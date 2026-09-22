@@ -186,6 +186,27 @@ export interface DashboardSummary {
 export interface Settings {
   id: number;
   allowExternalAiProcessing: boolean;
+  defaultLandingPage: string;
+}
+
+export interface GraphNode {
+  id: string;
+  type: "PERSON" | "ENTITY" | "ASSET" | "ACCOUNT" | "INVESTMENT" | "LIABILITY";
+  label: string;
+  sublabel?: string;
+  value?: number | null;
+  route?: string;
+}
+
+export interface GraphEdge {
+  from: string;
+  to: string;
+  label?: string;
+}
+
+export interface Graph {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
 }
 
 export interface Asset {
@@ -681,6 +702,8 @@ export const api = {
       request<Asset>(`/assets/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     remove: (id: string) => request<void>(`/assets/${id}`, { method: "DELETE" }),
   },
+
+  graph: () => request<Graph>("/graph"),
 
   commercialProperties: {
     list: (entityId?: string) =>

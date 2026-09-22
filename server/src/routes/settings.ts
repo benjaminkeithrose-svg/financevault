@@ -20,7 +20,10 @@ settingsRouter.get(
   })
 );
 
-const updateInput = z.object({ allowExternalAiProcessing: z.boolean() });
+const updateInput = z.object({
+  allowExternalAiProcessing: z.boolean().optional(),
+  defaultLandingPage: z.enum(["DASHBOARD", "VISUALIZATION"]).optional(),
+});
 
 settingsRouter.put(
   "/",

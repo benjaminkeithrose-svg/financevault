@@ -8,7 +8,23 @@ hand them to one quickly.
 
 See the project brief for the full design spec. This repository currently
 implements **Stage 1 and Stage 2** of the staged build, plus the Commercial
-Property module and a subsequent architecture correction described below.
+Property module, a subsequent architecture correction, and a Visualization
+tab, all described below.
+
+### Visualization
+
+A `/visualization` page renders the whole ownership structure as a
+flowchart — People at the top, Entities below them, Assets/Accounts below
+that, and Liabilities at the bottom, connected by the same relationships
+already recorded elsewhere in the app (person-entity roles, entity
+ownership, loan security). Every node is clickable and opens its real
+detail page — the diagram is a navigation surface, not a static picture.
+It's a custom lightweight SVG layout (no charting/graph library added) fed
+by a new `GET /api/graph` endpoint.
+
+Settings → Landing page lets you promote it to be what opens at `/`
+instead of the Dashboard, without changing any routes — exactly the "push
+it to the front later" behaviour asked for.
 
 ### Architecture correction: People vs. Entities vs. Assets
 

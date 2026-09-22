@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { NavSidebar } from "./components/NavSidebar.js";
 import { Placeholder } from "./components/Placeholder.js";
+import { api } from "./api/client.js";
 import { Dashboard } from "./pages/Dashboard.js";
+import { Visualization } from "./pages/Visualization.js";
 import { Inbox } from "./pages/Inbox.js";
 import { Documents } from "./pages/Documents.js";
 import { DocumentDetail } from "./pages/DocumentDetail.js";
@@ -43,6 +45,17 @@ function TopSearch() {
   );
 }
 
+function Home() {
+  const [landingPage, setLandingPage] = useState<string | null>(null);
+
+  useEffect(() => {
+    api.settings.get().then((s) => setLandingPage(s.defaultLandingPage));
+  }, []);
+
+  if (!landingPage) return null;
+  return landingPage === "VISUALIZATION" ? <Visualization /> : <Dashboard />;
+}
+
 export default function App() {
   return (
     <div className="app-shell">
@@ -50,7 +63,8 @@ export default function App() {
       <main className="main-content">
         <TopSearch />
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/visualization" element={<Visualization />} />
           <Route path="/inbox" element={<Inbox />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/documents/:id" element={<DocumentDetail />} />

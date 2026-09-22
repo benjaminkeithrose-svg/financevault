@@ -14,6 +14,11 @@ export function Settings() {
     setSettings(updated);
   }
 
+  async function setLandingPage(defaultLandingPage: string) {
+    const updated = await api.settings.update({ defaultLandingPage });
+    setSettings(updated);
+  }
+
   return (
     <div>
       <div className="page-header">
@@ -40,6 +45,19 @@ export function Settings() {
             />
             Allow external AI processing
           </label>
+        )}
+      </div>
+
+      <div className="card">
+        <h3 style={{ marginTop: 0 }}>Landing page</h3>
+        <p style={{ color: "var(--text-muted)" }}>
+          Choose what opens first when you launch Financial Vault.
+        </p>
+        {settings && (
+          <select value={settings.defaultLandingPage} onChange={(e) => setLandingPage(e.target.value)} style={{ maxWidth: 280 }}>
+            <option value="DASHBOARD">Dashboard</option>
+            <option value="VISUALIZATION">Visualization</option>
+          </select>
         )}
       </div>
 

@@ -9,7 +9,15 @@ interface NavItem {
 // ownership layer; Assets/Liabilities are what they own and owe. Keeping
 // this distinction visible in the nav, not just in the data model.
 const GROUPS: Array<{ label: string; items: NavItem[] }> = [
-  { label: "", items: [{ to: "/", label: "Dashboard" }, { to: "/inbox", label: "Inbox" }, { to: "/documents", label: "Documents" }] },
+  {
+    label: "",
+    items: [
+      { to: "/", label: "Dashboard" },
+      { to: "/visualization", label: "Visualization" },
+      { to: "/inbox", label: "Inbox" },
+      { to: "/documents", label: "Documents" },
+    ],
+  },
   { label: "People", items: [{ to: "/people", label: "People" }] },
   { label: "Entities", items: [{ to: "/entities", label: "Entities" }] },
   {

@@ -706,4 +706,5 @@ model AuditLog {
 model Settings {
   id                        Int     @id @default(1)
   allowExternalAiProcessing Boolean @default(false)
+  defaultLandingPage        String  @default("DASHBOARD") // DASHBOARD | VISUALIZATION
 }
