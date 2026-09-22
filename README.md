@@ -11,8 +11,9 @@ implements **Stage 1 and Stage 2** of the staged build, plus the Commercial
 Property module (Phase 1-4), a subsequent architecture correction, a
 Visualization tab, Net Worth/Tax/Reports, Document Packs with payslip
 tracking (Stage 4), a UI/UX pass against `PREFERENCES.md`, fractional/joint
-ownership, a multi-property Portfolio Plan, Gmail email import, a
-double-click local launcher and a one-click backup, all described below.
+ownership, a multi-property Portfolio Plan, bulk folder import, CSV
+transaction import, Gmail email import, a double-click local launcher and a
+one-click backup, all described below.
 
 ### Backup
 
@@ -37,6 +38,51 @@ and needs a manual edit plus restart to move, which the Settings page's own
 text explains. If you use the app from two computers sharing a synced
 folder, avoid running it on both at once — the SQLite database itself
 isn't safe to sync live, only the documents folder is.
+
+### Bulk import
+
+`/bulk-import` is for loading a whole folder at once — a first-time load of
+years of accumulated paperwork.
+
+- Files upload a few at a time with live progress, and a file that can't be
+  read fails on its own rather than abandoning the rest of the run.
+- Afterwards the imported documents are **grouped by what they look like**
+  (proposed type plus source folder) rather than listed individually, so a
+  run of bank statements is one decision instead of fifty. Least confident
+  groups sort first. Setting a type, entity or financial year applies to
+  every file in the group; anything left blank keeps whatever the
+  classifier proposed per document.
+- Picking a folder keeps its structure as a signal, because it reflects
+  filing you did deliberately: a file under `Tax Returns/2023-24` takes
+  that financial year directly, which is more reliable than inferring it
+  from a date on the page. Only explicit year ranges (`2023-24`, `FY24`)
+  are read — a bare `2023` is ambiguous between two financial years, so
+  it's left for you to set rather than guessed.
+- Duplicates are detected by content hash, so re-importing a folder you've
+  already loaded adds nothing.
+- Batches are saved and have their own URL, so closing the page mid-review
+  doesn't lose a large import.
+
+### Importing bank transactions from CSV
+
+On a bank account's page, **Import transactions from CSV** loads a date
+range exported from your bank's website. This is deliberately preferred
+over reading transactions out of PDF statements, which is unreliable —
+statements are best kept as evidence, with the transaction data coming from
+the CSV export.
+
+Australian bank exports have no common format: CommBank ships no header row
+and writes credits as `+1234.56`, Westpac splits money in and out across
+two columns, NAB carries both a transaction *type* and *details* column.
+Rather than maintain a guessed profile per bank — which mis-imports
+silently the moment a bank changes its export — the file is inspected, the
+columns and date format are proposed, and you confirm them against a
+preview before anything is written. Accounting-style negatives `(25.50)`,
+two-digit years and `14 Mar 2024` style dates are all handled.
+
+Re-importing an overlapping range is safe: a transaction matching one
+already stored on the same account by date, amount and description is
+skipped, and the preview says how many that will be before you commit.
 
 ### Email import (Gmail)
 

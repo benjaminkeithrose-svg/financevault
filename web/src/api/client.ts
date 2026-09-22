@@ -755,6 +755,33 @@ export interface PackPreview {
   generated: PackChip[];
 }
 
+export interface CsvColumnMapping {
+  dateColumn: number;
+  descriptionColumn: number;
+  amountColumn?: number | null;
+  debitColumn?: number | null;
+  creditColumn?: number | null;
+  dateFormat: "DMY" | "MDY" | "YMD";
+  hasHeaderRow: boolean;
+  invertSign?: boolean;
+}
+
+export interface CsvInspection {
+  headers: string[] | null;
+  sampleRows: string[][];
+  totalRows: number;
+  proposed: CsvColumnMapping;
+}
+
+export interface CsvPreview {
+  totalParsed: number;
+  duplicates: number;
+  willImport: number;
+  skipped: Array<{ line: number; reason: string; raw: string[] }>;
+  preview: Array<{ date: string; description: string; amount: number; duplicate: boolean }>;
+  dateRange: { from: string; to: string } | null;
+}
+
 export interface ImportBatch {
   id: string;
   name: string;
@@ -1255,6 +1282,38 @@ export const api = {
     addEquityDraw: (propertyId: string, data: Record<string, unknown>) =>
       request<PlanEquityDraw>(`/portfolio-plans/properties/${propertyId}/equity-draws`, { method: "POST", body: JSON.stringify(data) }),
     removeEquityDraw: (drawId: string) => request<void>(`/portfolio-plans/equity-draws/${drawId}`, { method: "DELETE" }),
+  },
+
+  transactionImport: {
+    inspect: async (file: File): Promise<CsvInspection> => {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch(`${BASE}/transaction-import/inspect`, { method: "POST", body: form });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `Failed: ${res.status}`);
+      return res.json();
+    },
+    preview: async (file: File, accountId: string, mapping: CsvColumnMapping): Promise<CsvPreview> => {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("accountId", accountId);
+      form.append("mapping", JSON.stringify(mapping));
+      const res = await fetch(`${BASE}/transaction-import/preview`, { method: "POST", body: form });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `Failed: ${res.status}`);
+      return res.json();
+    },
+    commit: async (
+      file: File,
+      accountId: string,
+      mapping: CsvColumnMapping
+    ): Promise<{ imported: number; duplicates: number; skipped: number }> => {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("accountId", accountId);
+      form.append("mapping", JSON.stringify(mapping));
+      const res = await fetch(`${BASE}/transaction-import/commit`, { method: "POST", body: form });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `Failed: ${res.status}`);
+      return res.json();
+    },
   },
 
   importBatches: {

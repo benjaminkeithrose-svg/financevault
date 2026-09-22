@@ -19,6 +19,7 @@
     "@prisma/client": "^5.20.0",
     "archiver": "^8.0.0",
     "cors": "^2.8.5",
+    "csv-parse": "^7.0.2",
     "dotenv": "^18.0.2",
     "express": "^4.21.0",
     "imapflow": "^2.0.5",

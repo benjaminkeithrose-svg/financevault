@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, Account, TaxCategory } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
+import { TransactionCsvImport } from "../components/TransactionCsvImport.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 
 const STATUSES = ["UNREVIEWED", "CATEGORISED", "MATCHED", "RECONCILED", "NEEDS_REVIEW"];
@@ -156,6 +157,8 @@ export function AccountDetail() {
           </table>
         )}
       </div>
+
+      <TransactionCsvImport accountId={account.id} onImported={load} />
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>
