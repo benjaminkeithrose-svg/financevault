@@ -7,6 +7,7 @@ import { classifyDocument } from "./classification.js";
 import { financialYearBounds } from "./financialYear.js";
 import { logAudit } from "./audit.js";
 import { getEffectiveStorageDir } from "./paths.js";
+import { redactTfns } from "./tfn.js";
 
 export async function ensureFinancialYear(label: string | null) {
   if (!label) return null;
@@ -87,7 +88,10 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
       amount: classification.amount ?? undefined,
       taxRelevance: classification.taxRelevance,
       confidenceScore: classification.confidenceScore,
-      ocrText: text || null,
+      // Stored text is searchable and unencrypted, so a TFN read out of a tax
+      // return is masked before it's saved. Classification above already
+      // ran on the full text.
+      ocrText: text ? redactTfns(text).text : null,
       reviewStatus: classification.needsReview ? "NEEDS_CONFIRMATION" : "PENDING_CLASSIFICATION",
     },
   });

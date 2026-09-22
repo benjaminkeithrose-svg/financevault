@@ -514,6 +514,23 @@ Uploaded documents are stored under `server/storage/documents/`, named by
 their content hash. Originals are never overwritten; re-uploading an
 identical file is detected as a duplicate.
 
+### Tests
+
+```bash
+npm test
+```
+
+Runs the server test suite (Vitest) against a throwaway database and
+storage folder — it never touches your real records. It covers the parts
+where a mistake would be quiet and costly: CGT arithmetic (parcel
+allocation, the 12-month boundary, discount rates by entity, losses),
+bank CSV parsing for each major bank's layout, document classification and
+financial-year detection, TFN validation and redaction, encryption and the
+full passcode/recovery lifecycle, and the HTTP security boundary (loopback
+host, cross-origin refusal, the lock gate, TFNs never appearing in responses
+or the audit log, and uploaded files that can't run as the app). The web
+interface itself has no automated tests yet.
+
 ### Notes on OCR
 
 Text is pulled out of a PDF in three escalating steps, cheapest first:
@@ -564,6 +581,19 @@ stored and flagged for manual classification, just without extracted text.
   every write, so no part of the app can store them in the clear. Any
   plaintext values from before the passcode existed are encrypted when you
   first set it.
+- **Tax file numbers stay out of everything else.** The app shows only the
+  last three digits (`••• ••• 782`); **Show** fetches the full number on
+  request and each reveal is recorded in the audit log. TFNs are checked
+  against the ATO's check-digit scheme when entered, so a mistyped digit is
+  caught rather than stored. They're left out of every other API response
+  by default, the audit log records *that* a TFN changed but never its
+  value, and TFNs read out of uploaded documents are masked before the text
+  is stored. Existing document text and audit entries from before this are
+  cleaned once, on the first start after updating. A nine-digit number is
+  only treated as a TFN if it passes the check digit **and** is printed in
+  TFN grouping or labelled as one on the same line — about one in eleven
+  random numbers pass the check digit alone, so invoice and reference
+  numbers are left alone.
 - **Uploaded files can't run as the app.** Only PDFs and ordinary images are
   shown inline; anything else (HTML, SVG, …) is downloaded instead, so a
   malicious file posing as a statement can't run scripts with the app's
@@ -577,14 +607,14 @@ stored and flagged for manual classification, just without extracted text.
 ### What isn't — read this
 
 - **Everything else in the database is not encrypted**: balances,
-  transactions, holdings, document details and the text read out of
-  documents. The original document files aren't encrypted either. That
-  includes the OCR text of a tax return or payslip, which contains your tax
-  file number in plain text. The passcode stops people *using the app*; it
-  does not stop someone with access to your files opening the database
-  directly. Encrypting the whole database needs SQLCipher, a native build
-  that would break the "install Node.js and double-click" setup, so the most
-  sensitive fields are encrypted individually instead.
+  transactions, holdings and document details. The original document
+  files aren't encrypted either — so a scanned tax return still shows your
+  tax file number to anyone who opens the PDF itself. The passcode stops
+  people *using the app*; it does not stop someone with access to your
+  files opening the database or documents directly. Encrypting the whole
+  database needs SQLCipher, a native build that would break the "install
+  Node.js and double-click" setup, so the most sensitive fields are
+  protected individually instead.
 - Anyone who can use your computer while the app is unlocked can see what
   you can see. Malware on the computer is out of scope — it could read the
   key from memory or capture your passcode as you type it.

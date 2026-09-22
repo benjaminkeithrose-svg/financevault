@@ -11,7 +11,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "tsx prisma/seed.ts",
-    "reset-passcode": "tsx scripts/reset-passcode.ts"
+    "reset-passcode": "tsx scripts/reset-passcode.ts",
+    "test": "vitest run"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -37,8 +38,11 @@
     "@types/multer": "^2.2.0",
     "@types/node": "^22.7.4",
     "@types/pdf-parse": "^1.1.5",
+    "@types/supertest": "^7.2.1",
     "prisma": "^5.20.0",
+    "supertest": "^7.3.0",
     "tsx": "^4.19.1",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "vitest": "^5.0.1"
   }
 }

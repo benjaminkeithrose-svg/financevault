@@ -13,6 +13,7 @@
     "build": "npm run build --workspace server && npm run build --workspace web",
     "prisma:generate": "npm run prisma:generate --workspace server",
     "prisma:migrate": "npm run prisma:migrate --workspace server",
-    "prisma:seed": "npm run prisma:seed --workspace server"
+    "prisma:seed": "npm run prisma:seed --workspace server",
+    "test": "npm test --workspace server"
   }
 }

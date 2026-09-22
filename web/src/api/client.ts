@@ -18,7 +18,9 @@ export interface Entity {
   name: string;
   entityType: string;
   abn?: string | null;
-  tfn?: string | null;
+  /** Never the number itself — only whether one exists and its last digits. */
+  hasTfn?: boolean;
+  tfnMasked?: string | null;
   acn?: string | null;
   establishmentDate?: string | null;
   ownershipInfo?: string | null;
@@ -52,7 +54,8 @@ export interface Person {
   id: string;
   name: string;
   dateOfBirth?: string | null;
-  tfn?: string | null;
+  hasTfn?: boolean;
+  tfnMasked?: string | null;
   contactInfo?: string | null;
   notes?: string | null;
   payFrequency?: string | null;
@@ -1156,6 +1159,7 @@ export const api = {
   entities: {
     list: (entityType?: string) => request<Entity[]>(`/entities${entityType ? `?entityType=${entityType}` : ""}`),
     get: (id: string) => request<Entity>(`/entities/${id}`),
+    revealTfn: (id: string) => request<{ tfn: string | null }>(`/entities/${id}/tfn`),
     create: (data: Partial<Entity>) => request<Entity>("/entities", { method: "POST", body: JSON.stringify(data) }),
     update: (id: string, data: Partial<Entity>) =>
       request<Entity>(`/entities/${id}`, { method: "PUT", body: JSON.stringify(data) }),
@@ -1168,6 +1172,7 @@ export const api = {
   people: {
     list: () => request<Person[]>("/people"),
     get: (id: string) => request<Person>(`/people/${id}`),
+    revealTfn: (id: string) => request<{ tfn: string | null }>(`/people/${id}/tfn`),
     create: (data: Partial<Person>) => request<Person>("/people", { method: "POST", body: JSON.stringify(data) }),
     update: (id: string, data: Partial<Person>) =>
       request<Person>(`/people/${id}`, { method: "PUT", body: JSON.stringify(data) }),

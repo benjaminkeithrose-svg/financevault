@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
+import { parseTfnInput, revealTfn, tfnSummary } from "../services/tfnAccess.js";
 
 export const peopleRouter = Router();
 
@@ -33,7 +34,7 @@ peopleRouter.get(
       include: { document: true },
       orderBy: { createdAt: "desc" },
     });
-    res.json({ ...person, documents: links.map((l) => l.document) });
+    res.json({ ...person, ...(await tfnSummary("person", person.id)), documents: links.map((l) => l.document) });
   })
 );
 
@@ -57,9 +58,14 @@ peopleRouter.post(
   "/",
   asyncHandler(async (req, res) => {
     const parsed = personInput.parse(req.body);
-    const person = await prisma.person.create({ data: personData(parsed) });
+    const tfn = parseTfnInput(parsed.tfn);
+    if (!tfn.ok) {
+      res.status(400).json({ error: tfn.error });
+      return;
+    }
+    const person = await prisma.person.create({ data: { ...personData(parsed), tfn: tfn.value } });
     await logAudit("PERSON_CREATED", { targetType: "Person", targetId: person.id, data: { name: person.name } });
-    res.status(201).json(person);
+    res.status(201).json({ ...person, ...(await tfnSummary("person", person.id)) });
   })
 );
 
@@ -67,9 +73,30 @@ peopleRouter.put(
   "/:id",
   asyncHandler(async (req, res) => {
     const parsed = personInput.partial().parse(req.body);
-    const person = await prisma.person.update({ where: { id: req.params.id }, data: personData(parsed) });
+    const tfn = parseTfnInput(parsed.tfn);
+    if (!tfn.ok) {
+      res.status(400).json({ error: tfn.error });
+      return;
+    }
+    const person = await prisma.person.update({
+      where: { id: req.params.id },
+      data: { ...personData(parsed), tfn: tfn.value },
+    });
     await logAudit("PERSON_CHANGED", { targetType: "Person", targetId: person.id, data: parsed });
-    res.json(person);
+    res.json({ ...person, ...(await tfnSummary("person", person.id)) });
+  })
+);
+
+/**
+ * The full number, on explicit request only — every reveal is audited, since
+ * it's the one moment the value leaves the vault in readable form.
+ */
+peopleRouter.get(
+  "/:id/tfn",
+  asyncHandler(async (req, res) => {
+    const tfn = await revealTfn("person", req.params.id);
+    if (tfn) await logAudit("TFN_REVEALED", { targetType: "Person", targetId: req.params.id });
+    res.json({ tfn });
   })
 );
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { TfnField } from "../components/TfnField.js";
 import { Link, useParams } from "react-router-dom";
 import { api, Document, Entity, FinancialYear, PayPeriod, Person } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
@@ -236,6 +237,11 @@ export function PersonDetail() {
           <h2>{person.name}</h2>
           <p>Person — relationships to the legal entities that own assets on their behalf or with their involvement.</p>
         </div>
+      </div>
+
+      <div className="card">
+        <h3 style={{ marginTop: 0 }}>Tax file number</h3>
+        <TfnField owner="person" id={person.id} hasTfn={person.hasTfn} tfnMasked={person.tfnMasked} onSaved={load} />
       </div>
 
       <div className="card">

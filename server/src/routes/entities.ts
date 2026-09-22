@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
+import { parseTfnInput, revealTfn, tfnSummary } from "../services/tfnAccess.js";
 import { computeFinancialPosition } from "../services/financialPosition.js";
 
 export const entitiesRouter = Router();
@@ -68,7 +69,7 @@ entitiesRouter.get(
       return;
     }
     const financialPosition = computeFinancialPosition(entity.assets, entity.accounts, entity.liabilities);
-    res.json({ ...entity, financialPosition });
+    res.json({ ...entity, ...(await tfnSummary("entity", entity.id)), financialPosition });
   })
 );
 
@@ -76,9 +77,14 @@ entitiesRouter.post(
   "/",
   asyncHandler(async (req, res) => {
     const parsed = entityInput.parse(req.body);
-    const entity = await prisma.entity.create({ data: entityData(parsed) });
+    const tfn = parseTfnInput(parsed.tfn);
+    if (!tfn.ok) {
+      res.status(400).json({ error: tfn.error });
+      return;
+    }
+    const entity = await prisma.entity.create({ data: { ...entityData(parsed), tfn: tfn.value } });
     await logAudit("ENTITY_CREATED", { targetType: "Entity", targetId: entity.id, data: { name: entity.name } });
-    res.status(201).json(entity);
+    res.status(201).json({ ...entity, ...(await tfnSummary("entity", entity.id)) });
   })
 );
 
@@ -86,9 +92,30 @@ entitiesRouter.put(
   "/:id",
   asyncHandler(async (req, res) => {
     const parsed = entityInput.partial().parse(req.body);
-    const entity = await prisma.entity.update({ where: { id: req.params.id }, data: entityData(parsed) });
+    const tfn = parseTfnInput(parsed.tfn);
+    if (!tfn.ok) {
+      res.status(400).json({ error: tfn.error });
+      return;
+    }
+    const entity = await prisma.entity.update({
+      where: { id: req.params.id },
+      data: { ...entityData(parsed), tfn: tfn.value },
+    });
     await logAudit("ENTITY_CHANGED", { targetType: "Entity", targetId: entity.id, data: parsed });
-    res.json(entity);
+    res.json({ ...entity, ...(await tfnSummary("entity", entity.id)) });
+  })
+);
+
+/**
+ * The full number, on explicit request only — every reveal is audited, since
+ * it's the one moment the value leaves the vault in readable form.
+ */
+entitiesRouter.get(
+  "/:id/tfn",
+  asyncHandler(async (req, res) => {
+    const tfn = await revealTfn("entity", req.params.id);
+    if (tfn) await logAudit("TFN_REVEALED", { targetType: "Entity", targetId: req.params.id });
+    res.json({ tfn });
   })
 );
 

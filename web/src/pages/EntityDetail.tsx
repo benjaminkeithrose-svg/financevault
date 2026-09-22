@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, Entity } from "../api/client.js";
+import { TfnField } from "../components/TfnField.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 
 const ASSET_TYPE_ICONS: Record<string, string> = {
@@ -110,7 +111,9 @@ export function EntityDetail() {
               </tr>
               <tr>
                 <td>TFN</td>
-                <td>{entity.tfn ? "•••• stored" : "—"}</td>
+                <td>
+                  <TfnField owner="entity" id={entity.id} hasTfn={entity.hasTfn} tfnMasked={entity.tfnMasked} onSaved={load} />
+                </td>
               </tr>
               <tr>
                 <td>Established</td>

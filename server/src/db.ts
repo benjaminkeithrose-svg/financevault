@@ -26,7 +26,16 @@ function encryptInPlace(data: unknown, fields: string[]) {
   }
 }
 
-const base = new PrismaClient();
+// Encrypted fields are left out of every query result unless explicitly
+// selected. Ciphertext isn't dangerous on its own, but this way nothing —
+// a list endpoint, a nested include, a report — hands a TFN to the browser
+// by accident; the few places that need one have to ask for it by name.
+const base = new PrismaClient({
+  omit: {
+    person: { tfn: true },
+    entity: { tfn: true },
+  },
+});
 
 export const prisma = base.$extends({
   query: {
