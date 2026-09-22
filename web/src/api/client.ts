@@ -202,12 +202,22 @@ export interface DashboardSummary {
     }>;
     note: string;
   };
+  upcomingLeaseEvents: Array<{
+    tenancyId: string;
+    tenantName: string;
+    commercialPropertyId: string;
+    commercialPropertyName: string;
+    eventType: "EXPIRY" | "RENT_REVIEW";
+    eventDate: string;
+  }>;
 }
 
 export interface Settings {
   id: number;
   allowExternalAiProcessing: boolean;
   defaultLandingPage: string;
+  customStorageDir?: string | null;
+  effectiveStorageDir: string;
 }
 
 export interface PropertyPerformanceRow {
@@ -413,6 +423,20 @@ export interface RentReview {
   actualVsExpected?: string | null;
   notes?: string | null;
   createdAt: string;
+}
+
+export interface LeaseExtractionSuggestion {
+  rentPerAnnum: number | null;
+  leaseCommencement: string | null;
+  leaseExpiry: string | null;
+  reviewMechanism: string | null;
+  confidence: "LOW" | "MEDIUM";
+}
+
+export interface LeaseExtractionResponse {
+  found: boolean;
+  suggestion: LeaseExtractionSuggestion | null;
+  sourceDocument: { id: string; originalFilename: string } | null;
 }
 
 export interface Tenancy {
@@ -1056,6 +1080,8 @@ export const api = {
       request<Tenancy>(`/commercial-properties/tenancies/${tenancyId}`, { method: "PUT", body: JSON.stringify(data) }),
     removeTenancy: (tenancyId: string) =>
       request<void>(`/commercial-properties/tenancies/${tenancyId}`, { method: "DELETE" }),
+    extractLeaseTerms: (tenancyId: string) =>
+      request<LeaseExtractionResponse>(`/commercial-properties/tenancies/${tenancyId}/extract-lease-terms`),
 
     addRentReview: (tenancyId: string, data: Record<string, unknown>) =>
       request<RentReview>(`/commercial-properties/tenancies/${tenancyId}/rent-reviews`, {

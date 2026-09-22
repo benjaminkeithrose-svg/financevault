@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
+import { extractLeaseTerms } from "../services/leaseExtraction.js";
 import {
   computeCoverageRatios,
   computeDebtMetrics,
@@ -410,6 +411,31 @@ commercialPropertiesRouter.delete(
     await prisma.tenancy.delete({ where: { id: req.params.tenancyId } });
     await logAudit("TENANCY_DELETED", { targetType: "Tenancy", targetId: req.params.tenancyId });
     res.status(204).send();
+  })
+);
+
+// Heuristic only — proposes values from the most recently linked lease
+// document's OCR text for the user to review and apply, same pattern as
+// the general document classifier. Never writes to the tenancy itself.
+commercialPropertiesRouter.get(
+  "/tenancies/:tenancyId/extract-lease-terms",
+  asyncHandler(async (req, res) => {
+    const links = await prisma.documentLink.findMany({
+      where: { targetType: "TENANCY", targetId: req.params.tenancyId },
+      include: { document: true },
+      orderBy: { createdAt: "desc" },
+    });
+    const leaseDoc = links.map((l) => l.document).find((d) => d.documentType === "Lease" || d.documentType === "Lease Amendment");
+    if (!leaseDoc) {
+      res.json({ found: false, suggestion: null, sourceDocument: null });
+      return;
+    }
+    const suggestion = extractLeaseTerms(leaseDoc.ocrText || "");
+    res.json({
+      found: true,
+      suggestion,
+      sourceDocument: { id: leaseDoc.id, originalFilename: leaseDoc.originalFilename },
+    });
   })
 );
 

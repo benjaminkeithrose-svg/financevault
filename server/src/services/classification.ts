@@ -57,7 +57,7 @@ const MONTHS = [
   "july", "august", "september", "october", "november", "december",
 ];
 
-function extractAllDates(text: string): Date[] {
+export function extractAllDates(text: string): Date[] {
   const dates: Date[] = [];
   for (const { regex, parse } of DATE_PATTERNS) {
     for (const match of text.matchAll(regex)) {
@@ -68,7 +68,7 @@ function extractAllDates(text: string): Date[] {
   return dates;
 }
 
-function extractAmounts(text: string): number[] {
+export function extractAmounts(text: string): number[] {
   const amounts: number[] = [];
   for (const match of text.matchAll(AMOUNT_PATTERN)) {
     const value = Number(match[1].replace(/,/g, ""));

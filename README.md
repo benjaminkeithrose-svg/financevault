@@ -8,7 +8,7 @@ hand them to one quickly.
 
 See the project brief for the full design spec. This repository currently
 implements **Stage 1 and Stage 2** of the staged build, plus the Commercial
-Property module (Phase 1-3), a subsequent architecture correction, a
+Property module (Phase 1-4), a subsequent architecture correction, a
 Visualization tab, Net Worth/Tax/Reports, Document Packs with payslip
 tracking (Stage 4), a UI/UX pass against `PREFERENCES.md`, fractional/joint
 ownership, a multi-property Portfolio Plan, a double-click local launcher
@@ -22,6 +22,21 @@ restore Financial Vault elsewhere. The database is copied via SQLite's own
 `VACUUM INTO`, so a backup taken while the app is in use is always a
 consistent point-in-time copy, never a half-written file. Nothing is
 uploaded anywhere; the file goes straight to your browser's downloads.
+
+Settings → **Document storage location** lets you point new uploads at a
+folder inside a Google Drive/OneDrive/Dropbox sync folder instead of the
+app's default storage folder, so every new document is backed up
+automatically as you go, on top of the one-off ZIP above. Only documents
+uploaded from that point on move to the new location — anything already
+stored stays exactly where it is, since its recorded path is what's used to
+find it (nothing is bulk-moved on save). The setting is validated up front:
+the path must be absolute, and the app confirms it can create/write to that
+folder before accepting it. This does **not** relocate the database file
+itself — that's fixed at process start via `server/.env`'s `DATABASE_URL`
+and needs a manual edit plus restart to move, which the Settings page's own
+text explains. If you use the app from two computers sharing a synced
+folder, avoid running it on both at once — the SQLite database itself
+isn't safe to sync live, only the documents folder is.
 
 ### Portfolio Plan
 
@@ -301,7 +316,20 @@ Commercial toggle on the Properties page.
     and net yield, weighted occupancy and WALE, total rent/interest/cash
     flow — properties are listed with their own metrics, never ranked or
     scored against each other.
-- Lease-PDF extraction and alerts (Phase 4) remain intentionally not built.
+- **Phase 4, now built**:
+  - **Lease term extraction**: on a tenancy with a "Lease" or "Lease
+    Amendment" document linked, an **Extract from lease document** button
+    runs a heuristic pass over that document's OCR text for annual rent,
+    lease commencement/expiry dates and review mechanism (CPI/market/fixed
+    percentage/hybrid), each proposed with a confidence rating that's never
+    higher than "Medium" — this is a proposal, not an automatic update.
+    Every extracted field has its own **Apply** button so you accept them
+    one at a time (or not at all), matching the rest of the app's
+    propose-don't-auto-apply pattern for anything derived from a document.
+  - **Upcoming lease events** on the Dashboard: active tenancies with a
+    lease expiry in the next 180 days or a rent review due in the next 90
+    are listed with a direct link back to the property, so renewals and
+    reviews don't get missed by only ever looking at a property's own page.
 
 ### UI styling
 

@@ -14,6 +14,7 @@ dashboardRouter.get(
 
     const now = new Date();
     const in90Days = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+    const in180Days = new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000);
     const currentFyLabel = financialYearLabelForDate(now);
 
     const [
@@ -26,6 +27,7 @@ dashboardRouter.get(
       liabilities,
       accounts,
       currentFy,
+      leaseTenancies,
     ] = await Promise.all([
       prisma.document.count({ where: { reviewStatus: "PENDING_CLASSIFICATION", ...entityWhere } }),
       prisma.document.count({ where: { reviewStatus: "NEEDS_CONFIRMATION", ...entityWhere } }),
@@ -45,7 +47,47 @@ dashboardRouter.get(
       prisma.liability.findMany({ where: entityWhere }),
       prisma.account.findMany({ where: entityWhere }),
       prisma.financialYear.findUnique({ where: { label: currentFyLabel } }),
+      prisma.tenancy.findMany({
+        where: {
+          leaseStatus: "ACTIVE",
+          OR: [{ leaseExpiry: { gte: now, lte: in180Days } }, { nextRentReview: { gte: now, lte: in90Days } }],
+          ...(entityId ? { commercialProperty: { entityId } } : {}),
+        },
+        include: { commercialProperty: true },
+      }),
     ]);
+
+    const upcomingLeaseEvents: Array<{
+      tenancyId: string;
+      tenantName: string;
+      commercialPropertyId: string;
+      commercialPropertyName: string;
+      eventType: "EXPIRY" | "RENT_REVIEW";
+      eventDate: string;
+    }> = [];
+    for (const t of leaseTenancies) {
+      if (t.leaseExpiry && t.leaseExpiry >= now && t.leaseExpiry <= in180Days) {
+        upcomingLeaseEvents.push({
+          tenancyId: t.id,
+          tenantName: t.tenantName,
+          commercialPropertyId: t.commercialPropertyId,
+          commercialPropertyName: t.commercialProperty.name,
+          eventType: "EXPIRY",
+          eventDate: t.leaseExpiry.toISOString(),
+        });
+      }
+      if (t.nextRentReview && t.nextRentReview >= now && t.nextRentReview <= in90Days) {
+        upcomingLeaseEvents.push({
+          tenancyId: t.id,
+          tenantName: t.tenantName,
+          commercialPropertyId: t.commercialPropertyId,
+          commercialPropertyName: t.commercialProperty.name,
+          eventType: "RENT_REVIEW",
+          eventDate: t.nextRentReview.toISOString(),
+        });
+      }
+    }
+    upcomingLeaseEvents.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
 
     const totalAssetValue = assets.reduce((sum, a) => sum + (a.currentValue ?? 0), 0);
     const totalCash = accounts.reduce((sum, a) => sum + (a.currentBalance ?? 0), 0);
@@ -122,6 +164,7 @@ dashboardRouter.get(
         recentDocuments,
         upcomingRenewals,
       },
+      upcomingLeaseEvents,
       financialSnapshot: {
         totalAssets: totalAssetValue,
         totalLiabilities,

@@ -23,7 +23,7 @@ export function Dashboard() {
   if (error) return <div className="empty-state">{error}</div>;
   if (!summary) return <div className="empty-state">Loading…</div>;
 
-  const { documents, financialSnapshot, tax, consolidated } = summary;
+  const { documents, financialSnapshot, tax, consolidated, upcomingLeaseEvents } = summary;
 
   return (
     <div>
@@ -142,6 +142,31 @@ export function Dashboard() {
             before lodging.
           </p>
         </div>
+      </div>
+
+      <div className="card" style={{ marginTop: 16 }}>
+        <h3 style={{ marginTop: 0 }}>Upcoming lease events</h3>
+        <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+          Active tenancies with a lease expiry in the next 180 days, or a rent review due in the next 90.
+        </p>
+        {upcomingLeaseEvents.length === 0 ? (
+          <p className="empty-state">Nothing due soon.</p>
+        ) : (
+          <table>
+            <tbody>
+              {upcomingLeaseEvents.map((e) => (
+                <tr key={`${e.tenancyId}-${e.eventType}`}>
+                  <td>
+                    <Link to={`/commercial-properties/${e.commercialPropertyId}`}>{e.commercialPropertyName}</Link> —{" "}
+                    {e.tenantName}
+                  </td>
+                  <td>{e.eventType === "EXPIRY" ? "Lease expiry" : "Rent review"}</td>
+                  <td>{formatDate(e.eventDate)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {!entityId && consolidated.byEntity.length > 0 && (

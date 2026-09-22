@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api, CommercialProperty, Entity, FinancialYear } from "../api/client.js";
+import { api, CommercialProperty, Entity, FinancialYear, LeaseExtractionResponse } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ScenarioComparison } from "../components/ScenarioComparison.js";
@@ -54,6 +54,9 @@ export function CommercialPropertyDetail() {
   const [tenancyForm, setTenancyForm] = useState(emptyTenancy);
   const [rentReviewFormFor, setRentReviewFormFor] = useState<string | null>(null);
   const [rentReviewForm, setRentReviewForm] = useState(emptyRentReview);
+  const [extractionFor, setExtractionFor] = useState<string | null>(null);
+  const [extractionResult, setExtractionResult] = useState<LeaseExtractionResponse | null>(null);
+  const [extracting, setExtracting] = useState(false);
 
   const [showOutgoingForm, setShowOutgoingForm] = useState(false);
   const [outgoingForm, setOutgoingForm] = useState(emptyOutgoing);
@@ -147,6 +150,22 @@ export function CommercialPropertyDetail() {
 
   async function removeTenancy(tenancyId: string) {
     await api.commercialProperties.removeTenancy(tenancyId);
+    load();
+  }
+
+  async function runExtraction(tenancyId: string) {
+    setExtracting(true);
+    setExtractionFor(tenancyId);
+    try {
+      const result = await api.commercialProperties.extractLeaseTerms(tenancyId);
+      setExtractionResult(result);
+    } finally {
+      setExtracting(false);
+    }
+  }
+
+  async function applySuggestedField(tenancyId: string, data: Record<string, unknown>) {
+    await api.commercialProperties.updateTenancy(tenancyId, data);
     load();
   }
 
@@ -689,9 +708,84 @@ export function CommercialPropertyDetail() {
                   <button className="btn secondary" onClick={() => setRentReviewFormFor(t.id)}>
                     Record rent review
                   </button>
+                  <button className="btn secondary" onClick={() => runExtraction(t.id)} disabled={extracting && extractionFor === t.id}>
+                    {extracting && extractionFor === t.id ? "Extracting…" : "Extract from lease document"}
+                  </button>
                   <button className="btn secondary" onClick={() => removeTenancy(t.id)}>
                     Remove tenancy
                   </button>
+                </div>
+              )}
+
+              {extractionFor === t.id && extractionResult && (
+                <div className="message-box info" style={{ marginTop: 8 }}>
+                  {!extractionResult.found ? (
+                    <p style={{ margin: 0 }}>
+                      No lease document linked to this tenancy yet — link one below (documentType "Lease"), then try
+                      again.
+                    </p>
+                  ) : (
+                    <>
+                      <p style={{ margin: "0 0 8px" }}>
+                        Suggested from <strong>{extractionResult.sourceDocument?.originalFilename}</strong> — a
+                        heuristic guess, always check before applying.
+                      </p>
+                      <ul style={{ margin: 0, paddingLeft: 18 }}>
+                        {extractionResult.suggestion?.rentPerAnnum !== null && extractionResult.suggestion?.rentPerAnnum !== undefined && (
+                          <li>
+                            Rent per annum: {formatCurrency(extractionResult.suggestion.rentPerAnnum)}{" "}
+                            <button
+                              className="btn secondary"
+                              style={{ padding: "2px 8px", fontSize: 12 }}
+                              onClick={() => applySuggestedField(t.id, { rentPerAnnum: extractionResult.suggestion!.rentPerAnnum })}
+                            >
+                              Apply
+                            </button>
+                          </li>
+                        )}
+                        {extractionResult.suggestion?.leaseCommencement && (
+                          <li>
+                            Lease commencement: {formatDate(extractionResult.suggestion.leaseCommencement)}{" "}
+                            <button
+                              className="btn secondary"
+                              style={{ padding: "2px 8px", fontSize: 12 }}
+                              onClick={() => applySuggestedField(t.id, { leaseCommencement: extractionResult.suggestion!.leaseCommencement })}
+                            >
+                              Apply
+                            </button>
+                          </li>
+                        )}
+                        {extractionResult.suggestion?.leaseExpiry && (
+                          <li>
+                            Lease expiry: {formatDate(extractionResult.suggestion.leaseExpiry)}{" "}
+                            <button
+                              className="btn secondary"
+                              style={{ padding: "2px 8px", fontSize: 12 }}
+                              onClick={() => applySuggestedField(t.id, { leaseExpiry: extractionResult.suggestion!.leaseExpiry })}
+                            >
+                              Apply
+                            </button>
+                          </li>
+                        )}
+                        {extractionResult.suggestion?.reviewMechanism && (
+                          <li>
+                            Review mechanism: {humanize(extractionResult.suggestion.reviewMechanism)}{" "}
+                            <button
+                              className="btn secondary"
+                              style={{ padding: "2px 8px", fontSize: 12 }}
+                              onClick={() => applySuggestedField(t.id, { reviewMechanism: extractionResult.suggestion!.reviewMechanism })}
+                            >
+                              Apply
+                            </button>
+                          </li>
+                        )}
+                        {!extractionResult.suggestion?.rentPerAnnum &&
+                          !extractionResult.suggestion?.leaseCommencement &&
+                          !extractionResult.suggestion?.leaseExpiry &&
+                          !extractionResult.suggestion?.reviewMechanism && <li>Nothing recognisable in that document's text.</li>}
+                      </ul>
+                    </>
+                  )}
                 </div>
               )}
             </div>

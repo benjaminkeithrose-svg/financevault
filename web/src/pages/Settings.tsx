@@ -3,10 +3,18 @@ import { api, Settings as SettingsType } from "../api/client.js";
 
 export function Settings() {
   const [settings, setSettings] = useState<SettingsType | null>(null);
+  const [storageDirInput, setStorageDirInput] = useState("");
+  const [storageSaving, setStorageSaving] = useState(false);
+  const [storageError, setStorageError] = useState<string | null>(null);
 
-  useEffect(() => {
-    api.settings.get().then(setSettings);
-  }, []);
+  function load() {
+    api.settings.get().then((s) => {
+      setSettings(s);
+      setStorageDirInput(s.customStorageDir || "");
+    });
+  }
+
+  useEffect(load, []);
 
   async function toggleAi() {
     if (!settings) return;
@@ -17,6 +25,31 @@ export function Settings() {
   async function setLandingPage(defaultLandingPage: string) {
     const updated = await api.settings.update({ defaultLandingPage });
     setSettings(updated);
+  }
+
+  async function saveStorageDir() {
+    setStorageError(null);
+    setStorageSaving(true);
+    try {
+      const updated = await api.settings.update({ customStorageDir: storageDirInput.trim() || null });
+      setSettings(updated);
+    } catch (e) {
+      setStorageError((e as Error).message);
+    } finally {
+      setStorageSaving(false);
+    }
+  }
+
+  async function resetStorageDir() {
+    setStorageError(null);
+    setStorageSaving(true);
+    try {
+      const updated = await api.settings.update({ customStorageDir: null });
+      setSettings(updated);
+      setStorageDirInput("");
+    } finally {
+      setStorageSaving(false);
+    }
   }
 
   return (
@@ -58,6 +91,43 @@ export function Settings() {
             <option value="DASHBOARD">Dashboard</option>
             <option value="VISUALIZATION">Visualization</option>
           </select>
+        )}
+      </div>
+
+      <div className="card">
+        <h3 style={{ marginTop: 0 }}>Document storage location</h3>
+        <p style={{ color: "var(--text-muted)" }}>
+          Point this at a folder inside your Google Drive, OneDrive or Dropbox sync folder and new uploads get
+          backed up automatically as you go, on top of the one-off ZIP below. Only documents uploaded from now on
+          move — anything already stored stays exactly where it is. This doesn't move the database itself; that's
+          set via <code>server/.env</code> and needs a restart, since it can't change while the app is running.
+          If you sync between two computers, avoid opening this app on both at once — the database itself isn't
+          safe to sync live.
+        </p>
+        {settings && (
+          <>
+            <label>Folder path</label>
+            <input
+              value={storageDirInput}
+              onChange={(e) => setStorageDirInput(e.target.value)}
+              placeholder={settings.effectiveStorageDir}
+            />
+            <p style={{ color: "var(--text-muted)", fontSize: 12 }}>
+              Currently: <code>{settings.effectiveStorageDir}</code>
+              {!settings.customStorageDir && " (default location)"}
+            </p>
+            {storageError && <div className="message-box warning">{storageError}</div>}
+            <div className="toolbar" style={{ marginTop: 8 }}>
+              <button className="btn secondary" onClick={saveStorageDir} disabled={storageSaving || !storageDirInput.trim()}>
+                {storageSaving ? "Saving…" : "Save"}
+              </button>
+              {settings.customStorageDir && (
+                <button className="btn secondary" onClick={resetStorageDir} disabled={storageSaving}>
+                  Reset to default
+                </button>
+              )}
+            </div>
+          </>
         )}
       </div>
 

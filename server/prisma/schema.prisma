@@ -885,4 +885,12 @@ model Settings {
   id                        Int     @id @default(1)
   allowExternalAiProcessing Boolean @default(false)
   defaultLandingPage        String  @default("DASHBOARD") // DASHBOARD | VISUALIZATION
+  // Where NEW document uploads are written — e.g. a folder inside a Google
+  // Drive/OneDrive/Dropbox sync folder, for continuous backup. Null means
+  // the default (STORAGE_DIR env var, or server/storage/documents).
+  // Existing documents keep their already-recorded filePath; changing this
+  // never moves files that are already stored. The database file itself
+  // isn't covered — relocating it needs server/.env (DATABASE_URL) and a
+  // restart, since Prisma's connection is fixed at process start.
+  customStorageDir          String?
 }

@@ -10,9 +10,7 @@ import { extractText } from "../services/ocr.js";
 import { classifyDocument } from "../services/classification.js";
 import { financialYearBounds } from "../services/financialYear.js";
 import { logAudit } from "../services/audit.js";
-import { resolveStorageDir } from "../services/paths.js";
-
-const STORAGE_DIR = resolveStorageDir();
+import { getEffectiveStorageDir } from "../services/paths.js";
 
 export const documentsRouter = Router();
 
@@ -123,9 +121,10 @@ documentsRouter.post(
       return;
     }
 
-    await fs.mkdir(STORAGE_DIR, { recursive: true });
+    const storageDir = await getEffectiveStorageDir();
+    await fs.mkdir(storageDir, { recursive: true });
     const storedFilename = `${fileHash}${path.extname(req.file.originalname)}`;
-    const filePath = path.join(STORAGE_DIR, storedFilename);
+    const filePath = path.join(storageDir, storedFilename);
     await fs.writeFile(filePath, req.file.buffer);
 
     const { text } = await extractText(req.file.buffer, req.file.mimetype);
