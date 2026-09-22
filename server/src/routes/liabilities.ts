@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 
 export const liabilitiesRouter = Router();
@@ -103,7 +104,9 @@ liabilitiesRouter.put(
 liabilitiesRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    await prisma.liability.delete({ where: { id: req.params.id } });
+    await deleteWithLinks([{ type: "LIABILITY", id: req.params.id }], (tx) =>
+      tx.liability.delete({ where: { id: req.params.id } })
+    );
     await logAudit("LIABILITY_DELETED", { targetType: "Liability", targetId: req.params.id });
     res.status(204).send();
   })

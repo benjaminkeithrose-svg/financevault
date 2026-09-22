@@ -1,0 +1,196 @@
+import request from "supertest";
+import { beforeAll, describe, expect, it } from "vitest";
+import { app } from "../src/app.js";
+import { prisma } from "../src/db.js";
+
+// Regression tests for the QA pass: error responses a person can read,
+// deletes that refuse rather than destroy history, and totals that agree
+// with each other across screens.
+
+const agent = request.agent(app);
+const iso = (d: string) => new Date(`${d}T00:00:00.000Z`).toISOString();
+
+async function post(path: string, body: unknown) {
+  const res = await agent.post(`/api${path}`).send(body as object);
+  if (res.status >= 300) throw new Error(`${path} -> ${res.status} ${JSON.stringify(res.body)}`);
+  return res.body;
+}
+
+beforeAll(async () => {
+  await prisma.vault.deleteMany();
+  const res = await agent.post("/api/vault/setup").send({ passcode: "integrity test passcode" });
+  expect(res.status).toBe(201);
+});
+
+describe("error responses", () => {
+  it("answers invalid input with 400 and a readable message, not a 500", async () => {
+    const res = await agent.post("/api/entities").send({});
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/Name is required/);
+    expect(res.body.error).not.toMatch(/invalid_type|"path"/);
+  });
+
+  it("answers a missing record with 404, not a database error", async () => {
+    const put = await agent.put("/api/liabilities/does-not-exist").send({ name: "x" });
+    expect(put.status).toBe(404);
+    const del = await agent.delete("/api/liabilities/does-not-exist");
+    expect(del.status).toBe(404);
+    expect(JSON.stringify(del.body)).not.toMatch(/prisma|P2025/i);
+  });
+
+  it("answers an unknown API path with JSON", async () => {
+    const res = await agent.get("/api/no-such-thing");
+    expect(res.status).toBe(404);
+    expect(res.headers["content-type"]).toMatch(/json/);
+  });
+
+  it("answers malformed JSON with 400", async () => {
+    const res = await agent.post("/api/entities").set("content-type", "application/json").send("{not json");
+    expect(res.status).toBe(400);
+  });
+});
+
+describe("deletes don't take history with them", () => {
+  let entityId = "";
+
+  beforeAll(async () => {
+    entityId = (await post("/entities", { name: "Delete-test Trust", entityType: "TRUST" })).id;
+  });
+
+  it("refuses to delete a commercial property that has tenancies, and changes nothing", async () => {
+    const cp = await post("/commercial-properties", { name: "Unit 9", address: "9 Test Rd", propertyTypes: ["INDUSTRIAL"], entityId, currentValue: 1_000_000 });
+    const tenancy = await post(`/commercial-properties/${cp.id}/tenancies`, { tenantName: "Tenant", leaseStatus: "ACTIVE" });
+
+    const res = await agent.delete(`/api/commercial-properties/${cp.id}`);
+    expect(res.status).toBe(409);
+    expect(res.body.error).toMatch(/1 tenancy/);
+    expect(await prisma.tenancy.findUnique({ where: { id: tenancy.id } })).not.toBeNull();
+    expect(await prisma.commercialProperty.findUnique({ where: { id: cp.id } })).not.toBeNull();
+  });
+
+  it("refuses to delete a property a loan is secured against", async () => {
+    const property = await post("/properties", { name: "1 Loan St", address: "1 Loan St", entityId, currentValue: 800_000 });
+    const loan = await post("/liabilities", {
+      name: "Mortgage",
+      liabilityType: "HOME_LOAN",
+      entityId,
+      currentBalance: 400_000,
+      securityPropertyId: property.id,
+    });
+
+    const res = await agent.delete(`/api/properties/${property.id}`);
+    expect(res.status).toBe(409);
+    expect(res.body.error).toMatch(/1 secured loan/);
+    const stillSecured = await prisma.liability.findUnique({ where: { id: loan.id } });
+    expect(stillSecured?.securityPropertyId).toBe(property.id);
+  });
+
+  it("deletes an unused property with its asset, and removes links pointing at it", async () => {
+    const property = await post("/properties", { name: "2 Free St", address: "2 Free St", entityId, currentValue: 500_000 });
+    const doc = await prisma.document.create({
+      data: {
+        originalFilename: "rates.pdf",
+        storedFilename: "x.pdf",
+        filePath: "/nowhere/x.pdf",
+        mimeType: "application/pdf",
+        fileSize: 1,
+        fileHash: `integrity-${Date.now()}`,
+      },
+    });
+    await prisma.documentLink.create({ data: { documentId: doc.id, targetType: "PROPERTY", targetId: property.id } });
+
+    const res = await agent.delete(`/api/properties/${property.id}`);
+    expect(res.status).toBe(204);
+    expect(await prisma.asset.findUnique({ where: { id: property.assetId } })).toBeNull();
+    expect(await prisma.documentLink.count({ where: { targetId: property.id } })).toBe(0);
+    // The document itself is kept.
+    expect(await prisma.document.findUnique({ where: { id: doc.id } })).not.toBeNull();
+  });
+
+  it("refuses to delete an investment account that holds parcels", async () => {
+    const account = await post("/investments", { institution: "Broker", entityId, accountType: "SHARES" });
+    const security = await post("/investments/securities", { code: "DELT", assetClass: "SHARE", priceSource: "MANUAL" });
+    await post(`/investments/${account.id}/parcels`, {
+      securityId: security.id,
+      acquisitionDate: iso("2022-01-01"),
+      quantity: 10,
+      unitPrice: 5,
+    });
+    const res = await agent.delete(`/api/investments/${account.id}`);
+    expect(res.status).toBe(409);
+    expect(res.body.error).toMatch(/1 parcel/);
+  });
+
+  it("refuses to delete an entity that still owns things, naming what", async () => {
+    const res = await agent.delete(`/api/entities/${entityId}`);
+    expect(res.status).toBe(409);
+    expect(res.body.error).toMatch(/1 loan\b/);
+    expect(res.body.error).toMatch(/investment account/);
+  });
+});
+
+describe("totals agree across screens", () => {
+  let entityId = "";
+
+  beforeAll(async () => {
+    entityId = (await post("/entities", { name: "Totals Person", entityType: "INDIVIDUAL" })).id;
+    await post("/banking/accounts", {
+      institution: "Bank",
+      accountName: "Everyday",
+      accountType: "TRANSACTION",
+      entityId,
+      currentBalance: 10_000,
+    });
+    await post("/assets", { name: "Car", assetType: "VEHICLE", entityId, currentValue: 20_000 });
+    const account = await post("/investments", { institution: "Broker", entityId, accountType: "SHARES" });
+    const security = await post("/investments/securities", { code: "TOTL", assetClass: "SHARE", priceSource: "MANUAL" });
+    await post(`/investments/${account.id}/parcels`, {
+      securityId: security.id,
+      acquisitionDate: iso("2021-01-01"),
+      quantity: 100,
+      unitPrice: 10,
+    });
+    await post(`/investments/securities/${security.id}/prices`, { price: 12 });
+  });
+
+  it("dashboard matches the Net Worth page, including cash and share holdings", async () => {
+    const dashboard = (await agent.get(`/api/dashboard?entityId=${entityId}`)).body.financialSnapshot;
+    const netWorth = (await agent.get(`/api/net-worth/preview?entityId=${entityId}`)).body;
+    // $10k cash + $20k car + 100 shares at $12.
+    expect(netWorth.totalAssets).toBe(31_200);
+    expect(dashboard.totalAssets).toBe(netWorth.totalAssets);
+    expect(dashboard.netPosition).toBe(netWorth.netPosition);
+    expect(dashboard.investmentValue).toBe(1_200);
+  });
+
+  it("the entity's balance sheet includes its share holdings", async () => {
+    const entity = (await agent.get(`/api/entities/${entityId}`)).body;
+    expect(entity.financialPosition.totalAssets).toBe(31_200);
+    expect(entity.financialPosition.byAssetType.INVESTMENT_HOLDINGS).toBe(1_200);
+  });
+});
+
+describe("capital gains report", () => {
+  it("takes losses off gains before the discount, per entity", async () => {
+    const entityId = (await post("/entities", { name: "CGT Person", entityType: "INDIVIDUAL" })).id;
+    const account = await post("/investments", { institution: "Broker", entityId, accountType: "SHARES" });
+    const winner = await post("/investments/securities", { code: "WIN", assetClass: "SHARE", priceSource: "MANUAL" });
+    const loser = await post("/investments/securities", { code: "LOSE", assetClass: "SHARE", priceSource: "MANUAL" });
+    await post(`/investments/${account.id}/parcels`, { securityId: winner.id, acquisitionDate: iso("2020-01-01"), quantity: 100, unitPrice: 100 });
+    await post(`/investments/${account.id}/parcels`, { securityId: loser.id, acquisitionDate: iso("2020-01-01"), quantity: 100, unitPrice: 100 });
+    // $10,000 discountable gain and a $4,000 loss in the same year.
+    const sale = await post(`/investments/${account.id}/disposals`, { securityId: winner.id, disposalDate: iso("2023-03-01"), quantity: 100, unitPrice: 200 });
+    await post(`/investments/${account.id}/disposals`, { securityId: loser.id, disposalDate: iso("2023-03-02"), quantity: 100, unitPrice: 60 });
+
+    const report = (await agent.get(`/api/reports/capital-gains?financialYearId=${sale.financialYearId}`)).body;
+    const row = report.byEntity.find((e: { entityId: string }) => e.entityId === entityId);
+    // (10,000 - 4,000) x 50% = 3,000 — not 10,000 x 50% - 4,000 = 1,000.
+    expect(row.netCapitalGain).toBe(3_000);
+    expect(row.discountAmount).toBe(3_000);
+    expect(row.lossCarriedForward).toBe(0);
+
+    const summary = (await agent.get(`/api/reports/tax-summary?financialYearId=${sale.financialYearId}`)).body;
+    const taxRow = summary.rows.find((r: { entityId: string }) => r.entityId === entityId);
+    expect(taxRow.calculatedCapitalGain).toBe(3_000);
+  });
+});

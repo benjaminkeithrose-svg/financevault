@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../db.js";
 import { computeDisposal } from "../services/cgt.js";
+import { capitalGainsForYear } from "../services/cgtReport.js";
 import { positionsForAccount } from "../services/positions.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 
@@ -178,7 +179,24 @@ reportsRouter.get(
       if (r.status === "NEEDS_REVIEW") row.needsReview += 1;
     }
 
-    res.json({ rows: Array.from(byEntity.values()) });
+    // Share, ETF and crypto sales are worked out from parcels rather than
+    // entered as tax records, so they're shown in their own column — adding
+    // them to "capital gains" would double count anyone who also recorded
+    // the gain by hand.
+    const calculated = new Map<string, number>();
+    if (financialYearId) {
+      const { byEntity: cgt } = await capitalGainsForYear(financialYearId);
+      for (const e of cgt) {
+        calculated.set(e.entityId, e.netCapitalGain);
+        if (!byEntity.has(e.entityId)) {
+          byEntity.set(e.entityId, { entityId: e.entityId, entityName: e.entityName, income: 0, expenses: 0, capitalGains: 0, capitalLosses: 0, needsReview: 0 });
+        }
+      }
+    }
+
+    res.json({
+      rows: Array.from(byEntity.values()).map((row) => ({ ...row, calculatedCapitalGain: calculated.get(row.entityId) ?? 0 })),
+    });
   })
 );
 
@@ -237,57 +255,7 @@ reportsRouter.get(
       return;
     }
 
-    const disposals = await prisma.investmentDisposal.findMany({
-      where: { financialYearId },
-      include: {
-        security: true,
-        allocations: { include: { parcel: true } },
-        investmentAccount: { include: { entity: true } },
-      },
-      orderBy: { disposalDate: "asc" },
-    });
-
-    const dividends = await prisma.investmentDividend.findMany({
-      where: { financialYearId },
-      include: { security: true, investmentAccount: { include: { entity: true } } },
-      orderBy: { paymentDate: "asc" },
-    });
-
-    const rows = disposals.map((d) => {
-      const parcelsById = new Map(d.allocations.map((a) => [a.parcelId, a.parcel]));
-      const result = computeDisposal(
-        d,
-        d.allocations.map((a) => ({ parcelId: a.parcelId, quantity: a.quantity })),
-        parcelsById,
-        d.investmentAccount.entity.entityType
-      );
-      return {
-        id: d.id,
-        disposalDate: d.disposalDate,
-        code: d.security.code,
-        entityName: d.investmentAccount.entity.name,
-        entityType: d.investmentAccount.entity.entityType,
-        quantity: d.quantity,
-        proceeds: result.proceeds,
-        costBase: result.costBase,
-        grossGain: result.grossGain,
-        discountAmount: result.discountAmount,
-        netGain: result.netGain,
-        parcels: result.allocations.map((a) => ({
-          acquisitionDate: a.acquisitionDate,
-          quantity: a.quantity,
-          costBase: a.costBase,
-          grossGain: a.grossGain,
-          discountEligible: a.discountEligible,
-        })),
-      };
-    });
-
-    const gains = rows.filter((r) => r.grossGain > 0);
-    const losses = rows.filter((r) => r.grossGain < 0);
-    const totalGrossGains = gains.reduce((s, r) => s + r.grossGain, 0);
-    const totalLosses = Math.abs(losses.reduce((s, r) => s + r.grossGain, 0));
-    const totalDiscount = rows.reduce((s, r) => s + r.discountAmount, 0);
+    const { rows, byEntity, dividends } = await capitalGainsForYear(financialYearId);
 
     res.json({
       financialYear,
@@ -304,19 +272,21 @@ reportsRouter.get(
         foreignIncome: d.foreignIncome,
         foreignTaxCredit: d.foreignTaxCredit,
       })),
+      byEntity,
       totals: {
         disposalCount: rows.length,
         totalProceeds: rows.reduce((s, r) => s + r.proceeds, 0),
         totalCostBase: rows.reduce((s, r) => s + r.costBase, 0),
-        totalGrossGains,
-        totalLosses,
-        totalDiscount,
-        netCapitalGain: rows.reduce((s, r) => s + r.netGain, 0),
+        totalGrossGains: byEntity.reduce((s, e) => s + e.totalGains, 0),
+        totalLosses: byEntity.reduce((s, e) => s + e.totalLosses, 0),
+        totalDiscount: byEntity.reduce((s, e) => s + e.discountAmount, 0),
+        netCapitalGain: byEntity.reduce((s, e) => s + e.netCapitalGain, 0),
+        lossCarriedForward: byEntity.reduce((s, e) => s + e.lossCarriedForward, 0),
         dividendIncome: dividends.reduce((s, d) => s + d.frankedAmount + d.unfrankedAmount, 0),
         frankingCredits: dividends.reduce((s, d) => s + d.frankingCredit, 0),
       },
       note:
-        "Calculated from the parcels and disposals you recorded. Capital losses offset gains before the CGT discount is applied, and losses carried forward from earlier years are not included here. Figures are for your accountant to confirm, not tax advice.",
+        "Calculated from the parcels and disposals you recorded, separately for each entity. Capital losses come off gains before the CGT discount is applied (non-discountable gains first). Losses carried forward from earlier years are not included. Figures are for your accountant to confirm, not tax advice.",
     });
   })
 );

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 import { parseTfnInput, revealTfn, tfnSummary } from "../services/tfnAccess.js";
 
@@ -103,7 +104,7 @@ peopleRouter.get(
 peopleRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    await prisma.person.delete({ where: { id: req.params.id } });
+    await deleteWithLinks([{ type: "PERSON", id: req.params.id }], (tx) => tx.person.delete({ where: { id: req.params.id } }));
     await logAudit("PERSON_DELETED", { targetType: "Person", targetId: req.params.id });
     res.status(204).send();
   })

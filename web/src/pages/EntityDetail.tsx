@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { api, Entity } from "../api/client.js";
 import { TfnField } from "../components/TfnField.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
+import { LoadFailed } from "../components/LoadFailed.js";
 
 const ASSET_TYPE_ICONS: Record<string, string> = {
   PROPERTY: "🏠",
@@ -19,13 +20,14 @@ const ASSET_TYPE_ICONS: Record<string, string> = {
 export function EntityDetail() {
   const { id } = useParams<{ id: string }>();
   const [entity, setEntity] = useState<Entity | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [allEntities, setAllEntities] = useState<Entity[]>([]);
   const [relType, setRelType] = useState("OWNS");
   const [relTarget, setRelTarget] = useState("");
 
   function load() {
     if (!id) return;
-    api.entities.get(id).then(setEntity);
+    api.entities.get(id).then(setEntity).catch((e: Error) => setLoadError(e.message));
   }
 
   useEffect(load, [id]);
@@ -33,7 +35,10 @@ export function EntityDetail() {
     api.entities.list().then(setAllEntities);
   }, []);
 
-  if (!entity) return <div className="empty-state">Loading…</div>;
+  if (!entity) {
+    if (loadError) return <LoadFailed message={loadError} backTo="/entities" backLabel="Back to entities" />;
+    return <div className="empty-state">Loading…</div>;
+  }
 
   async function addRelationship() {
     if (!id || !relTarget) return;

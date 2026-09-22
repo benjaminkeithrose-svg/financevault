@@ -207,6 +207,7 @@ function TaxSummary() {
               <th>Expenses</th>
               <th>Capital gains</th>
               <th>Capital losses</th>
+              <th>Share sales (calculated net gain)</th>
               <th>Needs review</th>
             </tr>
           </thead>
@@ -220,6 +221,7 @@ function TaxSummary() {
                 <td>{formatCurrency(r.expenses)}</td>
                 <td>{formatCurrency(r.capitalGains)}</td>
                 <td>{formatCurrency(r.capitalLosses)}</td>
+                <td>{financialYearId ? formatCurrency(r.calculatedCapitalGain) : "Choose a year"}</td>
                 <td>{r.needsReview}</td>
               </tr>
             ))}
@@ -283,6 +285,8 @@ function DebtSummary() {
   );
 }
 
+const DISCOUNT_LABEL = { YES: "Yes", NO: "No — held under 12 months", PART: "Part", NONE: "—" } as const;
+
 function CapitalGains() {
   const [financialYears, setFinancialYears] = useState<FinancialYear[]>([]);
   const [financialYearId, setFinancialYearId] = useState("");
@@ -330,6 +334,52 @@ function CapitalGains() {
               <div className="value">{formatCurrency(data.totals.netCapitalGain)}</div>
             </div>
           </div>
+          {data.totals.lossCarriedForward > 0 && (
+            <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+              {formatCurrency(data.totals.lossCarriedForward)} of losses are more than this year's gains and carry
+              forward to a later year.
+            </p>
+          )}
+
+          {data.byEntity.length > 0 && (
+            <>
+              <h3>By entity</h3>
+              <p style={{ color: "var(--text-muted)", fontSize: 13, marginTop: 0 }}>
+                Each entity is worked out on its own — one entity's losses can't reduce another's gains.
+              </p>
+              <div className="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Entity</th>
+                      <th>Gains</th>
+                      <th>Losses used</th>
+                      <th>Discount</th>
+                      <th>Net capital gain</th>
+                      <th>Loss carried forward</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.byEntity.map((e) => (
+                      <tr key={e.entityId}>
+                        <td>{e.entityName}</td>
+                        <td>{formatCurrency(e.totalGains)}</td>
+                        <td>{formatCurrency(e.lossesApplied)}</td>
+                        <td>
+                          {formatCurrency(e.discountAmount)}
+                          {e.discountRate > 0 && (
+                            <span style={{ color: "var(--text-muted)" }}> ({Math.round(e.discountRate * 1000) / 10}%)</span>
+                          )}
+                        </td>
+                        <td>{formatCurrency(e.netCapitalGain)}</td>
+                        <td>{formatCurrency(e.lossCarriedForward)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
 
           <h3>Disposals ({data.totals.disposalCount})</h3>
           {data.rows.length === 0 ? (
@@ -344,9 +394,8 @@ function CapitalGains() {
                   <th>Units</th>
                   <th>Proceeds</th>
                   <th>Cost base</th>
-                  <th>Gross gain</th>
-                  <th>Discount</th>
-                  <th>Net</th>
+                  <th>Gain / loss</th>
+                  <th>12-month discount</th>
                 </tr>
               </thead>
               <tbody>
@@ -359,8 +408,7 @@ function CapitalGains() {
                     <td>{formatCurrency(r.proceeds)}</td>
                     <td>{formatCurrency(r.costBase)}</td>
                     <td>{formatCurrency(r.grossGain)}</td>
-                    <td>{formatCurrency(r.discountAmount)}</td>
-                    <td>{formatCurrency(r.netGain)}</td>
+                    <td>{DISCOUNT_LABEL[r.discount]}</td>
                   </tr>
                 ))}
               </tbody>

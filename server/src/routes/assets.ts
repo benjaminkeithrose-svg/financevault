@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
-import { asyncHandler } from "../middleware/errorHandler.js";
+import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
+import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 
 export const assetsRouter = Router();
@@ -57,7 +58,7 @@ const assetInput = z.object({
 
 function assetData(parsed: z.infer<typeof assetInput>) {
   if (parsed.assetType === "PROPERTY") {
-    throw new Error("Use /api/properties to create property assets");
+    throw new HttpError(400, "Properties are added from the Properties page, not as a general asset.");
   }
   return {
     ...parsed,
@@ -94,12 +95,19 @@ assetsRouter.put(
 assetsRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    const asset = await prisma.asset.findUnique({ where: { id: req.params.id }, include: { property: true } });
-    if (asset?.property) {
+    const asset = await prisma.asset.findUnique({
+      where: { id: req.params.id },
+      include: { property: true, commercialProperty: true },
+    });
+    if (!asset) {
+      res.status(404).json({ error: "Asset not found" });
+      return;
+    }
+    if (asset.property || asset.commercialProperty) {
       res.status(400).json({ error: "Delete the property instead — this asset backs a property record" });
       return;
     }
-    await prisma.asset.delete({ where: { id: req.params.id } });
+    await deleteWithLinks([{ type: "ASSET", id: asset.id }], (tx) => tx.asset.delete({ where: { id: asset.id } }));
     await logAudit("ASSET_DELETED", { targetType: "Asset", targetId: req.params.id });
     res.status(204).send();
   })

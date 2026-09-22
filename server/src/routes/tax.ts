@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 
 export const taxRouter = Router();
@@ -59,7 +60,7 @@ taxRouter.put(
 taxRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    await prisma.taxRecord.delete({ where: { id: req.params.id } });
+    await deleteWithLinks([{ type: "TAX_RECORD", id: req.params.id }], (tx) => tx.taxRecord.delete({ where: { id: req.params.id } }));
     await logAudit("TAX_RECORD_DELETED", { targetType: "TaxRecord", targetId: req.params.id });
     res.status(204).send();
   })

@@ -33,3 +33,19 @@ export function humanize(value?: string | null): string {
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
 }
+
+/**
+ * Asks before deleting, and if the server refuses (for example because other
+ * records still depend on this one) shows its reason instead of failing
+ * silently. Returns true only if the delete went through.
+ */
+export async function confirmThenDelete(question: string, action: () => Promise<unknown>): Promise<boolean> {
+  if (!window.confirm(question)) return false;
+  try {
+    await action();
+    return true;
+  } catch (err) {
+    window.alert((err as Error).message);
+    return false;
+  }
+}

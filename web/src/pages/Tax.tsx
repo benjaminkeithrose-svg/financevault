@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, Document, Entity, FinancialYear, TaxRecord } from "../api/client.js";
-import { financialYearLabelForToday, formatCurrency, humanize } from "../utils.js";
+import { financialYearLabelForToday, formatCurrency, humanize, confirmThenDelete } from "../utils.js";
 
 const RECORD_TYPES = ["INCOME", "EXPENSE", "CAPITAL_GAIN", "CAPITAL_LOSS"];
 const STATUSES = ["RECORDED", "ESTIMATED", "NEEDS_REVIEW", "ACCOUNTANT_CONFIRMED"];
@@ -69,7 +69,7 @@ export function Tax() {
   }
 
   async function removeRecord(id: string) {
-    await api.taxRecords.remove(id);
+    if (!(await confirmThenDelete("Delete this tax record?", () => api.taxRecords.remove(id)))) return;
     loadRecords();
   }
 

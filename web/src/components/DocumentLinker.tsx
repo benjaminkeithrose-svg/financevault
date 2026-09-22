@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, Document, DocumentLink } from "../api/client.js";
-import { formatDate, humanize } from "../utils.js";
+import { formatDate, humanize, confirmThenDelete } from "../utils.js";
 
 export function DocumentLinker({ targetType, targetId }: { targetType: string; targetId: string }) {
   const [links, setLinks] = useState<Array<DocumentLink & { document: Document }>>([]);
@@ -28,7 +28,11 @@ export function DocumentLinker({ targetType, targetId }: { targetType: string; t
   }
 
   async function unlink(documentId: string, linkId: string) {
-    await api.documents.removeLink(documentId, linkId);
+    const deleted = await confirmThenDelete(
+      "Unlink this document? The document itself is kept.",
+      () => api.documents.removeLink(documentId, linkId)
+    );
+    if (!deleted) return;
     load();
   }
 

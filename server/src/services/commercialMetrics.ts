@@ -151,9 +151,18 @@ export function computeDebtMetrics(loans: LoanLike[], propertyValue: number | nu
     (sum, l) => sum + (l.currentBalance ?? 0) * ((l.interestRate ?? 0) / 100),
     0
   );
+  // A loan with no repayment amount recorded still costs money. Counting it
+  // as zero would show the whole NOI as cash flow and a DSCR of "n/a", so
+  // its estimated interest stands in (i.e. treated as interest-only) and the
+  // number of loans estimated that way is reported alongside.
+  let loansAssumedInterestOnly = 0;
   const annualDebtService = loans.reduce((sum, l) => {
+    if (!l.repaymentAmount) {
+      if ((l.currentBalance ?? 0) > 0) loansAssumedInterestOnly += 1;
+      return sum + (l.currentBalance ?? 0) * ((l.interestRate ?? 0) / 100);
+    }
     const paymentsPerYear = l.repaymentFrequency ? FREQUENCY_PAYMENTS_PER_YEAR[l.repaymentFrequency] ?? 12 : 12;
-    return sum + (l.repaymentAmount ?? 0) * paymentsPerYear;
+    return sum + l.repaymentAmount * paymentsPerYear;
   }, 0);
   const equity = propertyValue !== null ? propertyValue - totalDebt : null;
   const lvr = propertyValue ? totalDebt / propertyValue : null;
@@ -163,11 +172,12 @@ export function computeDebtMetrics(loans: LoanLike[], propertyValue: number | nu
     lvr,
     estimatedAnnualInterest,
     annualDebtService,
+    loansAssumedInterestOnly,
     formula: {
       lvr: "total loan balance secured against this property / property value",
       equity: "property value - total loan balance",
       estimatedAnnualInterest: "sum(current balance x interest rate) per loan — a simple approximation, not an amortisation schedule",
-      annualDebtService: "sum(repayment amount x payments per year) per loan",
+      annualDebtService: "sum(repayment amount x payments per year) per loan; a loan with no repayment amount recorded uses its estimated annual interest (treated as interest-only)",
     },
   };
 }

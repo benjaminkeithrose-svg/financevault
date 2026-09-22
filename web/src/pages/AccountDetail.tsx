@@ -3,7 +3,8 @@ import { useParams } from "react-router-dom";
 import { api, Account, TaxCategory } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { TransactionCsvImport } from "../components/TransactionCsvImport.js";
-import { formatCurrency, formatDate, humanize } from "../utils.js";
+import { formatCurrency, formatDate, humanize, confirmThenDelete } from "../utils.js";
+import { LoadFailed } from "../components/LoadFailed.js";
 
 const STATUSES = ["UNREVIEWED", "CATEGORISED", "MATCHED", "RECONCILED", "NEEDS_REVIEW"];
 
@@ -12,13 +13,14 @@ const emptyTxn = { date: "", description: "", amount: "", counterparty: "", taxC
 export function AccountDetail() {
   const { id } = useParams<{ id: string }>();
   const [account, setAccount] = useState<Account | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [taxCategories, setTaxCategories] = useState<TaxCategory[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyTxn);
 
   function load() {
     if (!id) return;
-    api.banking.getAccount(id).then(setAccount);
+    api.banking.getAccount(id).then(setAccount).catch((e: Error) => setLoadError(e.message));
   }
 
   useEffect(load, [id]);
@@ -26,7 +28,10 @@ export function AccountDetail() {
     api.taxCategories.list().then(setTaxCategories);
   }, []);
 
-  if (!account) return <div className="empty-state">Loading…</div>;
+  if (!account) {
+    if (loadError) return <LoadFailed message={loadError} backTo="/banking" backLabel="Back to banking" />;
+    return <div className="empty-state">Loading…</div>;
+  }
 
   async function addTransaction() {
     if (!id || !form.date || !form.description.trim() || !form.amount) return;
@@ -48,7 +53,11 @@ export function AccountDetail() {
   }
 
   async function removeTransaction(transactionId: string) {
-    await api.banking.removeTransaction(transactionId);
+    const deleted = await confirmThenDelete(
+      "Delete this transaction?",
+      () => api.banking.removeTransaction(transactionId)
+    );
+    if (!deleted) return;
     load();
   }
 

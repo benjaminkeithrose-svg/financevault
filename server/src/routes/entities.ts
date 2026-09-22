@@ -2,9 +2,11 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 import { parseTfnInput, revealTfn, tfnSummary } from "../services/tfnAccess.js";
 import { computeFinancialPosition } from "../services/financialPosition.js";
+import { valueHoldings } from "../services/netWorth.js";
 
 export const entitiesRouter = Router();
 
@@ -68,7 +70,8 @@ entitiesRouter.get(
       res.status(404).json({ error: "Entity not found" });
       return;
     }
-    const financialPosition = computeFinancialPosition(entity.assets, entity.accounts, entity.liabilities);
+    const holdings = await valueHoldings(entity.investmentAccounts);
+    const financialPosition = computeFinancialPosition(entity.assets, entity.accounts, entity.liabilities, holdings.value);
     res.json({ ...entity, ...(await tfnSummary("entity", entity.id)), financialPosition });
   })
 );
@@ -122,7 +125,45 @@ entitiesRouter.get(
 entitiesRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    await prisma.entity.delete({ where: { id: req.params.id } });
+    const entity = await prisma.entity.findUnique({
+      where: { id: req.params.id },
+      include: {
+        _count: {
+          select: {
+            assets: true,
+            accounts: true,
+            liabilities: true,
+            investmentAccounts: true,
+            documents: true,
+            transactions: true,
+            taxRecords: true,
+            assetOwnerships: true,
+            netWorthSnapshots: true,
+            portfolioPlans: true,
+            emailImportRules: true,
+          },
+        },
+      },
+    });
+    if (!entity) {
+      res.status(404).json({ error: "Entity not found" });
+      return;
+    }
+    const c = entity._count;
+    refuseIfInUse("entity", [
+      { count: c.assets, one: "asset or property", many: "assets and properties" },
+      { count: c.accounts, one: "bank account", many: "bank accounts" },
+      { count: c.liabilities, one: "loan", many: "loans" },
+      { count: c.investmentAccounts, one: "investment account", many: "investment accounts" },
+      { count: c.documents, one: "document", many: "documents" },
+      { count: c.transactions, one: "transaction", many: "transactions" },
+      { count: c.taxRecords, one: "tax record", many: "tax records" },
+      { count: c.assetOwnerships, one: "asset ownership share", many: "asset ownership shares" },
+      { count: c.netWorthSnapshots, one: "net worth snapshot", many: "net worth snapshots" },
+      { count: c.portfolioPlans, one: "portfolio plan", many: "portfolio plans" },
+      { count: c.emailImportRules, one: "email import rule", many: "email import rules" },
+    ]);
+    await deleteWithLinks([{ type: "ENTITY", id: entity.id }], (tx) => tx.entity.delete({ where: { id: entity.id } }));
     await logAudit("ENTITY_DELETED", { targetType: "Entity", targetId: req.params.id });
     res.status(204).send();
   })

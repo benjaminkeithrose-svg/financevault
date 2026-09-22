@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, CommercialProperty, PortfolioPlan, PortfolioPlanProjection } from "../api/client.js";
-import { formatCurrency } from "../utils.js";
+import { formatCurrency, confirmThenDelete } from "../utils.js";
+import { LoadFailed } from "../components/LoadFailed.js";
 
 function pct(v: number | null | undefined, digits = 1): string {
   if (v === null || v === undefined) return "—";
@@ -31,6 +32,7 @@ export function PortfolioPlanDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [plan, setPlan] = useState<PortfolioPlan | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [projection, setProjection] = useState<PortfolioPlanProjection | null>(null);
   const [commercialProperties, setCommercialProperties] = useState<CommercialProperty[]>([]);
   const [form, setForm] = useState<Record<string, string>>({});
@@ -57,7 +59,7 @@ export function PortfolioPlanDetail() {
         depositPercent: toPercentInput(p.depositPercent),
         projectionYears: p.projectionYears.toString(),
       });
-    });
+    }).catch((e: Error) => setLoadError(e.message));
     api.portfolioPlans.projection(id).then(setProjection);
   }
 
@@ -66,7 +68,10 @@ export function PortfolioPlanDetail() {
     api.commercialProperties.list().then(setCommercialProperties);
   }, []);
 
-  if (!plan) return <div className="empty-state">Loading…</div>;
+  if (!plan) {
+    if (loadError) return <LoadFailed message={loadError} backTo="/portfolio-plans" backLabel="Back to portfolio plans" />;
+    return <div className="empty-state">Loading…</div>;
+  }
 
   async function saveAssumptions() {
     if (!id) return;
@@ -90,7 +95,11 @@ export function PortfolioPlanDetail() {
 
   async function removePlan() {
     if (!id) return;
-    await api.portfolioPlans.remove(id);
+    const deleted = await confirmThenDelete(
+      "Delete this whole plan, including its properties, refinances and equity draws?",
+      () => api.portfolioPlans.remove(id)
+    );
+    if (!deleted) return;
     navigate("/portfolio-plans");
   }
 
@@ -109,7 +118,11 @@ export function PortfolioPlanDetail() {
   }
 
   async function removeProperty(propertyId: string) {
-    await api.portfolioPlans.removeProperty(propertyId);
+    const deleted = await confirmThenDelete(
+      "Remove this property from the plan?",
+      () => api.portfolioPlans.removeProperty(propertyId)
+    );
+    if (!deleted) return;
     load();
   }
 
@@ -130,7 +143,11 @@ export function PortfolioPlanDetail() {
   }
 
   async function removeRefinance(refinanceId: string) {
-    await api.portfolioPlans.removeRefinance(refinanceId);
+    const deleted = await confirmThenDelete(
+      "Remove this refinance from the plan?",
+      () => api.portfolioPlans.removeRefinance(refinanceId)
+    );
+    if (!deleted) return;
     load();
   }
 
@@ -148,7 +165,11 @@ export function PortfolioPlanDetail() {
   }
 
   async function removeEquityDraw(drawId: string) {
-    await api.portfolioPlans.removeEquityDraw(drawId);
+    const deleted = await confirmThenDelete(
+      "Remove this equity draw from the plan?",
+      () => api.portfolioPlans.removeEquityDraw(drawId)
+    );
+    if (!deleted) return;
     load();
   }
 

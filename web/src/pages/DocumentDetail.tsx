@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, AuditLogEntry, Document, Entity, TaxCategory } from "../api/client.js";
 import { formatDate, humanize } from "../utils.js";
+import { LoadFailed } from "../components/LoadFailed.js";
 
 const REVIEW_STATUSES = ["PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"];
 const TAX_RELEVANCE = ["UNKNOWN", "NOT_RELEVANT", "POSSIBLE", "CONFIRMED"];
@@ -14,6 +15,7 @@ function toDateInput(value?: string | null): string {
 export function DocumentDetail() {
   const { id } = useParams<{ id: string }>();
   const [doc, setDoc] = useState<Document | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [taxCategories, setTaxCategories] = useState<TaxCategory[]>([]);
   const [audit, setAudit] = useState<AuditLogEntry[]>([]);
@@ -38,7 +40,7 @@ export function DocumentDetail() {
         documentDate: toDateInput(d.documentDate),
         renewalDate: toDateInput(d.renewalDate),
       });
-    });
+    }).catch((e: Error) => setLoadError(e.message));
     api.audit.list(id).then(setAudit);
   }
 
@@ -48,7 +50,10 @@ export function DocumentDetail() {
     api.taxCategories.list().then(setTaxCategories);
   }, []);
 
-  if (!doc) return <div className="empty-state">Loading…</div>;
+  if (!doc) {
+    if (loadError) return <LoadFailed message={loadError} backTo="/documents" backLabel="Back to documents" />;
+    return <div className="empty-state">Loading…</div>;
+  }
 
   async function save() {
     if (!id) return;

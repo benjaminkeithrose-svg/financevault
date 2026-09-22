@@ -391,6 +391,25 @@ tr:hover td {
   background: var(--surface-2);
 }
 
+/* Ledger tables have more columns than fit on a phone. Rather than pushing
+   the whole page sideways, the table scrolls within its own box. */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 720px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  .table-scroll table {
+    display: table;
+  }
+}
+
 /* ---------------------------------------------------------------------- */
 /* Buttons, chips, segmented controls                                     */
 /* ---------------------------------------------------------------------- */

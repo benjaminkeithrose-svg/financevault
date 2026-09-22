@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, Entity, NetWorthBreakdown, NetWorthSnapshot } from "../api/client.js";
-import { formatCurrency, formatDate } from "../utils.js";
+import { formatCurrency, formatDate, confirmThenDelete } from "../utils.js";
 
 const CATEGORY_ROWS: Array<{ key: keyof NetWorthBreakdown; label: string; icon: string }> = [
   { key: "cash", label: "Cash", icon: "💵" },
@@ -51,7 +51,7 @@ export function NetWorth() {
   }
 
   async function removeSnapshot(id: string) {
-    await api.netWorth.removeSnapshot(id);
+    if (!(await confirmThenDelete("Delete this saved snapshot?", () => api.netWorth.removeSnapshot(id)))) return;
     loadSnapshots();
   }
 

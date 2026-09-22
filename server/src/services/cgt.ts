@@ -235,3 +235,61 @@ export function computePosition(input: PositionInput, asAt: Date = new Date()): 
     discountEligibleQuantity,
   };
 }
+
+export interface GainPart {
+  /** Gain (positive) or loss (negative) on one parcel slice of a sale. */
+  grossGain: number;
+  /** Whether a gain on this slice qualifies for the discount (held 12+ months). */
+  discountEligible: boolean;
+}
+
+export interface NetCapitalGainResult {
+  totalGains: number;
+  totalLosses: number;
+  lossesApplied: number;
+  discountAmount: number;
+  netCapitalGain: number;
+  /** Losses left over once every gain is used up — carried to a later year. */
+  lossCarriedForward: number;
+}
+
+/**
+ * One entity's net capital gain for a year, the way the return works it out:
+ * capital losses come off gains FIRST, and the discount only applies to
+ * what's left. Discounting each sale and then subtracting losses gets a
+ * different (lower) answer whenever there's a loss in the year.
+ *
+ * Losses are applied to gains that don't get the discount before gains that
+ * do. The ATO lets you choose the order, and this one leaves the most gain
+ * eligible for the discount — so it produces the lowest net gain.
+ *
+ * Only one entity's sales may be passed in: losses of one taxpayer can't
+ * offset another's gains.
+ */
+export function netCapitalGain(parts: GainPart[], discountRate: number): NetCapitalGainResult {
+  let discountable = 0;
+  let nonDiscountable = 0;
+  let losses = 0;
+  for (const part of parts) {
+    if (part.grossGain < 0) losses += -part.grossGain;
+    else if (part.discountEligible) discountable += part.grossGain;
+    else nonDiscountable += part.grossGain;
+  }
+
+  const againstNonDiscountable = Math.min(losses, nonDiscountable);
+  let lossLeft = losses - againstNonDiscountable;
+  const againstDiscountable = Math.min(lossLeft, discountable);
+  lossLeft -= againstDiscountable;
+
+  const discountBase = discountable - againstDiscountable;
+  const discountAmount = discountBase * discountRate;
+
+  return {
+    totalGains: discountable + nonDiscountable,
+    totalLosses: losses,
+    lossesApplied: againstNonDiscountable + againstDiscountable,
+    discountAmount,
+    netCapitalGain: nonDiscountable - againstNonDiscountable + discountBase - discountAmount,
+    lossCarriedForward: lossLeft,
+  };
+}

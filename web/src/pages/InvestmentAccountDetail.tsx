@@ -8,7 +8,8 @@ import {
   Security,
 } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
-import { formatCurrency, formatCurrencyExact, formatDate, humanize } from "../utils.js";
+import { formatCurrency, formatCurrencyExact, formatDate, humanize, confirmThenDelete } from "../utils.js";
+import { LoadFailed } from "../components/LoadFailed.js";
 
 const ASSET_CLASSES = ["SHARE", "ETF", "MANAGED_FUND", "CRYPTO", "SUPER", "BOND", "OTHER"] as const;
 
@@ -186,7 +187,10 @@ export function InvestmentAccountDetail() {
   }
 
   if (error && !account) return <div className="empty-state">{error}</div>;
-  if (!account) return <div className="empty-state">Loading…</div>;
+  if (!account) {
+    if (error) return <LoadFailed message={error} backTo="/investments" backLabel="Back to investments" />;
+    return <div className="empty-state">Loading…</div>;
+  }
 
   const positions = account.positions ?? [];
   const totals = account.totals;
@@ -490,7 +494,11 @@ export function InvestmentAccountDetail() {
                     <button
                       className="btn danger secondary"
                       onClick={async () => {
-                        await api.investments.removeDisposal(d.id);
+                        const deleted = await confirmThenDelete(
+                          "Delete this sale? The parcels it came out of are restored.",
+                          () => api.investments.removeDisposal(d.id)
+                        );
+                        if (!deleted) return;
                         load();
                       }}
                     >
@@ -629,7 +637,11 @@ export function InvestmentAccountDetail() {
                     <button
                       className="btn danger secondary"
                       onClick={async () => {
-                        await api.investments.removeDividend(d.id);
+                        const deleted = await confirmThenDelete(
+                          "Delete this dividend?",
+                          () => api.investments.removeDividend(d.id)
+                        );
+                        if (!deleted) return;
                         load();
                       }}
                     >

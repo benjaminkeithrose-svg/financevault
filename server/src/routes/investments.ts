@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 import { financialYearBounds, financialYearLabelForDate } from "../services/financialYear.js";
 import {
@@ -227,7 +228,24 @@ investmentsRouter.put(
 investmentsRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    await prisma.investmentAccount.delete({ where: { id: req.params.id } });
+    const account = await prisma.investmentAccount.findUnique({
+      where: { id: req.params.id },
+      include: { _count: { select: { parcels: true, disposals: true, dividends: true } } },
+    });
+    if (!account) {
+      res.status(404).json({ error: "Investment account not found" });
+      return;
+    }
+    // Parcels and disposals are the cost-base and CGT history — years of it
+    // may be needed for a future sale or an ATO question.
+    refuseIfInUse("investment account", [
+      { count: account._count.parcels, one: "parcel", many: "parcels" },
+      { count: account._count.disposals, one: "sale", many: "sales" },
+      { count: account._count.dividends, one: "dividend", many: "dividends" },
+    ]);
+    await deleteWithLinks([{ type: "INVESTMENT_ACCOUNT", id: account.id }], (tx) =>
+      tx.investmentAccount.delete({ where: { id: account.id } })
+    );
     await logAudit("INVESTMENT_ACCOUNT_DELETED", { targetType: "InvestmentAccount", targetId: req.params.id });
     res.status(204).send();
   })

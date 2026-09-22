@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { api, Liability } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { humanize } from "../utils.js";
+import { LoadFailed } from "../components/LoadFailed.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -12,6 +13,7 @@ function toDateInput(value?: string | null): string {
 export function LiabilityDetail() {
   const { id } = useParams<{ id: string }>();
   const [liability, setLiability] = useState<Liability | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
@@ -31,12 +33,15 @@ export function LiabilityDetail() {
         maturityDate: toDateInput(l.maturityDate),
         notes: l.notes || "",
       });
-    });
+    }).catch((e: Error) => setLoadError(e.message));
   }
 
   useEffect(load, [id]);
 
-  if (!liability) return <div className="empty-state">Loading…</div>;
+  if (!liability) {
+    if (loadError) return <LoadFailed message={loadError} backTo="/liabilities" backLabel="Back to loans" />;
+    return <div className="empty-state">Loading…</div>;
+  }
 
   async function save() {
     if (!id) return;

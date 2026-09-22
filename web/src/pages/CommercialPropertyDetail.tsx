@@ -4,7 +4,8 @@ import { api, CommercialProperty, Entity, FinancialYear, LeaseExtractionResponse
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ScenarioComparison } from "../components/ScenarioComparison.js";
-import { formatCurrency, formatDate, humanize } from "../utils.js";
+import { formatCurrency, formatDate, humanize, confirmThenDelete } from "../utils.js";
+import { LoadFailed } from "../components/LoadFailed.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -44,6 +45,7 @@ const emptyRentReview = { reviewDate: "", reviewMechanism: "CPI", previousRent: 
 export function CommercialPropertyDetail() {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<CommercialProperty | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [financialYears, setFinancialYears] = useState<FinancialYear[]>([]);
   const [valuationBasis, setValuationBasis] = useState<"current" | "purchase">("current");
@@ -90,7 +92,7 @@ export function CommercialPropertyDetail() {
         constructionType: p.constructionType || "",
         yearBuilt: p.yearBuilt?.toString() || "",
       });
-    });
+    }).catch((e: Error) => setLoadError(e.message));
   }
 
   useEffect(load, [id, valuationBasis]);
@@ -99,7 +101,10 @@ export function CommercialPropertyDetail() {
     api.entities.list().then(setEntities);
   }, []);
 
-  if (!property) return <div className="empty-state">Loading…</div>;
+  if (!property) {
+    if (loadError) return <LoadFailed message={loadError} backTo="/properties" backLabel="Back to properties" />;
+    return <div className="empty-state">Loading…</div>;
+  }
 
   async function save() {
     if (!id) return;
@@ -149,7 +154,11 @@ export function CommercialPropertyDetail() {
   }
 
   async function removeTenancy(tenancyId: string) {
-    await api.commercialProperties.removeTenancy(tenancyId);
+    const deleted = await confirmThenDelete(
+      "Delete this tenancy? Its rent review history is deleted with it.",
+      () => api.commercialProperties.removeTenancy(tenancyId)
+    );
+    if (!deleted) return;
     load();
   }
 
@@ -198,7 +207,11 @@ export function CommercialPropertyDetail() {
   }
 
   async function removeOutgoing(outgoingId: string) {
-    await api.commercialProperties.removeOutgoing(outgoingId);
+    const deleted = await confirmThenDelete(
+      "Delete this outgoing?",
+      () => api.commercialProperties.removeOutgoing(outgoingId)
+    );
+    if (!deleted) return;
     load();
   }
 
@@ -216,7 +229,11 @@ export function CommercialPropertyDetail() {
   }
 
   async function removeCapex(capexId: string) {
-    await api.commercialProperties.removeCapex(capexId);
+    const deleted = await confirmThenDelete(
+      "Delete this capital expenditure item?",
+      () => api.commercialProperties.removeCapex(capexId)
+    );
+    if (!deleted) return;
     load();
   }
 
@@ -351,7 +368,15 @@ export function CommercialPropertyDetail() {
                   <td>{formatCurrency(m.debt.estimatedAnnualInterest)}</td>
                 </tr>
                 <tr>
-                  <td>Annual debt service (repayments × frequency)</td>
+                  <td>
+                    Annual debt service (repayments × frequency)
+                    {m.debt.loansAssumedInterestOnly > 0 && (
+                      <div style={{ color: "var(--text-muted)", fontSize: 12 }}>
+                        {m.debt.loansAssumedInterestOnly === 1 ? "1 loan has" : `${m.debt.loansAssumedInterestOnly} loans have`} no
+                        repayment amount recorded, so its interest is used (treated as interest-only).
+                      </div>
+                    )}
+                  </td>
                   <td>{formatCurrency(m.debt.annualDebtService)}</td>
                 </tr>
                 <tr>

@@ -3,6 +3,7 @@ import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { financialYearLabelForDate } from "../services/financialYear.js";
 import { computeFinancialPosition } from "../services/financialPosition.js";
+import { computeLiveBreakdown, valueHoldings } from "../services/netWorth.js";
 
 export const dashboardRouter = Router();
 
@@ -23,9 +24,6 @@ dashboardRouter.get(
       missingInformation,
       recentDocuments,
       upcomingRenewals,
-      assets,
-      liabilities,
-      accounts,
       currentFy,
       leaseTenancies,
     ] = await Promise.all([
@@ -43,9 +41,6 @@ dashboardRouter.get(
         orderBy: { renewalDate: "asc" },
         include: { entity: true },
       }),
-      prisma.asset.findMany({ where: entityWhere }),
-      prisma.liability.findMany({ where: entityWhere }),
-      prisma.account.findMany({ where: entityWhere }),
       prisma.financialYear.findUnique({ where: { label: currentFyLabel } }),
       prisma.tenancy.findMany({
         where: {
@@ -89,16 +84,8 @@ dashboardRouter.get(
     }
     upcomingLeaseEvents.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
 
-    const totalAssetValue = assets.reduce((sum, a) => sum + (a.currentValue ?? 0), 0);
-    const totalCash = accounts.reduce((sum, a) => sum + (a.currentBalance ?? 0), 0);
-    const propertyValue = assets
-      .filter((a) => a.assetType === "PROPERTY" || a.assetType === "COMMERCIAL_PROPERTY")
-      .reduce((s, a) => s + (a.currentValue ?? 0), 0);
-    const investmentValue = assets
-      .filter((a) => ["SHARES", "MANAGED_FUND"].includes(a.assetType))
-      .reduce((s, a) => s + (a.currentValue ?? 0), 0);
-    const superValue = assets.filter((a) => a.assetType === "SUPERANNUATION").reduce((s, a) => s + (a.currentValue ?? 0), 0);
-    const totalLiabilities = liabilities.reduce((sum, l) => sum + (l.currentBalance ?? 0), 0);
+    // Same figures as the Net Worth page — both come from one calculation.
+    const breakdown = await computeLiveBreakdown(entityId);
 
     let taxSummary = {
       financialYearLabel: currentFyLabel,
@@ -141,19 +128,21 @@ dashboardRouter.get(
     }> = [];
     if (!entityId) {
       const allEntities = await prisma.entity.findMany({
-        include: { assets: true, accounts: true, liabilities: true },
+        include: { assets: true, accounts: true, liabilities: true, investmentAccounts: true },
       });
-      byEntity = allEntities.map((e) => {
-        const position = computeFinancialPosition(e.assets, e.accounts, e.liabilities);
-        return {
+      byEntity = [];
+      for (const e of allEntities) {
+        const holdings = await valueHoldings(e.investmentAccounts);
+        const position = computeFinancialPosition(e.assets, e.accounts, e.liabilities, holdings.value);
+        byEntity.push({
           entityId: e.id,
           entityName: e.name,
           entityType: e.entityType,
           totalAssets: position.totalAssets,
           totalLiabilities: position.totalLiabilities,
           netAssets: position.netAssets,
-        };
-      });
+        });
+      }
     }
 
     res.json({
@@ -166,13 +155,13 @@ dashboardRouter.get(
       },
       upcomingLeaseEvents,
       financialSnapshot: {
-        totalAssets: totalAssetValue,
-        totalLiabilities,
-        netPosition: totalAssetValue - totalLiabilities,
-        cash: totalCash,
-        investmentValue,
-        propertyValue,
-        superannuation: superValue,
+        totalAssets: breakdown.totalAssets,
+        totalLiabilities: breakdown.totalLiabilities,
+        netPosition: breakdown.netPosition,
+        cash: breakdown.cash,
+        investmentValue: breakdown.investmentValue,
+        propertyValue: breakdown.propertyValue,
+        superannuation: breakdown.superValue,
       },
       tax: { ...taxSummary, unclassifiedTransactions },
       consolidated: {

@@ -266,9 +266,21 @@ export interface CapitalGainsReport {
     proceeds: number;
     costBase: number;
     grossGain: number;
-    discountAmount: number;
-    netGain: number;
+    discount: "YES" | "NO" | "PART" | "NONE";
     parcels: Array<{ acquisitionDate: string; quantity: number; costBase: number; grossGain: number; discountEligible: boolean }>;
+  }>;
+  byEntity: Array<{
+    entityId: string;
+    entityName: string;
+    entityType: string;
+    discountRate: number;
+    disposalCount: number;
+    totalGains: number;
+    totalLosses: number;
+    lossesApplied: number;
+    discountAmount: number;
+    netCapitalGain: number;
+    lossCarriedForward: number;
   }>;
   dividends: Array<{
     id: string;
@@ -287,6 +299,7 @@ export interface CapitalGainsReport {
     totalLosses: number;
     totalDiscount: number;
     netCapitalGain: number;
+    lossCarriedForward: number;
     dividendIncome: number;
     frankingCredits: number;
   };
@@ -301,6 +314,8 @@ export interface TaxSummaryRow {
   capitalGains: number;
   capitalLosses: number;
   needsReview: number;
+  /** Net capital gain worked out from recorded share/ETF/crypto sales. */
+  calculatedCapitalGain: number;
 }
 
 export interface DebtSummaryRow {
@@ -639,6 +654,7 @@ export interface CommercialPropertyMetrics {
     lvr: number | null;
     estimatedAnnualInterest: number;
     annualDebtService: number;
+    loansAssumedInterestOnly: number;
     formula: { lvr: string; equity: string; estimatedAnnualInterest: string; annualDebtService: string };
   };
   cashFlowAfterFinancing: { value: number; status: string; formula: string };

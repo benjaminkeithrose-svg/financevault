@@ -3,7 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, Asset, Entity } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
-import { humanize } from "../utils.js";
+import { humanize, confirmThenDelete } from "../utils.js";
+import { LoadFailed } from "../components/LoadFailed.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -16,6 +17,7 @@ export function AssetDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [asset, setAsset] = useState<Asset | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
@@ -32,7 +34,7 @@ export function AssetDetail() {
         currentValue: a.currentValue?.toString() || "",
         notes: a.notes || "",
       });
-    });
+    }).catch((e: Error) => setLoadError(e.message));
   }
 
   useEffect(load, [id]);
@@ -40,7 +42,10 @@ export function AssetDetail() {
     api.entities.list().then(setEntities);
   }, []);
 
-  if (!asset) return <div className="empty-state">Loading…</div>;
+  if (!asset) {
+    if (loadError) return <LoadFailed message={loadError} backTo="/assets" backLabel="Back to assets" />;
+    return <div className="empty-state">Loading…</div>;
+  }
 
   async function save() {
     if (!id) return;
@@ -62,7 +67,7 @@ export function AssetDetail() {
 
   async function remove() {
     if (!id) return;
-    await api.assets.remove(id);
+    if (!(await confirmThenDelete("Delete this asset?", () => api.assets.remove(id)))) return;
     navigate("/assets");
   }
 

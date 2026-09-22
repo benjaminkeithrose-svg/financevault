@@ -53,7 +53,7 @@ export function encryptField(plaintext: string): string {
   if (!dataKey) {
     // Refusing is the whole point: storing the value in the clear because the
     // key happened to be missing would silently defeat the protection.
-    throw new Error("Financial Vault is locked, so this value can't be saved securely.");
+    throw Object.assign(new Error("Financial Vault is locked, so this value can't be saved securely."), { status: 423 });
   }
   return PREFIX + sealBytes(dataKey, Buffer.from(plaintext, "utf8"));
 }
@@ -61,6 +61,6 @@ export function encryptField(plaintext: string): string {
 export function decryptField(value: string | null | undefined): string | null {
   if (value === null || value === undefined) return null;
   if (!isEncrypted(value)) return value;
-  if (!dataKey) throw new Error("Financial Vault is locked.");
+  if (!dataKey) throw Object.assign(new Error("Financial Vault is locked."), { status: 423 });
   return openBytes(dataKey, value.slice(PREFIX.length)).toString("utf8");
 }

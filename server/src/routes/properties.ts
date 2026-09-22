@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 
 export const propertiesRouter = Router();
@@ -156,13 +157,23 @@ propertiesRouter.put(
 propertiesRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    const property = await prisma.property.findUnique({ where: { id: req.params.id } });
+    const property = await prisma.property.findUnique({
+      where: { id: req.params.id },
+      include: { _count: { select: { liabilities: true } } },
+    });
     if (!property) {
       res.status(404).json({ error: "Property not found" });
       return;
     }
-    await prisma.property.delete({ where: { id: req.params.id } });
-    await prisma.asset.delete({ where: { id: property.assetId } });
+    refuseIfInUse("property", [{ count: property._count.liabilities, one: "secured loan", many: "secured loans" }]);
+    await deleteWithLinks(
+      [
+        { type: "PROPERTY", id: property.id },
+        { type: "ASSET", id: property.assetId },
+      ],
+      // Deleting the asset takes the property record with it.
+      (tx) => tx.asset.delete({ where: { id: property.assetId } })
+    );
     await logAudit("PROPERTY_DELETED", { targetType: "Property", targetId: req.params.id });
     res.status(204).send();
   })

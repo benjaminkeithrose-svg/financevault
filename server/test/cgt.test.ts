@@ -5,6 +5,7 @@ import {
   computePosition,
   discountRateFor,
   isDiscountEligible,
+  netCapitalGain,
   parcelCostBase,
   type ParcelLike,
 } from "../src/services/cgt.js";
@@ -157,5 +158,48 @@ describe("positions", () => {
     const pos = computePosition({ securityId: "x", parcels, allocations: sold, latestPrice: null, priceDate: null });
     expect(pos.marketValue).toBeNull();
     expect(pos.unrealisedGain).toBeNull();
+  });
+});
+
+describe("net capital gain for a year", () => {
+  it("applies losses before the discount", () => {
+    const result = netCapitalGain(
+      [
+        { grossGain: 10_000, discountEligible: true },
+        { grossGain: -4_000, discountEligible: false },
+      ],
+      0.5
+    );
+    expect(result.netCapitalGain).toBe(3_000);
+    expect(result.discountAmount).toBe(3_000);
+  });
+
+  it("uses losses on non-discountable gains first", () => {
+    const result = netCapitalGain(
+      [
+        { grossGain: 10_000, discountEligible: true },
+        { grossGain: 2_000, discountEligible: false },
+        { grossGain: -3_000, discountEligible: false },
+      ],
+      0.5
+    );
+    // 2,000 short-term gain wiped out, 1,000 left against the 10,000.
+    expect(result.netCapitalGain).toBe(4_500);
+  });
+
+  it("carries forward losses bigger than the year's gains, and never goes negative", () => {
+    const result = netCapitalGain(
+      [
+        { grossGain: 1_000, discountEligible: true },
+        { grossGain: -5_000, discountEligible: false },
+      ],
+      0.5
+    );
+    expect(result.netCapitalGain).toBe(0);
+    expect(result.lossCarriedForward).toBe(4_000);
+  });
+
+  it("applies the super fund's one-third discount", () => {
+    expect(netCapitalGain([{ grossGain: 900, discountEligible: true }], discountRateFor("SMSF")).netCapitalGain).toBeCloseTo(600);
   });
 });

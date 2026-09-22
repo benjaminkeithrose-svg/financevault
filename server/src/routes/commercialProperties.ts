@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 import { extractLeaseTerms } from "../services/leaseExtraction.js";
 import {
@@ -328,13 +329,45 @@ commercialPropertiesRouter.put(
 commercialPropertiesRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    const property = await prisma.commercialProperty.findUnique({ where: { id: req.params.id } });
+    const property = await prisma.commercialProperty.findUnique({
+      where: { id: req.params.id },
+      include: {
+        tenancies: { select: { id: true } },
+        _count: {
+          select: {
+            tenancies: true,
+            loans: true,
+            outgoings: true,
+            capitalExpenditure: true,
+            occupancySnapshots: true,
+            annualSnapshots: true,
+            planEquityDrawSources: true,
+          },
+        },
+      },
+    });
     if (!property) {
       res.status(404).json({ error: "Commercial property not found" });
       return;
     }
-    await prisma.commercialProperty.delete({ where: { id: req.params.id } });
-    await prisma.asset.delete({ where: { id: property.assetId } });
+    const c = property._count;
+    refuseIfInUse("commercial property", [
+      { count: c.tenancies, one: "tenancy", many: "tenancies" },
+      { count: c.loans, one: "secured loan", many: "secured loans" },
+      { count: c.outgoings, one: "outgoing", many: "outgoings" },
+      { count: c.capitalExpenditure, one: "capital expenditure item", many: "capital expenditure items" },
+      { count: c.occupancySnapshots, one: "occupancy snapshot", many: "occupancy snapshots" },
+      { count: c.annualSnapshots, one: "annual snapshot", many: "annual snapshots" },
+      { count: c.planEquityDrawSources, one: "portfolio plan equity draw", many: "portfolio plan equity draws" },
+    ]);
+    await deleteWithLinks(
+      [
+        { type: "COMMERCIAL_PROPERTY", id: property.id },
+        { type: "ASSET", id: property.assetId },
+      ],
+      // Deleting the asset takes the commercial property record with it.
+      (tx) => tx.asset.delete({ where: { id: property.assetId } })
+    );
     await logAudit("COMMERCIAL_PROPERTY_DELETED", { targetType: "CommercialProperty", targetId: req.params.id });
     res.status(204).send();
   })
@@ -408,7 +441,9 @@ commercialPropertiesRouter.put(
 commercialPropertiesRouter.delete(
   "/tenancies/:tenancyId",
   asyncHandler(async (req, res) => {
-    await prisma.tenancy.delete({ where: { id: req.params.tenancyId } });
+    await deleteWithLinks([{ type: "TENANCY", id: req.params.tenancyId }], (tx) =>
+      tx.tenancy.delete({ where: { id: req.params.tenancyId } })
+    );
     await logAudit("TENANCY_DELETED", { targetType: "Tenancy", targetId: req.params.tenancyId });
     res.status(204).send();
   })

@@ -28,7 +28,7 @@ import { emailImportRouter } from "./routes/emailImport.js";
 import { importBatchesRouter } from "./routes/importBatches.js";
 import { transactionImportRouter } from "./routes/transactionImport.js";
 import { vaultRouter, requireSession } from "./routes/vault.js";
-import { errorHandler } from "./middleware/errorHandler.js";
+import { apiNotFound, errorHandler } from "./middleware/errorHandler.js";
 import { rejectCrossOriginWrites, requireLoopbackHost, securityHeaders } from "./middleware/localOnly.js";
 
 export const app = express();
@@ -74,6 +74,7 @@ app.use("/api/email-import", emailImportRouter);
 app.use("/api/import-batches", importBatchesRouter);
 app.use("/api/transaction-import", transactionImportRouter);
 
+app.use("/api", apiNotFound);
 app.use(errorHandler);
 
 // Serving the built frontend from this same process (single double-click

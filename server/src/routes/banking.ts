@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 import { financialYearBounds, financialYearLabelForDate } from "../services/financialYear.js";
 
@@ -89,7 +90,16 @@ bankingRouter.put(
 bankingRouter.delete(
   "/accounts/:id",
   asyncHandler(async (req, res) => {
-    await prisma.account.delete({ where: { id: req.params.id } });
+    const account = await prisma.account.findUnique({
+      where: { id: req.params.id },
+      include: { _count: { select: { transactions: true } } },
+    });
+    if (!account) {
+      res.status(404).json({ error: "Bank account not found" });
+      return;
+    }
+    refuseIfInUse("bank account", [{ count: account._count.transactions, one: "transaction", many: "transactions" }]);
+    await deleteWithLinks([{ type: "ACCOUNT", id: account.id }], (tx) => tx.account.delete({ where: { id: account.id } }));
     await logAudit("ACCOUNT_DELETED", { targetType: "Account", targetId: req.params.id });
     res.status(204).send();
   })
@@ -145,7 +155,9 @@ bankingRouter.put(
 bankingRouter.delete(
   "/transactions/:transactionId",
   asyncHandler(async (req, res) => {
-    await prisma.transaction.delete({ where: { id: req.params.transactionId } });
+    await deleteWithLinks([{ type: "TRANSACTION", id: req.params.transactionId }], (tx) =>
+      tx.transaction.delete({ where: { id: req.params.transactionId } })
+    );
     res.status(204).send();
   })
 );

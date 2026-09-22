@@ -3,7 +3,8 @@ import { TfnField } from "../components/TfnField.js";
 import { Link, useParams } from "react-router-dom";
 import { api, Document, Entity, FinancialYear, PayPeriod, Person } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
-import { financialYearLabelForToday, formatCurrency, formatDate, humanize } from "../utils.js";
+import { financialYearLabelForToday, formatCurrency, formatDate, humanize, confirmThenDelete } from "../utils.js";
+import { LoadFailed } from "../components/LoadFailed.js";
 
 const RELATIONSHIP_TYPES = [
   "SETTLOR",
@@ -171,6 +172,7 @@ function PayPeriodRow({ period, onChange }: { period: PayPeriod; onChange: () =>
 export function PersonDetail() {
   const { id } = useParams<{ id: string }>();
   const [person, setPerson] = useState<Person | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [relType, setRelType] = useState("TRUSTEE");
   const [relEntityId, setRelEntityId] = useState("");
@@ -181,7 +183,7 @@ export function PersonDetail() {
 
   function load() {
     if (!id) return;
-    api.people.get(id).then(setPerson);
+    api.people.get(id).then(setPerson).catch((e: Error) => setLoadError(e.message));
   }
 
   useEffect(load, [id]);
@@ -210,7 +212,10 @@ export function PersonDetail() {
     load();
   }
 
-  if (!person) return <div className="empty-state">Loading…</div>;
+  if (!person) {
+    if (loadError) return <LoadFailed message={loadError} backTo="/people" backLabel="Back to people" />;
+    return <div className="empty-state">Loading…</div>;
+  }
 
   async function addRelationship() {
     if (!id || !relEntityId) return;
@@ -226,7 +231,11 @@ export function PersonDetail() {
   }
 
   async function removeRelationship(relId: string) {
-    await api.people.removeRelationship(relId);
+    const deleted = await confirmThenDelete(
+      "Remove this relationship?",
+      () => api.people.removeRelationship(relId)
+    );
+    if (!deleted) return;
     load();
   }
 

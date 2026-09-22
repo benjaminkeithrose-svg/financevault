@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { api, Asset, Entity } from "../api/client.js";
-import { humanize } from "../utils.js";
+import { humanize, confirmThenDelete } from "../utils.js";
 
 const OWNERSHIP_TYPES = ["LEGAL", "BENEFICIAL"];
 
@@ -43,7 +43,7 @@ export function AssetOwnershipPanel({
   }
 
   async function remove(id: string) {
-    await api.assets.removeOwnership(id);
+    if (!(await confirmThenDelete("Remove this ownership share?", () => api.assets.removeOwnership(id)))) return;
     onChange();
   }
 

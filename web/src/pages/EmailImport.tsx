@@ -7,7 +7,7 @@ import {
   Entity,
   ImportedEmailAttachment,
 } from "../api/client.js";
-import { formatDate } from "../utils.js";
+import { formatDate, confirmThenDelete } from "../utils.js";
 
 const OUTCOME_LABELS: Record<string, string> = {
   IMPORTED: "Imported",
@@ -102,7 +102,11 @@ export function EmailImport() {
   }
 
   async function removeRule(ruleId: string) {
-    await api.emailImport.removeRule(ruleId);
+    const deleted = await confirmThenDelete(
+      "Delete this import rule? Documents it already imported are kept.",
+      () => api.emailImport.removeRule(ruleId)
+    );
+    if (!deleted) return;
     await load();
   }
 

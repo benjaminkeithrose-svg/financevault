@@ -4,6 +4,7 @@ import { api, Entity, Liability, Property } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
+import { LoadFailed } from "../components/LoadFailed.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -13,6 +14,7 @@ function toDateInput(value?: string | null): string {
 export function PropertyDetail() {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<Property | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
@@ -37,12 +39,15 @@ export function PropertyDetail() {
         tenantInfo: p.tenantInfo || "",
         propertyManager: p.propertyManager || "",
       });
-    });
+    }).catch((e: Error) => setLoadError(e.message));
   }
 
   useEffect(load, [id]);
 
-  if (!property) return <div className="empty-state">Loading…</div>;
+  if (!property) {
+    if (loadError) return <LoadFailed message={loadError} backTo="/properties" backLabel="Back to properties" />;
+    return <div className="empty-state">Loading…</div>;
+  }
 
   async function save() {
     if (!id) return;
