@@ -137,6 +137,7 @@ model Entity {
   assetOwnerships      AssetOwnership[]
   netWorthSnapshots    NetWorthSnapshot[]
   portfolioPlans       PortfolioPlan[]
+  emailImportRules     EmailImportRule[]
 
   @@index([entityType])
 }
@@ -893,4 +894,96 @@ model Settings {
   // isn't covered — relocating it needs server/.env (DATABASE_URL) and a
   // restart, since Prisma's connection is fixed at process start.
   customStorageDir          String?
+}
+
+// ---------------------------------------------------------------------------
+// Email import — pulls financial documents out of Gmail as attachments and
+// feeds them through the same ingestion pipeline as a manual upload.
+//
+// Connection is Gmail IMAP with an app-specific password rather than OAuth.
+// OAuth's gmail.readonly is a RESTRICTED scope: an unverified personal app
+// has to stay in "Testing" publishing status, where refresh tokens expire
+// every 7 days — meaning a weekly re-consent through a Google Cloud project
+// the user would have to create themselves. An app password is one paste
+// into Settings and keeps working. The honest tradeoff, stated in the UI:
+// an app password grants broader IMAP/SMTP access than a read-only scope
+// would, and is stored locally in this database, which is not yet encrypted
+// at rest. It can be revoked independently of the account password.
+//
+// Nothing here ever sends, deletes, or modifies mail — it opens mailboxes
+// read-only and copies attachments out.
+// ---------------------------------------------------------------------------
+
+model EmailAccount {
+  id           String  @id @default(cuid())
+  emailAddress String  @unique
+  provider     String  @default("GMAIL") // GMAIL — the only IMAP host wired up today
+  // App-specific password. Stored as entered; see the encryption-at-rest
+  // note in the security posture section of the README.
+  appPassword  String
+  enabled      Boolean @default(true)
+
+  lastSyncAt     DateTime?
+  lastSyncStatus String? // SUCCESS | ERROR
+  lastSyncError  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rules            EmailImportRule[]
+  importedMessages ImportedEmailAttachment[]
+}
+
+model EmailImportRule {
+  id             String       @id @default(cuid())
+  emailAccountId String
+  emailAccount   EmailAccount @relation(fields: [emailAccountId], references: [id], onDelete: Cascade)
+
+  name String
+  // Raw Gmail search syntax, passed through IMAP's X-GM-RAW extension, so
+  // anything that works in Gmail's own search box works here —
+  // e.g. `from:commbank.com.au has:attachment filename:pdf`.
+  gmailQuery String
+
+  // Proposed classification for anything this rule brings in. Only fills a
+  // gap the document classifier left — never overrides what was read out of
+  // the document, and never marks a document confirmed.
+  suggestedDocumentType String?
+  suggestedEntityId     String?
+  suggestedEntity       Entity? @relation(fields: [suggestedEntityId], references: [id])
+
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  importedMessages ImportedEmailAttachment[]
+
+  @@index([emailAccountId])
+}
+
+// One row per attachment ever pulled in, so re-running an import never
+// creates a second copy of something already seen — including when the
+// resulting Document was a content-hash duplicate of a file uploaded by
+// hand, or was later archived.
+model ImportedEmailAttachment {
+  id             String       @id @default(cuid())
+  emailAccountId String
+  emailAccount   EmailAccount @relation(fields: [emailAccountId], references: [id], onDelete: Cascade)
+
+  ruleId String?
+  rule   EmailImportRule? @relation(fields: [ruleId], references: [id], onDelete: SetNull)
+
+  messageId          String // RFC822 Message-ID header
+  attachmentFilename String
+  subject            String?
+  fromAddress        String?
+  messageDate        DateTime?
+
+  documentId String? // null when skipped as a duplicate of an existing document
+  outcome    String // IMPORTED | DUPLICATE | SKIPPED_UNSUPPORTED_TYPE | SKIPPED_TOO_LARGE
+
+  importedAt DateTime @default(now())
+
+  @@unique([emailAccountId, messageId, attachmentFilename])
+  @@index([emailAccountId])
 }

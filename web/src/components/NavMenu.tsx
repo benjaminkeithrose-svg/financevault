@@ -16,6 +16,7 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
       { to: "/visualization", label: "Visualization" },
       { to: "/inbox", label: "Inbox" },
       { to: "/documents", label: "Documents" },
+      { to: "/email-import", label: "Email import" },
     ],
   },
   { label: "People", items: [{ to: "/people", label: "People" }] },

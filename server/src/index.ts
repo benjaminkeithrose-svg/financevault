@@ -26,6 +26,7 @@ import { reportsRouter } from "./routes/reports.js";
 import { documentPacksRouter } from "./routes/documentPacks.js";
 import { portfolioPlansRouter } from "./routes/portfolioPlans.js";
 import { backupRouter } from "./routes/backup.js";
+import { emailImportRouter } from "./routes/emailImport.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -58,6 +59,7 @@ app.use("/api/reports", reportsRouter);
 app.use("/api/document-packs", documentPacksRouter);
 app.use("/api/portfolio-plans", portfolioPlansRouter);
 app.use("/api/backup", backupRouter);
+app.use("/api/email-import", emailImportRouter);
 
 app.use(errorHandler);
 

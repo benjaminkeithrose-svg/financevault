@@ -755,6 +755,59 @@ export interface PackPreview {
   generated: PackChip[];
 }
 
+export interface EmailImportRule {
+  id: string;
+  emailAccountId: string;
+  name: string;
+  gmailQuery: string;
+  suggestedDocumentType?: string | null;
+  suggestedEntityId?: string | null;
+  suggestedEntity?: Entity | null;
+  enabled: boolean;
+  createdAt: string;
+}
+
+export interface EmailAccount {
+  id: string;
+  emailAddress: string;
+  provider: string;
+  hasAppPassword: boolean;
+  enabled: boolean;
+  lastSyncAt?: string | null;
+  lastSyncStatus?: string | null;
+  lastSyncError?: string | null;
+  rules: EmailImportRule[];
+  createdAt: string;
+}
+
+export type EmailImportOutcome = "IMPORTED" | "DUPLICATE" | "SKIPPED_UNSUPPORTED_TYPE" | "SKIPPED_TOO_LARGE";
+
+export interface EmailSyncResult {
+  imported: number;
+  duplicates: number;
+  skipped: number;
+  items: Array<{
+    filename: string;
+    subject: string | null;
+    fromAddress: string | null;
+    outcome: EmailImportOutcome;
+    documentId: string | null;
+    ruleName: string;
+  }>;
+}
+
+export interface ImportedEmailAttachment {
+  id: string;
+  attachmentFilename: string;
+  subject?: string | null;
+  fromAddress?: string | null;
+  messageDate?: string | null;
+  documentId?: string | null;
+  outcome: EmailImportOutcome;
+  importedAt: string;
+  rule?: { name: string } | null;
+}
+
 export interface PlanRefinance {
   id: string;
   planPropertyId: string;
@@ -1157,6 +1210,29 @@ export const api = {
     addEquityDraw: (propertyId: string, data: Record<string, unknown>) =>
       request<PlanEquityDraw>(`/portfolio-plans/properties/${propertyId}/equity-draws`, { method: "POST", body: JSON.stringify(data) }),
     removeEquityDraw: (drawId: string) => request<void>(`/portfolio-plans/equity-draws/${drawId}`, { method: "DELETE" }),
+  },
+
+  emailImport: {
+    listAccounts: () => request<EmailAccount[]>("/email-import/accounts"),
+    connect: (data: { emailAddress: string; appPassword: string }) =>
+      request<EmailAccount>("/email-import/accounts", { method: "POST", body: JSON.stringify(data) }),
+    updateAccount: (id: string, data: { appPassword?: string; enabled?: boolean }) =>
+      request<EmailAccount>(`/email-import/accounts/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    testAccount: (id: string) => request<{ ok: boolean }>(`/email-import/accounts/${id}/test`, { method: "POST" }),
+    disconnect: (id: string) => request<void>(`/email-import/accounts/${id}`, { method: "DELETE" }),
+
+    addRule: (accountId: string, data: Record<string, unknown>) =>
+      request<EmailImportRule>(`/email-import/accounts/${accountId}/rules`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    updateRule: (ruleId: string, data: Record<string, unknown>) =>
+      request<EmailImportRule>(`/email-import/rules/${ruleId}`, { method: "PUT", body: JSON.stringify(data) }),
+    removeRule: (ruleId: string) => request<void>(`/email-import/rules/${ruleId}`, { method: "DELETE" }),
+
+    sync: (accountId: string) =>
+      request<EmailSyncResult>(`/email-import/accounts/${accountId}/sync`, { method: "POST" }),
+    history: (accountId: string) => request<ImportedEmailAttachment[]>(`/email-import/accounts/${accountId}/history`),
   },
 
   documentPacks: {

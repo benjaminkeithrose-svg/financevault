@@ -29,6 +29,7 @@ import { NetWorth } from "./pages/NetWorth.js";
 import { Tax } from "./pages/Tax.js";
 import { Reports } from "./pages/Reports.js";
 import { Packs } from "./pages/Packs.js";
+import { EmailImport } from "./pages/EmailImport.js";
 import { PortfolioPlans } from "./pages/PortfolioPlans.js";
 import { PortfolioPlanDetail } from "./pages/PortfolioPlanDetail.js";
 
@@ -78,6 +79,7 @@ export default function App() {
           <Route path="/tax" element={<Tax />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/packs" element={<Packs />} />
+          <Route path="/email-import" element={<EmailImport />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>

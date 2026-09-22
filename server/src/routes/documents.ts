@@ -1,31 +1,15 @@
 import { Router } from "express";
 import multer from "multer";
 import { z } from "zod";
-import fs from "node:fs/promises";
 import path from "node:path";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
-import { sha256 } from "../services/hash.js";
-import { extractText } from "../services/ocr.js";
-import { classifyDocument } from "../services/classification.js";
-import { financialYearBounds } from "../services/financialYear.js";
 import { logAudit } from "../services/audit.js";
-import { getEffectiveStorageDir } from "../services/paths.js";
+import { ensureFinancialYear, ingestDocument } from "../services/documentIngest.js";
 
 export const documentsRouter = Router();
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
-
-async function ensureFinancialYear(label: string | null) {
-  if (!label) return null;
-  const { start, end } = financialYearBounds(label);
-  const fy = await prisma.financialYear.upsert({
-    where: { label },
-    update: {},
-    create: { label, startDate: start, endDate: end },
-  });
-  return fy.id;
-}
 
 documentsRouter.get(
   "/",
@@ -113,57 +97,20 @@ documentsRouter.post(
       return;
     }
 
-    const fileHash = sha256(req.file.buffer);
+    const result = await ingestDocument({
+      buffer: req.file.buffer,
+      originalFilename: req.file.originalname,
+      mimeType: req.file.mimetype,
+      fileSize: req.file.size,
+      source: "MANUAL_UPLOAD",
+    });
 
-    const existing = await prisma.document.findFirst({ where: { fileHash } });
-    if (existing) {
-      res.status(200).json({ duplicate: true, document: existing });
+    if (result.duplicate) {
+      res.status(200).json({ duplicate: true, document: result.document });
       return;
     }
 
-    const storageDir = await getEffectiveStorageDir();
-    await fs.mkdir(storageDir, { recursive: true });
-    const storedFilename = `${fileHash}${path.extname(req.file.originalname)}`;
-    const filePath = path.join(storageDir, storedFilename);
-    await fs.writeFile(filePath, req.file.buffer);
-
-    const { text } = await extractText(req.file.buffer, req.file.mimetype);
-
-    const entities = await prisma.entity.findMany({ select: { id: true, name: true } });
-    const classification = classifyDocument({ filename: req.file.originalname, text, entities });
-
-    const financialYearId = await ensureFinancialYear(classification.financialYearLabel);
-
-    const doc = await prisma.document.create({
-      data: {
-        originalFilename: req.file.originalname,
-        storedFilename,
-        filePath,
-        mimeType: req.file.mimetype,
-        fileSize: req.file.size,
-        fileHash,
-        documentType: classification.documentType,
-        source: "MANUAL_UPLOAD",
-        documentDate: classification.documentDate,
-        renewalDate: classification.renewalDate,
-        financialYearId: financialYearId ?? undefined,
-        entityId: classification.entityId ?? undefined,
-        amount: classification.amount ?? undefined,
-        taxRelevance: classification.taxRelevance,
-        confidenceScore: classification.confidenceScore,
-        ocrText: text || null,
-        reviewStatus: classification.needsReview ? "NEEDS_CONFIRMATION" : "PENDING_CLASSIFICATION",
-      },
-    });
-
-    await logAudit("DOCUMENT_IMPORTED", {
-      targetType: "Document",
-      targetId: doc.id,
-      documentId: doc.id,
-      data: { filename: doc.originalFilename, confidence: classification.confidenceScore },
-    });
-
-    res.status(201).json({ duplicate: false, document: doc, proposed: classification });
+    res.status(201).json({ duplicate: false, document: result.document, proposed: result.classification });
   })
 );
 

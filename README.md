@@ -11,8 +11,8 @@ implements **Stage 1 and Stage 2** of the staged build, plus the Commercial
 Property module (Phase 1-4), a subsequent architecture correction, a
 Visualization tab, Net Worth/Tax/Reports, Document Packs with payslip
 tracking (Stage 4), a UI/UX pass against `PREFERENCES.md`, fractional/joint
-ownership, a multi-property Portfolio Plan, a double-click local launcher
-and a one-click backup, all described below.
+ownership, a multi-property Portfolio Plan, Gmail email import, a
+double-click local launcher and a one-click backup, all described below.
 
 ### Backup
 
@@ -37,6 +37,45 @@ and needs a manual edit plus restart to move, which the Settings page's own
 text explains. If you use the app from two computers sharing a synced
 folder, avoid running it on both at once — the SQLite database itself
 isn't safe to sync live, only the documents folder is.
+
+### Email import (Gmail)
+
+Financial documents mostly arrive by email, so `/email-import` pulls them
+straight out of Gmail as attachments instead of needing them saved and
+re-uploaded by hand.
+
+- **Rules are ordinary Gmail searches.** A rule is just a name plus a query
+  in Gmail's own search syntax — `from:commbank.com.au has:attachment
+  filename:pdf` — passed through IMAP's `X-GM-RAW` extension, so anything
+  that works in Gmail's search box works here. A rule can also propose a
+  document type and entity, applied only where the classifier couldn't
+  work it out from the document itself; it never overrides what was read
+  out of the document, and never marks anything confirmed.
+- **Imports run only when asked.** Nothing polls Gmail in the background.
+  You press "Import now" and it runs, which also means nothing can quietly
+  fill the Inbox while you aren't looking.
+- **Attachments go through the same pipeline as a manual upload** — the
+  same content hashing, de-duplication, OCR, classification and audit
+  logging — so an imported document is indistinguishable from a dragged-in
+  one apart from being marked `GMAIL` as its source. New documents land in
+  the Inbox awaiting confirmation; nothing is filed automatically.
+- **Nothing is ever imported twice.** Every attachment seen is recorded by
+  message ID and filename, so re-running an import repeatedly is safe. The
+  history table shows each one and what happened to it (imported, already
+  had it, or skipped as not a document / too large).
+- **Mail is only ever read.** Mailboxes are opened read-only — nothing is
+  sent, deleted, moved or even marked as read.
+
+**Connection uses a Gmail app password, not OAuth.** This is a deliberate
+tradeoff. OAuth's `gmail.readonly` is a *restricted* scope: an unverified
+personal app has to stay in Google's "Testing" publishing status, where
+refresh tokens expire every 7 days — meaning a weekly re-consent through a
+Google Cloud project you'd have to create yourself. An app password is one
+paste and keeps working. The honest cost: an app password grants broader
+IMAP/SMTP access than a read-only scope would, and it's stored in the local
+database, which isn't yet encrypted at rest (see the security posture
+section). It can be revoked at `myaccount.google.com/apppasswords` at any
+time without changing your Google password.
 
 ### Portfolio Plan
 
@@ -401,6 +440,11 @@ access.
   (off by default).
 - No payment, money-movement, or bank-credential storage exists anywhere in
   this codebase.
+- The one credential the app can hold is a Gmail **app password**, stored
+  only if you connect a mailbox for email import. It is kept in the local
+  database (not yet encrypted at rest), is never sent to the browser — the
+  UI is only told whether one is set — and can be revoked from your Google
+  account at any time without changing your real password.
 
 Encryption at rest, backups, export, and stronger authentication are
 planned for the security-hardening stage of the build, per the project
