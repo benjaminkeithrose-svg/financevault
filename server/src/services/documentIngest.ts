@@ -28,6 +28,8 @@ export interface IngestInput {
   /** Proposed, never auto-applied — only used where the classifier found nothing. */
   suggestedDocumentType?: string | null;
   suggestedEntityId?: string | null;
+  /** Folder the file came from on a bulk import; feeds classification. */
+  relativePath?: string | null;
 }
 
 export type IngestResult =
@@ -54,7 +56,12 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
   const { text } = await extractText(input.buffer, input.mimeType);
 
   const entities = await prisma.entity.findMany({ select: { id: true, name: true } });
-  const classification = classifyDocument({ filename: input.originalFilename, text, entities });
+  const classification = classifyDocument({
+    filename: input.originalFilename,
+    text,
+    entities,
+    folderPath: input.relativePath,
+  });
 
   const financialYearId = await ensureFinancialYear(classification.financialYearLabel);
 

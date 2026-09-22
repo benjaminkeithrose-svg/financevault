@@ -10,6 +10,12 @@ export interface ClassificationInput {
   filename: string;
   text: string;
   entities: EntityCandidate[];
+  /**
+   * Folder the file came from on a bulk import, relative to the folder the
+   * user picked. Their own filing ("Tax Returns/2023") is a deliberate,
+   * free signal, so it's matched alongside the filename and contents.
+   */
+  folderPath?: string | null;
 }
 
 export interface ClassificationResult {
@@ -86,9 +92,43 @@ function findRenewalDate(text: string): Date | null {
   return dates[0] ?? null;
 }
 
+/**
+ * Pulls an explicit Australian financial year out of a folder or filename,
+ * e.g. "2023-24", "2023-2024", "FY24", "FY2024".
+ *
+ * A bare year is deliberately NOT matched: "2023" could mean either
+ * 2022-23 or 2023-24, and guessing would silently file documents into the
+ * wrong year — worse than leaving it for the user to set.
+ */
+export function financialYearLabelFromText(text: string): string | null {
+  const rangeMatch = text.match(/\b(20\d{2})\s*[-\/]\s*(\d{2}|20\d{2})\b/);
+  if (rangeMatch) {
+    const startYear = Number(rangeMatch[1]);
+    const rawEnd = rangeMatch[2];
+    const endYear = rawEnd.length === 4 ? Number(rawEnd) : 2000 + Number(rawEnd);
+    if (endYear === startYear + 1) return `${startYear}-${String(endYear).slice(2)}`;
+    return null;
+  }
+
+  const fyMatch = text.match(/\bFY\s*(20\d{2}|\d{2})\b/i);
+  if (fyMatch) {
+    const raw = fyMatch[1];
+    // "FY24" means the year ENDING June 2024, so the label is 2023-24.
+    const endYear = raw.length === 4 ? Number(raw) : 2000 + Number(raw);
+    return `${endYear - 1}-${String(endYear).slice(2)}`;
+  }
+
+  return null;
+}
+
 export function classifyDocument(input: ClassificationInput): ClassificationResult {
-  const { filename, text, entities } = input;
-  const haystack = `${filename}\n${text}`;
+  const { filename, text, entities, folderPath } = input;
+  // Real filenames separate words with underscores and hyphens
+  // ("CommBank_Statement_2024_01.pdf"), so matching them raw would miss every
+  // multi-word keyword. Separators are normalised to spaces for matching
+  // only — the stored filename is untouched.
+  const normalisePath = (value: string) => value.replace(/[\/_\-.]+/g, " ");
+  const haystack = `${folderPath ? normalisePath(folderPath) + "\n" : ""}${normalisePath(filename)}\n${text}`;
   let signals = 0;
 
   const typeDef = findDocumentTypeByKeyword(haystack);
@@ -113,7 +153,12 @@ export function classifyDocument(input: ClassificationInput): ClassificationResu
 
   const renewalDate = findRenewalDate(text);
 
-  const financialYearLabel = documentDate ? financialYearLabelForDate(documentDate) : null;
+  // An explicitly-labelled folder or filename beats a date guessed out of the
+  // page: "Tax Returns/2023-24" is the user's own filing decision, whereas the
+  // earliest date in a tax return is often a prior-year comparative figure.
+  const labelFromPath = financialYearLabelFromText(`${folderPath ?? ""} ${filename}`);
+  const financialYearLabel = labelFromPath ?? (documentDate ? financialYearLabelForDate(documentDate) : null);
+  if (labelFromPath) signals++;
 
   const taxRelevance: "UNKNOWN" | "POSSIBLE" =
     typeDef && ["Tax", "Property", "Investment"].includes(typeDef.category) ? "POSSIBLE" : "UNKNOWN";

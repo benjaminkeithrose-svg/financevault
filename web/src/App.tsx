@@ -30,6 +30,7 @@ import { Tax } from "./pages/Tax.js";
 import { Reports } from "./pages/Reports.js";
 import { Packs } from "./pages/Packs.js";
 import { EmailImport } from "./pages/EmailImport.js";
+import { BulkImport } from "./pages/BulkImport.js";
 import { PortfolioPlans } from "./pages/PortfolioPlans.js";
 import { PortfolioPlanDetail } from "./pages/PortfolioPlanDetail.js";
 
@@ -80,6 +81,8 @@ export default function App() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/packs" element={<Packs />} />
           <Route path="/email-import" element={<EmailImport />} />
+          <Route path="/bulk-import" element={<BulkImport />} />
+          <Route path="/bulk-import/:id" element={<BulkImport />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>

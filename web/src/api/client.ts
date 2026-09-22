@@ -755,6 +755,51 @@ export interface PackPreview {
   generated: PackChip[];
 }
 
+export interface ImportBatch {
+  id: string;
+  name: string;
+  status: string;
+  createdAt: string;
+  completedAt?: string | null;
+}
+
+export interface ImportBatchSummary extends ImportBatch {
+  _count: { files: number };
+}
+
+export interface ImportBatchFile {
+  id: string;
+  batchId: string;
+  originalFilename: string;
+  relativePath?: string | null;
+  status: "IMPORTED" | "DUPLICATE" | "FAILED";
+  errorMessage?: string | null;
+  documentId?: string | null;
+  proposedDocumentType?: string | null;
+  confidenceScore?: number | null;
+}
+
+export interface ImportGroup {
+  key: string;
+  documentType: string | null;
+  folder: string | null;
+  count: number;
+  fileIds: string[];
+  documentIds: string[];
+  sampleFilenames: string[];
+  filenameTemplates: string[];
+  financialYearLabels: string[];
+  averageConfidence: number | null;
+}
+
+export interface ImportBatchReview {
+  batch: ImportBatch;
+  totals: { imported: number; duplicates: number; failed: number };
+  groups: ImportGroup[];
+  failed: Array<{ id: string; originalFilename: string; errorMessage?: string | null }>;
+  duplicates: Array<{ id: string; originalFilename: string }>;
+}
+
 export interface EmailImportRule {
   id: string;
   emailAccountId: string;
@@ -1210,6 +1255,31 @@ export const api = {
     addEquityDraw: (propertyId: string, data: Record<string, unknown>) =>
       request<PlanEquityDraw>(`/portfolio-plans/properties/${propertyId}/equity-draws`, { method: "POST", body: JSON.stringify(data) }),
     removeEquityDraw: (drawId: string) => request<void>(`/portfolio-plans/equity-draws/${drawId}`, { method: "DELETE" }),
+  },
+
+  importBatches: {
+    list: () => request<ImportBatchSummary[]>("/import-batches"),
+    create: (name: string) =>
+      request<ImportBatch>("/import-batches", { method: "POST", body: JSON.stringify({ name }) }),
+    uploadFile: async (batchId: string, file: File, relativePath?: string): Promise<ImportBatchFile> => {
+      const form = new FormData();
+      form.append("file", file);
+      if (relativePath) form.append("relativePath", relativePath);
+      const res = await fetch(`${BASE}/import-batches/${batchId}/files`, { method: "POST", body: form });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Upload failed: ${res.status}`);
+      }
+      return res.json();
+    },
+    groups: (batchId: string) => request<ImportBatchReview>(`/import-batches/${batchId}/groups`),
+    apply: (batchId: string, data: Record<string, unknown>) =>
+      request<{ updated: number }>(`/import-batches/${batchId}/apply`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    complete: (batchId: string) => request<ImportBatch>(`/import-batches/${batchId}/complete`, { method: "POST" }),
+    remove: (batchId: string) => request<void>(`/import-batches/${batchId}`, { method: "DELETE" }),
   },
 
   emailImport: {

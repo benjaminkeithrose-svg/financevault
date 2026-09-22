@@ -265,6 +265,7 @@ model Document {
   transactions     Transaction[]
   auditLogs        AuditLog[]
   payPeriodEntries PayPeriodEntry[]
+  importBatchFiles ImportBatchFile[]
 
   @@index([reviewStatus])
   @@index([financialYearId])
@@ -986,4 +987,57 @@ model ImportedEmailAttachment {
 
   @@unique([emailAccountId, messageId, attachmentFilename])
   @@index([emailAccountId])
+}
+
+// ---------------------------------------------------------------------------
+// Bulk import — a first-time load of a whole folder of documents.
+//
+// The hard part of importing 100 files isn't the upload, it's that reviewing
+// 100 individually-proposed classifications is unusable. So a batch keeps
+// per-file state, and the review step groups files that look alike (same
+// proposed type, same source folder) so one decision can settle dozens.
+//
+// Per-file rows also mean a failure is isolated — one unreadable PDF never
+// abandons the other 99 — and that progress survives closing the page.
+// ---------------------------------------------------------------------------
+
+model ImportBatch {
+  id     String @id @default(cuid())
+  name   String
+  status String @default("UPLOADING") // UPLOADING | READY_FOR_REVIEW | COMPLETED
+
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  files ImportBatchFile[]
+}
+
+model ImportBatchFile {
+  id      String      @id @default(cuid())
+  batchId String
+  batch   ImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  originalFilename String
+  // Folder path the file came from, relative to the folder that was picked.
+  // A user's own folder structure ("Tax Returns/2023") is a strong and
+  // completely free classification signal, so it's kept rather than dropped.
+  relativePath String?
+
+  status       String  // IMPORTED | DUPLICATE | FAILED
+  errorMessage String?
+
+  documentId String?
+  document   Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  // What the classifier proposed, kept so the review screen can cluster and
+  // display without re-reading every document.
+  proposedDocumentType String?
+  confidenceScore      Float?
+  // Filename with digit runs collapsed ("Statement_2024_05" -> "Statement_#_#"),
+  // so a run of same-shaped filenames is recognisable as one set.
+  filenameTemplate String?
+
+  createdAt DateTime @default(now())
+
+  @@index([batchId])
 }

@@ -27,6 +27,7 @@ import { documentPacksRouter } from "./routes/documentPacks.js";
 import { portfolioPlansRouter } from "./routes/portfolioPlans.js";
 import { backupRouter } from "./routes/backup.js";
 import { emailImportRouter } from "./routes/emailImport.js";
+import { importBatchesRouter } from "./routes/importBatches.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -60,6 +61,7 @@ app.use("/api/document-packs", documentPacksRouter);
 app.use("/api/portfolio-plans", portfolioPlansRouter);
 app.use("/api/backup", backupRouter);
 app.use("/api/email-import", emailImportRouter);
+app.use("/api/import-batches", importBatchesRouter);
 
 app.use(errorHandler);
 
