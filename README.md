@@ -425,11 +425,25 @@ identical file is detected as a duplicate.
 
 ### Notes on OCR
 
-Image OCR (`tesseract.js`) downloads its language data from a CDN on first
-use. If that network call is unavailable, OCR fails safely: the document is
-still stored, flagged `NEEDS_CONFIRMATION` with a low confidence score, and
-can be classified manually. PDF text extraction does not require network
-access.
+Text is pulled out of a PDF in three escalating steps, cheapest first:
+`pdf-parse` reads the embedded text layer; failing that, MuPDF has a second
+go at it (it reads some PDFs `pdf-parse` can't); and only if there's no
+usable text layer at all — i.e. the PDF is a scan — is each page rendered to
+an image and OCR'd. Rendering is done by MuPDF's WebAssembly build, so
+there's no extra software to install beyond Node.js.
+
+Page OCR is capped at the first 10 pages of a document. Those carry the
+identifying details and the figures that matter for classification, and
+going further would make a bulk import of long scanned statements
+unreasonably slow.
+
+OCR language data (~11MB) is downloaded once on first use and cached in
+`server/storage/tessdata/`, after which OCR works with no network access at
+all. To set it up fully offline, put `eng.traineddata.gz` in that folder by
+hand and nothing is ever downloaded. If the data can't be fetched, the
+first document to need OCR waits up to 90 seconds, then every later one
+skips OCR immediately rather than repeating the wait — documents are still
+stored and flagged for manual classification, just without extracted text.
 
 ## Security posture (Stage 1)
 
