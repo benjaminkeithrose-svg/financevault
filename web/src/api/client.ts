@@ -55,10 +55,31 @@ export interface Person {
   tfn?: string | null;
   contactInfo?: string | null;
   notes?: string | null;
+  payFrequency?: string | null;
   entityRelationships?: PersonEntityRelationship[];
   documents?: Document[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PayPeriodEntry {
+  id: string;
+  personId: string;
+  periodStart: string;
+  periodEnd: string;
+  status: "LOGGED" | "NON_WORKING";
+  documentId?: string | null;
+  document?: Document | null;
+  amount?: number | null;
+  notes?: string | null;
+  createdAt: string;
+}
+
+export interface PayPeriod {
+  periodStart: string;
+  periodEnd: string;
+  status: "LOGGED" | "NON_WORKING" | "MISSING" | "PENDING";
+  entry: PayPeriodEntry | null;
 }
 
 export interface PersonEntityRelationship {
@@ -685,6 +706,17 @@ export interface Account {
   updatedAt: string;
 }
 
+export interface PackChip {
+  key: string;
+  label: string;
+  count: number;
+}
+
+export interface PackPreview {
+  categories: PackChip[];
+  generated: PackChip[];
+}
+
 export interface AuditLogEntry {
   id: string;
   timestamp: string;
@@ -720,6 +752,13 @@ export const api = {
     addRelationship: (data: Partial<PersonEntityRelationship>) =>
       request<PersonEntityRelationship>("/people/relationships", { method: "POST", body: JSON.stringify(data) }),
     removeRelationship: (id: string) => request<void>(`/people/relationships/${id}`, { method: "DELETE" }),
+    payPeriods: (personId: string, financialYearId: string) =>
+      request<{ payFrequency: string | null; periods: PayPeriod[] }>(
+        `/people/${personId}/pay-periods?financialYearId=${financialYearId}`
+      ),
+    logPayPeriod: (personId: string, data: Record<string, unknown>) =>
+      request<PayPeriodEntry>(`/people/${personId}/pay-periods`, { method: "PUT", body: JSON.stringify(data) }),
+    removePayPeriodEntry: (entryId: string) => request<void>(`/people/pay-periods/${entryId}`, { method: "DELETE" }),
   },
 
   documents: {
@@ -933,5 +972,24 @@ export const api = {
       }),
     removeAnnualSnapshot: (id: string) =>
       request<void>(`/commercial-properties/annual-snapshots/${id}`, { method: "DELETE" }),
+  },
+
+  documentPacks: {
+    preview: (entityId: string, financialYearId?: string) =>
+      request<PackPreview>(
+        `/document-packs/preview?entityId=${entityId}${financialYearId ? `&financialYearId=${financialYearId}` : ""}`
+      ),
+    generate: async (data: { entityId: string; financialYearId?: string; categories: string[]; generated: string[] }): Promise<Blob> => {
+      const res = await fetch(`${BASE}/document-packs/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Request failed: ${res.status}`);
+      }
+      return res.blob();
+    },
   },
 };

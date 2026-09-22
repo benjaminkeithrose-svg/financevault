@@ -19,6 +19,7 @@ import { graphRouter } from "./routes/graph.js";
 import { netWorthRouter } from "./routes/netWorth.js";
 import { taxRouter } from "./routes/tax.js";
 import { reportsRouter } from "./routes/reports.js";
+import { documentPacksRouter } from "./routes/documentPacks.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -48,6 +49,7 @@ app.use("/api/graph", graphRouter);
 app.use("/api/net-worth", netWorthRouter);
 app.use("/api/tax-records", taxRouter);
 app.use("/api/reports", reportsRouter);
+app.use("/api/document-packs", documentPacksRouter);
 
 app.use(errorHandler);
 

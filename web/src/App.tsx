@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { NavSidebar } from "./components/NavSidebar.js";
-import { Placeholder } from "./components/Placeholder.js";
 import { api } from "./api/client.js";
 import { Dashboard } from "./pages/Dashboard.js";
 import { Visualization } from "./pages/Visualization.js";
@@ -28,6 +27,7 @@ import { Assets } from "./pages/Assets.js";
 import { NetWorth } from "./pages/NetWorth.js";
 import { Tax } from "./pages/Tax.js";
 import { Reports } from "./pages/Reports.js";
+import { Packs } from "./pages/Packs.js";
 
 function TopSearch() {
   const [q, setQ] = useState("");
@@ -92,7 +92,7 @@ export default function App() {
           <Route path="/net-worth" element={<NetWorth />} />
           <Route path="/tax" element={<Tax />} />
           <Route path="/reports" element={<Reports />} />
-          <Route path="/packs" element={<Placeholder title="Document Packs" stage="Stage 4" />} />
+          <Route path="/packs" element={<Packs />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>

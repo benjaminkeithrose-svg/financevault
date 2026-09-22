@@ -39,21 +39,48 @@ datasource db {
 // ---------------------------------------------------------------------------
 
 model Person {
-  id          String    @id @default(cuid())
-  name        String
-  dateOfBirth DateTime?
-  tfn         String?
-  contactInfo String? // JSON blob: address, phone, email
-  notes       String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           String    @id @default(cuid())
+  name         String
+  dateOfBirth  DateTime?
+  tfn          String?
+  contactInfo  String? // JSON blob: address, phone, email
+  notes        String?
+  payFrequency String? // WEEKLY | FORTNIGHTLY | MONTHLY — used to work out expected pay periods for gap detection. Null = not tracked.
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   entityRelationships PersonEntityRelationship[]
+  payPeriodEntries    PayPeriodEntry[]
   // Documents reference this Person via the polymorphic DocumentLink
   // (targetType = PERSON, targetId = this.id) — no direct relation field,
   // consistent with how every other linkable record works.
 
   @@index([name])
+}
+
+// One expected/actual pay period for a Person whose income is tracked
+// (spec: Document Packs — PAYG/payslip tracking). A period is either
+// LOGGED (a payslip document is attached, optionally with an amount) or
+// NON_WORKING (explicitly marked as an intentional gap — e.g. a casual
+// employee's week off — so it's never flagged as a missing payslip).
+// Periods that are neither are simply absent rows; gap detection is done
+// in application code by generating the expected periods from
+// Person.payFrequency and diffing against what's stored here.
+model PayPeriodEntry {
+  id          String    @id @default(cuid())
+  personId    String
+  person      Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  periodStart DateTime
+  periodEnd   DateTime
+  status      String // LOGGED | NON_WORKING
+  documentId  String?
+  document    Document? @relation(fields: [documentId], references: [id])
+  amount      Float?
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  @@unique([personId, periodStart])
+  @@index([personId])
 }
 
 // Generic relationship from a Person to the Entity they act in relation to,
@@ -231,9 +258,10 @@ model Document {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  links        DocumentLink[]
-  transactions Transaction[]
-  auditLogs    AuditLog[]
+  links            DocumentLink[]
+  transactions     Transaction[]
+  auditLogs        AuditLog[]
+  payPeriodEntries PayPeriodEntry[]
 
   @@index([reviewStatus])
   @@index([financialYearId])

@@ -9,7 +9,34 @@ hand them to one quickly.
 See the project brief for the full design spec. This repository currently
 implements **Stage 1 and Stage 2** of the staged build, plus the Commercial
 Property module (Phase 1-3), a subsequent architecture correction, a
-Visualization tab, and Net Worth/Tax/Reports, all described below.
+Visualization tab, Net Worth/Tax/Reports, and Document Packs with payslip
+tracking (Stage 4), all described below.
+
+### Document Packs and pay tracking
+
+- **Pay tracking** (on a Person's detail page): set a pay frequency
+  (weekly/fortnightly/monthly) and the app generates the expected pay
+  periods for a chosen financial year. Each period is Logged (a payslip
+  document attached, amount optional), Non-working (explicitly marked as
+  an intentional gap — e.g. a casual employee's week off — so it's never
+  flagged as missing), Missing (expected, past, nothing recorded — a
+  genuine gap to chase up) or Not yet due (in the future, never flagged
+  early). A period can be logged by uploading a new file or linking an
+  already-uploaded one.
+- **Document Packs** (`/packs`): builds a ZIP for a chosen entity (and
+  optionally a financial year) from chips you tick yourself — nothing is
+  bundled automatically, so a pack only ever contains what you chose.
+  Document chips mirror the existing document type catalogue (Tax,
+  Property, Investment, Personal, Finance, Trust/Company, Commercial
+  Property) plus an Income chip covering payslips/PAYG summaries, whether
+  uploaded directly or logged against a tracked pay period. Generated
+  summary chips (Assets & Liabilities Statement, Tax Summary, Income
+  Summary) are CSVs built live from current records, never from uploaded
+  documents, so they're always current. A chip with nothing behind it
+  can't be selected. "Broker Pack" and "Accountant Pack" presets pre-tick
+  a sensible starting set — every chip stays editable afterwards. The ZIP
+  always includes a `document_index.csv` listing every original document
+  bundled (name, type, entity, date, financial year, source).
 
 ### Net Worth, Tax and Reports
 
@@ -118,9 +145,9 @@ ownership layer with the things being owned. This has been corrected:
   new file or link an existing one, so a document never needs duplicating
   across a property, a loan and a tax record.
 
-Tax, Reports and Document Packs still have nav entries and placeholder
-screens; their data model already exists in `server/prisma/schema.prisma`
-ahead of the UI.
+Tax and Reports were built out in a later stage (see below); Document
+Packs has also since been built (see "Document Packs and pay tracking"
+above).
 
 ### Commercial Property & Investment Module (Phase 1-3)
 

@@ -12,6 +12,7 @@ export const DOCUMENT_TYPES: DocumentTypeDef[] = [
   { name: "Tax Return", category: "Tax", keywords: ["tax return", "individual tax return", "income tax return"] },
   { name: "Notice of Assessment", category: "Tax", keywords: ["notice of assessment", "ato notice"] },
   { name: "PAYG Summary / Income Statement", category: "Tax", keywords: ["payg", "income statement", "payment summary"] },
+  { name: "Payslip", category: "Tax", keywords: ["payslip", "pay advice", "net pay", "gross pay", "pay slip"] },
   { name: "Tax Agent Correspondence", category: "Tax", keywords: ["tax agent", "accountant letter"] },
   { name: "ATO Correspondence", category: "Tax", keywords: ["australian taxation office", "ato.gov.au"] },
   { name: "Deduction Evidence", category: "Tax", keywords: ["receipt", "tax invoice"] },
