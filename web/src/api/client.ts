@@ -140,6 +140,134 @@ export interface Settings {
   allowExternalAiProcessing: boolean;
 }
 
+export interface Asset {
+  id: string;
+  name: string;
+  assetType: string;
+  entityId: string;
+  entity?: Entity;
+  acquisitionDate?: string | null;
+  acquisitionCost?: number | null;
+  currentValue?: number | null;
+  valuationDate?: string | null;
+  disposalDate?: string | null;
+  disposalValue?: number | null;
+  notes?: string | null;
+  property?: Property | null;
+  documents?: Document[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Property {
+  id: string;
+  assetId: string;
+  asset?: Asset;
+  entityId: string;
+  entity?: Entity;
+  address: string;
+  state?: string | null;
+  purchaseDate?: string | null;
+  settlementDate?: string | null;
+  purchasePrice?: number | null;
+  ownershipPercent?: number | null;
+  tenantInfo?: string | null;
+  propertyManager?: string | null;
+  liabilities?: Liability[];
+  documents?: Document[];
+  summary?: Record<string, { total: number; byCategory: Record<string, number> }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Liability {
+  id: string;
+  name: string;
+  liabilityType: string;
+  entityId: string;
+  entity?: Entity;
+  lender?: string | null;
+  originalAmount?: number | null;
+  currentBalance?: number | null;
+  interestRate?: number | null;
+  loanType?: string | null;
+  fixedPeriodEnds?: string | null;
+  repaymentAmount?: number | null;
+  maturityDate?: string | null;
+  securityPropertyId?: string | null;
+  securityProperty?: Property | null;
+  notes?: string | null;
+  documents?: Document[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InvestmentHolding {
+  id: string;
+  investmentAccountId: string;
+  code: string;
+  quantity?: number | null;
+  acquisitionDate?: string | null;
+  purchasePrice?: number | null;
+  disposalDate?: string | null;
+  salePrice?: number | null;
+  costBase?: number | null;
+  brokerage?: number | null;
+  notes?: string | null;
+}
+
+export interface InvestmentAccount {
+  id: string;
+  institution: string;
+  accountRef?: string | null;
+  entityId: string;
+  entity?: Entity;
+  accountType: string;
+  notes?: string | null;
+  holdings: InvestmentHolding[];
+  documents?: Document[];
+  realisedGainLoss?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Transaction {
+  id: string;
+  accountId: string;
+  date: string;
+  description: string;
+  amount: number;
+  counterparty?: string | null;
+  taxCategoryId?: string | null;
+  taxCategory?: TaxCategory | null;
+  entityId?: string | null;
+  financialYearId?: string | null;
+  financialYear?: FinancialYear | null;
+  taxRelevance: string;
+  status: string;
+  notes?: string | null;
+  documentId?: string | null;
+}
+
+export interface Account {
+  id: string;
+  institution: string;
+  accountName: string;
+  accountNumber?: string | null;
+  bsb?: string | null;
+  entityId: string;
+  entity?: Entity;
+  accountType: string;
+  currency: string;
+  openingBalance?: number | null;
+  currentBalance?: number | null;
+  transactions?: Transaction[];
+  documents?: Document[];
+  _count?: { transactions: number };
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AuditLogEntry {
   id: string;
   timestamp: string;
@@ -187,6 +315,10 @@ export const api = {
       request<DocumentLink>(`/documents/${id}/links`, { method: "POST", body: JSON.stringify(data) }),
     removeLink: (id: string, linkId: string) =>
       request<void>(`/documents/${id}/links/${linkId}`, { method: "DELETE" }),
+    byTarget: (targetType: string, targetId: string) =>
+      request<Array<DocumentLink & { document: Document }>>(
+        `/documents/by-target?targetType=${targetType}&targetId=${targetId}`
+      ),
     fileUrl: (id: string) => `${BASE}/documents/${id}/file`,
   },
 
@@ -207,5 +339,66 @@ export const api = {
 
   audit: {
     list: (documentId?: string) => request<AuditLogEntry[]>(`/audit${documentId ? `?documentId=${documentId}` : ""}`),
+  },
+
+  properties: {
+    list: (entityId?: string) => request<Property[]>(`/properties${entityId ? `?entityId=${entityId}` : ""}`),
+    get: (id: string) => request<Property>(`/properties/${id}`),
+    create: (data: Record<string, unknown>) => request<Property>("/properties", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<Property>(`/properties/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/properties/${id}`, { method: "DELETE" }),
+  },
+
+  liabilities: {
+    list: (params?: Record<string, string>) =>
+      request<Liability[]>(`/liabilities${params ? `?${new URLSearchParams(params)}` : ""}`),
+    get: (id: string) => request<Liability>(`/liabilities/${id}`),
+    create: (data: Record<string, unknown>) =>
+      request<Liability>("/liabilities", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<Liability>(`/liabilities/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/liabilities/${id}`, { method: "DELETE" }),
+  },
+
+  investments: {
+    list: (entityId?: string) => request<InvestmentAccount[]>(`/investments${entityId ? `?entityId=${entityId}` : ""}`),
+    get: (id: string) => request<InvestmentAccount>(`/investments/${id}`),
+    create: (data: Record<string, unknown>) =>
+      request<InvestmentAccount>("/investments", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<InvestmentAccount>(`/investments/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/investments/${id}`, { method: "DELETE" }),
+    addHolding: (accountId: string, data: Record<string, unknown>) =>
+      request<InvestmentHolding>(`/investments/${accountId}/holdings`, { method: "POST", body: JSON.stringify(data) }),
+    updateHolding: (holdingId: string, data: Record<string, unknown>) =>
+      request<InvestmentHolding>(`/investments/holdings/${holdingId}`, { method: "PUT", body: JSON.stringify(data) }),
+    removeHolding: (holdingId: string) =>
+      request<void>(`/investments/holdings/${holdingId}`, { method: "DELETE" }),
+  },
+
+  banking: {
+    listAccounts: (entityId?: string) => request<Account[]>(`/banking/accounts${entityId ? `?entityId=${entityId}` : ""}`),
+    getAccount: (id: string) => request<Account>(`/banking/accounts/${id}`),
+    createAccount: (data: Record<string, unknown>) =>
+      request<Account>("/banking/accounts", { method: "POST", body: JSON.stringify(data) }),
+    updateAccount: (id: string, data: Record<string, unknown>) =>
+      request<Account>(`/banking/accounts/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    removeAccount: (id: string) => request<void>(`/banking/accounts/${id}`, { method: "DELETE" }),
+    addTransaction: (accountId: string, data: Record<string, unknown>) =>
+      request<Transaction>(`/banking/accounts/${accountId}/transactions`, { method: "POST", body: JSON.stringify(data) }),
+    updateTransaction: (transactionId: string, data: Record<string, unknown>) =>
+      request<Transaction>(`/banking/transactions/${transactionId}`, { method: "PUT", body: JSON.stringify(data) }),
+    removeTransaction: (transactionId: string) =>
+      request<void>(`/banking/transactions/${transactionId}`, { method: "DELETE" }),
+  },
+
+  assets: {
+    list: (params?: Record<string, string>) => request<Asset[]>(`/assets${params ? `?${new URLSearchParams(params)}` : ""}`),
+    get: (id: string) => request<Asset>(`/assets/${id}`),
+    create: (data: Record<string, unknown>) => request<Asset>("/assets", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<Asset>(`/assets/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/assets/${id}`, { method: "DELETE" }),
   },
 };

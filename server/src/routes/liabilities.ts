@@ -1,0 +1,100 @@
+import { Router } from "express";
+import { z } from "zod";
+import { prisma } from "../db.js";
+import { asyncHandler } from "../middleware/errorHandler.js";
+import { logAudit } from "../services/audit.js";
+
+export const liabilitiesRouter = Router();
+
+liabilitiesRouter.get(
+  "/",
+  asyncHandler(async (req, res) => {
+    const { entityId, liabilityType } = req.query as Record<string, string | undefined>;
+    const where: Record<string, unknown> = {};
+    if (entityId) where.entityId = entityId;
+    if (liabilityType) where.liabilityType = liabilityType;
+    const liabilities = await prisma.liability.findMany({
+      where,
+      include: { entity: true, securityProperty: true },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json(liabilities);
+  })
+);
+
+liabilitiesRouter.get(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const liability = await prisma.liability.findUnique({
+      where: { id: req.params.id },
+      include: { entity: true, securityProperty: true },
+    });
+    if (!liability) {
+      res.status(404).json({ error: "Liability not found" });
+      return;
+    }
+    const links = await prisma.documentLink.findMany({
+      where: { targetType: "LIABILITY", targetId: liability.id },
+      include: { document: true },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json({ ...liability, documents: links.map((l) => l.document) });
+  })
+);
+
+const liabilityInput = z.object({
+  name: z.string().min(1),
+  liabilityType: z.string().min(1), // HOME_LOAN | INVESTMENT_LOAN | CREDIT_CARD | PERSONAL_LOAN | OTHER
+  entityId: z.string(),
+  lender: z.string().optional().nullable(),
+  originalAmount: z.number().optional().nullable(),
+  currentBalance: z.number().optional().nullable(),
+  interestRate: z.number().optional().nullable(),
+  loanType: z.string().optional().nullable(), // fixed | variable
+  fixedPeriodEnds: z.string().datetime().optional().nullable(),
+  repaymentAmount: z.number().optional().nullable(),
+  maturityDate: z.string().datetime().optional().nullable(),
+  securityPropertyId: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+function toData(parsed: z.infer<typeof liabilityInput>) {
+  return {
+    ...parsed,
+    fixedPeriodEnds: parsed.fixedPeriodEnds ? new Date(parsed.fixedPeriodEnds) : parsed.fixedPeriodEnds,
+    maturityDate: parsed.maturityDate ? new Date(parsed.maturityDate) : parsed.maturityDate,
+  };
+}
+
+liabilitiesRouter.post(
+  "/",
+  asyncHandler(async (req, res) => {
+    const parsed = liabilityInput.parse(req.body);
+    const liability = await prisma.liability.create({ data: toData(parsed), include: { entity: true, securityProperty: true } });
+    await logAudit("LIABILITY_CREATED", { targetType: "Liability", targetId: liability.id });
+    res.status(201).json(liability);
+  })
+);
+
+liabilitiesRouter.put(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const parsed = liabilityInput.partial().parse(req.body);
+    const liability = await prisma.liability.update({
+      where: { id: req.params.id },
+      data: toData(parsed as z.infer<typeof liabilityInput>),
+      include: { entity: true, securityProperty: true },
+    });
+    await logAudit("LIABILITY_CHANGED", { targetType: "Liability", targetId: liability.id, data: parsed });
+    res.json(liability);
+  })
+);
+
+liabilitiesRouter.delete(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    await prisma.liability.delete({ where: { id: req.params.id } });
+    await logAudit("LIABILITY_DELETED", { targetType: "Liability", targetId: req.params.id });
+    res.status(204).send();
+  })
+);

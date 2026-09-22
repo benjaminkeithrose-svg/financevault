@@ -57,6 +57,25 @@ documentsRouter.get(
   })
 );
 
+// Registered before "/:id" so the literal path isn't swallowed by the param route.
+documentsRouter.get(
+  "/by-target",
+  asyncHandler(async (req, res) => {
+    const targetType = String(req.query.targetType || "");
+    const targetId = String(req.query.targetId || "");
+    if (!targetType || !targetId) {
+      res.status(400).json({ error: "targetType and targetId are required" });
+      return;
+    }
+    const links = await prisma.documentLink.findMany({
+      where: { targetType, targetId },
+      include: { document: { include: { entity: true, financialYear: true, taxCategory: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json(links);
+  })
+);
+
 documentsRouter.get(
   "/:id",
   asyncHandler(async (req, res) => {

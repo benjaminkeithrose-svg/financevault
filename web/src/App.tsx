@@ -10,6 +10,15 @@ import { Entities } from "./pages/Entities.js";
 import { EntityDetail } from "./pages/EntityDetail.js";
 import { Search } from "./pages/Search.js";
 import { Settings } from "./pages/Settings.js";
+import { Properties } from "./pages/Properties.js";
+import { PropertyDetail } from "./pages/PropertyDetail.js";
+import { Liabilities } from "./pages/Liabilities.js";
+import { LiabilityDetail } from "./pages/LiabilityDetail.js";
+import { Investments } from "./pages/Investments.js";
+import { InvestmentAccountDetail } from "./pages/InvestmentAccountDetail.js";
+import { Banking } from "./pages/Banking.js";
+import { AccountDetail } from "./pages/AccountDetail.js";
+import { Assets } from "./pages/Assets.js";
 
 function TopSearch() {
   const [q, setQ] = useState("");
@@ -45,13 +54,17 @@ export default function App() {
           <Route path="/entities" element={<Entities />} />
           <Route path="/entities/:id" element={<EntityDetail />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/properties" element={<Placeholder title="Properties" stage="Stage 2" />} />
-          <Route path="/investments" element={<Placeholder title="Investments" stage="Stage 2" />} />
-          <Route path="/banking" element={<Placeholder title="Banking" stage="Stage 2" />} />
-          <Route path="/loans" element={<Placeholder title="Loans" stage="Stage 2" />} />
+          <Route path="/properties" element={<Properties />} />
+          <Route path="/properties/:id" element={<PropertyDetail />} />
+          <Route path="/investments" element={<Investments />} />
+          <Route path="/investments/:id" element={<InvestmentAccountDetail />} />
+          <Route path="/banking" element={<Banking />} />
+          <Route path="/banking/:id" element={<AccountDetail />} />
+          <Route path="/loans" element={<Liabilities scope="loans" />} />
+          <Route path="/liabilities" element={<Liabilities scope="all" />} />
+          <Route path="/liabilities/:id" element={<LiabilityDetail />} />
+          <Route path="/assets" element={<Assets />} />
           <Route path="/tax" element={<Placeholder title="Tax" stage="Stage 3" />} />
-          <Route path="/assets" element={<Placeholder title="Assets" stage="Stage 2" />} />
-          <Route path="/liabilities" element={<Placeholder title="Liabilities" stage="Stage 2" />} />
           <Route path="/reports" element={<Placeholder title="Reports" stage="Stage 3" />} />
           <Route path="/packs" element={<Placeholder title="Document Packs" stage="Stage 4" />} />
           <Route path="/settings" element={<Settings />} />

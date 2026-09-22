@@ -8,6 +8,11 @@ import { searchRouter } from "./routes/search.js";
 import { dashboardRouter } from "./routes/dashboard.js";
 import { auditRouter } from "./routes/audit.js";
 import { settingsRouter } from "./routes/settings.js";
+import { propertiesRouter } from "./routes/properties.js";
+import { liabilitiesRouter } from "./routes/liabilities.js";
+import { investmentsRouter } from "./routes/investments.js";
+import { bankingRouter } from "./routes/banking.js";
+import { assetsRouter } from "./routes/assets.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -26,6 +31,11 @@ app.use("/api/search", searchRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/audit", auditRouter);
 app.use("/api/settings", settingsRouter);
+app.use("/api/properties", propertiesRouter);
+app.use("/api/liabilities", liabilitiesRouter);
+app.use("/api/investments", investmentsRouter);
+app.use("/api/banking", bankingRouter);
+app.use("/api/assets", assetsRouter);
 
 app.use(errorHandler);
 
