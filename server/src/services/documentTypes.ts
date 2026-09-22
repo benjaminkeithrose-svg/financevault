@@ -1,0 +1,77 @@
+// Document type catalogue (spec section 13) with keyword hints used by the
+// heuristic classifier. Not exhaustive — users can still enter free text.
+
+export interface DocumentTypeDef {
+  name: string;
+  category: "Tax" | "Property" | "Investment" | "Personal" | "Finance" | "Trust/Company";
+  keywords: string[];
+}
+
+export const DOCUMENT_TYPES: DocumentTypeDef[] = [
+  // Tax
+  { name: "Tax Return", category: "Tax", keywords: ["tax return", "individual tax return", "income tax return"] },
+  { name: "Notice of Assessment", category: "Tax", keywords: ["notice of assessment", "ato notice"] },
+  { name: "PAYG Summary / Income Statement", category: "Tax", keywords: ["payg", "income statement", "payment summary"] },
+  { name: "Tax Agent Correspondence", category: "Tax", keywords: ["tax agent", "accountant letter"] },
+  { name: "ATO Correspondence", category: "Tax", keywords: ["australian taxation office", "ato.gov.au"] },
+  { name: "Deduction Evidence", category: "Tax", keywords: ["receipt", "tax invoice"] },
+
+  // Property
+  { name: "Contract of Sale", category: "Property", keywords: ["contract of sale", "vendor", "purchaser"] },
+  { name: "Settlement Statement", category: "Property", keywords: ["settlement statement", "settlement date"] },
+  { name: "Loan Document", category: "Property", keywords: ["loan agreement", "mortgage document"] },
+  { name: "Loan Statement", category: "Property", keywords: ["loan statement", "home loan statement"] },
+  { name: "Rental Statement", category: "Property", keywords: ["rental statement", "property management statement", "tenancy"] },
+  { name: "Insurance", category: "Property", keywords: ["insurance", "policy schedule", "renewal notice", "premium"] },
+  { name: "Council Rates", category: "Property", keywords: ["council rates", "rates notice"] },
+  { name: "Water Rates", category: "Property", keywords: ["water rates", "water usage"] },
+  { name: "Land Tax", category: "Property", keywords: ["land tax"] },
+  { name: "Repairs & Maintenance", category: "Property", keywords: ["repair", "maintenance invoice"] },
+  { name: "Property Management", category: "Property", keywords: ["property manager", "letting fee", "management fee"] },
+  { name: "Depreciation Schedule", category: "Property", keywords: ["depreciation schedule", "quantity surveyor", "capital allowance"] },
+
+  // Investment
+  { name: "Trade Confirmation", category: "Investment", keywords: ["trade confirmation", "contract note"] },
+  { name: "Dividend Statement", category: "Investment", keywords: ["dividend statement", "dividend payment"] },
+  { name: "Distribution Statement", category: "Investment", keywords: ["distribution statement", "annual tax statement"] },
+  { name: "CGT Statement", category: "Investment", keywords: ["capital gains", "cgt statement"] },
+  { name: "Brokerage Statement", category: "Investment", keywords: ["brokerage", "share registry"] },
+  { name: "Portfolio Statement", category: "Investment", keywords: ["portfolio statement", "portfolio valuation"] },
+
+  // Personal
+  { name: "Motor Vehicle Insurance", category: "Personal", keywords: ["motor vehicle insurance", "car insurance", "comprehensive insurance"] },
+  { name: "Vehicle Registration", category: "Personal", keywords: ["registration renewal", "vehicle registration"] },
+  { name: "Utilities", category: "Personal", keywords: ["electricity", "gas bill", "utility bill"] },
+  { name: "Home Insurance", category: "Personal", keywords: ["home and contents", "home insurance", "building insurance"] },
+  { name: "Medical", category: "Personal", keywords: ["medicare", "health fund", "medical invoice"] },
+  { name: "Major Purchase", category: "Personal", keywords: ["tax invoice", "purchase receipt"] },
+
+  // Finance
+  { name: "Loan Application", category: "Finance", keywords: ["loan application"] },
+  { name: "Loan Approval", category: "Finance", keywords: ["loan approval", "letter of offer"] },
+  { name: "Valuation", category: "Finance", keywords: ["valuation report", "property valuation"] },
+  { name: "Bank Statement", category: "Finance", keywords: ["bank statement", "account statement"] },
+  { name: "Broker Correspondence", category: "Finance", keywords: ["mortgage broker"] },
+  { name: "Asset & Liability Statement", category: "Finance", keywords: ["asset and liability statement", "statement of position"] },
+
+  // Trust/Company
+  { name: "Trust Deed", category: "Trust/Company", keywords: ["trust deed", "declaration of trust"] },
+  { name: "Trust Amendment", category: "Trust/Company", keywords: ["deed of variation", "trust amendment"] },
+  { name: "Company Constitution", category: "Trust/Company", keywords: ["company constitution"] },
+  { name: "ASIC Document", category: "Trust/Company", keywords: ["asic", "australian securities and investments commission"] },
+  { name: "Annual Statement", category: "Trust/Company", keywords: ["annual statement", "annual review"] },
+  { name: "Distribution Statement (Trust)", category: "Trust/Company", keywords: ["trust distribution", "beneficiary distribution"] },
+  { name: "Financial Statement", category: "Trust/Company", keywords: ["financial statements", "balance sheet", "profit and loss"] },
+];
+
+export function findDocumentTypeByKeyword(text: string): DocumentTypeDef | null {
+  const lower = text.toLowerCase();
+  let best: { def: DocumentTypeDef; hits: number } | null = null;
+  for (const def of DOCUMENT_TYPES) {
+    const hits = def.keywords.filter((k) => lower.includes(k)).length;
+    if (hits > 0 && (!best || hits > best.hits)) {
+      best = { def, hits };
+    }
+  }
+  return best?.def ?? null;
+}

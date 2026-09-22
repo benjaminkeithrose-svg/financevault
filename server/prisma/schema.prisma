@@ -1,0 +1,395 @@
+// Financial Vault — data model
+//
+// Design principle (spec section 1 & 34): documents, entities, assets,
+// liabilities, accounts and transactions are independent records connected
+// by relationships and link tables, not by folders. A single document can be
+// linked to many things at once. New entity types/relationships never
+// require a schema change — EntityRelationship and DocumentLink are generic.
+//
+// SQLite has no native enum type, so fields that would otherwise be enums
+// are plain strings whose allowed values are validated at the API layer
+// (see server/src/routes/*.ts zod schemas). The allowed values are listed
+// in comments next to each field below.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Entities — the generic node in the ownership/relationship graph
+// (individuals, joint ownership, trusts, companies, super funds,
+// investment accounts, bank accounts, properties, other)
+// ---------------------------------------------------------------------------
+
+model Entity {
+  id            String   @id @default(cuid())
+  name          String
+  entityType    String   // INDIVIDUAL | JOINT | TRUST | COMPANY | SUPER_FUND | INVESTMENT_ACCOUNT | BANK_ACCOUNT | PROPERTY | OTHER
+  abn           String?
+  tfn           String?
+  acn           String?
+  ownershipInfo String?  // free text / JSON describing ownership split, trustee, directors etc.
+  contactInfo   String?  // JSON blob: address, phone, email, adviser contacts
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relationships where this entity is the source ("Benjamin owns XYZ Pty Ltd")
+  relationshipsFrom EntityRelationship[] @relation("RelationshipFrom")
+  // Relationships where this entity is the target
+  relationshipsTo   EntityRelationship[] @relation("RelationshipTo")
+
+  documents          Document[]
+  assets             Asset[]
+  liabilities        Liability[]
+  accounts           Account[]
+  transactions       Transaction[]
+  properties         Property[]
+  investmentAccounts InvestmentAccount[]
+  taxRecords         TaxRecord[]
+
+  @@index([entityType])
+}
+
+// Generic, non-hardcoded relationship between two entities, e.g.
+// "trustee of", "director of", "beneficiary of", "owns", "member of".
+model EntityRelationship {
+  id               String   @id @default(cuid())
+  fromEntityId     String
+  toEntityId       String
+  relationshipType String   // free-form label, e.g. TRUSTEE_OF, OWNS, DIRECTOR_OF, BENEFICIARY_OF
+  ownershipPercent Float?
+  notes            String?
+  createdAt        DateTime @default(now())
+
+  fromEntity Entity @relation("RelationshipFrom", fields: [fromEntityId], references: [id], onDelete: Cascade)
+  toEntity   Entity @relation("RelationshipTo", fields: [toEntityId], references: [id], onDelete: Cascade)
+
+  @@index([fromEntityId])
+  @@index([toEntityId])
+}
+
+// ---------------------------------------------------------------------------
+// Financial years — Australian FY (1 Jul -> 30 Jun), e.g. "2026-27"
+// ---------------------------------------------------------------------------
+
+model FinancialYear {
+  id        String   @id @default(cuid())
+  label     String   @unique // "2026-27"
+  startDate DateTime // 2026-07-01
+  endDate   DateTime // 2027-06-30
+
+  documents    Document[]
+  transactions Transaction[]
+  taxRecords   TaxRecord[]
+}
+
+// ---------------------------------------------------------------------------
+// Tax categories — organiser labels, not tax advice
+// ---------------------------------------------------------------------------
+
+model TaxCategory {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  group       String  // INCOME | EXPENSE | CAPITAL | OTHER
+  description String?
+
+  documents    Document[]
+  transactions Transaction[]
+}
+
+// ---------------------------------------------------------------------------
+// Documents — first-class objects, immutable originals + metadata/versions
+// ---------------------------------------------------------------------------
+
+model Document {
+  id               String @id @default(cuid())
+  originalFilename String
+  storedFilename   String
+  filePath         String
+  mimeType         String
+  fileSize         Int
+  fileHash         String @unique // sha256 of original bytes — integrity + de-dup
+  version          Int    @default(1)
+
+  documentType String? // e.g. "Insurance", "Tax Return", "Rental Statement" — see DocumentType catalogue in app code
+  source       String  @default("MANUAL_UPLOAD") // MANUAL_UPLOAD | GMAIL | CSV_IMPORT | ...
+
+  uploadDate   DateTime  @default(now())
+  documentDate DateTime?
+
+  financialYearId String?
+  financialYear   FinancialYear? @relation(fields: [financialYearId], references: [id])
+
+  entityId String?
+  entity   Entity? @relation(fields: [entityId], references: [id])
+
+  amount   Float?
+  supplier String?
+
+  taxCategoryId String?
+  taxCategory   TaxCategory? @relation(fields: [taxCategoryId], references: [id])
+  taxRelevance  String       @default("UNKNOWN") // UNKNOWN | NOT_RELEVANT | POSSIBLE | CONFIRMED
+
+  confidenceScore Float? // 0-1, set by the classifier
+  ocrText         String?
+  aiSummary       String?
+  tags            String? // comma-separated
+  notes           String?
+
+  retentionDate DateTime?
+  reviewStatus  String    @default("PENDING_CLASSIFICATION") // PENDING_CLASSIFICATION | NEEDS_CONFIRMATION | MISSING_INFORMATION | CONFIRMED | ARCHIVED
+
+  renewalDate DateTime? // for insurance/registrations etc.
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  links        DocumentLink[]
+  transactions Transaction[]
+  auditLogs    AuditLog[]
+
+  @@index([reviewStatus])
+  @@index([financialYearId])
+  @@index([entityId])
+}
+
+// Generic polymorphic link so one document can be attached to many records
+// at once (an insurance invoice linked to an entity, a property AND a tax
+// record simultaneously) without duplicating the document.
+model DocumentLink {
+  id         String   @id @default(cuid())
+  documentId String
+  targetType String   // ENTITY | ASSET | LIABILITY | ACCOUNT | PROPERTY | INVESTMENT_ACCOUNT | TRANSACTION | TAX_RECORD
+  targetId   String
+  label      String? // e.g. "Renewal", "Supporting evidence"
+  createdAt  DateTime @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([targetType, targetId])
+}
+
+// ---------------------------------------------------------------------------
+// Asset & liability registers (generic — property/vehicle/shares/other)
+// ---------------------------------------------------------------------------
+
+model Asset {
+  id               String    @id @default(cuid())
+  name             String
+  assetType        String    // PROPERTY | VEHICLE | SHARES | MANAGED_FUND | EQUIPMENT | SUPERANNUATION | CASH | OTHER
+  entityId         String
+  entity           Entity    @relation(fields: [entityId], references: [id])
+  acquisitionDate  DateTime?
+  acquisitionCost  Float?
+  currentValue     Float?
+  valuationDate    DateTime?
+  disposalDate     DateTime?
+  disposalValue    Float?
+  depreciationInfo String? // JSON: method, rate, effective life
+  notes            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  property Property?
+
+  @@index([entityId])
+  @@index([assetType])
+}
+
+model Liability {
+  id                 String    @id @default(cuid())
+  name               String
+  liabilityType      String    // HOME_LOAN | INVESTMENT_LOAN | CREDIT_CARD | PERSONAL_LOAN | OTHER
+  entityId           String
+  entity             Entity    @relation(fields: [entityId], references: [id])
+  lender             String?
+  originalAmount     Float?
+  currentBalance     Float?
+  interestRate       Float?
+  loanType           String? // fixed/variable
+  fixedPeriodEnds    DateTime?
+  repaymentAmount    Float?
+  maturityDate       DateTime?
+  securityPropertyId String?
+  notes              String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  securityProperty Property? @relation(fields: [securityPropertyId], references: [id])
+
+  @@index([entityId])
+}
+
+// ---------------------------------------------------------------------------
+// Properties (stage 2 module — schema present now so the model never needs
+// to change; UI ships later)
+// ---------------------------------------------------------------------------
+
+model Property {
+  id               String    @id @default(cuid())
+  assetId          String    @unique
+  asset            Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  entityId         String
+  entity           Entity    @relation(fields: [entityId], references: [id])
+  address          String
+  state            String?
+  purchaseDate     DateTime?
+  settlementDate   DateTime?
+  purchasePrice    Float?
+  ownershipPercent Float?
+  tenantInfo       String?
+  propertyManager  String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  liabilities Liability[]
+
+  @@index([entityId])
+}
+
+// ---------------------------------------------------------------------------
+// Investment accounts (stage 2 module — schema present now)
+// ---------------------------------------------------------------------------
+
+model InvestmentAccount {
+  id          String   @id @default(cuid())
+  institution String
+  accountRef  String?
+  entityId    String
+  entity      Entity   @relation(fields: [entityId], references: [id])
+  accountType String   // SHARES | ETF | MANAGED_FUND | TERM_DEPOSIT | BOND | OTHER
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  holdings InvestmentHolding[]
+
+  @@index([entityId])
+}
+
+model InvestmentHolding {
+  id                  String   @id @default(cuid())
+  investmentAccountId String
+  investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+  code                String // e.g. ASX ticker
+  quantity            Float?
+  acquisitionDate     DateTime?
+  purchasePrice       Float?
+  disposalDate        DateTime?
+  salePrice           Float?
+  costBase            Float?
+  brokerage           Float?
+  notes               String?
+
+  @@index([investmentAccountId])
+}
+
+// ---------------------------------------------------------------------------
+// Banking — generic account + transactions
+// ---------------------------------------------------------------------------
+
+model Account {
+  id             String   @id @default(cuid())
+  institution    String
+  accountName    String
+  accountNumber  String?
+  bsb            String?
+  entityId       String
+  entity         Entity   @relation(fields: [entityId], references: [id])
+  accountType    String   // TRANSACTION | SAVINGS | OFFSET | CREDIT_CARD | OTHER
+  currency       String   @default("AUD")
+  openingBalance Float?
+  currentBalance Float?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  transactions Transaction[]
+
+  @@index([entityId])
+}
+
+model Transaction {
+  id              String   @id @default(cuid())
+  accountId       String
+  account         Account  @relation(fields: [accountId], references: [id])
+  date            DateTime
+  description     String
+  amount          Float
+  counterparty    String?
+  taxCategoryId   String?
+  taxCategory     TaxCategory? @relation(fields: [taxCategoryId], references: [id])
+  entityId        String?
+  entity          Entity?  @relation(fields: [entityId], references: [id])
+  financialYearId String?
+  financialYear   FinancialYear? @relation(fields: [financialYearId], references: [id])
+  taxRelevance    String   @default("UNKNOWN") // UNKNOWN | NOT_RELEVANT | POSSIBLE | CONFIRMED
+  status          String   @default("UNREVIEWED") // UNREVIEWED | CATEGORISED | MATCHED | RECONCILED | NEEDS_REVIEW
+  notes           String?
+
+  documentId String?
+  document   Document? @relation(fields: [documentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([accountId])
+  @@index([financialYearId])
+  @@index([entityId])
+}
+
+// ---------------------------------------------------------------------------
+// Tax records — links income/expense/capital-gain items to a financial year
+// without assuming a category always implies a tax treatment (spec section 8)
+// ---------------------------------------------------------------------------
+
+model TaxRecord {
+  id              String        @id @default(cuid())
+  financialYearId String
+  financialYear   FinancialYear @relation(fields: [financialYearId], references: [id])
+  entityId        String
+  entity          Entity        @relation(fields: [entityId], references: [id])
+  recordType      String        // INCOME | EXPENSE | CAPITAL_GAIN | CAPITAL_LOSS
+  description     String
+  amount          Float?
+  status          String        @default("RECORDED") // RECORDED | ESTIMATED | NEEDS_REVIEW | ACCOUNTANT_CONFIRMED
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([financialYearId])
+  @@index([entityId])
+}
+
+// ---------------------------------------------------------------------------
+// Audit log — every significant event, never silently overwritten
+// ---------------------------------------------------------------------------
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  timestamp  DateTime @default(now())
+  action     String   // DOCUMENT_IMPORTED | DOCUMENT_CLASSIFIED | METADATA_CHANGED | ...
+  targetType String?
+  targetId   String?
+  documentId String?
+  document   Document? @relation(fields: [documentId], references: [id])
+  details    String? // JSON
+
+  @@index([timestamp])
+  @@index([action])
+}
+
+// ---------------------------------------------------------------------------
+// Application settings — single-row config (e.g. external AI processing toggle)
+// ---------------------------------------------------------------------------
+
+model Settings {
+  id                        Int     @id @default(1)
+  allowExternalAiProcessing Boolean @default(false)
+}
