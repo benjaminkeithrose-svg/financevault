@@ -3,7 +3,7 @@
 
 export interface DocumentTypeDef {
   name: string;
-  category: "Tax" | "Property" | "Investment" | "Personal" | "Finance" | "Trust/Company";
+  category: "Tax" | "Property" | "Investment" | "Personal" | "Finance" | "Trust/Company" | "Commercial Property";
   keywords: string[];
 }
 
@@ -62,6 +62,23 @@ export const DOCUMENT_TYPES: DocumentTypeDef[] = [
   { name: "Annual Statement", category: "Trust/Company", keywords: ["annual statement", "annual review"] },
   { name: "Distribution Statement (Trust)", category: "Trust/Company", keywords: ["trust distribution", "beneficiary distribution"] },
   { name: "Financial Statement", category: "Trust/Company", keywords: ["financial statements", "balance sheet", "profit and loss"] },
+
+  // Commercial Property (spec section 29)
+  { name: "Lease", category: "Commercial Property", keywords: ["lease agreement", "deed of lease", "agreement to lease"] },
+  { name: "Lease Amendment", category: "Commercial Property", keywords: ["deed of variation of lease", "lease amendment"] },
+  { name: "Rent Review", category: "Commercial Property", keywords: ["rent review notice", "market rent review"] },
+  { name: "Property Management Agreement", category: "Commercial Property", keywords: ["management agreement", "agency agreement"] },
+  { name: "Outgoings Statement", category: "Commercial Property", keywords: ["outgoings statement", "outgoings estimate", "outgoings reconciliation"] },
+  { name: "Tenant Invoice", category: "Commercial Property", keywords: ["tax invoice to tenant", "tenant invoice"] },
+  { name: "Tenant Recovery", category: "Commercial Property", keywords: ["outgoings recovery", "recovery notice"] },
+  { name: "Bank Guarantee", category: "Commercial Property", keywords: ["bank guarantee", "guarantee document"] },
+  { name: "Bond", category: "Commercial Property", keywords: ["rental bond", "lease bond"] },
+  { name: "Quantity Surveyor Report", category: "Commercial Property", keywords: ["quantity surveyor", "tax depreciation report"] },
+  { name: "Capital Works Invoice", category: "Commercial Property", keywords: ["capital works", "fitout invoice"] },
+  { name: "Building Inspection", category: "Commercial Property", keywords: ["building inspection report", "dilapidation report"] },
+  { name: "Environmental Report", category: "Commercial Property", keywords: ["environmental report", "contamination report"] },
+  { name: "Fire Compliance", category: "Commercial Property", keywords: ["fire safety statement", "essential services", "afss"] },
+  { name: "Building Certification", category: "Commercial Property", keywords: ["occupation certificate", "building certification"] },
 ];
 
 export function findDocumentTypeByKeyword(text: string): DocumentTypeDef | null {

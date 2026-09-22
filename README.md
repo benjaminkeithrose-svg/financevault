@@ -55,6 +55,46 @@ Tax, Reports and Document Packs still have nav entries and placeholder
 screens; their data model already exists in `server/prisma/schema.prisma`
 ahead of the UI.
 
+### Commercial Property & Investment Module (Phase 1 & 2)
+
+Commercial property is a distinct asset class from residential — it isn't
+squeezed into the residential Property UI. Reachable via a Residential /
+Commercial toggle on the Properties page.
+
+- **CommercialProperty**: multi-classification (e.g. "Industrial /
+  Warehouse"), characteristics (NLA/GLA/site area, zoning, construction,
+  car spaces), valuation, all backed by its own Asset row like residential
+  Property is.
+- **Tenancy/Lease**: tenant details, lease term, rent, outgoings
+  arrangement (gross/net/triple-net/gross+recoveries), incentives, bank
+  guarantee/bond, review mechanism — with a **Rent Review** history per
+  tenancy.
+- **Outgoings**: every record carries gross expense, recoverable flag and
+  recovered amount, so the net landlord cost is never conflated with the
+  full gross expense.
+- **Capital expenditure**: kept separate from operating outgoings, with its
+  own tax-treatment status (Confirmed/Proposed/Needs review) — the system
+  never decides deductibility.
+- **Occupancy snapshots**: historical vacancy record, stored point-in-time
+  rather than only ever showing today's figure.
+- **Annual snapshots**: an explicit, immutable per-financial-year record
+  (value/debt/equity/NOI/yields/LVR). A "Generate & save from current
+  figures" action pre-fills it from the live calculation, but saving never
+  gets silently overwritten by later changes — a loan added afterwards
+  changes the live metrics, not the saved snapshot.
+- **Live metrics** (computed on read, formula shown alongside every
+  figure): NOI, gross/net yield, cap rate (toggle current valuation vs
+  purchase price as the basis), LVR/equity across all loans secured
+  against the property, occupancy/vacancy, tenant concentration (% of rent
+  and % of NLA per tenant), and WALE by both lease-count and rent-weighted
+  methodology, clearly labelled. None of this is investment advice.
+- Loans can now secure either a residential or a commercial property, with
+  commercial-specific fields (interest-only vs P&I, repayment frequency,
+  loan/establishment/valuation fees).
+- DSCR/interest coverage, acquisition modelling, scenario modelling and a
+  portfolio-level roll-up (spec Phase 3) plus lease-PDF extraction and
+  alerts (Phase 4) are intentionally not built yet.
+
 ### UI styling
 
 A `PREFERENCES.md` in this repo sets visual/interaction defaults (light

@@ -29,12 +29,12 @@ datasource db {
 model Entity {
   id            String   @id @default(cuid())
   name          String
-  entityType    String   // INDIVIDUAL | JOINT | TRUST | COMPANY | SUPER_FUND | INVESTMENT_ACCOUNT | BANK_ACCOUNT | PROPERTY | OTHER
+  entityType    String // INDIVIDUAL | JOINT | TRUST | COMPANY | SUPER_FUND | INVESTMENT_ACCOUNT | BANK_ACCOUNT | PROPERTY | OTHER
   abn           String?
   tfn           String?
   acn           String?
-  ownershipInfo String?  // free text / JSON describing ownership split, trustee, directors etc.
-  contactInfo   String?  // JSON blob: address, phone, email, adviser contacts
+  ownershipInfo String? // free text / JSON describing ownership split, trustee, directors etc.
+  contactInfo   String? // JSON blob: address, phone, email, adviser contacts
   notes         String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -44,14 +44,15 @@ model Entity {
   // Relationships where this entity is the target
   relationshipsTo   EntityRelationship[] @relation("RelationshipTo")
 
-  documents          Document[]
-  assets             Asset[]
-  liabilities        Liability[]
-  accounts           Account[]
-  transactions       Transaction[]
-  properties         Property[]
-  investmentAccounts InvestmentAccount[]
-  taxRecords         TaxRecord[]
+  documents            Document[]
+  assets               Asset[]
+  liabilities          Liability[]
+  accounts             Account[]
+  transactions         Transaction[]
+  properties           Property[]
+  commercialProperties CommercialProperty[]
+  investmentAccounts   InvestmentAccount[]
+  taxRecords           TaxRecord[]
 
   @@index([entityType])
 }
@@ -62,7 +63,7 @@ model EntityRelationship {
   id               String   @id @default(cuid())
   fromEntityId     String
   toEntityId       String
-  relationshipType String   // free-form label, e.g. TRUSTEE_OF, OWNS, DIRECTOR_OF, BENEFICIARY_OF
+  relationshipType String // free-form label, e.g. TRUSTEE_OF, OWNS, DIRECTOR_OF, BENEFICIARY_OF
   ownershipPercent Float?
   notes            String?
   createdAt        DateTime @default(now())
@@ -84,9 +85,10 @@ model FinancialYear {
   startDate DateTime // 2026-07-01
   endDate   DateTime // 2027-06-30
 
-  documents    Document[]
-  transactions Transaction[]
-  taxRecords   TaxRecord[]
+  documents               Document[]
+  transactions            Transaction[]
+  taxRecords              TaxRecord[]
+  annualPropertySnapshots AnnualPropertySnapshot[]
 }
 
 // ---------------------------------------------------------------------------
@@ -96,7 +98,7 @@ model FinancialYear {
 model TaxCategory {
   id          String  @id @default(cuid())
   name        String  @unique
-  group       String  // INCOME | EXPENSE | CAPITAL | OTHER
+  group       String // INCOME | EXPENSE | CAPITAL | OTHER
   description String?
 
   documents    Document[]
@@ -165,7 +167,7 @@ model Document {
 model DocumentLink {
   id         String   @id @default(cuid())
   documentId String
-  targetType String   // ENTITY | ASSET | LIABILITY | ACCOUNT | PROPERTY | INVESTMENT_ACCOUNT | TRANSACTION | TAX_RECORD
+  targetType String // ENTITY | ASSET | LIABILITY | ACCOUNT | PROPERTY | COMMERCIAL_PROPERTY | TENANCY | INVESTMENT_ACCOUNT | TRANSACTION | TAX_RECORD
   targetId   String
   label      String? // e.g. "Renewal", "Supporting evidence"
   createdAt  DateTime @default(now())
@@ -183,7 +185,7 @@ model DocumentLink {
 model Asset {
   id               String    @id @default(cuid())
   name             String
-  assetType        String    // PROPERTY | VEHICLE | SHARES | MANAGED_FUND | EQUIPMENT | SUPERANNUATION | CASH | OTHER
+  assetType        String // PROPERTY | COMMERCIAL_PROPERTY | VEHICLE | SHARES | MANAGED_FUND | EQUIPMENT | SUPERANNUATION | CASH | OTHER
   entityId         String
   entity           Entity    @relation(fields: [entityId], references: [id])
   acquisitionDate  DateTime?
@@ -197,34 +199,46 @@ model Asset {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  property Property?
+  property           Property?
+  commercialProperty CommercialProperty?
 
   @@index([entityId])
   @@index([assetType])
 }
 
 model Liability {
-  id                 String    @id @default(cuid())
-  name               String
-  liabilityType      String    // HOME_LOAN | INVESTMENT_LOAN | CREDIT_CARD | PERSONAL_LOAN | OTHER
-  entityId           String
-  entity             Entity    @relation(fields: [entityId], references: [id])
-  lender             String?
-  originalAmount     Float?
-  currentBalance     Float?
-  interestRate       Float?
-  loanType           String? // fixed/variable
-  fixedPeriodEnds    DateTime?
-  repaymentAmount    Float?
-  maturityDate       DateTime?
-  securityPropertyId String?
-  notes              String?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id                           String    @id @default(cuid())
+  name                         String
+  liabilityType                String // HOME_LOAN | INVESTMENT_LOAN | CREDIT_CARD | PERSONAL_LOAN | OTHER
+  entityId                     String
+  entity                       Entity    @relation(fields: [entityId], references: [id])
+  lender                       String?
+  originalAmount               Float?
+  currentBalance               Float?
+  interestRate                 Float?
+  loanType                     String? // fixed/variable
+  fixedPeriodEnds              DateTime?
+  repaymentAmount              Float?
+  maturityDate                 DateTime?
+  securityPropertyId           String?
+  securityCommercialPropertyId String?
+  // Commercial-specific loan detail (spec section 17) — nullable, only
+  // meaningful when this liability secures a CommercialProperty.
+  interestOnly                 Boolean?
+  loanTermYears                Float?
+  repaymentFrequency           String? // WEEKLY | FORTNIGHTLY | MONTHLY | QUARTERLY
+  loanFees                     Float?
+  establishmentFees            Float?
+  valuationFees                Float?
+  notes                        String?
+  createdAt                    DateTime  @default(now())
+  updatedAt                    DateTime  @updatedAt
 
-  securityProperty Property? @relation(fields: [securityPropertyId], references: [id])
+  securityProperty           Property?           @relation(fields: [securityPropertyId], references: [id])
+  securityCommercialProperty CommercialProperty? @relation(fields: [securityCommercialPropertyId], references: [id])
 
   @@index([entityId])
+  @@index([securityCommercialPropertyId])
 }
 
 // ---------------------------------------------------------------------------
@@ -255,6 +269,227 @@ model Property {
 }
 
 // ---------------------------------------------------------------------------
+// Commercial property — a distinct asset class from residential Property
+// (spec: Commercial Property & Investment Module, section 37). Backed by an
+// Asset like Property is, but with its own specialised profile, tenancies,
+// leases, outgoings and capital expenditure rather than reusing the
+// residential model.
+// ---------------------------------------------------------------------------
+
+model CommercialProperty {
+  id       String @id @default(cuid())
+  assetId  String @unique
+  asset    Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  entityId String
+  entity   Entity @relation(fields: [entityId], references: [id])
+
+  name          String
+  address       String
+  state         String?
+  postcode      String?
+  // Comma-separated list, e.g. "INDUSTRIAL,WAREHOUSE" — a property can carry
+  // multiple classifications (spec section 2). Allowed values: OFFICE |
+  // RETAIL | INDUSTRIAL | WAREHOUSE | LOGISTICS | MEDICAL | CHILDCARE |
+  // HOSPITALITY | MIXED_USE | DEVELOPMENT_SITE | LAND | OTHER
+  propertyTypes String
+
+  ownershipPercent Float?
+  purchaseDate     DateTime?
+  settlementDate   DateTime?
+  purchasePrice    Float?
+  valuationDate    DateTime?
+  valuer           String?
+
+  // Characteristics
+  buildingArea      Float?
+  landArea          Float?
+  areaUnit          String? // SQM | HECTARES | ACRES
+  numberOfTenancies Int?
+  numberOfBuildings Int?
+  carSpaces         Int?
+  zoning            String?
+  constructionType  String?
+  yearBuilt         Int?
+  refurbishmentDate DateTime?
+  nla               Float? // net lettable area
+  gla               Float? // gross lettable area
+  siteArea          Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenancies          Tenancy[]
+  loans              Liability[]
+  outgoings          OutgoingRecord[]
+  capitalExpenditure CapitalExpenditureItem[]
+  occupancySnapshots OccupancySnapshot[]
+  annualSnapshots    AnnualPropertySnapshot[]
+
+  @@index([entityId])
+}
+
+model Tenancy {
+  id                   String             @id @default(cuid())
+  commercialPropertyId String
+  commercialProperty   CommercialProperty @relation(fields: [commercialPropertyId], references: [id], onDelete: Cascade)
+
+  tenantName      String
+  tenantLegalName String?
+  tradingName     String?
+  contactDetails  String? // JSON: phone, email
+
+  leaseCommencement DateTime?
+  leaseExpiry       DateTime?
+  optionPeriods     String? // free text, e.g. "2 x 5 years"
+  rentCommencement  DateTime?
+
+  currentBaseRent Float?
+  rentFrequency   String? // WEEKLY | MONTHLY | ANNUALLY
+  rentPerAnnum    Float?
+  rentPerSqm      Float?
+  nlaOccupied     Float?
+
+  securityDeposit Float?
+  bankGuarantee   Float?
+  bond            Float?
+
+  incentives     String?
+  rentFreeMonths Float?
+
+  reviewMechanism  String? // FIXED_PERCENT | CPI | MARKET | HYBRID | FIXED
+  reviewPercentage Float?
+  nextRentReview   DateTime?
+  cpiLinked        Boolean?
+
+  outgoingsArrangement String? // GROSS | NET | NET_NET | NET_NET_NET | GROSS_PLUS_RECOVERIES
+  gstTreatment         String?
+
+  leaseStatus String @default("PROPOSED") // PROPOSED | NEGOTIATING | ACTIVE | EXPIRED | TERMINATED | VACANT
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rentReviews    RentReview[]
+  outgoingLinked OutgoingRecord[]
+
+  @@index([commercialPropertyId])
+}
+
+model RentReview {
+  id        String  @id @default(cuid())
+  tenancyId String
+  tenancy   Tenancy @relation(fields: [tenancyId], references: [id], onDelete: Cascade)
+
+  reviewDate       DateTime
+  reviewMechanism  String? // FIXED_PERCENT | CPI | MARKET | HYBRID | FIXED
+  previousRent     Float?
+  newRent          Float?
+  actualVsExpected String?
+  notes            String?
+
+  createdAt DateTime @default(now())
+
+  @@index([tenancyId])
+}
+
+model OutgoingRecord {
+  id                   String             @id @default(cuid())
+  commercialPropertyId String
+  commercialProperty   CommercialProperty @relation(fields: [commercialPropertyId], references: [id], onDelete: Cascade)
+
+  date     DateTime
+  category String // COUNCIL_RATES | WATER | LAND_TAX | INSURANCE | STRATA | REPAIRS | MAINTENANCE | CLEANING | SECURITY | FIRE_SERVICES | LIFT | AIRCON | ELECTRICAL | BUILDING_MANAGEMENT | PROPERTY_MANAGEMENT | WASTE | GARDENING | PEST_CONTROL | COMPLIANCE | OTHER
+  supplier String?
+  amount   Float
+  gst      Float?
+
+  tenancyId String?
+  tenancy   Tenancy? @relation(fields: [tenancyId], references: [id])
+
+  recoverable     Boolean @default(false)
+  recoveryPercent Float?
+  recoveredAmount Float?
+
+  notes String?
+
+  createdAt DateTime @default(now())
+
+  @@index([commercialPropertyId])
+  @@index([tenancyId])
+}
+
+model CapitalExpenditureItem {
+  id                   String             @id @default(cuid())
+  commercialPropertyId String
+  commercialProperty   CommercialProperty @relation(fields: [commercialPropertyId], references: [id], onDelete: Cascade)
+
+  date               DateTime
+  description        String
+  amount             Float
+  gst                Float?
+  usefulLifeYears    Float?
+  depreciationInfo   String? // JSON: method, rate
+  taxTreatmentStatus String   @default("NEEDS_REVIEW") // CONFIRMED | PROPOSED | NEEDS_REVIEW
+
+  notes String?
+
+  createdAt DateTime @default(now())
+
+  @@index([commercialPropertyId])
+}
+
+model OccupancySnapshot {
+  id                   String             @id @default(cuid())
+  commercialPropertyId String
+  commercialProperty   CommercialProperty @relation(fields: [commercialPropertyId], references: [id], onDelete: Cascade)
+
+  asAtDate    DateTime
+  totalNla    Float
+  occupiedNla Float
+  notes       String?
+
+  createdAt DateTime @default(now())
+
+  @@index([commercialPropertyId])
+}
+
+// Historical, immutable year-by-year record (spec section 33) — created
+// explicitly by the user (optionally pre-filled from a live calculation),
+// never silently recalculated or overwritten.
+model AnnualPropertySnapshot {
+  id                   String             @id @default(cuid())
+  commercialPropertyId String
+  commercialProperty   CommercialProperty @relation(fields: [commercialPropertyId], references: [id], onDelete: Cascade)
+  financialYearId      String
+  financialYear        FinancialYear      @relation(fields: [financialYearId], references: [id])
+
+  propertyValue     Float?
+  debt              Float?
+  equity            Float?
+  rent              Float?
+  recoveries        Float?
+  operatingExpenses Float?
+  noi               Float?
+  interest          Float?
+  principal         Float?
+  cashFlow          Float?
+  capRate           Float?
+  grossYield        Float?
+  netYield          Float?
+  lvr               Float?
+
+  status String  @default("ACTUAL") // ACTUAL | ESTIMATED | PROJECTED
+  notes  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([commercialPropertyId, financialYearId])
+}
+
+// ---------------------------------------------------------------------------
 // Investment accounts (stage 2 module — schema present now)
 // ---------------------------------------------------------------------------
 
@@ -264,7 +499,7 @@ model InvestmentAccount {
   accountRef  String?
   entityId    String
   entity      Entity   @relation(fields: [entityId], references: [id])
-  accountType String   // SHARES | ETF | MANAGED_FUND | TERM_DEPOSIT | BOND | OTHER
+  accountType String // SHARES | ETF | MANAGED_FUND | TERM_DEPOSIT | BOND | OTHER
   notes       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -275,7 +510,7 @@ model InvestmentAccount {
 }
 
 model InvestmentHolding {
-  id                  String   @id @default(cuid())
+  id                  String            @id @default(cuid())
   investmentAccountId String
   investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
   code                String // e.g. ASX ticker
@@ -303,7 +538,7 @@ model Account {
   bsb            String?
   entityId       String
   entity         Entity   @relation(fields: [entityId], references: [id])
-  accountType    String   // TRANSACTION | SAVINGS | OFFSET | CREDIT_CARD | OTHER
+  accountType    String // TRANSACTION | SAVINGS | OFFSET | CREDIT_CARD | OTHER
   currency       String   @default("AUD")
   openingBalance Float?
   currentBalance Float?
@@ -316,21 +551,21 @@ model Account {
 }
 
 model Transaction {
-  id              String   @id @default(cuid())
+  id              String         @id @default(cuid())
   accountId       String
-  account         Account  @relation(fields: [accountId], references: [id])
+  account         Account        @relation(fields: [accountId], references: [id])
   date            DateTime
   description     String
   amount          Float
   counterparty    String?
   taxCategoryId   String?
-  taxCategory     TaxCategory? @relation(fields: [taxCategoryId], references: [id])
+  taxCategory     TaxCategory?   @relation(fields: [taxCategoryId], references: [id])
   entityId        String?
-  entity          Entity?  @relation(fields: [entityId], references: [id])
+  entity          Entity?        @relation(fields: [entityId], references: [id])
   financialYearId String?
   financialYear   FinancialYear? @relation(fields: [financialYearId], references: [id])
-  taxRelevance    String   @default("UNKNOWN") // UNKNOWN | NOT_RELEVANT | POSSIBLE | CONFIRMED
-  status          String   @default("UNREVIEWED") // UNREVIEWED | CATEGORISED | MATCHED | RECONCILED | NEEDS_REVIEW
+  taxRelevance    String         @default("UNKNOWN") // UNKNOWN | NOT_RELEVANT | POSSIBLE | CONFIRMED
+  status          String         @default("UNREVIEWED") // UNREVIEWED | CATEGORISED | MATCHED | RECONCILED | NEEDS_REVIEW
   notes           String?
 
   documentId String?
@@ -355,7 +590,7 @@ model TaxRecord {
   financialYear   FinancialYear @relation(fields: [financialYearId], references: [id])
   entityId        String
   entity          Entity        @relation(fields: [entityId], references: [id])
-  recordType      String        // INCOME | EXPENSE | CAPITAL_GAIN | CAPITAL_LOSS
+  recordType      String // INCOME | EXPENSE | CAPITAL_GAIN | CAPITAL_LOSS
   description     String
   amount          Float?
   status          String        @default("RECORDED") // RECORDED | ESTIMATED | NEEDS_REVIEW | ACCOUNTANT_CONFIRMED
@@ -372,9 +607,9 @@ model TaxRecord {
 // ---------------------------------------------------------------------------
 
 model AuditLog {
-  id         String   @id @default(cuid())
-  timestamp  DateTime @default(now())
-  action     String   // DOCUMENT_IMPORTED | DOCUMENT_CLASSIFIED | METADATA_CHANGED | ...
+  id         String    @id @default(cuid())
+  timestamp  DateTime  @default(now())
+  action     String // DOCUMENT_IMPORTED | DOCUMENT_CLASSIFIED | METADATA_CHANGED | ...
   targetType String?
   targetId   String?
   documentId String?

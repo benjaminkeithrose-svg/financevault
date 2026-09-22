@@ -222,6 +222,8 @@ const linkInput = z.object({
     "LIABILITY",
     "ACCOUNT",
     "PROPERTY",
+    "COMMERCIAL_PROPERTY",
+    "TENANCY",
     "INVESTMENT_ACCOUNT",
     "TRANSACTION",
     "TAX_RECORD",

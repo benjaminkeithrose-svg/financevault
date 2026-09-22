@@ -12,6 +12,7 @@ import { Search } from "./pages/Search.js";
 import { Settings } from "./pages/Settings.js";
 import { Properties } from "./pages/Properties.js";
 import { PropertyDetail } from "./pages/PropertyDetail.js";
+import { CommercialPropertyDetail } from "./pages/CommercialPropertyDetail.js";
 import { Liabilities } from "./pages/Liabilities.js";
 import { LiabilityDetail } from "./pages/LiabilityDetail.js";
 import { Investments } from "./pages/Investments.js";
@@ -56,6 +57,7 @@ export default function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/properties/:id" element={<PropertyDetail />} />
+          <Route path="/commercial-properties/:id" element={<CommercialPropertyDetail />} />
           <Route path="/investments" element={<Investments />} />
           <Route path="/investments/:id" element={<InvestmentAccountDetail />} />
           <Route path="/banking" element={<Banking />} />

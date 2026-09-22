@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api, Entity, Liability, Property } from "../api/client.js";
+import { api, CommercialProperty, Entity, Liability, Property } from "../api/client.js";
 import { formatCurrency, humanize } from "../utils.js";
 
-const ALL_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "CREDIT_CARD", "PERSONAL_LOAN", "OTHER"];
-const LOAN_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN"];
+const ALL_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN", "CREDIT_CARD", "PERSONAL_LOAN", "OTHER"];
+const LOAN_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN"];
 
 export function Liabilities({ scope }: { scope: "loans" | "all" }) {
   const [liabilities, setLiabilities] = useState<Liability[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [properties, setProperties] = useState<Property[]>([]);
+  const [commercialProperties, setCommercialProperties] = useState<CommercialProperty[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [securityKind, setSecurityKind] = useState<"none" | "residential" | "commercial">("none");
   const [form, setForm] = useState({
     name: "",
     liabilityType: scope === "loans" ? "HOME_LOAN" : "CREDIT_CARD",
@@ -21,6 +23,9 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
     loanType: "variable",
     repaymentAmount: "",
     securityPropertyId: "",
+    securityCommercialPropertyId: "",
+    interestOnly: false,
+    repaymentFrequency: "MONTHLY",
   });
 
   const allowedTypes = scope === "loans" ? LOAN_TYPES : ALL_TYPES;
@@ -33,10 +38,12 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
   useEffect(() => {
     api.entities.list().then(setEntities);
     api.properties.list().then(setProperties);
+    api.commercialProperties.list().then(setCommercialProperties);
   }, []);
 
   async function create() {
     if (!form.name.trim() || !form.entityId) return;
+    const isCommercial = form.liabilityType === "COMMERCIAL_LOAN";
     await api.liabilities.create({
       name: form.name,
       liabilityType: form.liabilityType,
@@ -46,9 +53,13 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
       interestRate: form.interestRate ? Number(form.interestRate) : null,
       loanType: form.loanType || null,
       repaymentAmount: form.repaymentAmount ? Number(form.repaymentAmount) : null,
-      securityPropertyId: form.securityPropertyId || null,
+      securityPropertyId: securityKind === "residential" ? form.securityPropertyId || null : null,
+      securityCommercialPropertyId: securityKind === "commercial" ? form.securityCommercialPropertyId || null : null,
+      interestOnly: isCommercial ? form.interestOnly : null,
+      repaymentFrequency: isCommercial ? form.repaymentFrequency : null,
     });
     setForm({ ...form, name: "", lender: "", currentBalance: "", interestRate: "", repaymentAmount: "" });
+    setSecurityKind("none");
     setShowForm(false);
     load();
   }
@@ -124,21 +135,71 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
               />
             </div>
           </div>
-          {(form.liabilityType === "HOME_LOAN" || form.liabilityType === "INVESTMENT_LOAN") && (
+          {(form.liabilityType === "HOME_LOAN" ||
+            form.liabilityType === "INVESTMENT_LOAN" ||
+            form.liabilityType === "COMMERCIAL_LOAN") && (
             <>
-              <label>Security property (optional)</label>
-              <select
-                value={form.securityPropertyId}
-                onChange={(e) => setForm({ ...form, securityPropertyId: e.target.value })}
-              >
-                <option value="">— None —</option>
-                {properties.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.asset?.name}
-                  </option>
-                ))}
+              <label>Security</label>
+              <select value={securityKind} onChange={(e) => setSecurityKind(e.target.value as typeof securityKind)}>
+                <option value="none">— None —</option>
+                <option value="residential">Residential property</option>
+                <option value="commercial">Commercial property</option>
               </select>
+              {securityKind === "residential" && (
+                <select
+                  value={form.securityPropertyId}
+                  onChange={(e) => setForm({ ...form, securityPropertyId: e.target.value })}
+                  style={{ marginTop: 8 }}
+                >
+                  <option value="">— Select property —</option>
+                  {properties.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.asset?.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {securityKind === "commercial" && (
+                <select
+                  value={form.securityCommercialPropertyId}
+                  onChange={(e) => setForm({ ...form, securityCommercialPropertyId: e.target.value })}
+                  style={{ marginTop: 8 }}
+                >
+                  <option value="">— Select property —</option>
+                  {commercialProperties.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </>
+          )}
+          {form.liabilityType === "COMMERCIAL_LOAN" && (
+            <div className="grid grid-2">
+              <div>
+                <label>Repayment type</label>
+                <select
+                  value={form.interestOnly ? "io" : "pi"}
+                  onChange={(e) => setForm({ ...form, interestOnly: e.target.value === "io" })}
+                >
+                  <option value="pi">Principal & interest</option>
+                  <option value="io">Interest-only</option>
+                </select>
+              </div>
+              <div>
+                <label>Repayment frequency</label>
+                <select
+                  value={form.repaymentFrequency}
+                  onChange={(e) => setForm({ ...form, repaymentFrequency: e.target.value })}
+                >
+                  <option value="WEEKLY">Weekly</option>
+                  <option value="FORTNIGHTLY">Fortnightly</option>
+                  <option value="MONTHLY">Monthly</option>
+                  <option value="QUARTERLY">Quarterly</option>
+                </select>
+              </div>
+            </div>
           )}
           <div className="toolbar" style={{ marginTop: 16 }}>
             <button className="btn" onClick={create}>
@@ -175,7 +236,7 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
                   <td>{l.lender || "—"}</td>
                   <td>{formatCurrency(l.currentBalance)}</td>
                   <td>{l.interestRate ? `${l.interestRate}%` : "—"}</td>
-                  <td>{l.securityProperty?.address || "—"}</td>
+                  <td>{l.securityProperty?.address || l.securityCommercialProperty?.name || "—"}</td>
                 </tr>
               ))}
             </tbody>

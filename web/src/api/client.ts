@@ -196,8 +196,228 @@ export interface Liability {
   maturityDate?: string | null;
   securityPropertyId?: string | null;
   securityProperty?: Property | null;
+  securityCommercialPropertyId?: string | null;
+  securityCommercialProperty?: CommercialProperty | null;
+  interestOnly?: boolean | null;
+  loanTermYears?: number | null;
+  repaymentFrequency?: string | null;
+  loanFees?: number | null;
+  establishmentFees?: number | null;
+  valuationFees?: number | null;
   notes?: string | null;
   documents?: Document[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RentReview {
+  id: string;
+  tenancyId: string;
+  reviewDate: string;
+  reviewMechanism?: string | null;
+  previousRent?: number | null;
+  newRent?: number | null;
+  actualVsExpected?: string | null;
+  notes?: string | null;
+  createdAt: string;
+}
+
+export interface Tenancy {
+  id: string;
+  commercialPropertyId: string;
+  tenantName: string;
+  tenantLegalName?: string | null;
+  tradingName?: string | null;
+  contactDetails?: string | null;
+  leaseCommencement?: string | null;
+  leaseExpiry?: string | null;
+  optionPeriods?: string | null;
+  rentCommencement?: string | null;
+  currentBaseRent?: number | null;
+  rentFrequency?: string | null;
+  rentPerAnnum?: number | null;
+  rentPerSqm?: number | null;
+  nlaOccupied?: number | null;
+  securityDeposit?: number | null;
+  bankGuarantee?: number | null;
+  bond?: number | null;
+  incentives?: string | null;
+  rentFreeMonths?: number | null;
+  reviewMechanism?: string | null;
+  reviewPercentage?: number | null;
+  nextRentReview?: string | null;
+  cpiLinked?: boolean | null;
+  outgoingsArrangement?: string | null;
+  gstTreatment?: string | null;
+  leaseStatus: string;
+  notes?: string | null;
+  rentReviews?: RentReview[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OutgoingRecord {
+  id: string;
+  commercialPropertyId: string;
+  date: string;
+  category: string;
+  supplier?: string | null;
+  amount: number;
+  gst?: number | null;
+  tenancyId?: string | null;
+  recoverable: boolean;
+  recoveryPercent?: number | null;
+  recoveredAmount?: number | null;
+  notes?: string | null;
+  createdAt: string;
+}
+
+export interface CapitalExpenditureItem {
+  id: string;
+  commercialPropertyId: string;
+  date: string;
+  description: string;
+  amount: number;
+  gst?: number | null;
+  usefulLifeYears?: number | null;
+  depreciationInfo?: string | null;
+  taxTreatmentStatus: string;
+  notes?: string | null;
+  createdAt: string;
+}
+
+export interface OccupancySnapshot {
+  id: string;
+  commercialPropertyId: string;
+  asAtDate: string;
+  totalNla: number;
+  occupiedNla: number;
+  notes?: string | null;
+  createdAt: string;
+}
+
+export interface AnnualPropertySnapshot {
+  id: string;
+  commercialPropertyId: string;
+  financialYearId: string;
+  financialYear?: FinancialYear;
+  propertyValue?: number | null;
+  debt?: number | null;
+  equity?: number | null;
+  rent?: number | null;
+  recoveries?: number | null;
+  operatingExpenses?: number | null;
+  noi?: number | null;
+  interest?: number | null;
+  principal?: number | null;
+  cashFlow?: number | null;
+  capRate?: number | null;
+  grossYield?: number | null;
+  netYield?: number | null;
+  lvr?: number | null;
+  status: string;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CommercialPropertyMetrics {
+  period: { basis: string };
+  occupancy: {
+    totalNla: number | null;
+    occupiedNla: number;
+    vacantNla: number | null;
+    occupancyPercent: number | null;
+    vacancyPercent: number | null;
+    formula: string;
+  };
+  tenantConcentration: {
+    totalRent: number;
+    tenants: Array<{
+      tenancyId: string;
+      tenantName: string;
+      annualRent: number;
+      percentOfRent: number | null;
+      nlaOccupied?: number | null;
+      percentOfNla: number | null;
+    }>;
+    top3: unknown[];
+    largestTenant: { tenantName: string; percentOfRent: number | null } | null;
+    formula: string;
+  };
+  wale: {
+    waleByLeaseYears: number | null;
+    waleByRentYears: number | null;
+    leaseCount: number;
+    formula: { byLease: string; byRent: string } | null;
+  };
+  income: {
+    grossRent: number;
+    otherIncome: number;
+    recoveries: number;
+    grossPropertyIncome: number;
+    grossOperatingExpenses: number;
+    unrecoveredExpenses: number;
+    noi: number;
+    formula: string;
+  };
+  yields: {
+    grossYield: number | null;
+    netYield: number | null;
+    capRate: number | null;
+    propertyValue: number | null;
+    valuationBasis: "current" | "purchase";
+    formula?: { grossYield: string; netYield: string; capRate: string };
+  };
+  debt: {
+    totalDebt: number;
+    equity: number | null;
+    lvr: number | null;
+    estimatedAnnualInterest: number;
+    annualDebtService: number;
+    formula: { lvr: string; equity: string; estimatedAnnualInterest: string; annualDebtService: string };
+  };
+  cashFlowAfterFinancing: { value: number; status: string; formula: string };
+}
+
+export interface CommercialProperty {
+  id: string;
+  assetId: string;
+  asset?: Asset;
+  entityId: string;
+  entity?: Entity;
+  name: string;
+  address: string;
+  state?: string | null;
+  postcode?: string | null;
+  propertyTypes: string; // comma-separated
+  ownershipPercent?: number | null;
+  purchaseDate?: string | null;
+  settlementDate?: string | null;
+  purchasePrice?: number | null;
+  valuationDate?: string | null;
+  valuer?: string | null;
+  buildingArea?: number | null;
+  landArea?: number | null;
+  areaUnit?: string | null;
+  numberOfTenancies?: number | null;
+  numberOfBuildings?: number | null;
+  carSpaces?: number | null;
+  zoning?: string | null;
+  constructionType?: string | null;
+  yearBuilt?: number | null;
+  refurbishmentDate?: string | null;
+  nla?: number | null;
+  gla?: number | null;
+  siteArea?: number | null;
+  tenancies?: Tenancy[];
+  loans?: Liability[];
+  outgoings?: OutgoingRecord[];
+  capitalExpenditure?: CapitalExpenditureItem[];
+  occupancySnapshots?: OccupancySnapshot[];
+  annualSnapshots?: AnnualPropertySnapshot[];
+  documents?: Document[];
+  metrics?: CommercialPropertyMetrics;
   createdAt: string;
   updatedAt: string;
 }
@@ -400,5 +620,74 @@ export const api = {
     update: (id: string, data: Record<string, unknown>) =>
       request<Asset>(`/assets/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     remove: (id: string) => request<void>(`/assets/${id}`, { method: "DELETE" }),
+  },
+
+  commercialProperties: {
+    list: (entityId?: string) =>
+      request<CommercialProperty[]>(`/commercial-properties${entityId ? `?entityId=${entityId}` : ""}`),
+    get: (id: string, valuationBasis?: "current" | "purchase") =>
+      request<CommercialProperty>(`/commercial-properties/${id}${valuationBasis ? `?valuationBasis=${valuationBasis}` : ""}`),
+    create: (data: Record<string, unknown>) =>
+      request<CommercialProperty>("/commercial-properties", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<CommercialProperty>(`/commercial-properties/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/commercial-properties/${id}`, { method: "DELETE" }),
+
+    addTenancy: (propertyId: string, data: Record<string, unknown>) =>
+      request<Tenancy>(`/commercial-properties/${propertyId}/tenancies`, { method: "POST", body: JSON.stringify(data) }),
+    updateTenancy: (tenancyId: string, data: Record<string, unknown>) =>
+      request<Tenancy>(`/commercial-properties/tenancies/${tenancyId}`, { method: "PUT", body: JSON.stringify(data) }),
+    removeTenancy: (tenancyId: string) =>
+      request<void>(`/commercial-properties/tenancies/${tenancyId}`, { method: "DELETE" }),
+
+    addRentReview: (tenancyId: string, data: Record<string, unknown>) =>
+      request<RentReview>(`/commercial-properties/tenancies/${tenancyId}/rent-reviews`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    removeRentReview: (id: string) => request<void>(`/commercial-properties/rent-reviews/${id}`, { method: "DELETE" }),
+
+    addOutgoing: (propertyId: string, data: Record<string, unknown>) =>
+      request<OutgoingRecord>(`/commercial-properties/${propertyId}/outgoings`, { method: "POST", body: JSON.stringify(data) }),
+    updateOutgoing: (id: string, data: Record<string, unknown>) =>
+      request<OutgoingRecord>(`/commercial-properties/outgoings/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    removeOutgoing: (id: string) => request<void>(`/commercial-properties/outgoings/${id}`, { method: "DELETE" }),
+
+    addCapex: (propertyId: string, data: Record<string, unknown>) =>
+      request<CapitalExpenditureItem>(`/commercial-properties/${propertyId}/capital-expenditure`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    updateCapex: (id: string, data: Record<string, unknown>) =>
+      request<CapitalExpenditureItem>(`/commercial-properties/capital-expenditure/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    removeCapex: (id: string) => request<void>(`/commercial-properties/capital-expenditure/${id}`, { method: "DELETE" }),
+
+    addOccupancySnapshot: (propertyId: string, data: Record<string, unknown>) =>
+      request<OccupancySnapshot>(`/commercial-properties/${propertyId}/occupancy-snapshots`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    removeOccupancySnapshot: (id: string) =>
+      request<void>(`/commercial-properties/occupancy-snapshots/${id}`, { method: "DELETE" }),
+
+    previewAnnualSnapshot: (propertyId: string, valuationBasis?: "current" | "purchase") =>
+      request<Record<string, unknown>>(
+        `/commercial-properties/${propertyId}/annual-snapshot-preview${valuationBasis ? `?valuationBasis=${valuationBasis}` : ""}`
+      ),
+    saveAnnualSnapshot: (propertyId: string, data: Record<string, unknown>) =>
+      request<AnnualPropertySnapshot>(`/commercial-properties/${propertyId}/annual-snapshots`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    updateAnnualSnapshot: (id: string, data: Record<string, unknown>) =>
+      request<AnnualPropertySnapshot>(`/commercial-properties/annual-snapshots/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    removeAnnualSnapshot: (id: string) =>
+      request<void>(`/commercial-properties/annual-snapshots/${id}`, { method: "DELETE" }),
   },
 };

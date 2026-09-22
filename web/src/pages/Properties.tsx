@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, Entity, Property } from "../api/client.js";
 import { formatCurrency } from "../utils.js";
+import { CommercialProperties } from "./CommercialProperties.js";
 
-export function Properties() {
+function ResidentialProperties() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -35,11 +36,7 @@ export function Properties() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h2>Properties</h2>
-          <p>Purchase, financing, income, expenses, capital and documents — all against the one property.</p>
-        </div>
+      <div className="toolbar" style={{ justifyContent: "flex-end" }}>
         <button className="btn" onClick={() => setShowForm((v) => !v)}>
           {showForm ? "Cancel" : "New property"}
         </button>
@@ -114,6 +111,36 @@ export function Properties() {
           </table>
         )}
       </div>
+    </div>
+  );
+}
+
+export function Properties() {
+  const [view, setView] = useState<"residential" | "commercial">("residential");
+
+  return (
+    <div>
+      <div className="page-header">
+        <div>
+          <h2>Properties</h2>
+          <p>
+            {view === "residential"
+              ? "Purchase, financing, income, expenses, capital and documents — all against the one property."
+              : "Commercial property is a distinct asset class: tenancies, leases, outgoings recoveries and yield/NOI metrics of its own."}
+          </p>
+        </div>
+      </div>
+
+      <div className="toolbar">
+        <button className={`btn ${view === "residential" ? "" : "secondary"}`} onClick={() => setView("residential")}>
+          Residential
+        </button>
+        <button className={`btn ${view === "commercial" ? "" : "secondary"}`} onClick={() => setView("commercial")}>
+          Commercial
+        </button>
+      </div>
+
+      {view === "residential" ? <ResidentialProperties /> : <CommercialProperties />}
     </div>
   );
 }
