@@ -19,6 +19,7 @@
     "@prisma/client": "^5.20.0",
     "archiver": "^8.0.0",
     "cors": "^2.8.5",
+    "dotenv": "^18.0.2",
     "express": "^4.21.0",
     "multer": "^2.0.0",
     "pdf-parse": "^1.1.1",

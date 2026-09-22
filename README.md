@@ -310,6 +310,23 @@ line with them.
 
 ## Getting started
 
+### Running it as a regular app (no terminal needed after setup)
+
+1. If you don't already have Node.js, go to https://nodejs.org and install
+   the LTS version — this is a one-time step.
+2. Double-click **`Start Financial Vault.command`** (Mac) or
+   **`Start Financial Vault.bat`** (Windows) in this folder.
+
+The first time, it installs everything and sets up the database — this can
+take a few minutes. Every time after that, it starts in a few seconds and
+opens the app in your browser at `http://localhost:4000` automatically.
+Everything runs on your own machine; nothing is uploaded anywhere. To stop
+the app, close the window it's running in (on Windows, that's the separate
+window titled "Financial Vault" that opens — closing the first small window
+is fine and doesn't stop it).
+
+### For development (two dev servers, hot reload)
+
 ```bash
 # Server
 cd server

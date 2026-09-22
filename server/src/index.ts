@@ -1,5 +1,9 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import path from "node:path";
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
 import { entitiesRouter } from "./routes/entities.js";
 import { peopleRouter } from "./routes/people.js";
 import { documentsRouter } from "./routes/documents.js";
@@ -54,6 +58,18 @@ app.use("/api/document-packs", documentPacksRouter);
 app.use("/api/portfolio-plans", portfolioPlansRouter);
 
 app.use(errorHandler);
+
+// Serving the built frontend from this same process (single double-click
+// launcher, one port, no separate dev server) — only when a build exists.
+// In development the web app runs on its own Vite dev server instead.
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
+const webDist = path.join(currentDir, "../../web/dist");
+if (fs.existsSync(webDist)) {
+  app.use(express.static(webDist));
+  app.get(/^(?!\/api\/).*/, (_req, res) => {
+    res.sendFile(path.join(webDist, "index.html"));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Financial Vault server listening on port ${PORT}`);
