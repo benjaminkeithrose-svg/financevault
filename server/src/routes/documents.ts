@@ -217,6 +217,7 @@ documentsRouter.post(
 
 const linkInput = z.object({
   targetType: z.enum([
+    "PERSON",
     "ENTITY",
     "ASSET",
     "LIABILITY",

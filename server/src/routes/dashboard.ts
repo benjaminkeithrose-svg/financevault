@@ -2,6 +2,7 @@ import { Router } from "express";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { financialYearLabelForDate } from "../services/financialYear.js";
+import { computeFinancialPosition } from "../services/financialPosition.js";
 
 export const dashboardRouter = Router();
 
@@ -48,7 +49,9 @@ dashboardRouter.get(
 
     const totalAssetValue = assets.reduce((sum, a) => sum + (a.currentValue ?? 0), 0);
     const totalCash = accounts.reduce((sum, a) => sum + (a.currentBalance ?? 0), 0);
-    const propertyValue = assets.filter((a) => a.assetType === "PROPERTY").reduce((s, a) => s + (a.currentValue ?? 0), 0);
+    const propertyValue = assets
+      .filter((a) => a.assetType === "PROPERTY" || a.assetType === "COMMERCIAL_PROPERTY")
+      .reduce((s, a) => s + (a.currentValue ?? 0), 0);
     const investmentValue = assets
       .filter((a) => ["SHARES", "MANAGED_FUND"].includes(a.assetType))
       .reduce((s, a) => s + (a.currentValue ?? 0), 0);
@@ -82,6 +85,35 @@ dashboardRouter.get(
       where: { status: "UNREVIEWED", ...entityWhere },
     });
 
+    // Consolidated, by-entity breakdown — a user-level convenience view
+    // only, never a formal accounting consolidation. Only computed for the
+    // "All entities" view; each asset/liability belongs to exactly one
+    // entity so nothing here double-counts.
+    let byEntity: Array<{
+      entityId: string;
+      entityName: string;
+      entityType: string;
+      totalAssets: number;
+      totalLiabilities: number;
+      netAssets: number;
+    }> = [];
+    if (!entityId) {
+      const allEntities = await prisma.entity.findMany({
+        include: { assets: true, accounts: true, liabilities: true },
+      });
+      byEntity = allEntities.map((e) => {
+        const position = computeFinancialPosition(e.assets, e.accounts, e.liabilities);
+        return {
+          entityId: e.id,
+          entityName: e.name,
+          entityType: e.entityType,
+          totalAssets: position.totalAssets,
+          totalLiabilities: position.totalLiabilities,
+          netAssets: position.netAssets,
+        };
+      });
+    }
+
     res.json({
       documents: {
         pendingClassification,
@@ -100,6 +132,10 @@ dashboardRouter.get(
         superannuation: superValue,
       },
       tax: { ...taxSummary, unclassifiedTransactions },
+      consolidated: {
+        byEntity,
+        note: "User-level convenience view — not a formal accounting consolidation or tax statement.",
+      },
     });
   })
 );

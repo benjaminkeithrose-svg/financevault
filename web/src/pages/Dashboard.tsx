@@ -23,7 +23,7 @@ export function Dashboard() {
   if (error) return <div className="empty-state">{error}</div>;
   if (!summary) return <div className="empty-state">Loading…</div>;
 
-  const { documents, financialSnapshot, tax } = summary;
+  const { documents, financialSnapshot, tax, consolidated } = summary;
 
   return (
     <div>
@@ -143,6 +143,39 @@ export function Dashboard() {
           </p>
         </div>
       </div>
+
+      {!entityId && consolidated.byEntity.length > 0 && (
+        <div className="card" style={{ marginTop: 16 }}>
+          <h3 style={{ marginTop: 0 }}>Consolidated position by entity</h3>
+          <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+            {consolidated.note} Each asset belongs to exactly one entity below — nothing here is double-counted.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Entity</th>
+                <th>Type</th>
+                <th>Assets</th>
+                <th>Liabilities</th>
+                <th>Net</th>
+              </tr>
+            </thead>
+            <tbody>
+              {consolidated.byEntity.map((e) => (
+                <tr key={e.entityId}>
+                  <td>
+                    <Link to={`/entities/${e.entityId}`}>{e.entityName}</Link>
+                  </td>
+                  <td>{humanize(e.entityType)}</td>
+                  <td>{formatCurrency(e.totalAssets)}</td>
+                  <td>{formatCurrency(e.totalLiabilities)}</td>
+                  <td>{formatCurrency(e.netAssets)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div className="card" style={{ marginTop: 16 }}>
         <h3 style={{ marginTop: 0 }}>Recently imported</h3>

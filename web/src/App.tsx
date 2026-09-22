@@ -8,6 +8,8 @@ import { Documents } from "./pages/Documents.js";
 import { DocumentDetail } from "./pages/DocumentDetail.js";
 import { Entities } from "./pages/Entities.js";
 import { EntityDetail } from "./pages/EntityDetail.js";
+import { People } from "./pages/People.js";
+import { PersonDetail } from "./pages/PersonDetail.js";
 import { Search } from "./pages/Search.js";
 import { Settings } from "./pages/Settings.js";
 import { Properties } from "./pages/Properties.js";
@@ -52,6 +54,8 @@ export default function App() {
           <Route path="/inbox" element={<Inbox />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/documents/:id" element={<DocumentDetail />} />
+          <Route path="/people" element={<People />} />
+          <Route path="/people/:id" element={<PersonDetail />} />
           <Route path="/entities" element={<Entities />} />
           <Route path="/entities/:id" element={<EntityDetail />} />
           <Route path="/search" element={<Search />} />

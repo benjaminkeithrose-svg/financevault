@@ -21,28 +21,82 @@ datasource db {
 }
 
 // ---------------------------------------------------------------------------
-// Entities — the generic node in the ownership/relationship graph
-// (individuals, joint ownership, trusts, companies, super funds,
-// investment accounts, bank accounts, properties, other)
+// People vs. legal/ownership Entities — a deliberate distinction (spec:
+// "Ownership Structures, Trusts, Companies and Underlying Assets").
+//
+// A Person is a real human. An Entity is the legal/ownership vehicle that
+// actually owns assets — an individual acting in their own capacity, a
+// joint ownership arrangement, a trust, a company, a partnership, a super
+// fund or SMSF. A Person never owns an Asset directly in this schema; they
+// hold a relationship (trustee, director, shareholder, beneficiary,
+// individual owner, etc.) to the Entity that does. This is why "Benjamin"
+// the Person and "Benjamin (Personal)" the Entity are two different rows:
+// the Entity is what Assets/Liabilities/Accounts/Documents attach to.
+//
+// Entities are never asset/account types — PROPERTY, BANK_ACCOUNT and
+// INVESTMENT_ACCOUNT are Asset/Account concepts, not ownership vehicles,
+// and must not appear as an entityType value.
 // ---------------------------------------------------------------------------
 
-model Entity {
-  id            String   @id @default(cuid())
-  name          String
-  entityType    String // INDIVIDUAL | JOINT | TRUST | COMPANY | SUPER_FUND | INVESTMENT_ACCOUNT | BANK_ACCOUNT | PROPERTY | OTHER
-  abn           String?
-  tfn           String?
-  acn           String?
-  ownershipInfo String? // free text / JSON describing ownership split, trustee, directors etc.
-  contactInfo   String? // JSON blob: address, phone, email, adviser contacts
-  notes         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model Person {
+  id          String    @id @default(cuid())
+  name        String
+  dateOfBirth DateTime?
+  tfn         String?
+  contactInfo String? // JSON blob: address, phone, email
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  // Relationships where this entity is the source ("Benjamin owns XYZ Pty Ltd")
-  relationshipsFrom EntityRelationship[] @relation("RelationshipFrom")
+  entityRelationships PersonEntityRelationship[]
+  // Documents reference this Person via the polymorphic DocumentLink
+  // (targetType = PERSON, targetId = this.id) — no direct relation field,
+  // consistent with how every other linkable record works.
+
+  @@index([name])
+}
+
+// Generic relationship from a Person to the Entity they act in relation to,
+// e.g. trustee, director, shareholder, beneficiary, member, individual
+// owner, joint owner, guarantor, borrower, settlor, appointor.
+model PersonEntityRelationship {
+  id               String    @id @default(cuid())
+  personId         String
+  entityId         String
+  relationshipType String // SETTLOR | TRUSTEE | DIRECTOR | SHAREHOLDER | BENEFICIARY | MEMBER | INDIVIDUAL_OWNER | JOINT_OWNER | GUARANTOR | BORROWER | APPOINTOR | ACCOUNTANT | TAX_AGENT | OTHER
+  ownershipPercent Float? // meaningful for SHAREHOLDER / JOINT_OWNER
+  startDate        DateTime?
+  endDate          DateTime?
+  notes            String?
+  createdAt        DateTime  @default(now())
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  entity Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
+
+  @@index([personId])
+  @@index([entityId])
+}
+
+model Entity {
+  id                String    @id @default(cuid())
+  name              String
+  entityType        String // INDIVIDUAL | JOINT | TRUST | COMPANY | PARTNERSHIP | SUPER_FUND | SMSF | OTHER
+  abn               String?
+  tfn               String?
+  acn               String?
+  establishmentDate DateTime? // trust/company establishment date
+  ownershipInfo     String? // free text / JSON describing ownership split, trustee, directors etc.
+  contactInfo       String? // JSON blob: address, phone, email, adviser contacts
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relationships where this entity is the source ("XYZ Pty Ltd owns Commercial Property A")
+  relationshipsFrom   EntityRelationship[]       @relation("RelationshipFrom")
   // Relationships where this entity is the target
-  relationshipsTo   EntityRelationship[] @relation("RelationshipTo")
+  relationshipsTo     EntityRelationship[]       @relation("RelationshipTo")
+  // People who hold a role in relation to this entity (trustee, director, beneficiary, ...)
+  personRelationships PersonEntityRelationship[]
 
   documents            Document[]
   assets               Asset[]
@@ -53,17 +107,18 @@ model Entity {
   commercialProperties CommercialProperty[]
   investmentAccounts   InvestmentAccount[]
   taxRecords           TaxRecord[]
+  assetOwnerships      AssetOwnership[]
 
   @@index([entityType])
 }
 
 // Generic, non-hardcoded relationship between two entities, e.g.
-// "trustee of", "director of", "beneficiary of", "owns", "member of".
+// "owns", "trustee of" (for a corporate trustee), "subsidiary of".
 model EntityRelationship {
   id               String   @id @default(cuid())
   fromEntityId     String
   toEntityId       String
-  relationshipType String // free-form label, e.g. TRUSTEE_OF, OWNS, DIRECTOR_OF, BENEFICIARY_OF
+  relationshipType String // free-form label, e.g. OWNS, TRUSTEE_OF, SUBSIDIARY_OF
   ownershipPercent Float?
   notes            String?
   createdAt        DateTime @default(now())
@@ -73,6 +128,29 @@ model EntityRelationship {
 
   @@index([fromEntityId])
   @@index([toEntityId])
+}
+
+// Explicit, time-boxed ownership record for an Asset — supplements
+// Asset.entityId (the current/primary owner, kept for simple queries) so
+// that fractional and changing ownership (e.g. Benjamin 50% / Spouse 50%
+// of Property B) can be recorded without losing the simple case. Absence
+// of any record here just means Asset.entityId is the sole 100% owner.
+model AssetOwnership {
+  id               String    @id @default(cuid())
+  assetId          String
+  ownerEntityId    String
+  ownershipPercent Float
+  ownershipType    String? // e.g. LEGAL | BENEFICIAL
+  startDate        DateTime?
+  endDate          DateTime?
+  notes            String?
+  createdAt        DateTime  @default(now())
+
+  asset       Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  ownerEntity Entity @relation(fields: [ownerEntityId], references: [id])
+
+  @@index([assetId])
+  @@index([ownerEntityId])
 }
 
 // ---------------------------------------------------------------------------
@@ -167,7 +245,7 @@ model Document {
 model DocumentLink {
   id         String   @id @default(cuid())
   documentId String
-  targetType String // ENTITY | ASSET | LIABILITY | ACCOUNT | PROPERTY | COMMERCIAL_PROPERTY | TENANCY | INVESTMENT_ACCOUNT | TRANSACTION | TAX_RECORD
+  targetType String // PERSON | ENTITY | ASSET | LIABILITY | ACCOUNT | PROPERTY | COMMERCIAL_PROPERTY | TENANCY | INVESTMENT_ACCOUNT | TRANSACTION | TAX_RECORD
   targetId   String
   label      String? // e.g. "Renewal", "Supporting evidence"
   createdAt  DateTime @default(now())
@@ -201,6 +279,7 @@ model Asset {
 
   property           Property?
   commercialProperty CommercialProperty?
+  ownerships         AssetOwnership[]
 
   @@index([entityId])
   @@index([assetType])

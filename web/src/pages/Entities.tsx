@@ -3,17 +3,10 @@ import { Link } from "react-router-dom";
 import { api, Entity } from "../api/client.js";
 import { humanize } from "../utils.js";
 
-const ENTITY_TYPES = [
-  "INDIVIDUAL",
-  "JOINT",
-  "TRUST",
-  "COMPANY",
-  "SUPER_FUND",
-  "INVESTMENT_ACCOUNT",
-  "BANK_ACCOUNT",
-  "PROPERTY",
-  "OTHER",
-];
+// Legal/ownership vehicles only — an Entity is who owns things, never the
+// thing itself. Properties, bank accounts and investment accounts are
+// Assets/Accounts that belong TO an entity, not entity types.
+const ENTITY_TYPES = ["INDIVIDUAL", "JOINT", "TRUST", "COMPANY", "PARTNERSHIP", "SUPER_FUND", "SMSF", "OTHER"];
 
 export function Entities() {
   const [entities, setEntities] = useState<Entity[]>([]);
@@ -42,7 +35,7 @@ export function Entities() {
       <div className="page-header">
         <div>
           <h2>Entities</h2>
-          <p>Individuals, trusts, companies, super funds, properties and accounts — one graph, no hard-coded relationships.</p>
+          <p>The legal/ownership vehicles that hold assets — individuals, trusts, companies, partnerships, super funds and SMSFs.</p>
         </div>
         <button className="btn" onClick={() => setShowForm((v) => !v)}>
           {showForm ? "Cancel" : "New entity"}

@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { entitiesRouter } from "./routes/entities.js";
+import { peopleRouter } from "./routes/people.js";
 import { documentsRouter } from "./routes/documents.js";
 import { financialYearsRouter } from "./routes/financialYears.js";
 import { taxCategoriesRouter } from "./routes/taxCategories.js";
@@ -25,6 +26,7 @@ app.use(express.json());
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 
 app.use("/api/entities", entitiesRouter);
+app.use("/api/people", peopleRouter);
 app.use("/api/documents", documentsRouter);
 app.use("/api/financial-years", financialYearsRouter);
 app.use("/api/tax-categories", taxCategoriesRouter);

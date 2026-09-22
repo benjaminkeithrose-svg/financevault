@@ -7,7 +7,38 @@ accounting system — it organises your own records and evidence so you can
 hand them to one quickly.
 
 See the project brief for the full design spec. This repository currently
-implements **Stage 1 and Stage 2** of the staged build.
+implements **Stage 1 and Stage 2** of the staged build, plus the Commercial
+Property module and a subsequent architecture correction described below.
+
+### Architecture correction: People vs. Entities vs. Assets
+
+An early version of the schema let an `Entity` have `entityType` values of
+`PROPERTY`, `BANK_ACCOUNT` and `INVESTMENT_ACCOUNT` — conflating the
+ownership layer with the things being owned. This has been corrected:
+
+- `Entity` is now strictly a legal/ownership vehicle: `INDIVIDUAL`, `JOINT`,
+  `TRUST`, `COMPANY`, `PARTNERSHIP`, `SUPER_FUND`, `SMSF` or `OTHER`.
+  Properties, bank accounts and investment accounts are Assets/Accounts
+  that belong *to* an entity, never entity types themselves.
+- A new **Person** model represents the human, separate from the Entity
+  they act through — a Person never owns an Asset directly. Instead a
+  `PersonEntityRelationship` records their role (trustee, director,
+  shareholder, beneficiary, settlor, member, individual owner, joint
+  owner, guarantor, borrower, appointor, accountant, tax agent).
+- Every Entity now has a computed **financial position** (total assets,
+  total liabilities, net assets, broken down by asset type) calculated
+  only from what that entity directly owns — a trust's balance sheet is
+  never conflated with the personal net worth of its trustee or
+  beneficiaries.
+- The Dashboard's "All entities" view now also shows a **consolidated,
+  by-entity breakdown** — explicitly labelled as a user-level convenience
+  view, not a formal accounting consolidation, with each asset counted
+  under exactly one entity.
+- An `AssetOwnership` table exists in the schema for recording fractional
+  or time-boxed ownership (e.g. 50/50 between two people) on top of an
+  asset's primary owning entity, ready for a future UI pass.
+- The nav now visually groups People / Entities / Assets / Liabilities
+  rather than flattening everything into one list.
 
 ### Stage 1
 

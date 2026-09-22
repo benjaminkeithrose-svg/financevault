@@ -20,6 +20,7 @@ export interface Entity {
   abn?: string | null;
   tfn?: string | null;
   acn?: string | null;
+  establishmentDate?: string | null;
   ownershipInfo?: string | null;
   contactInfo?: string | null;
   notes?: string | null;
@@ -28,13 +29,49 @@ export interface Entity {
   _count?: { documents: number; assets: number; liabilities: number };
   relationshipsFrom?: EntityRelationship[];
   relationshipsTo?: EntityRelationship[];
+  personRelationships?: PersonEntityRelationship[];
   documents?: Document[];
-  assets?: unknown[];
-  liabilities?: unknown[];
-  accounts?: unknown[];
-  properties?: unknown[];
-  investmentAccounts?: unknown[];
+  assets?: Asset[];
+  liabilities?: Liability[];
+  accounts?: Account[];
+  properties?: Property[];
+  commercialProperties?: CommercialProperty[];
+  investmentAccounts?: InvestmentAccount[];
   taxRecords?: unknown[];
+  financialPosition?: {
+    byAssetType: Record<string, number>;
+    cash: number;
+    totalAssets: number;
+    totalLiabilities: number;
+    netAssets: number;
+    formula: string;
+  };
+}
+
+export interface Person {
+  id: string;
+  name: string;
+  dateOfBirth?: string | null;
+  tfn?: string | null;
+  contactInfo?: string | null;
+  notes?: string | null;
+  entityRelationships?: PersonEntityRelationship[];
+  documents?: Document[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PersonEntityRelationship {
+  id: string;
+  personId: string;
+  entityId: string;
+  relationshipType: string;
+  ownershipPercent?: number | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  notes?: string | null;
+  person?: Person;
+  entity?: Entity;
 }
 
 export interface EntityRelationship {
@@ -132,6 +169,17 @@ export interface DashboardSummary {
     investmentIncome: number;
     needsReviewCount: number;
     unclassifiedTransactions: number;
+  };
+  consolidated: {
+    byEntity: Array<{
+      entityId: string;
+      entityName: string;
+      entityType: string;
+      totalAssets: number;
+      totalLiabilities: number;
+      netAssets: number;
+    }>;
+    note: string;
   };
 }
 
@@ -511,6 +559,18 @@ export const api = {
     addRelationship: (data: Partial<EntityRelationship>) =>
       request<EntityRelationship>("/entities/relationships", { method: "POST", body: JSON.stringify(data) }),
     removeRelationship: (id: string) => request<void>(`/entities/relationships/${id}`, { method: "DELETE" }),
+  },
+
+  people: {
+    list: () => request<Person[]>("/people"),
+    get: (id: string) => request<Person>(`/people/${id}`),
+    create: (data: Partial<Person>) => request<Person>("/people", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Partial<Person>) =>
+      request<Person>(`/people/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/people/${id}`, { method: "DELETE" }),
+    addRelationship: (data: Partial<PersonEntityRelationship>) =>
+      request<PersonEntityRelationship>("/people/relationships", { method: "POST", body: JSON.stringify(data) }),
+    removeRelationship: (id: string) => request<void>(`/people/relationships/${id}`, { method: "DELETE" }),
   },
 
   documents: {

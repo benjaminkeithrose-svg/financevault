@@ -1,7 +1,19 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, Entity } from "../api/client.js";
-import { formatDate, humanize } from "../utils.js";
+import { formatCurrency, formatDate, humanize } from "../utils.js";
+
+const ASSET_TYPE_ICONS: Record<string, string> = {
+  PROPERTY: "🏠",
+  COMMERCIAL_PROPERTY: "🏭",
+  SHARES: "📈",
+  MANAGED_FUND: "📈",
+  VEHICLE: "🚗",
+  EQUIPMENT: "🛠️",
+  SUPERANNUATION: "💰",
+  CASH: "💵",
+  OTHER: "📦",
+};
 
 export function EntityDetail() {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +40,8 @@ export function EntityDetail() {
     load();
   }
 
+  const fp = entity.financialPosition;
+
   return (
     <div>
       <div className="page-header">
@@ -36,6 +50,50 @@ export function EntityDetail() {
           <p>{humanize(entity.entityType)}</p>
         </div>
       </div>
+
+      {fp && (
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Financial position</h3>
+          <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+            This is {entity.name}'s own balance sheet — calculated only from assets, accounts and liabilities owned
+            directly by this entity. It is not the personal net worth of any related person.
+          </p>
+          <div className="grid grid-3">
+            <div className="stat-tile">
+              <div className="label">Total assets</div>
+              <div className="value">{formatCurrency(fp.totalAssets)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Total liabilities</div>
+              <div className="value">{formatCurrency(fp.totalLiabilities)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Net assets</div>
+              <div className="value">{formatCurrency(fp.netAssets)}</div>
+            </div>
+          </div>
+          {Object.keys(fp.byAssetType).length > 0 && (
+            <table style={{ marginTop: 16 }}>
+              <tbody>
+                {Object.entries(fp.byAssetType).map(([type, value]) => (
+                  <tr key={type}>
+                    <td>
+                      {ASSET_TYPE_ICONS[type] || "📦"} {humanize(type)}
+                    </td>
+                    <td>{formatCurrency(value)}</td>
+                  </tr>
+                ))}
+                {fp.cash > 0 && (
+                  <tr>
+                    <td>💵 Cash (bank accounts)</td>
+                    <td>{formatCurrency(fp.cash)}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-2">
         <div className="card">
@@ -55,6 +113,10 @@ export function EntityDetail() {
                 <td>{entity.tfn ? "•••• stored" : "—"}</td>
               </tr>
               <tr>
+                <td>Established</td>
+                <td>{formatDate(entity.establishmentDate)}</td>
+              </tr>
+              <tr>
                 <td>Notes</td>
                 <td>{entity.notes || "—"}</td>
               </tr>
@@ -63,41 +125,116 @@ export function EntityDetail() {
         </div>
 
         <div className="card">
-          <h3 style={{ marginTop: 0 }}>Relationships</h3>
-          {(entity.relationshipsFrom || []).map((r) => (
-            <div className="entity-graph-item" key={r.id}>
-              <strong>{entity.name}</strong> {humanize(r.relationshipType).toLowerCase()}{" "}
-              <Link to={`/entities/${r.toEntityId}`}>{r.toEntity?.name}</Link>
-            </div>
-          ))}
-          {(entity.relationshipsTo || []).map((r) => (
-            <div className="entity-graph-item" key={r.id}>
-              <Link to={`/entities/${r.fromEntityId}`}>{r.fromEntity?.name}</Link>{" "}
-              {humanize(r.relationshipType).toLowerCase()} <strong>{entity.name}</strong>
-            </div>
-          ))}
-          {(entity.relationshipsFrom || []).length === 0 && (entity.relationshipsTo || []).length === 0 && (
-            <p className="empty-state">No relationships yet.</p>
+          <h3 style={{ marginTop: 0 }}>People</h3>
+          {(entity.personRelationships || []).length === 0 ? (
+            <p className="empty-state">No people linked yet. Add a relationship from a person's page.</p>
+          ) : (
+            (entity.personRelationships || []).map((r) => (
+              <div className="entity-graph-item" key={r.id}>
+                <Link to={`/people/${r.personId}`}>{r.person?.name}</Link> — {humanize(r.relationshipType).toLowerCase()}
+                {r.ownershipPercent !== null && r.ownershipPercent !== undefined ? ` (${r.ownershipPercent}%)` : ""}
+              </div>
+            ))
           )}
+        </div>
+      </div>
 
-          <label>Relationship type</label>
-          <input value={relType} onChange={(e) => setRelType(e.target.value)} placeholder="OWNS, TRUSTEE_OF, BENEFICIARY_OF…" />
-          <label>Target entity</label>
-          <select value={relTarget} onChange={(e) => setRelTarget(e.target.value)}>
-            <option value="">— Select —</option>
-            {allEntities
-              .filter((e) => e.id !== id)
-              .map((e) => (
-                <option key={e.id} value={e.id}>
-                  {e.name}
-                </option>
+      <div className="grid grid-2">
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Assets</h3>
+          {(entity.properties || []).length === 0 &&
+          (entity.commercialProperties || []).length === 0 &&
+          (entity.investmentAccounts || []).length === 0 &&
+          (entity.assets || []).filter((a) => a.assetType !== "PROPERTY" && a.assetType !== "COMMERCIAL_PROPERTY").length ===
+            0 ? (
+            <p className="empty-state">No assets recorded yet.</p>
+          ) : (
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {(entity.properties || []).map((p) => (
+                <li key={p.id} style={{ marginBottom: 6 }}>
+                  🏠 <Link to={`/properties/${p.id}`}>{p.asset?.name}</Link> — {formatCurrency(p.asset?.currentValue)}
+                </li>
               ))}
-          </select>
-          <div className="toolbar" style={{ marginTop: 12 }}>
-            <button className="btn secondary" onClick={addRelationship}>
-              Add relationship
-            </button>
+              {(entity.commercialProperties || []).map((p) => (
+                <li key={p.id} style={{ marginBottom: 6 }}>
+                  🏭 <Link to={`/commercial-properties/${p.id}`}>{p.name}</Link> — {formatCurrency(p.asset?.currentValue)}
+                </li>
+              ))}
+              {(entity.investmentAccounts || []).map((a) => (
+                <li key={a.id} style={{ marginBottom: 6 }}>
+                  📈 <Link to={`/investments/${a.id}`}>{a.institution}</Link> ({a.holdings.length} holdings)
+                </li>
+              ))}
+              {(entity.assets || [])
+                .filter((a) => a.assetType !== "PROPERTY" && a.assetType !== "COMMERCIAL_PROPERTY")
+                .map((a) => (
+                  <li key={a.id} style={{ marginBottom: 6 }}>
+                    {ASSET_TYPE_ICONS[a.assetType] || "📦"} {a.name} — {formatCurrency(a.currentValue)}
+                  </li>
+                ))}
+              {(entity.accounts || []).map((a) => (
+                <li key={a.id} style={{ marginBottom: 6 }}>
+                  💵 <Link to={`/banking/${a.id}`}>
+                    {a.institution} — {a.accountName}
+                  </Link>{" "}
+                  — {formatCurrency(a.currentBalance)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Liabilities</h3>
+          {(entity.liabilities || []).length === 0 ? (
+            <p className="empty-state">No liabilities recorded yet.</p>
+          ) : (
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {(entity.liabilities || []).map((l) => (
+                <li key={l.id} style={{ marginBottom: 6 }}>
+                  🏦 <Link to={`/liabilities/${l.id}`}>{l.name}</Link> — {formatCurrency(l.currentBalance)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      <div className="card">
+        <h3 style={{ marginTop: 0 }}>Relationships to other entities</h3>
+        {(entity.relationshipsFrom || []).map((r) => (
+          <div className="entity-graph-item" key={r.id}>
+            <strong>{entity.name}</strong> {humanize(r.relationshipType).toLowerCase()}{" "}
+            <Link to={`/entities/${r.toEntityId}`}>{r.toEntity?.name}</Link>
           </div>
+        ))}
+        {(entity.relationshipsTo || []).map((r) => (
+          <div className="entity-graph-item" key={r.id}>
+            <Link to={`/entities/${r.fromEntityId}`}>{r.fromEntity?.name}</Link>{" "}
+            {humanize(r.relationshipType).toLowerCase()} <strong>{entity.name}</strong>
+          </div>
+        ))}
+        {(entity.relationshipsFrom || []).length === 0 && (entity.relationshipsTo || []).length === 0 && (
+          <p className="empty-state">No entity-to-entity relationships yet.</p>
+        )}
+
+        <label>Relationship type</label>
+        <input value={relType} onChange={(e) => setRelType(e.target.value)} placeholder="OWNS, TRUSTEE_OF, SUBSIDIARY_OF…" />
+        <label>Target entity</label>
+        <select value={relTarget} onChange={(e) => setRelTarget(e.target.value)}>
+          <option value="">— Select —</option>
+          {allEntities
+            .filter((e) => e.id !== id)
+            .map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.name}
+              </option>
+            ))}
+        </select>
+        <div className="toolbar" style={{ marginTop: 12 }}>
+          <button className="btn secondary" onClick={addRelationship}>
+            Add relationship
+          </button>
         </div>
       </div>
 
