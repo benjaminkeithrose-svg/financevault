@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { api, CsvInspection, CsvColumnMapping, CsvPreview } from "../api/client.js";
 import { formatCurrencyExact, formatDate } from "../utils.js";
+import { HelpLink } from "./HelpLink.js";
 
 /**
  * Bank CSV exports have no common shape, so the file is inspected, a mapping
@@ -89,7 +90,7 @@ export function TransactionCsvImport({ accountId, onImported }: { accountId: str
 
   return (
     <div className="card">
-      <h3 style={{ marginTop: 0 }}>Import transactions from CSV</h3>
+      <h3 style={{ marginTop: 0 }}>Import transactions from CSV <HelpLink topic="banking" /></h3>
       <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
         Export a date range from your bank's website as CSV and load it here. This is far more reliable than reading
         transactions out of PDF statements. Nothing is written until you've seen the preview, and anything already

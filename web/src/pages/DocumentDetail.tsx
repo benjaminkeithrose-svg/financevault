@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { api, AuditLogEntry, Document, Entity, TaxCategory } from "../api/client.js";
 import { formatDate, humanize } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
+import { DeleteSection } from "../components/DeleteSection.js";
 
 const REVIEW_STATUSES = ["PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"];
 const TAX_RELEVANCE = ["UNKNOWN", "NOT_RELEVANT", "POSSIBLE", "CONFIRMED"];
@@ -234,6 +235,26 @@ export function DocumentDetail() {
           {isImage && <img src={api.documents.fileUrl(doc.id)} alt={doc.originalFilename} />}
           {!isPdf && !isImage && <div className="empty-state">No inline preview for this file type.</div>}
         </div>
+      </div>
+      <div className="grid grid-2">
+        {doc.reviewStatus !== "ARCHIVED" && (
+          <DeleteSection
+            title="Archive"
+            note="Keeps the file and everything recorded about it, but hides it from the document lists and dashboard. You can still find it under the Archived filter and bring it back by changing its status."
+            question={`Archive ${doc.originalFilename}?`}
+            action={() => api.documents.remove(doc.id)}
+            redirectTo="/documents"
+            buttonLabel="Archive"
+          />
+        )}
+        <DeleteSection
+          title="Delete permanently"
+          note="Removes the file from Financial Vault and your computer's document folder, along with its links. Use this for duplicates or files uploaded by mistake."
+          question={`Permanently delete ${doc.originalFilename}? The file itself is removed. This can't be undone.`}
+          action={() => api.documents.removePermanently(doc.id)}
+          redirectTo="/documents"
+          buttonLabel="Delete permanently"
+        />
       </div>
     </div>
   );

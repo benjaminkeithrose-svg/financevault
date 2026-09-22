@@ -10,6 +10,7 @@ import {
   TaxSummaryRow,
 } from "../api/client.js";
 import { formatCurrency, formatDate } from "../utils.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 const TABS = ["Property Performance", "Investment Portfolio", "Capital Gains", "Tax Summary", "Debt Summary"] as const;
 type Tab = (typeof TABS)[number];
@@ -26,7 +27,7 @@ export function Reports() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Reports</h2>
+          <h2>Reports <HelpLink topic="tax" /></h2>
           <p>Assembled from your own records. Not financial or tax advice.</p>
         </div>
       </div>
@@ -303,7 +304,7 @@ function CapitalGains() {
 
   return (
     <div className="card">
-      <h3 style={{ marginTop: 0 }}>Capital gains</h3>
+      <h3 style={{ marginTop: 0 }}>Capital gains <HelpLink topic="capital-gains" /></h3>
       <label>Financial year</label>
       <select value={financialYearId} onChange={(e) => setFinancialYearId(e.target.value)}>
         <option value="">Choose a financial year…</option>

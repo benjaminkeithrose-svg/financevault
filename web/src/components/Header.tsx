@@ -26,6 +26,9 @@ const TITLES: Record<string, string> = {
   "/reports": "Reports",
   "/packs": "Document Packs",
   "/settings": "Settings",
+  "/help": "Help",
+  "/bulk-import": "Bulk Import",
+  "/email-import": "Email Import",
 };
 
 // Singular label for a detail route (e.g. /people/:id) whose exact title

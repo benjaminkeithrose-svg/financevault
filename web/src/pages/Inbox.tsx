@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { api, Document } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { formatDate, humanize } from "../utils.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 export function Inbox() {
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -47,7 +48,7 @@ export function Inbox() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Inbox</h2>
+          <h2>Inbox <HelpLink topic="documents" /></h2>
           <p>Upload documents, review the proposed classification, and confirm.</p>
         </div>
       </div>

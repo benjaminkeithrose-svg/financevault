@@ -16,6 +16,27 @@ CGT tracking, bulk folder import, CSV transaction import, Gmail email
 import, a double-click local launcher and a one-click backup, all described
 below.
 
+**Using it:** the user guide is built into the app — open the menu and choose
+**Help**, or tap the **?** next to a screen's title to jump to the part about
+that screen. **Print this guide** on the Help page gives a paper or PDF copy.
+This README is the technical reference.
+
+### Deleting records
+
+Every record type can be deleted from the bottom of its own page, always
+after a confirmation. Deletes never quietly take history with them: a
+commercial property with tenancies, outgoings, capital works, snapshots or a
+secured loan; a residential property with a secured loan; an investment
+account with purchases, sales or dividends; and an entity that still owns
+anything are all refused with a message naming what's in the way. Bank
+accounts are the exception — deleting one deletes its transactions too,
+after a warning with the count, because transactions come from the bank's
+CSV and can be imported again. Moving an account to another entity moves its
+transactions with it. Documents offer **Archive** (kept, hidden from the
+everyday lists) or **Delete permanently** (record and stored file removed).
+Deleting a record removes document links pointing at it but never the
+documents themselves.
+
 ### Backup
 
 Settings → **Download full backup** streams a single ZIP containing the
@@ -77,12 +98,16 @@ was actually taken with. Where no price is known, market value is shown as
 unknown rather than falling back to cost, which would read as a zero gain.
 
 **Reports → Capital Gains** gives a per-financial-year summary: every
-disposal with its proceeds, cost base, gross gain, discount and net, plus
-dividend income and franking credits — the figures an accountant asks for.
-Gains and losses are reported separately because losses offset gains
-*before* the discount applies. As everywhere else in this app, these are
-calculations from your own records for your accountant to confirm, not tax
-advice.
+disposal with its proceeds, cost base, gain or loss and whether the discount
+applies, then a per-entity net capital gain, plus dividend income and
+franking credits — the figures an accountant asks for. Netting is done per
+entity (one taxpayer's losses can't offset another's gains), with the year's
+losses applied *before* the discount — against non-discountable gains first,
+the order that leaves the most gain eligible — and any excess shown as a loss
+carried forward. Losses carried in from earlier years aren't included. The
+Tax Summary report shows the same calculated gain per entity. As everywhere
+else in this app, these are calculations from your own records for your
+accountant to confirm, not tax advice.
 
 ### Bulk import
 
@@ -293,10 +318,16 @@ schema, API or business-logic changes.
   that entity and year.
 - **Reports** (`/reports`): Property Performance (residential — equity,
   gross rent, expenses, net cash flow, estimated yield), Investment
-  Portfolio (cost base and realised gain/loss — explicitly honest that
-  there's no live pricing, so unrealised gain/loss isn't shown), Tax
-  Summary by financial year, and Debt Summary with LVR against whatever
-  secures each loan.
+  Portfolio (cost base, market value at the latest recorded price,
+  unrealised gain where every holding is priced, realised gain/loss and
+  franking), Capital Gains, Tax Summary by financial year (including the
+  calculated share-sale gain per entity), and Debt Summary with LVR against
+  whatever secures each loan.
+- The Dashboard, Net Worth and each entity's balance sheet share one
+  calculation, so their totals always agree: bank balances, property,
+  tracked holdings (at the latest price, or cost where unpriced), manually
+  entered investments, super, vehicles and other assets, less every
+  liability.
 
 ### Visualization
 

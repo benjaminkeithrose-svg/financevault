@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api, Entity, FinancialYear, PortfolioPlan } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { financialYearLabelForToday, formatCurrency } from "../utils.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 const emptyForm = {
   name: "",
@@ -60,7 +61,7 @@ export function PortfolioPlans() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Portfolio Plan</h2>
+          <h2>Portfolio Plan <HelpLink topic="portfolio-plan" /></h2>
           <p>A multi-property purchase plan you save at inception, then trend against real outcomes over time.</p>
         </div>
         <button className="btn" onClick={() => setShowForm((v) => !v)}>

@@ -5,6 +5,7 @@ import { api, Document, Entity, FinancialYear, PayPeriod, Person } from "../api/
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { financialYearLabelForToday, formatCurrency, formatDate, humanize, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
+import { DeleteSection } from "../components/DeleteSection.js";
 
 const RELATIONSHIP_TYPES = [
   "SETTLOR",
@@ -376,6 +377,13 @@ export function PersonDetail() {
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="PERSON" targetId={person.id} />
       </div>
+      <DeleteSection
+        title="Delete this person"
+        note="Removes the person, their links to entities and their pay-period log. Entities, assets and documents are not deleted."
+        question={`Delete ${person.name}? Their entity relationships and pay-period log are removed too. This can't be undone.`}
+        action={() => api.people.remove(person.id)}
+        redirectTo="/people"
+      />
     </div>
   );
 }

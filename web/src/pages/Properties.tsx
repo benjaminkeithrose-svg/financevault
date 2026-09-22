@@ -3,6 +3,7 @@ import { api, Entity, Property } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency } from "../utils.js";
 import { CommercialProperties } from "./CommercialProperties.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 function ResidentialProperties() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -107,7 +108,7 @@ export function Properties() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Properties</h2>
+          <h2>Properties <HelpLink topic="properties" /></h2>
           <p>
             {view === "residential"
               ? "Purchase, financing, income, expenses, capital and documents — all against the one property."

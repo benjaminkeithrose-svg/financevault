@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api, Person } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { humanize } from "../utils.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 export function People() {
   const [people, setPeople] = useState<Person[]>([]);
@@ -26,7 +27,7 @@ export function People() {
     <div>
       <div className="page-header">
         <div>
-          <h2>People</h2>
+          <h2>People <HelpLink topic="how-it-fits" /></h2>
           <p>The humans behind the structure — each with relationships to the entities that actually own things.</p>
         </div>
         <button className="btn" onClick={() => setShowForm((v) => !v)}>

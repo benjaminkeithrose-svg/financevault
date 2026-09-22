@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, Entity, FinancialYear, PackPreview } from "../api/client.js";
 import { financialYearLabelForToday } from "../utils.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 const DOCUMENT_CATEGORY_KEYS = ["Tax", "Property", "Investment", "Personal", "Finance", "Trust/Company", "Commercial Property", "Income"];
 const GENERATED_KEYS = ["ASSETS_LIABILITIES", "TAX_SUMMARY", "INCOME_SUMMARY"];
@@ -103,7 +104,7 @@ export function Packs() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Document Packs</h2>
+          <h2>Document Packs <HelpLink topic="packs" /></h2>
           <p>
             Pick exactly what to include — nothing is bundled automatically. A pack is a ZIP of the original
             documents you select, plus a document index and any generated summaries you tick.

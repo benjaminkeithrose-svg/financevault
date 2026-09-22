@@ -34,6 +34,7 @@ import { BulkImport } from "./pages/BulkImport.js";
 import { PortfolioPlans } from "./pages/PortfolioPlans.js";
 import { PortfolioPlanDetail } from "./pages/PortfolioPlanDetail.js";
 import { LoadFailed } from "./components/LoadFailed.js";
+import { Help } from "./pages/Help.js";
 
 function Home() {
   const [landingPage, setLandingPage] = useState<string | null>(null);
@@ -85,6 +86,7 @@ export default function App() {
           <Route path="/bulk-import" element={<BulkImport />} />
           <Route path="/bulk-import/:id" element={<BulkImport />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
           <Route
             path="*"
             element={<LoadFailed message="Page not found" backTo="/" backLabel="Back to the dashboard" />}

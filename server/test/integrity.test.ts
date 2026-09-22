@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import request from "supertest";
 import { beforeAll, describe, expect, it } from "vitest";
 import { app } from "../src/app.js";
@@ -242,5 +245,41 @@ describe("capital gains report", () => {
     const summary = (await agent.get(`/api/reports/tax-summary?financialYearId=${sale.financialYearId}`)).body;
     const taxRow = summary.rows.find((r: { entityId: string }) => r.entityId === entityId);
     expect(taxRow.calculatedCapitalGain).toBe(3_000);
+  });
+});
+
+describe("deleting documents", () => {
+  async function makeDocument(name: string) {
+    const filePath = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "fv-doc-")), name);
+    fs.writeFileSync(filePath, "test");
+    return prisma.document.create({
+      data: {
+        originalFilename: name,
+        storedFilename: name,
+        filePath,
+        mimeType: "application/pdf",
+        fileSize: 4,
+        fileHash: `${name}-${Date.now()}`,
+      },
+    });
+  }
+
+  it("archiving keeps the file but hides it from the list", async () => {
+    const doc = await makeDocument("archive-me.pdf");
+    expect((await agent.delete(`/api/documents/${doc.id}`)).status).toBe(204);
+    expect(fs.existsSync(doc.filePath)).toBe(true);
+    const list = (await agent.get("/api/documents")).body as Array<{ id: string }>;
+    expect(list.some((d) => d.id === doc.id)).toBe(false);
+    const archived = (await agent.get("/api/documents?reviewStatus=ARCHIVED")).body as Array<{ id: string }>;
+    expect(archived.some((d) => d.id === doc.id)).toBe(true);
+  });
+
+  it("deleting permanently removes the record, its links and the file", async () => {
+    const doc = await makeDocument("delete-me.pdf");
+    await prisma.documentLink.create({ data: { documentId: doc.id, targetType: "PERSON", targetId: "someone" } });
+    expect((await agent.delete(`/api/documents/${doc.id}?permanent=true`)).status).toBe(204);
+    expect(await prisma.document.findUnique({ where: { id: doc.id } })).toBeNull();
+    expect(await prisma.documentLink.count({ where: { documentId: doc.id } })).toBe(0);
+    expect(fs.existsSync(doc.filePath)).toBe(false);
   });
 });

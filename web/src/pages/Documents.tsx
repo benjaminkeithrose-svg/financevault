@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { api, Document } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 const STATUSES = ["", "PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"];
 
@@ -23,7 +24,7 @@ export function Documents() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Documents</h2>
+          <h2>Documents <HelpLink topic="documents" /></h2>
           <p>Every document is a first-class record — link it wherever it's relevant, never duplicate it.</p>
         </div>
       </div>
@@ -42,7 +43,7 @@ export function Documents() {
             className={`chip ${reviewStatus === status ? "selected" : ""}`}
             onClick={() => setParams(status ? { reviewStatus: status } : {})}
           >
-            {status ? humanize(status) : "All"}
+            {status ? humanize(status) : "All (not archived)"}
           </button>
         ))}
       </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, Settings as SettingsType } from "../api/client.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 export function Settings() {
   const [settings, setSettings] = useState<SettingsType | null>(null);
@@ -109,7 +110,7 @@ export function Settings() {
       </div>
 
       <div className="card">
-        <h3 style={{ marginTop: 0 }}>Passcode</h3>
+        <h3 style={{ marginTop: 0 }}>Passcode <HelpLink topic="passcode" /></h3>
         <p style={{ color: "var(--text-muted)" }}>
           Changing your passcode doesn't re-encrypt anything and doesn't change your recovery key — it just changes
           what opens the vault.
@@ -137,7 +138,7 @@ export function Settings() {
       </div>
 
       <div className="card">
-        <h3 style={{ marginTop: 0 }}>Market price lookups</h3>
+        <h3 style={{ marginTop: 0 }}>Market price lookups <HelpLink topic="investments" /></h3>
         <p style={{ color: "var(--text-muted)" }}>
           Lets the app look up prices for the shares, ETFs and crypto you hold, so its valuations and your net worth
           stay current. This is the only part of the investment module that reaches the internet. A lookup discloses
@@ -210,7 +211,7 @@ export function Settings() {
       </div>
 
       <div className="card">
-        <h3 style={{ marginTop: 0 }}>Backup</h3>
+        <h3 style={{ marginTop: 0 }}>Backup <HelpLink topic="backup" /></h3>
         <p style={{ color: "var(--text-muted)" }}>
           Downloads one ZIP with a full copy of your database and every uploaded document — everything needed to
           restore Financial Vault elsewhere. It goes straight to your browser's downloads; nothing is uploaded

@@ -31,13 +31,13 @@ dashboardRouter.get(
       prisma.document.count({ where: { reviewStatus: "NEEDS_CONFIRMATION", ...entityWhere } }),
       prisma.document.count({ where: { reviewStatus: "MISSING_INFORMATION", ...entityWhere } }),
       prisma.document.findMany({
-        where: entityWhere,
+        where: { reviewStatus: { not: "ARCHIVED" }, ...entityWhere },
         orderBy: { uploadDate: "desc" },
         take: 10,
         include: { entity: true },
       }),
       prisma.document.findMany({
-        where: { renewalDate: { gte: now, lte: in90Days }, ...entityWhere },
+        where: { renewalDate: { gte: now, lte: in90Days }, reviewStatus: { not: "ARCHIVED" }, ...entityWhere },
         orderBy: { renewalDate: "asc" },
         include: { entity: true },
       }),

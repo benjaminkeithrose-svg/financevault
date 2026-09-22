@@ -1222,7 +1222,9 @@ export const api = {
     update: (id: string, data: Record<string, unknown>) =>
       request<Document>(`/documents/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     confirm: (id: string) => request<Document>(`/documents/${id}/confirm`, { method: "POST" }),
+    /** Archives: the document is kept but hidden from everyday lists. */
     remove: (id: string) => request<void>(`/documents/${id}`, { method: "DELETE" }),
+    removePermanently: (id: string) => request<void>(`/documents/${id}?permanent=true`, { method: "DELETE" }),
     addLink: (id: string, data: { targetType: string; targetId: string; label?: string }) =>
       request<DocumentLink>(`/documents/${id}/links`, { method: "POST", body: JSON.stringify(data) }),
     removeLink: (id: string, linkId: string) =>

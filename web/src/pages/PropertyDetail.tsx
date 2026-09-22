@@ -5,6 +5,7 @@ import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
+import { DeleteSection } from "../components/DeleteSection.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -214,6 +215,13 @@ export function PropertyDetail() {
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="PROPERTY" targetId={property.id} />
       </div>
+      <DeleteSection
+        title="Delete this property"
+        note="Not possible while a loan is secured against it — change or remove the loan first. Linked documents are kept."
+        question={`Delete ${property.asset?.name ?? "this property"}? This can't be undone.`}
+        action={() => api.properties.remove(property.id)}
+        redirectTo="/properties"
+      />
     </div>
   );
 }

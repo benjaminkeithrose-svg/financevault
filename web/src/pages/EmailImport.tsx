@@ -8,6 +8,7 @@ import {
   ImportedEmailAttachment,
 } from "../api/client.js";
 import { formatDate, confirmThenDelete } from "../utils.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 const OUTCOME_LABELS: Record<string, string> = {
   IMPORTED: "Imported",
@@ -137,7 +138,7 @@ export function EmailImport() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Email import</h2>
+          <h2>Email import <HelpLink topic="email-import" /></h2>
           <p>
             Pull financial documents out of Gmail as attachments. Nothing is sent, deleted or changed in your mailbox —
             attachments are only ever copied out, and an import only runs when you ask for one.

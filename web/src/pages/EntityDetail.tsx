@@ -4,6 +4,7 @@ import { api, Entity } from "../api/client.js";
 import { TfnField } from "../components/TfnField.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
+import { DeleteSection } from "../components/DeleteSection.js";
 
 const ASSET_TYPE_ICONS: Record<string, string> = {
   PROPERTY: "🏠",
@@ -277,6 +278,13 @@ export function EntityDetail() {
           </table>
         )}
       </div>
+      <DeleteSection
+        title="Delete this entity"
+        note="Only possible once nothing is recorded against it — assets, accounts, loans, documents and so on. If anything is, you'll be told what to remove or move first."
+        question={`Delete ${entity.name}? This can't be undone.`}
+        action={() => api.entities.remove(entity.id)}
+        redirectTo="/entities"
+      />
     </div>
   );
 }

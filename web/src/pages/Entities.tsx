@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api, Entity } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { humanize } from "../utils.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 // Legal/ownership vehicles only — an Entity is who owns things, never the
 // thing itself. Properties, bank accounts and investment accounts are
@@ -34,7 +35,7 @@ export function Entities() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Entities</h2>
+          <h2>Entities <HelpLink topic="how-it-fits" /></h2>
           <p>The legal/ownership vehicles that hold assets — individuals, trusts, companies, partnerships, super funds and SMSFs.</p>
         </div>
         <button className="btn" onClick={() => setShowForm((v) => !v)}>

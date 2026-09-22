@@ -1,6 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import { z } from "zod";
+import fs from "node:fs/promises";
 import path from "node:path";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
@@ -30,7 +31,8 @@ documentsRouter.get(
     const { reviewStatus, entityId, financialYearId, q } = req.query as Record<string, string | undefined>;
 
     const where: Record<string, unknown> = {};
-    if (reviewStatus) where.reviewStatus = reviewStatus;
+    // Archived documents are kept but stay out of the way unless asked for.
+    where.reviewStatus = reviewStatus || { not: "ARCHIVED" };
     if (entityId) where.entityId = entityId;
     if (financialYearId) where.financialYearId = financialYearId;
     if (q) {
@@ -230,8 +232,33 @@ documentsRouter.delete(
 documentsRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    await prisma.document.update({ where: { id: req.params.id }, data: { reviewStatus: "ARCHIVED" } });
-    await logAudit("DOCUMENT_DELETED", { targetType: "Document", targetId: req.params.id, documentId: req.params.id });
+    const doc = await prisma.document.findUnique({ where: { id: req.params.id } });
+    if (!doc) {
+      res.status(404).json({ error: "Document not found" });
+      return;
+    }
+
+    // Without ?permanent=true a delete only archives: the file and record are
+    // kept and it drops out of the everyday lists.
+    if (req.query.permanent !== "true") {
+      await prisma.document.update({ where: { id: doc.id }, data: { reviewStatus: "ARCHIVED" } });
+      await logAudit("DOCUMENT_ARCHIVED", { targetType: "Document", targetId: doc.id, documentId: doc.id });
+      res.status(204).send();
+      return;
+    }
+
+    // Permanent: the record goes (its links with it; payslips and
+    // transactions that referred to it keep their own details), then the
+    // stored file. The audit entry keeps the filename, since the document
+    // it would point to no longer exists.
+    await prisma.document.delete({ where: { id: doc.id } });
+    const sharedFile = await prisma.document.count({ where: { filePath: doc.filePath } });
+    if (sharedFile === 0) await fs.unlink(doc.filePath).catch(() => {});
+    await logAudit("DOCUMENT_DELETED", {
+      targetType: "Document",
+      targetId: doc.id,
+      data: { filename: doc.originalFilename },
+    });
     res.status(204).send();
   })
 );

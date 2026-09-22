@@ -10,6 +10,8 @@ import {
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { formatCurrency, formatCurrencyExact, formatDate, humanize, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
+import { DeleteSection } from "../components/DeleteSection.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 const ASSET_CLASSES = ["SHARE", "ETF", "MANAGED_FUND", "CRYPTO", "SUPER", "BOND", "OTHER"] as const;
 
@@ -200,7 +202,7 @@ export function InvestmentAccountDetail() {
     <div>
       <div className="page-header">
         <div>
-          <h2>{account.institution}</h2>
+          <h2>{account.institution} <HelpLink topic="investments" /></h2>
           <p>
             {humanize(account.accountType)} · {account.entity?.name}
           </p>
@@ -666,6 +668,13 @@ export function InvestmentAccountDetail() {
       </p>
 
       {securities.length === 0 && null}
+      <DeleteSection
+        title="Delete this investment account"
+        note="Only possible once it holds no purchases, sales or dividends — that is your cost-base and capital gains history. Linked documents are kept."
+        question={`Delete the ${account.institution} account? This can't be undone.`}
+        action={() => api.investments.remove(account.id)}
+        redirectTo="/investments"
+      />
     </div>
   );
 }

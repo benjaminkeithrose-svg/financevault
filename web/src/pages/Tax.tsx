@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, Document, Entity, FinancialYear, TaxRecord } from "../api/client.js";
 import { financialYearLabelForToday, formatCurrency, humanize, confirmThenDelete } from "../utils.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 const RECORD_TYPES = ["INCOME", "EXPENSE", "CAPITAL_GAIN", "CAPITAL_LOSS"];
 const STATUSES = ["RECORDED", "ESTIMATED", "NEEDS_REVIEW", "ACCOUNTANT_CONFIRMED"];
@@ -130,7 +131,7 @@ export function Tax() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Tax</h2>
+          <h2>Tax <HelpLink topic="tax" /></h2>
           <p>Organised by entity and financial year — an information organiser, not tax advice.</p>
         </div>
       </div>

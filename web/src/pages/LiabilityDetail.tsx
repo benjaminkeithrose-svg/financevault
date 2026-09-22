@@ -4,6 +4,9 @@ import { api, Liability } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { humanize } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
+import { DeleteSection } from "../components/DeleteSection.js";
+
+const LOAN_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN"];
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -155,6 +158,13 @@ export function LiabilityDetail() {
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="LIABILITY" targetId={liability.id} />
       </div>
+      <DeleteSection
+        title="Delete this loan"
+        note="Removes the loan from your records and totals. Linked documents are kept."
+        question={`Delete ${liability.name}? This can't be undone.`}
+        action={() => api.liabilities.remove(liability.id)}
+        redirectTo={LOAN_TYPES.includes(liability.liabilityType) ? "/loans" : "/liabilities"}
+      />
     </div>
   );
 }

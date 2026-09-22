@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, Entity, NetWorthBreakdown, NetWorthSnapshot } from "../api/client.js";
 import { formatCurrency, formatDate, confirmThenDelete } from "../utils.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 const CATEGORY_ROWS: Array<{ key: keyof NetWorthBreakdown; label: string; icon: string }> = [
   { key: "cash", label: "Cash", icon: "💵" },
@@ -62,7 +63,7 @@ export function NetWorth() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Net Worth</h2>
+          <h2>Net Worth <HelpLink topic="net-worth" /></h2>
           <p>{entityId ? "This entity's" : "Consolidated"} balance sheet, and how it's changed over time.</p>
         </div>
         <select value={entityId} onChange={(e) => setEntityId(e.target.value)} style={{ width: 220 }}>

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, Entity, FinancialYear, ImportBatchReview, ImportBatchSummary, ImportGroup } from "../api/client.js";
 import { formatDate } from "../utils.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 /** OCR is CPU-heavy, so a few at a time keeps things moving without thrashing. */
 const UPLOAD_CONCURRENCY = 3;
@@ -144,7 +145,7 @@ export function BulkImport() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Bulk import</h2>
+          <h2>Bulk import <HelpLink topic="bulk-import" /></h2>
           <p>
             For loading a whole folder at once. Files that look alike are grouped afterwards so you can classify a
             run of statements in one go rather than one at a time.

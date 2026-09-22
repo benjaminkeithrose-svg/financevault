@@ -6,6 +6,8 @@ import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ScenarioComparison } from "../components/ScenarioComparison.js";
 import { formatCurrency, formatDate, humanize, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
+import { DeleteSection } from "../components/DeleteSection.js";
+import { HelpLink } from "../components/HelpLink.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -262,7 +264,7 @@ export function CommercialPropertyDetail() {
     <div>
       <div className="page-header">
         <div>
-          <h2>{property.name}</h2>
+          <h2>{property.name} <HelpLink topic="properties" /></h2>
           <p>
             {property.propertyTypes.split(",").map(humanize).join(" / ")} · {property.address} · {property.entity?.name}
           </p>
@@ -1127,6 +1129,13 @@ export function CommercialPropertyDetail() {
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="COMMERCIAL_PROPERTY" targetId={property.id} />
       </div>
+      <DeleteSection
+        title="Delete this property"
+        note="Only possible once it has no tenancies, outgoings, capital works, snapshots or secured loans — that history is kept on purpose. Linked documents are kept."
+        question={`Delete ${property.name}? This can't be undone.`}
+        action={() => api.commercialProperties.remove(property.id)}
+        redirectTo="/properties"
+      />
     </div>
   );
 }
