@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api, CommercialProperty, FinancialYear } from "../api/client.js";
+import { api, CommercialProperty, Entity, FinancialYear } from "../api/client.js";
+import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ScenarioComparison } from "../components/ScenarioComparison.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
@@ -43,6 +44,7 @@ const emptyRentReview = { reviewDate: "", reviewMechanism: "CPI", previousRent: 
 export function CommercialPropertyDetail() {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<CommercialProperty | null>(null);
+  const [entities, setEntities] = useState<Entity[]>([]);
   const [financialYears, setFinancialYears] = useState<FinancialYear[]>([]);
   const [valuationBasis, setValuationBasis] = useState<"current" | "purchase">("current");
   const [form, setForm] = useState<Record<string, string>>({});
@@ -91,6 +93,7 @@ export function CommercialPropertyDetail() {
   useEffect(load, [id, valuationBasis]);
   useEffect(() => {
     api.financialYears.list().then(setFinancialYears);
+    api.entities.list().then(setEntities);
   }, []);
 
   if (!property) return <div className="empty-state">Loading…</div>;
@@ -998,6 +1001,8 @@ export function CommercialPropertyDetail() {
           </table>
         )}
       </div>
+
+      {property.asset && <AssetOwnershipPanel asset={property.asset} entities={entities} onChange={load} />}
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>

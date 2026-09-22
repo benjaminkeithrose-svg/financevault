@@ -25,7 +25,10 @@ assetsRouter.get(
 assetsRouter.get(
   "/:id",
   asyncHandler(async (req, res) => {
-    const asset = await prisma.asset.findUnique({ where: { id: req.params.id }, include: { entity: true, property: true } });
+    const asset = await prisma.asset.findUnique({
+      where: { id: req.params.id },
+      include: { entity: true, property: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } },
+    });
     if (!asset) {
       res.status(404).json({ error: "Asset not found" });
       return;
@@ -98,6 +101,71 @@ assetsRouter.delete(
     }
     await prisma.asset.delete({ where: { id: req.params.id } });
     await logAudit("ASSET_DELETED", { targetType: "Asset", targetId: req.params.id });
+    res.status(204).send();
+  })
+);
+
+// ---------------------------------------------------------------------------
+// Asset ownership — fractional/time-boxed ownership records that sit
+// alongside Asset.entityId (the primary/current owner, kept for simple
+// queries). Recording a split here (e.g. 50/50 between two entities) never
+// changes Asset.entityId; absence of any record here just means the primary
+// entity is the sole 100% owner.
+// ---------------------------------------------------------------------------
+
+const ownershipInput = z.object({
+  ownerEntityId: z.string(),
+  ownershipPercent: z.number().min(0).max(100),
+  ownershipType: z.string().optional().nullable(), // LEGAL | BENEFICIAL
+  startDate: z.string().datetime().optional().nullable(),
+  endDate: z.string().datetime().optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+assetsRouter.post(
+  "/:id/ownerships",
+  asyncHandler(async (req, res) => {
+    const parsed = ownershipInput.parse(req.body);
+    const ownership = await prisma.assetOwnership.create({
+      data: {
+        assetId: req.params.id,
+        ownerEntityId: parsed.ownerEntityId,
+        ownershipPercent: parsed.ownershipPercent,
+        ownershipType: parsed.ownershipType ?? null,
+        startDate: parsed.startDate ? new Date(parsed.startDate) : null,
+        endDate: parsed.endDate ? new Date(parsed.endDate) : null,
+        notes: parsed.notes ?? null,
+      },
+      include: { ownerEntity: true },
+    });
+    await logAudit("ASSET_OWNERSHIP_ADDED", { targetType: "Asset", targetId: req.params.id });
+    res.status(201).json(ownership);
+  })
+);
+
+assetsRouter.put(
+  "/ownerships/:ownershipId",
+  asyncHandler(async (req, res) => {
+    const parsed = ownershipInput.partial().parse(req.body);
+    const ownership = await prisma.assetOwnership.update({
+      where: { id: req.params.ownershipId },
+      data: {
+        ...parsed,
+        startDate: parsed.startDate !== undefined ? (parsed.startDate ? new Date(parsed.startDate) : null) : undefined,
+        endDate: parsed.endDate !== undefined ? (parsed.endDate ? new Date(parsed.endDate) : null) : undefined,
+      },
+      include: { ownerEntity: true },
+    });
+    await logAudit("ASSET_OWNERSHIP_CHANGED", { targetType: "Asset", targetId: ownership.assetId });
+    res.json(ownership);
+  })
+);
+
+assetsRouter.delete(
+  "/ownerships/:ownershipId",
+  asyncHandler(async (req, res) => {
+    const ownership = await prisma.assetOwnership.delete({ where: { id: req.params.ownershipId } });
+    await logAudit("ASSET_OWNERSHIP_REMOVED", { targetType: "Asset", targetId: ownership.assetId });
     res.status(204).send();
   })
 );

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api, Liability, Property } from "../api/client.js";
+import { api, Entity, Liability, Property } from "../api/client.js";
+import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 
@@ -12,8 +13,13 @@ function toDateInput(value?: string | null): string {
 export function PropertyDetail() {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<Property | null>(null);
+  const [entities, setEntities] = useState<Entity[]>([]);
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    api.entities.list().then(setEntities);
+  }, []);
 
   function load() {
     if (!id) return;
@@ -196,6 +202,8 @@ export function PropertyDetail() {
           </table>
         </div>
       </div>
+
+      {property.asset && <AssetOwnershipPanel asset={property.asset} entities={entities} onChange={load} />}
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>

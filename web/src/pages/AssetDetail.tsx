@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { api, Asset } from "../api/client.js";
+import { api, Asset, Entity } from "../api/client.js";
+import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { humanize } from "../utils.js";
 
@@ -15,6 +16,7 @@ export function AssetDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [asset, setAsset] = useState<Asset | null>(null);
+  const [entities, setEntities] = useState<Entity[]>([]);
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
@@ -34,6 +36,9 @@ export function AssetDetail() {
   }
 
   useEffect(load, [id]);
+  useEffect(() => {
+    api.entities.list().then(setEntities);
+  }, []);
 
   if (!asset) return <div className="empty-state">Loading…</div>;
 
@@ -114,6 +119,8 @@ export function AssetDetail() {
           </button>
         </div>
       </div>
+
+      <AssetOwnershipPanel asset={asset} entities={entities} onChange={load} />
 
       <div className="card">
         <h3>Documents</h3>

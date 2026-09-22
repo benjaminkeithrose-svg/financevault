@@ -334,8 +334,22 @@ export interface Asset {
   notes?: string | null;
   property?: Property | null;
   documents?: Document[];
+  ownerships?: AssetOwnership[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AssetOwnership {
+  id: string;
+  assetId: string;
+  ownerEntityId: string;
+  ownerEntity?: Entity;
+  ownershipPercent: number;
+  ownershipType?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  notes?: string | null;
+  createdAt: string;
 }
 
 export interface Property {
@@ -868,6 +882,11 @@ export const api = {
     update: (id: string, data: Record<string, unknown>) =>
       request<Asset>(`/assets/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     remove: (id: string) => request<void>(`/assets/${id}`, { method: "DELETE" }),
+    addOwnership: (assetId: string, data: Record<string, unknown>) =>
+      request<AssetOwnership>(`/assets/${assetId}/ownerships`, { method: "POST", body: JSON.stringify(data) }),
+    updateOwnership: (ownershipId: string, data: Record<string, unknown>) =>
+      request<AssetOwnership>(`/assets/ownerships/${ownershipId}`, { method: "PUT", body: JSON.stringify(data) }),
+    removeOwnership: (ownershipId: string) => request<void>(`/assets/ownerships/${ownershipId}`, { method: "DELETE" }),
   },
 
   graph: () => request<Graph>("/graph"),

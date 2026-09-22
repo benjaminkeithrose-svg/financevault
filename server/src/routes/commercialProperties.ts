@@ -155,7 +155,7 @@ commercialPropertiesRouter.get(
     const property = await prisma.commercialProperty.findUnique({
       where: { id: req.params.id },
       include: {
-        asset: true,
+        asset: { include: { ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } } },
         entity: true,
         tenancies: { include: { rentReviews: { orderBy: { reviewDate: "desc" } } }, orderBy: { createdAt: "desc" } },
         loans: true,

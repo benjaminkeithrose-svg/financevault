@@ -24,7 +24,11 @@ propertiesRouter.get(
   asyncHandler(async (req, res) => {
     const property = await prisma.property.findUnique({
       where: { id: req.params.id },
-      include: { asset: true, entity: true, liabilities: true },
+      include: {
+        asset: { include: { ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } } },
+        entity: true,
+        liabilities: true,
+      },
     });
     if (!property) {
       res.status(404).json({ error: "Property not found" });

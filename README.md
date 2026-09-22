@@ -132,9 +132,12 @@ ownership layer with the things being owned. This has been corrected:
   by-entity breakdown** — explicitly labelled as a user-level convenience
   view, not a formal accounting consolidation, with each asset counted
   under exactly one entity.
-- An `AssetOwnership` table exists in the schema for recording fractional
-  or time-boxed ownership (e.g. 50/50 between two people) on top of an
-  asset's primary owning entity, ready for a future UI pass.
+- **Fractional/joint ownership**: the `AssetOwnership` table now has a UI —
+  an "Ownership split" panel on Asset, Property and Commercial Property
+  detail pages lets you record splits (e.g. 50/50 between two entities) on
+  top of the asset's primary owning entity, which is never changed by
+  adding a split. If recorded splits don't total 100%, it's flagged as an
+  informational note, not blocked — the figures are recorded as entered.
 - The nav now visually groups People / Entities / Assets / Liabilities
   rather than flattening everything into one list.
 
