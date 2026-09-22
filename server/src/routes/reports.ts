@@ -2,6 +2,7 @@ import { Router } from "express";
 import { prisma } from "../db.js";
 import { computeDisposal } from "../services/cgt.js";
 import { capitalGainsForYear } from "../services/cgtReport.js";
+import { describeVehicle, monthlyRepayment } from "../services/debts.js";
 import { positionsForAccount } from "../services/positions.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 
@@ -208,11 +209,21 @@ reportsRouter.get(
   "/debt-summary",
   asyncHandler(async (_req, res) => {
     const liabilities = await prisma.liability.findMany({
-      include: { entity: true, securityProperty: { include: { asset: true } }, securityCommercialProperty: { include: { asset: true } } },
+      include: {
+        entity: true,
+        securityProperty: { include: { asset: true } },
+        securityCommercialProperty: { include: { asset: true } },
+        securityAsset: true,
+      },
+      orderBy: { createdAt: "asc" },
     });
 
     const rows = liabilities.map((l) => {
-      const securedValue = l.securityProperty?.asset.currentValue ?? l.securityCommercialProperty?.asset.currentValue ?? null;
+      const securedValue =
+        l.securityProperty?.asset.currentValue ??
+        l.securityCommercialProperty?.asset.currentValue ??
+        l.securityAsset?.currentValue ??
+        null;
       const lvr = securedValue && l.currentBalance ? l.currentBalance / securedValue : null;
       return {
         id: l.id,
@@ -221,15 +232,32 @@ reportsRouter.get(
         entityName: l.entity.name,
         lender: l.lender,
         currentBalance: l.currentBalance,
+        creditLimit: l.creditLimit,
         interestRate: l.interestRate,
         repaymentAmount: l.repaymentAmount,
-        securedAsset: l.securityProperty?.address ?? l.securityCommercialProperty?.name ?? null,
+        repaymentFrequency: l.repaymentFrequency,
+        monthlyRepayment: monthlyRepayment(l),
+        securedAsset:
+          l.securityProperty?.address ??
+          l.securityCommercialProperty?.name ??
+          (l.securityAsset ? describeVehicle(l.securityAsset) : null),
         lvr,
       };
     });
 
-    const totalDebt = liabilities.reduce((s, l) => s + (l.currentBalance ?? 0), 0);
-    res.json({ rows, totalDebt, formula: "LVR = loan balance / current value of the property securing it" });
+    const cards = rows.filter((r) => r.liabilityType === "CREDIT_CARD");
+    res.json({
+      rows,
+      totalDebt: rows.reduce((s, r) => s + (r.currentBalance ?? 0), 0),
+      totalCreditLimits: cards.reduce((s, r) => s + (r.creditLimit ?? 0), 0),
+      cardsWithoutLimit: cards.filter((r) => r.creditLimit === null).length,
+      totalMonthlyRepayments: rows.reduce((s, r) => s + (r.monthlyRepayment ?? 0), 0),
+      // Cards are excluded here: their repayment is the lender's calculation
+      // on the limit, not a fixed amount, so no figure is expected.
+      loansWithoutRepayment: rows.filter((r) => r.liabilityType !== "CREDIT_CARD" && r.monthlyRepayment === null).length,
+      formula:
+        "LVR = balance / current value of what secures it; monthly repayment = repayment amount x payments per year / 12 (monthly if no frequency is recorded)",
+    });
   })
 );
 

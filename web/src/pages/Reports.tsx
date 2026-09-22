@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import {
   api,
   CapitalGainsReport,
-  DebtSummaryRow,
+  DebtSummary as DebtSummaryData,
   FinancialYear,
   InvestmentPortfolioRow,
   PropertyPerformanceRow,
   TaxSummaryRow,
 } from "../api/client.js";
-import { formatCurrency, formatDate } from "../utils.js";
+import { formatCurrency, formatDate, liabilityTypeLabel } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
 
 const TABS = ["Property Performance", "Investment Portfolio", "Capital Gains", "Tax Summary", "Debt Summary"] as const;
@@ -234,7 +234,7 @@ function TaxSummary() {
 }
 
 function DebtSummary() {
-  const [data, setData] = useState<{ rows: DebtSummaryRow[]; totalDebt: number } | null>(null);
+  const [data, setData] = useState<DebtSummaryData | null>(null);
 
   useEffect(() => {
     api.reports.debtSummary().then(setData);
@@ -244,23 +244,52 @@ function DebtSummary() {
 
   return (
     <div className="card">
-      <div className="stat-tile" style={{ maxWidth: 220, marginBottom: 16 }}>
-        <div className="label">Total debt</div>
-        <div className="value">{formatCurrency(data.totalDebt)}</div>
+      <p style={{ marginTop: 0, color: "var(--text-muted)", fontSize: 13 }}>
+        Everything a lender asks about when you apply for a new loan: what you owe, your credit card limits and what your
+        debts cost each month. <HelpLink topic="borrowing" />
+      </p>
+      <div className="grid grid-3" style={{ marginBottom: 16 }}>
+        <div className="stat-tile">
+          <div className="label">Total debt</div>
+          <div className="value">{formatCurrency(data.totalDebt)}</div>
+        </div>
+        <div className="stat-tile">
+          <div className="label">Credit card limits</div>
+          <div className="value">{formatCurrency(data.totalCreditLimits)}</div>
+        </div>
+        <div className="stat-tile">
+          <div className="label">Repayments a month</div>
+          <div className="value">{formatCurrency(data.totalMonthlyRepayments)}</div>
+        </div>
       </div>
+      {(data.cardsWithoutLimit > 0 || data.loansWithoutRepayment > 0) && (
+        <div className="message-box warning">
+          {data.cardsWithoutLimit > 0 &&
+            `${data.cardsWithoutLimit} credit card${data.cardsWithoutLimit === 1 ? " has" : "s have"} no limit recorded. `}
+          {data.loansWithoutRepayment > 0 &&
+            `${data.loansWithoutRepayment} loan${data.loansWithoutRepayment === 1 ? " has" : "s have"} no repayment amount recorded, so ${data.loansWithoutRepayment === 1 ? "it isn't" : "they aren't"} in the monthly total. `}
+          Open each one to add it.
+        </div>
+      )}
+      <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+        Lenders count a credit card at its limit, even if it's paid off — reducing or closing unused cards can increase how
+        much you can borrow.
+      </p>
       {data.rows.length === 0 ? (
         <p className="empty-state">No liabilities recorded yet.</p>
       ) : (
         <table>
           <thead>
             <tr>
-              <th>Loan</th>
+              <th>Debt</th>
+              <th>Type</th>
               <th>Entity</th>
               <th>Lender</th>
               <th>Balance</th>
+              <th>Limit</th>
               <th>Rate</th>
-              <th>Repayment</th>
-              <th>Security</th>
+              <th>A month</th>
+              <th>Secured by / for</th>
               <th>LVR</th>
             </tr>
           </thead>
@@ -270,11 +299,13 @@ function DebtSummary() {
                 <td>
                   <Link to={`/liabilities/${r.id}`}>{r.name}</Link>
                 </td>
+                <td>{liabilityTypeLabel(r.liabilityType)}</td>
                 <td>{r.entityName}</td>
                 <td>{r.lender || "—"}</td>
                 <td>{formatCurrency(r.currentBalance)}</td>
+                <td>{r.liabilityType === "CREDIT_CARD" ? formatCurrency(r.creditLimit) : "—"}</td>
                 <td>{r.interestRate ? `${r.interestRate}%` : "—"}</td>
-                <td>{formatCurrency(r.repaymentAmount)}</td>
+                <td>{r.monthlyRepayment !== null ? formatCurrency(r.monthlyRepayment) : "—"}</td>
                 <td>{r.securedAsset || "—"}</td>
                 <td>{pct(r.lvr)}</td>
               </tr>

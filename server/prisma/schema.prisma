@@ -310,12 +310,25 @@ model Asset {
   disposalValue    Float?
   depreciationInfo String? // JSON: method, rate, effective life
   notes            String?
+
+  // Vehicle details — only meaningful when assetType is VEHICLE, which
+  // covers anything registrable or financeable the same way: cars,
+  // motorcycles, boats, jet skis, caravans, trailers.
+  vehicleType        String? // CAR | MOTORCYCLE | BOAT | JET_SKI | CARAVAN | CAMPERVAN | TRAILER | OTHER
+  make               String?
+  model              String?
+  year               Int?
+  registration       String?
+  registrationExpiry DateTime?
+  identifier         String? // VIN, or hull identification number for a boat
+
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
   property           Property?
   commercialProperty CommercialProperty?
   ownerships         AssetOwnership[]
+  securedLoans       Liability[]
 
   @@index([entityId])
   @@index([assetType])
@@ -324,7 +337,7 @@ model Asset {
 model Liability {
   id                           String    @id @default(cuid())
   name                         String
-  liabilityType                String // HOME_LOAN | INVESTMENT_LOAN | CREDIT_CARD | PERSONAL_LOAN | OTHER
+  liabilityType                String // HOME_LOAN | INVESTMENT_LOAN | COMMERCIAL_LOAN | VEHICLE_LOAN | CREDIT_CARD | PERSONAL_LOAN | OTHER
   entityId                     String
   entity                       Entity    @relation(fields: [entityId], references: [id])
   lender                       String?
@@ -337,6 +350,10 @@ model Liability {
   maturityDate                 DateTime?
   securityPropertyId           String?
   securityCommercialPropertyId String?
+  // The vehicle (car, boat, jet ski…) a vehicle or personal loan paid for.
+  securityAssetId              String?
+  // Credit cards: lenders assess a card on its limit, not its balance.
+  creditLimit                  Float?
   // Commercial-specific loan detail (spec section 17) — nullable, only
   // meaningful when this liability secures a CommercialProperty.
   interestOnly                 Boolean?
@@ -351,8 +368,10 @@ model Liability {
 
   securityProperty           Property?           @relation(fields: [securityPropertyId], references: [id])
   securityCommercialProperty CommercialProperty? @relation(fields: [securityCommercialPropertyId], references: [id])
+  securityAsset              Asset?              @relation(fields: [securityAssetId], references: [id])
 
   @@index([entityId])
+  @@index([securityAssetId])
   @@index([securityCommercialPropertyId])
 }
 
@@ -855,6 +874,7 @@ model NetWorthSnapshot {
   mortgages        Float
   creditCards      Float
   personalLoans    Float
+  vehicleLoans     Float    @default(0)
   otherLiabilities Float
   totalLiabilities Float
 

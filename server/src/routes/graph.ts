@@ -111,6 +111,9 @@ graphRouter.get(
         const secured = assets.find((a) => a.commercialProperty?.id === l.securityCommercialPropertyId);
         if (secured) edges.push({ from: `liability:${l.id}`, to: `asset:${secured.id}`, label: "Secured by" });
       }
+      if (l.securityAssetId && assets.some((a) => a.id === l.securityAssetId)) {
+        edges.push({ from: `liability:${l.id}`, to: `asset:${l.securityAssetId}`, label: "Paid for" });
+      }
     }
 
     res.json({ nodes, edges });

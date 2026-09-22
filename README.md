@@ -21,6 +21,24 @@ below.
 that screen. **Print this guide** on the Help page gives a paper or PDF copy.
 This README is the technical reference.
 
+### Vehicles, boats and borrowing
+
+**Vehicles & boats** (menu → Assets) records cars, motorcycles, boats, jet
+skis, caravans, campervans and trailers with year, make, model, rego and
+expiry, and VIN or hull ID. A **vehicle / boat loan** (or a personal loan)
+can be linked to the vehicle it paid for; the vehicle's page then shows
+what's owing, the monthly repayment and equity, and a vehicle can't be
+deleted while a loan is linked. Vehicle loans are their own line in Net
+Worth.
+
+Credit cards carry a **credit limit**, and every loan a repayment amount
+and frequency. **Reports → Debt Summary** is laid out for a loan
+application: total debt, total credit card limits (lenders assess cards on
+the limit, not the balance) and total monthly repayments, with a warning
+for any card without a limit or loan without a repayment so the totals
+aren't silently short. The Broker Pack's assets and liabilities statement
+carries the same limits, monthly repayments and security.
+
 ### Deleting records
 
 Every record type can be deleted from the bottom of its own page, always

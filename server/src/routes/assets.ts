@@ -16,7 +16,7 @@ assetsRouter.get(
     if (assetType) where.assetType = assetType;
     const assets = await prisma.asset.findMany({
       where,
-      include: { entity: true, property: true },
+      include: { entity: true, property: true, securedLoans: true },
       orderBy: { createdAt: "desc" },
     });
     res.json(assets);
@@ -28,7 +28,12 @@ assetsRouter.get(
   asyncHandler(async (req, res) => {
     const asset = await prisma.asset.findUnique({
       where: { id: req.params.id },
-      include: { entity: true, property: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } },
+      include: {
+        entity: true,
+        property: true,
+        securedLoans: true,
+        ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } },
+      },
     });
     if (!asset) {
       res.status(404).json({ error: "Asset not found" });
@@ -54,6 +59,13 @@ const assetInput = z.object({
   disposalDate: z.string().datetime().optional().nullable(),
   disposalValue: z.number().optional().nullable(),
   notes: z.string().optional().nullable(),
+  vehicleType: z.string().optional().nullable(),
+  make: z.string().optional().nullable(),
+  model: z.string().optional().nullable(),
+  year: z.number().int().min(1900).max(2100).optional().nullable(),
+  registration: z.string().optional().nullable(),
+  registrationExpiry: z.string().datetime().optional().nullable(),
+  identifier: z.string().optional().nullable(),
 });
 
 function assetData(parsed: z.infer<typeof assetInput>) {
@@ -65,6 +77,7 @@ function assetData(parsed: z.infer<typeof assetInput>) {
     acquisitionDate: parsed.acquisitionDate ? new Date(parsed.acquisitionDate) : parsed.acquisitionDate,
     valuationDate: parsed.valuationDate ? new Date(parsed.valuationDate) : parsed.valuationDate,
     disposalDate: parsed.disposalDate ? new Date(parsed.disposalDate) : parsed.disposalDate,
+    registrationExpiry: parsed.registrationExpiry ? new Date(parsed.registrationExpiry) : parsed.registrationExpiry,
   };
 }
 
@@ -97,7 +110,7 @@ assetsRouter.delete(
   asyncHandler(async (req, res) => {
     const asset = await prisma.asset.findUnique({
       where: { id: req.params.id },
-      include: { property: true, commercialProperty: true },
+      include: { property: true, commercialProperty: true, _count: { select: { securedLoans: true } } },
     });
     if (!asset) {
       res.status(404).json({ error: "Asset not found" });
@@ -107,6 +120,9 @@ assetsRouter.delete(
       res.status(400).json({ error: "Delete the property instead — this asset backs a property record" });
       return;
     }
+    refuseIfInUse(asset.assetType === "VEHICLE" ? "vehicle" : "asset", [
+      { count: asset._count.securedLoans, one: "loan linked to it", many: "loans linked to it" },
+    ]);
     await deleteWithLinks([{ type: "ASSET", id: asset.id }], (tx) => tx.asset.delete({ where: { id: asset.id } }));
     await logAudit("ASSET_DELETED", { targetType: "Asset", targetId: req.params.id });
     res.status(204).send();

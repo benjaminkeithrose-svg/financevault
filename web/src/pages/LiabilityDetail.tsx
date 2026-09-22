@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api, Liability } from "../api/client.js";
+import { api, Asset, Liability } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
-import { humanize } from "../utils.js";
+import { describeVehicle, formatCurrency, liabilityTypeLabel, monthlyEquivalent, REPAYMENT_FREQUENCIES } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 
 const LOAN_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN"];
+const VEHICLE_LINKABLE = ["VEHICLE_LOAN", "PERSONAL_LOAN"];
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -19,6 +20,7 @@ export function LiabilityDetail() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [vehicles, setVehicles] = useState<Asset[]>([]);
 
   function load() {
     if (!id) return;
@@ -32,6 +34,9 @@ export function LiabilityDetail() {
         interestRate: l.interestRate?.toString() || "",
         loanType: l.loanType || "variable",
         repaymentAmount: l.repaymentAmount?.toString() || "",
+        repaymentFrequency: l.repaymentFrequency || "MONTHLY",
+        creditLimit: l.creditLimit?.toString() || "",
+        securityAssetId: l.securityAssetId || "",
         fixedPeriodEnds: toDateInput(l.fixedPeriodEnds),
         maturityDate: toDateInput(l.maturityDate),
         notes: l.notes || "",
@@ -40,11 +45,18 @@ export function LiabilityDetail() {
   }
 
   useEffect(load, [id]);
+  useEffect(() => {
+    api.assets.list().then((all) => setVehicles(all.filter((a) => a.assetType === "VEHICLE")));
+  }, []);
 
   if (!liability) {
     if (loadError) return <LoadFailed message={loadError} backTo="/liabilities" backLabel="Back to loans" />;
     return <div className="empty-state">Loading…</div>;
   }
+
+  const isCard = liability.liabilityType === "CREDIT_CARD";
+  const vehicleLinkable = VEHICLE_LINKABLE.includes(liability.liabilityType);
+  const monthly = monthlyEquivalent(Number(form.repaymentAmount) || null, form.repaymentFrequency);
 
   async function save() {
     if (!id) return;
@@ -58,6 +70,9 @@ export function LiabilityDetail() {
         interestRate: form.interestRate ? Number(form.interestRate) : null,
         loanType: form.loanType || null,
         repaymentAmount: form.repaymentAmount ? Number(form.repaymentAmount) : null,
+        repaymentFrequency: isCard ? null : form.repaymentFrequency || null,
+        creditLimit: isCard && form.creditLimit ? Number(form.creditLimit) : null,
+        ...(vehicleLinkable ? { securityAssetId: form.securityAssetId || null } : {}),
         fixedPeriodEnds: form.fixedPeriodEnds ? new Date(form.fixedPeriodEnds).toISOString() : null,
         maturityDate: form.maturityDate ? new Date(form.maturityDate).toISOString() : null,
         notes: form.notes || null,
@@ -74,7 +89,7 @@ export function LiabilityDetail() {
         <div>
           <h2>{liability.name}</h2>
           <p>
-            {humanize(liability.liabilityType)} · {liability.entity?.name}
+            {liabilityTypeLabel(liability.liabilityType)} · {liability.entity?.name}
           </p>
         </div>
       </div>
@@ -85,19 +100,36 @@ export function LiabilityDetail() {
             Secured by: {liability.securityProperty?.address || liability.securityCommercialProperty?.name}
           </div>
         )}
+        {isCard && (
+          <div className="message-box info">
+            Lenders assess a credit card on its limit, not the balance. A lower or cancelled limit can raise how much you
+            can borrow.
+          </div>
+        )}
         <label>Name</label>
         <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
         <label>Lender</label>
         <input value={form.lender} onChange={(e) => setForm({ ...form, lender: e.target.value })} />
         <div className="grid grid-2">
-          <div>
-            <label>Original amount</label>
-            <input
-              type="number"
-              value={form.originalAmount}
-              onChange={(e) => setForm({ ...form, originalAmount: e.target.value })}
-            />
-          </div>
+          {isCard ? (
+            <div>
+              <label>Credit limit</label>
+              <input
+                type="number"
+                value={form.creditLimit}
+                onChange={(e) => setForm({ ...form, creditLimit: e.target.value })}
+              />
+            </div>
+          ) : (
+            <div>
+              <label>Original amount</label>
+              <input
+                type="number"
+                value={form.originalAmount}
+                onChange={(e) => setForm({ ...form, originalAmount: e.target.value })}
+              />
+            </div>
+          )}
           <div>
             <label>Current balance</label>
             <input
@@ -117,34 +149,77 @@ export function LiabilityDetail() {
               onChange={(e) => setForm({ ...form, interestRate: e.target.value })}
             />
           </div>
-          <div>
-            <label>Fixed / variable</label>
-            <select value={form.loanType} onChange={(e) => setForm({ ...form, loanType: e.target.value })}>
-              <option value="variable">Variable</option>
-              <option value="fixed">Fixed</option>
+          {!isCard && (
+            <div>
+              <label>Fixed / variable</label>
+              <select value={form.loanType} onChange={(e) => setForm({ ...form, loanType: e.target.value })}>
+                <option value="variable">Variable</option>
+                <option value="fixed">Fixed</option>
+              </select>
+            </div>
+          )}
+        </div>
+        {!isCard && (
+          <>
+            <div className="grid grid-2">
+              <div>
+                <label>Repayment amount</label>
+                <input
+                  type="number"
+                  value={form.repaymentAmount}
+                  onChange={(e) => setForm({ ...form, repaymentAmount: e.target.value })}
+                />
+              </div>
+              <div>
+                <label>Paid</label>
+                <select
+                  value={form.repaymentFrequency}
+                  onChange={(e) => setForm({ ...form, repaymentFrequency: e.target.value })}
+                >
+                  {REPAYMENT_FREQUENCIES.map((f) => (
+                    <option key={f.value} value={f.value}>
+                      {f.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            {monthly !== null && form.repaymentFrequency !== "MONTHLY" && (
+              <p style={{ color: "var(--text-muted)", fontSize: 13 }}>About {formatCurrency(monthly)} a month.</p>
+            )}
+            <div className="grid grid-2">
+              <div>
+                <label>Fixed period ends</label>
+                <input
+                  type="date"
+                  value={form.fixedPeriodEnds}
+                  onChange={(e) => setForm({ ...form, fixedPeriodEnds: e.target.value })}
+                />
+              </div>
+              <div>
+                <label>Maturity date</label>
+                <input
+                  type="date"
+                  value={form.maturityDate}
+                  onChange={(e) => setForm({ ...form, maturityDate: e.target.value })}
+                />
+              </div>
+            </div>
+          </>
+        )}
+        {vehicleLinkable && (
+          <>
+            <label>What it paid for</label>
+            <select value={form.securityAssetId} onChange={(e) => setForm({ ...form, securityAssetId: e.target.value })}>
+              <option value="">— Not linked to a vehicle —</option>
+              {vehicles.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.name} ({describeVehicle(v)})
+                </option>
+              ))}
             </select>
-          </div>
-        </div>
-        <div className="grid grid-2">
-          <div>
-            <label>Repayment amount</label>
-            <input
-              type="number"
-              value={form.repaymentAmount}
-              onChange={(e) => setForm({ ...form, repaymentAmount: e.target.value })}
-            />
-          </div>
-          <div>
-            <label>Fixed period ends</label>
-            <input
-              type="date"
-              value={form.fixedPeriodEnds}
-              onChange={(e) => setForm({ ...form, fixedPeriodEnds: e.target.value })}
-            />
-          </div>
-        </div>
-        <label>Maturity date</label>
-        <input type="date" value={form.maturityDate} onChange={(e) => setForm({ ...form, maturityDate: e.target.value })} />
+          </>
+        )}
         <label>Notes</label>
         <textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
         <div className="toolbar" style={{ marginTop: 16 }}>

@@ -20,6 +20,7 @@ const TITLES: Record<string, string> = {
   "/loans": "Loans",
   "/liabilities": "Liabilities",
   "/assets": "Assets",
+  "/vehicles": "Vehicles & Boats",
   "/portfolio-plans": "Portfolio Plan",
   "/net-worth": "Net Worth",
   "/tax": "Tax",
@@ -43,6 +44,8 @@ const DETAIL_TITLES: Record<string, string> = {
   investments: "Investment Account",
   banking: "Bank Account",
   liabilities: "Liability",
+  assets: "Asset",
+  "bulk-import": "Bulk Import",
   "portfolio-plans": "Portfolio Plan",
 };
 

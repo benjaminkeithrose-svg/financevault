@@ -71,11 +71,12 @@ export async function computeLiveBreakdown(entityId?: string) {
   const mortgages = sumLiabilityType(MORTGAGE_TYPES);
   const creditCards = sumLiabilityType(["CREDIT_CARD"]);
   const personalLoans = sumLiabilityType(["PERSONAL_LOAN"]);
-  const NAMED_LIABILITY_TYPES = [...MORTGAGE_TYPES, "CREDIT_CARD", "PERSONAL_LOAN"];
+  const vehicleLoans = sumLiabilityType(["VEHICLE_LOAN"]);
+  const NAMED_LIABILITY_TYPES = [...MORTGAGE_TYPES, "CREDIT_CARD", "PERSONAL_LOAN", "VEHICLE_LOAN"];
   const otherLiabilities = liabilities
     .filter((l) => !NAMED_LIABILITY_TYPES.includes(l.liabilityType))
     .reduce((s, l) => s + (l.currentBalance ?? 0), 0);
-  const totalLiabilities = mortgages + creditCards + personalLoans + otherLiabilities;
+  const totalLiabilities = mortgages + creditCards + personalLoans + vehicleLoans + otherLiabilities;
 
   return {
     cash,
@@ -94,6 +95,7 @@ export async function computeLiveBreakdown(entityId?: string) {
     mortgages,
     creditCards,
     personalLoans,
+    vehicleLoans,
     otherLiabilities,
     totalLiabilities,
     netPosition: totalAssets - totalLiabilities,

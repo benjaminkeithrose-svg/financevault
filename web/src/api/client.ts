@@ -325,10 +325,23 @@ export interface DebtSummaryRow {
   entityName: string;
   lender?: string | null;
   currentBalance: number | null;
+  creditLimit: number | null;
   interestRate: number | null;
   repaymentAmount: number | null;
+  repaymentFrequency: string | null;
+  monthlyRepayment: number | null;
   securedAsset: string | null;
   lvr: number | null;
+}
+
+export interface DebtSummary {
+  rows: DebtSummaryRow[];
+  totalDebt: number;
+  totalCreditLimits: number;
+  cardsWithoutLimit: number;
+  totalMonthlyRepayments: number;
+  loansWithoutRepayment: number;
+  formula: string;
 }
 
 export interface TaxRecord {
@@ -357,6 +370,7 @@ export interface NetWorthBreakdown {
   mortgages: number;
   creditCards: number;
   personalLoans: number;
+  vehicleLoans: number;
   otherLiabilities: number;
   totalLiabilities: number;
   netPosition: number;
@@ -404,6 +418,14 @@ export interface Asset {
   disposalDate?: string | null;
   disposalValue?: number | null;
   notes?: string | null;
+  vehicleType?: string | null;
+  make?: string | null;
+  model?: string | null;
+  year?: number | null;
+  registration?: string | null;
+  registrationExpiry?: string | null;
+  identifier?: string | null;
+  securedLoans?: Liability[];
   property?: Property | null;
   documents?: Document[];
   ownerships?: AssetOwnership[];
@@ -463,6 +485,9 @@ export interface Liability {
   securityProperty?: Property | null;
   securityCommercialPropertyId?: string | null;
   securityCommercialProperty?: CommercialProperty | null;
+  securityAssetId?: string | null;
+  securityAsset?: Asset | null;
+  creditLimit?: number | null;
   interestOnly?: boolean | null;
   loanTermYears?: number | null;
   repaymentFrequency?: string | null;
@@ -1378,7 +1403,7 @@ export const api = {
       request<CapitalGainsReport>(`/reports/capital-gains?financialYearId=${financialYearId}`),
     taxSummary: (financialYearId?: string) =>
       request<{ rows: TaxSummaryRow[] }>(`/reports/tax-summary${financialYearId ? `?financialYearId=${financialYearId}` : ""}`),
-    debtSummary: () => request<{ rows: DebtSummaryRow[]; totalDebt: number; formula: string }>("/reports/debt-summary"),
+    debtSummary: () => request<DebtSummary>("/reports/debt-summary"),
   },
 
   netWorth: {

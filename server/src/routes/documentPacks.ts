@@ -3,6 +3,7 @@ import { ZipArchive, ArchiverError } from "archiver";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { DOCUMENT_TYPES } from "../services/documentTypes.js";
+import { describeVehicle, monthlyRepayment } from "../services/debts.js";
 
 export const documentPacksRouter = Router();
 
@@ -82,24 +83,51 @@ async function incomeDocuments(entityId: string, financialYearId: string | undef
   return Array.from(byId.values());
 }
 
-async function assetsLiabilitiesCsv(entityId: string): Promise<string> {
+export async function assetsLiabilitiesCsv(entityId: string): Promise<string> {
   const [assets, liabilities, accounts] = await Promise.all([
     prisma.asset.findMany({ where: { entityId } }),
-    prisma.liability.findMany({ where: { entityId } }),
+    prisma.liability.findMany({
+      where: { entityId },
+      include: { securityProperty: true, securityCommercialProperty: true, securityAsset: true },
+    }),
     prisma.account.findMany({ where: { entityId } }),
   ]);
 
-  const rows: string[][] = [["Type", "Name", "Value/Balance", "Detail"]];
-  for (const a of assets) rows.push(["Asset", a.name, String(a.currentValue ?? ""), a.assetType]);
-  for (const acc of accounts) rows.push(["Bank Account", `${acc.institution} ${acc.accountName}`, String(acc.currentBalance ?? ""), acc.accountType]);
-  for (const l of liabilities) rows.push(["Liability", l.name, String(l.currentBalance ?? ""), l.liabilityType]);
+  // Laid out the way a broker's assets-and-liabilities form asks for it:
+  // card limits and monthly repayments matter as much as balances.
+  const rows: string[][] = [["Type", "Name", "Value/Balance", "Detail", "Credit limit", "Monthly repayment", "Secured by / for"]];
+  for (const a of assets) {
+    const detail = a.assetType === "VEHICLE" ? `${a.vehicleType ?? "VEHICLE"}: ${describeVehicle(a)}` : a.assetType;
+    rows.push(["Asset", a.name, String(a.currentValue ?? ""), detail, "", "", ""]);
+  }
+  for (const acc of accounts) {
+    rows.push(["Bank Account", `${acc.institution} ${acc.accountName}`, String(acc.currentBalance ?? ""), acc.accountType, "", "", ""]);
+  }
+  for (const l of liabilities) {
+    const monthly = monthlyRepayment(l);
+    const securedBy =
+      l.securityProperty?.address ?? l.securityCommercialProperty?.name ?? (l.securityAsset ? describeVehicle(l.securityAsset) : "");
+    rows.push([
+      "Liability",
+      l.name,
+      String(l.currentBalance ?? ""),
+      [l.liabilityType, l.lender].filter(Boolean).join(" — "),
+      l.creditLimit !== null ? String(l.creditLimit) : "",
+      monthly !== null ? monthly.toFixed(2) : "",
+      securedBy,
+    ]);
+  }
 
   const totalAssets = assets.reduce((s, a) => s + (a.currentValue ?? 0), 0) + accounts.reduce((s, a) => s + (a.currentBalance ?? 0), 0);
   const totalLiabilities = liabilities.reduce((s, l) => s + (l.currentBalance ?? 0), 0);
+  const totalLimits = liabilities.reduce((s, l) => s + (l.liabilityType === "CREDIT_CARD" ? l.creditLimit ?? 0 : 0), 0);
+  const totalMonthly = liabilities.reduce((s, l) => s + (monthlyRepayment(l) ?? 0), 0);
   rows.push([]);
   rows.push(["Total assets", "", String(totalAssets), ""]);
   rows.push(["Total liabilities", "", String(totalLiabilities), ""]);
   rows.push(["Net position", "", String(totalAssets - totalLiabilities), ""]);
+  rows.push(["Total credit card limits", "", "", "", String(totalLimits)]);
+  rows.push(["Total monthly repayments", "", "", "", "", totalMonthly.toFixed(2)]);
 
   return toCsv(rows);
 }

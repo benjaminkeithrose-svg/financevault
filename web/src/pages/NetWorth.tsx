@@ -16,6 +16,7 @@ const LIABILITY_ROWS: Array<{ key: keyof NetWorthBreakdown; label: string; icon:
   { key: "mortgages", label: "Mortgages", icon: "🏦" },
   { key: "creditCards", label: "Credit cards", icon: "💳" },
   { key: "personalLoans", label: "Personal loans", icon: "📄" },
+  { key: "vehicleLoans", label: "Vehicle & boat loans", icon: "🚤" },
   { key: "otherLiabilities", label: "Other liabilities", icon: "📦" },
 ];
 

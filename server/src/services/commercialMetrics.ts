@@ -1,3 +1,4 @@
+import { PAYMENTS_PER_YEAR } from "./debts.js";
 // Commercial property analytics — spec sections 6-21 (Phase 1, 2 & 3:
 // acquisition/scenario modelling and portfolio roll-ups are handled
 // separately in acquisitionModel.ts and the portfolio route).
@@ -28,12 +29,7 @@ export interface LoanLike {
   repaymentFrequency: string | null;
 }
 
-const FREQUENCY_PAYMENTS_PER_YEAR: Record<string, number> = {
-  WEEKLY: 52,
-  FORTNIGHTLY: 26,
-  MONTHLY: 12,
-  QUARTERLY: 4,
-};
+const FREQUENCY_PAYMENTS_PER_YEAR = PAYMENTS_PER_YEAR;
 
 function annualRent(t: TenancyLike): number {
   return t.rentPerAnnum ?? t.currentBaseRent ?? 0;

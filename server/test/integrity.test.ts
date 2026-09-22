@@ -5,6 +5,7 @@ import request from "supertest";
 import { beforeAll, describe, expect, it } from "vitest";
 import { app } from "../src/app.js";
 import { prisma } from "../src/db.js";
+import { assetsLiabilitiesCsv } from "../src/routes/documentPacks.js";
 
 // Regression tests for the QA pass: error responses a person can read,
 // deletes that refuse rather than destroy history, and totals that agree
@@ -281,5 +282,82 @@ describe("deleting documents", () => {
     expect(await prisma.document.findUnique({ where: { id: doc.id } })).toBeNull();
     expect(await prisma.documentLink.count({ where: { documentId: doc.id } })).toBe(0);
     expect(fs.existsSync(doc.filePath)).toBe(false);
+  });
+});
+
+describe("vehicles, vehicle loans and credit card limits", () => {
+  let entityId = "";
+  let boatId = "";
+
+  beforeAll(async () => {
+    entityId = (await post("/entities", { name: "Borrower", entityType: "INDIVIDUAL" })).id;
+    const boat = await post("/assets", {
+      name: "The tinny",
+      assetType: "VEHICLE",
+      vehicleType: "BOAT",
+      make: "Quintrex",
+      model: "420 Hornet",
+      year: 2020,
+      registration: "BQ123",
+      entityId,
+      currentValue: 25_000,
+    });
+    boatId = boat.id;
+    await post("/liabilities", {
+      name: "Boat loan",
+      liabilityType: "VEHICLE_LOAN",
+      entityId,
+      currentBalance: 15_000,
+      repaymentAmount: 300,
+      repaymentFrequency: "FORTNIGHTLY",
+      securityAssetId: boatId,
+    });
+    await post("/liabilities", {
+      name: "Visa",
+      liabilityType: "CREDIT_CARD",
+      entityId,
+      currentBalance: 1_000,
+      creditLimit: 20_000,
+    });
+  });
+
+  it("keeps the vehicle's details and shows the loan against it", async () => {
+    const boat = (await agent.get(`/api/assets/${boatId}`)).body;
+    expect(boat).toMatchObject({ vehicleType: "BOAT", make: "Quintrex", year: 2020, registration: "BQ123" });
+    expect(boat.securedLoans).toHaveLength(1);
+  });
+
+  it("won't delete a vehicle while a loan is linked to it", async () => {
+    const res = await agent.delete(`/api/assets/${boatId}`);
+    expect(res.status).toBe(409);
+    expect(res.body.error).toMatch(/1 loan linked to it/);
+  });
+
+  it("counts vehicle loans on their own line in net worth", async () => {
+    const nw = (await agent.get(`/api/net-worth/preview?entityId=${entityId}`)).body;
+    expect(nw.vehicleLoans).toBe(15_000);
+    expect(nw.creditCards).toBe(1_000);
+    expect(nw.totalLiabilities).toBe(16_000);
+    expect(nw.vehicleValue).toBe(25_000);
+  });
+
+  it("borrowing summary gives card limits and monthly repayments", async () => {
+    const summary = (await agent.get("/api/reports/debt-summary")).body;
+    const boatLoan = summary.rows.find((r: { name: string }) => r.name === "Boat loan");
+    // $300 a fortnight = 300 x 26 / 12 = $650 a month.
+    expect(boatLoan.monthlyRepayment).toBe(650);
+    expect(boatLoan.securedAsset).toBe("2020 Quintrex 420 Hornet (rego BQ123)");
+    const visa = summary.rows.find((r: { name: string }) => r.name === "Visa");
+    expect(visa.creditLimit).toBe(20_000);
+    expect(summary.totalCreditLimits).toBeGreaterThanOrEqual(20_000);
+    expect(summary.totalMonthlyRepayments).toBeGreaterThanOrEqual(650);
+  });
+
+  it("the broker's assets and liabilities statement carries limits and repayments", async () => {
+    const csv = await assetsLiabilitiesCsv(entityId);
+    expect(csv).toMatch(/Credit limit.*Monthly repayment/);
+    expect(csv).toMatch(/Visa.*20000/);
+    expect(csv).toMatch(/Boat loan.*650\.00.*2020 Quintrex 420 Hornet/);
+    expect(csv).toMatch(/BOAT: 2020 Quintrex 420 Hornet/);
   });
 });

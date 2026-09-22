@@ -1,31 +1,42 @@
 import { useEffect, useState } from "react";
 import { api, Asset, Entity } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
-import { formatCurrency, formatDate, humanize } from "../utils.js";
+import { EMPTY_VEHICLE_FIELDS, VehicleFields, vehicleFieldsPayload } from "../components/VehicleFields.js";
+import { HelpLink } from "../components/HelpLink.js";
+import { describeVehicle, formatCurrency, formatDate, humanize, vehicleTypeLabel } from "../utils.js";
 
 const STANDALONE_TYPES = ["VEHICLE", "SHARES", "MANAGED_FUND", "EQUIPMENT", "SUPERANNUATION", "CASH", "OTHER"];
 
-export function Assets() {
+const emptyForm = (assetType: string) => ({
+  name: "",
+  assetType,
+  entityId: "",
+  acquisitionDate: "",
+  acquisitionCost: "",
+  currentValue: "",
+  ...EMPTY_VEHICLE_FIELDS,
+});
+
+/**
+ * The asset register. With `only="VEHICLE"` it becomes the Vehicles & boats
+ * page: the same records, filtered, with the vehicle form open by default.
+ */
+export function Assets({ only }: { only?: "VEHICLE" }) {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    assetType: "VEHICLE",
-    entityId: "",
-    acquisitionDate: "",
-    acquisitionCost: "",
-    currentValue: "",
-  });
+  const [form, setForm] = useState<Record<string, string>>(emptyForm(only ?? "VEHICLE"));
+  const isVehicle = form.assetType === "VEHICLE";
 
   function load() {
-    api.assets.list().then(setAssets);
+    api.assets.list().then((all) => setAssets(only ? all.filter((a) => a.assetType === only) : all));
   }
 
-  useEffect(load, []);
+  useEffect(load, [only]);
   useEffect(() => {
     api.entities.list().then(setEntities);
   }, []);
+  useEffect(() => setForm(emptyForm(only ?? "VEHICLE")), [only]);
 
   async function create() {
     if (!form.name.trim() || !form.entityId) return;
@@ -36,37 +47,65 @@ export function Assets() {
       acquisitionDate: form.acquisitionDate ? new Date(form.acquisitionDate).toISOString() : null,
       acquisitionCost: form.acquisitionCost ? Number(form.acquisitionCost) : null,
       currentValue: form.currentValue ? Number(form.currentValue) : null,
+      ...(isVehicle ? vehicleFieldsPayload(form) : {}),
     });
-    setForm({ name: "", assetType: "VEHICLE", entityId: "", acquisitionDate: "", acquisitionCost: "", currentValue: "" });
+    setForm(emptyForm(only ?? "VEHICLE"));
     setShowForm(false);
     load();
+  }
+
+  function subtitle(a: Asset): string {
+    const parts =
+      a.assetType === "VEHICLE"
+        ? [vehicleTypeLabel(a.vehicleType), describeVehicle(a) !== a.name ? describeVehicle(a) : ""]
+        : [humanize(a.assetType)];
+    parts.push(a.entity?.name || "No entity");
+    const loans = a.securedLoans?.length ?? 0;
+    if (loans > 0) parts.push(`${loans} loan${loans === 1 ? "" : "s"}`);
+    else if (a.acquisitionDate) parts.push(`Acquired ${formatDate(a.acquisitionDate)}`);
+    return parts.filter(Boolean).join(" · ");
   }
 
   return (
     <div>
       <div className="page-header">
         <div>
-          <h2>Assets</h2>
-          <p>Every asset in one register. Properties and investment accounts have their own pages — this covers the rest.</p>
+          <h2>
+            {only ? "Vehicles & boats" : "Assets"} <HelpLink topic={only ? "vehicles" : "loans-assets"} />
+          </h2>
+          <p>
+            {only
+              ? "Cars, motorcycles, boats, jet skis, caravans and trailers — and the loans against them."
+              : "Every asset in one register. Properties and investment accounts have their own pages — this covers the rest."}
+          </p>
         </div>
         <button className="btn" onClick={() => setShowForm((v) => !v)}>
-          {showForm ? "Cancel" : "New asset"}
+          {showForm ? "Cancel" : only ? "New vehicle" : "New asset"}
         </button>
       </div>
 
       {showForm && (
         <div className="card">
           <label>Name</label>
-          <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Toyota Hilux" />
-          <label>Type</label>
-          <select value={form.assetType} onChange={(e) => setForm({ ...form, assetType: e.target.value })}>
-            {STANDALONE_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {humanize(t)}
-              </option>
-            ))}
-          </select>
-          <label>Entity</label>
+          <input
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            placeholder={isVehicle ? "Family car, The tinny…" : "Toyota Hilux"}
+          />
+          {!only && (
+            <>
+              <label>Type</label>
+              <select value={form.assetType} onChange={(e) => setForm({ ...form, assetType: e.target.value })}>
+                {STANDALONE_TYPES.map((t) => (
+                  <option key={t} value={t}>
+                    {t === "VEHICLE" ? "Vehicle or boat" : humanize(t)}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
+          {isVehicle && <VehicleFields form={form} onChange={setForm} />}
+          <label>Owned by</label>
           <select value={form.entityId} onChange={(e) => setForm({ ...form, entityId: e.target.value })}>
             <option value="">— Select —</option>
             {entities.map((e) => (
@@ -77,7 +116,7 @@ export function Assets() {
           </select>
           <div className="grid grid-2">
             <div>
-              <label>Acquisition date</label>
+              <label>{isVehicle ? "Purchase date" : "Acquisition date"}</label>
               <input
                 type="date"
                 value={form.acquisitionDate}
@@ -85,7 +124,7 @@ export function Assets() {
               />
             </div>
             <div>
-              <label>Acquisition cost</label>
+              <label>{isVehicle ? "Purchase price" : "Acquisition cost"}</label>
               <input
                 type="number"
                 value={form.acquisitionCost}
@@ -104,7 +143,7 @@ export function Assets() {
       )}
 
       {assets.length === 0 ? (
-        <p className="empty-state">No assets recorded yet.</p>
+        <p className="empty-state">{only ? "No vehicles or boats recorded yet." : "No assets recorded yet."}</p>
       ) : (
         <ul className="item-card-list">
           {assets.map((a) => (
@@ -112,7 +151,7 @@ export function Assets() {
               key={a.id}
               to={a.property ? `/properties/${a.property.id}` : `/assets/${a.id}`}
               title={a.name}
-              subtitle={`${humanize(a.assetType)} · ${a.entity?.name || "No entity"}${a.acquisitionDate ? ` · Acquired ${formatDate(a.acquisitionDate)}` : ""}`}
+              subtitle={subtitle(a)}
               right={<strong>{formatCurrency(a.currentValue)}</strong>}
             />
           ))}

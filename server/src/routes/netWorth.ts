@@ -40,6 +40,7 @@ const snapshotInput = z.object({
   mortgages: z.number(),
   creditCards: z.number(),
   personalLoans: z.number(),
+  vehicleLoans: z.number().optional().default(0),
   otherLiabilities: z.number(),
   totalLiabilities: z.number(),
   netPosition: z.number(),

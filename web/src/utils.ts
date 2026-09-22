@@ -49,3 +49,57 @@ export async function confirmThenDelete(question: string, action: () => Promise<
     return false;
   }
 }
+
+export const VEHICLE_TYPES: Array<{ value: string; label: string }> = [
+  { value: "CAR", label: "Car / ute / 4WD" },
+  { value: "MOTORCYCLE", label: "Motorcycle" },
+  { value: "BOAT", label: "Boat" },
+  { value: "JET_SKI", label: "Jet ski" },
+  { value: "CARAVAN", label: "Caravan" },
+  { value: "CAMPERVAN", label: "Campervan / motorhome" },
+  { value: "TRAILER", label: "Trailer" },
+  { value: "OTHER", label: "Other vehicle" },
+];
+
+export function vehicleTypeLabel(value?: string | null): string {
+  return VEHICLE_TYPES.find((t) => t.value === value)?.label ?? "Vehicle";
+}
+
+/** "2021 Toyota Hilux · rego ABC123", falling back to the asset's name. */
+export function describeVehicle(a: {
+  name: string;
+  year?: number | null;
+  make?: string | null;
+  model?: string | null;
+  registration?: string | null;
+}): string {
+  const makeModel = [a.year, a.make, a.model].filter(Boolean).join(" ");
+  return [makeModel || a.name, a.registration ? `rego ${a.registration}` : ""].filter(Boolean).join(" · ");
+}
+
+export const REPAYMENT_FREQUENCIES = [
+  { value: "WEEKLY", label: "Weekly", perYear: 52 },
+  { value: "FORTNIGHTLY", label: "Fortnightly", perYear: 26 },
+  { value: "MONTHLY", label: "Monthly", perYear: 12 },
+  { value: "QUARTERLY", label: "Quarterly", perYear: 4 },
+];
+
+export function monthlyEquivalent(amount?: number | null, frequency?: string | null): number | null {
+  if (!amount) return null;
+  const perYear = REPAYMENT_FREQUENCIES.find((f) => f.value === (frequency || "MONTHLY"))?.perYear ?? 12;
+  return (amount * perYear) / 12;
+}
+
+const LIABILITY_TYPE_LABELS: Record<string, string> = {
+  HOME_LOAN: "Home loan",
+  INVESTMENT_LOAN: "Investment property loan",
+  COMMERCIAL_LOAN: "Commercial property loan",
+  VEHICLE_LOAN: "Vehicle / boat loan",
+  CREDIT_CARD: "Credit card",
+  PERSONAL_LOAN: "Personal loan",
+  OTHER: "Other",
+};
+
+export function liabilityTypeLabel(type: string): string {
+  return LIABILITY_TYPE_LABELS[type] ?? humanize(type);
+}

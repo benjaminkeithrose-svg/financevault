@@ -399,13 +399,86 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <p>
-          <Link to="/loans">Loans</Link> holds mortgages and investment and commercial loans; choose the property that
-          secures a loan so its LVR can be shown. <Link to="/liabilities">Liabilities</Link> holds credit cards, personal
-          loans and anything else owed.
+          <Link to="/loans">Loans</Link> holds mortgages and investment and commercial property loans; choose the property
+          that secures a loan so its LVR can be shown. <Link to="/liabilities">Liabilities</Link> holds every debt,
+          including vehicle and boat loans, credit cards and personal loans.
         </p>
         <p>
-          <Link to="/assets">Assets</Link> is for everything else you own: cars, super, equipment, cash held elsewhere.
-          An asset owned in shares by more than one entity can have its ownership split recorded on its page.
+          For every loan, enter the <strong>repayment amount</strong> and how often it's <strong>paid</strong> (weekly,
+          fortnightly, monthly or quarterly), so the monthly cost can be worked out.
+        </p>
+        <h4>Credit cards</h4>
+        <p>
+          Record each card with its <strong>credit limit</strong> as well as the balance. Lenders assess a card on its
+          limit — a $20,000 limit counts against you even when nothing is owing — so the limit is the figure that matters
+          when you apply for a loan.
+        </p>
+        <p>
+          <Link to="/assets">Assets</Link> is for everything else you own: super, equipment, cash held elsewhere, and
+          vehicles (see <a href="#vehicles">Vehicles and boats</a>). An asset owned in shares by more than one entity can
+          have its ownership split recorded on its page.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "vehicles",
+    title: "Vehicles and boats",
+    keywords: "car ute motorcycle motorbike boat jet ski caravan campervan trailer rego registration vin hull car loan boat loan",
+    body: (
+      <>
+        <p>
+          <Link to="/vehicles">Vehicles &amp; boats</Link> (in the menu under Assets) records cars, utes, motorcycles,
+          boats, jet skis, caravans, campervans and trailers. For each one you can keep the year, make and model, the
+          registration and when it expires, the VIN (or hull ID for a boat), what you paid and what it's worth now.
+        </p>
+        <h4>Loans for a vehicle</h4>
+        <p>
+          On a vehicle's page, <strong>Add a loan</strong> opens a vehicle / boat loan already linked to it. Enter the
+          balance, the rate and the repayments. A personal loan that paid for a vehicle can be linked the same way, using{" "}
+          <strong>What it paid for</strong> on the loan.
+        </p>
+        <p>
+          Once linked, the vehicle's page shows what's owing on it, the monthly repayment and your equity (its value less
+          the loan). Vehicle and boat loans have their own line in Net Worth, and they appear in the borrowing summary.
+        </p>
+        <p>A vehicle can't be deleted while a loan is linked to it — delete or unlink the loan first.</p>
+      </>
+    ),
+  },
+  {
+    id: "borrowing",
+    title: "Applying for a loan: your borrowing summary",
+    keywords: "mortgage application broker lender serviceability borrowing capacity commitments debts limits",
+    body: (
+      <>
+        <p>
+          When you apply for a new mortgage, the lender wants every debt you have: the balance, the monthly repayment,
+          and for credit cards the limit. <Link to="/reports">Reports</Link> → <strong>Debt Summary</strong> puts that in
+          one place:
+        </p>
+        <ul>
+          <li>
+            <strong>Total debt</strong> — what you owe across every loan and card.
+          </li>
+          <li>
+            <strong>Credit card limits</strong> — the total of your limits, which is what lenders count for cards.
+          </li>
+          <li>
+            <strong>Repayments a month</strong> — every loan's repayment converted to a monthly figure (a fortnightly
+            payment of $300 is about $650 a month).
+          </li>
+        </ul>
+        <p>
+          It warns you about any card with no limit recorded, and any loan with no repayment entered, so the totals
+          aren't quietly short.
+        </p>
+        <p>
+          For your broker, <Link to="/packs">Document Packs</Link> → <strong>Broker Pack</strong> includes an assets and
+          liabilities statement with the same limits, monthly repayments and what each loan is secured by or paid for.
+        </p>
+        <p>
+          These are the figures a lender starts from. How much they'll lend depends on their own rules — ask your broker.
         </p>
       </>
     ),
@@ -419,8 +492,8 @@ const SECTIONS: Section[] = [
         <p>
           The <Link to="/">Dashboard</Link> and <Link to="/net-worth">Net Worth</Link> use the same calculation, so their
           totals always agree. Assets = bank balances + property values + investments (share holdings at their latest
-          price, or at cost where there's no price) + super + vehicles + other assets. Liabilities = every loan and
-          debt.
+          price, or at cost where there's no price) + super + vehicles and boats + other assets. Liabilities = every loan
+          and debt, including vehicle and boat loans.
         </p>
         <p>
           Both can show everything together or one entity at a time. The per-entity view is a convenience, not a formal
@@ -540,6 +613,9 @@ const SECTIONS: Section[] = [
           <li>
             An <strong>investment account</strong> with purchases, sales or dividends — that's your cost-base and
             capital gains record.
+          </li>
+          <li>
+            A <strong>vehicle or boat</strong> with a loan linked to it.
           </li>
           <li>
             An <strong>entity</strong> that still owns or owes anything, or has documents filed against it.

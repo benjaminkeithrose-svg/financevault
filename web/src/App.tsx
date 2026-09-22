@@ -75,6 +75,7 @@ export default function App() {
           <Route path="/liabilities" element={<Liabilities scope="all" />} />
           <Route path="/liabilities/:id" element={<LiabilityDetail />} />
           <Route path="/assets" element={<Assets />} />
+          <Route path="/vehicles" element={<Assets only="VEHICLE" />} />
           <Route path="/assets/:id" element={<AssetDetail />} />
           <Route path="/portfolio-plans" element={<PortfolioPlans />} />
           <Route path="/portfolio-plans/:id" element={<PortfolioPlanDetail />} />
