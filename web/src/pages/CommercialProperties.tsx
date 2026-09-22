@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api, CommercialProperty, Entity } from "../api/client.js";
+import { api, CommercialPortfolio, CommercialProperty, Entity } from "../api/client.js";
 import { formatCurrency, humanize } from "../utils.js";
+
+function pct(v: number | null | undefined): string {
+  if (v === null || v === undefined) return "—";
+  return `${(v * 100).toFixed(2)}%`;
+}
 
 const PROPERTY_TYPES = [
   "OFFICE",
@@ -36,9 +41,11 @@ export function CommercialProperties() {
   const [showForm, setShowForm] = useState(false);
   const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
   const [form, setForm] = useState(emptyForm);
+  const [portfolio, setPortfolio] = useState<CommercialPortfolio | null>(null);
 
   function load() {
     api.commercialProperties.list().then(setProperties);
+    api.commercialProperties.portfolio().then(setPortfolio);
   }
 
   useEffect(load, []);
@@ -72,7 +79,71 @@ export function CommercialProperties() {
 
   return (
     <div>
+      {portfolio && portfolio.portfolio.numberOfProperties > 1 && (
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Portfolio</h3>
+          <p style={{ color: "var(--text-muted)", fontSize: 13 }}>{portfolio.note}</p>
+          <div className="grid grid-4">
+            <div className="stat-tile">
+              <div className="label">Properties</div>
+              <div className="value">{portfolio.portfolio.numberOfProperties}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Total value</div>
+              <div className="value">{formatCurrency(portfolio.portfolio.totalValue)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Total debt</div>
+              <div className="value">{formatCurrency(portfolio.portfolio.totalDebt)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Total equity</div>
+              <div className="value">{formatCurrency(portfolio.portfolio.totalEquity)}</div>
+            </div>
+          </div>
+          <div className="grid grid-4" style={{ marginTop: 16 }}>
+            <div className="stat-tile">
+              <div className="label">Weighted LVR</div>
+              <div className="value">{pct(portfolio.portfolio.weightedLvr)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Portfolio NOI</div>
+              <div className="value">{formatCurrency(portfolio.portfolio.totalNoi)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Portfolio net yield</div>
+              <div className="value">{pct(portfolio.portfolio.portfolioNetYield)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Weighted occupancy</div>
+              <div className="value">{pct(portfolio.portfolio.weightedOccupancy)}</div>
+            </div>
+          </div>
+          <div className="grid grid-4" style={{ marginTop: 16 }}>
+            <div className="stat-tile">
+              <div className="label">Weighted WALE (by rent)</div>
+              <div className="value">{portfolio.portfolio.weightedWaleByRentYears?.toFixed(1) ?? "—"}y</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Annual rent</div>
+              <div className="value">{formatCurrency(portfolio.portfolio.totalAnnualRent)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Annual interest</div>
+              <div className="value">{formatCurrency(portfolio.portfolio.totalAnnualInterest)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Cash flow after financing</div>
+              <div className="value">{formatCurrency(portfolio.portfolio.cashFlowAfterFinancing)}</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="toolbar" style={{ justifyContent: "flex-end" }}>
+        <Link to="/commercial-properties/acquisition-model" className="btn secondary">
+          Acquisition model
+        </Link>
         <button className="btn" onClick={() => setShowForm((v) => !v)}>
           {showForm ? "Cancel" : "New commercial property"}
         </button>

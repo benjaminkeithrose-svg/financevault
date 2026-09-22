@@ -108,6 +108,7 @@ model Entity {
   investmentAccounts   InvestmentAccount[]
   taxRecords           TaxRecord[]
   assetOwnerships      AssetOwnership[]
+  netWorthSnapshots    NetWorthSnapshot[]
 
   @@index([entityType])
 }
@@ -697,6 +698,43 @@ model AuditLog {
 
   @@index([timestamp])
   @@index([action])
+}
+
+// ---------------------------------------------------------------------------
+// Net worth — an explicit, immutable point-in-time balance-sheet snapshot
+// (spec section 21). entityId null means the consolidated, all-entities
+// view; set it to snapshot a single entity instead. Never recalculated
+// after saving — a later change to assets/liabilities only affects the
+// live preview, not a snapshot already taken.
+// ---------------------------------------------------------------------------
+
+model NetWorthSnapshot {
+  id       String   @id @default(cuid())
+  asAtDate DateTime
+  entityId String? // null = consolidated across all entities
+  entity   Entity?  @relation(fields: [entityId], references: [id])
+
+  cash            Float
+  propertyValue   Float
+  investmentValue Float
+  superValue      Float
+  vehicleValue    Float
+  otherAssets     Float
+  totalAssets     Float
+
+  mortgages        Float
+  creditCards      Float
+  personalLoans    Float
+  otherLiabilities Float
+  totalLiabilities Float
+
+  netPosition Float
+  notes       String?
+
+  createdAt DateTime @default(now())
+
+  @@index([entityId])
+  @@index([asAtDate])
 }
 
 // ---------------------------------------------------------------------------

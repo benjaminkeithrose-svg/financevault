@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, CommercialProperty, FinancialYear } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
+import { ScenarioComparison } from "../components/ScenarioComparison.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 
 function toDateInput(value?: string | null): string {
@@ -275,6 +276,18 @@ export function CommercialPropertyDetail() {
               <div className="value">{formatCurrency(m.cashFlowAfterFinancing.value)}</div>
             </div>
           </div>
+          <div className="grid grid-2" style={{ marginTop: 16 }}>
+            <div className="stat-tile">
+              <div className="label">DSCR</div>
+              <div className="value">{m.coverage.dscr !== null ? `${m.coverage.dscr.toFixed(2)}x` : "—"}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Interest coverage ratio</div>
+              <div className="value">
+                {m.coverage.interestCoverageRatio !== null ? `${m.coverage.interestCoverageRatio.toFixed(2)}x` : "—"}
+              </div>
+            </div>
+          </div>
 
           <div className="card">
             <h3 style={{ marginTop: 0 }}>How these are calculated</h3>
@@ -319,8 +332,19 @@ export function CommercialPropertyDetail() {
                   <td>Annual debt service (repayments × frequency)</td>
                   <td>{formatCurrency(m.debt.annualDebtService)}</td>
                 </tr>
+                <tr>
+                  <td>DSCR = NOI / annual debt service</td>
+                  <td>{m.coverage.dscr !== null ? `${m.coverage.dscr.toFixed(2)}x` : "—"}</td>
+                </tr>
+                <tr>
+                  <td>Interest coverage = NOI / estimated annual interest</td>
+                  <td>{m.coverage.interestCoverageRatio !== null ? `${m.coverage.interestCoverageRatio.toFixed(2)}x` : "—"}</td>
+                </tr>
               </tbody>
             </table>
+            <p style={{ color: "var(--text-muted)", fontSize: 13, marginTop: 8 }}>
+              DSCR and interest coverage are analytical ratios, not a lending approval prediction.
+            </p>
           </div>
 
           <div className="card">
@@ -350,6 +374,8 @@ export function CommercialPropertyDetail() {
               </table>
             )}
           </div>
+
+          <ScenarioComparison metrics={m} />
         </>
       )}
 

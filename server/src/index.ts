@@ -16,6 +16,9 @@ import { investmentsRouter } from "./routes/investments.js";
 import { bankingRouter } from "./routes/banking.js";
 import { assetsRouter } from "./routes/assets.js";
 import { graphRouter } from "./routes/graph.js";
+import { netWorthRouter } from "./routes/netWorth.js";
+import { taxRouter } from "./routes/tax.js";
+import { reportsRouter } from "./routes/reports.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -42,6 +45,9 @@ app.use("/api/investments", investmentsRouter);
 app.use("/api/banking", bankingRouter);
 app.use("/api/assets", assetsRouter);
 app.use("/api/graph", graphRouter);
+app.use("/api/net-worth", netWorthRouter);
+app.use("/api/tax-records", taxRouter);
+app.use("/api/reports", reportsRouter);
 
 app.use(errorHandler);
 

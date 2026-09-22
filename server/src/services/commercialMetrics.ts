@@ -1,6 +1,6 @@
-// Commercial property analytics — spec sections 6-20 (Phase 1 & 2 only:
-// DSCR, interest coverage, acquisition/scenario modelling and portfolio
-// roll-ups are Phase 3, deliberately out of scope here).
+// Commercial property analytics — spec sections 6-21 (Phase 1, 2 & 3:
+// acquisition/scenario modelling and portfolio roll-ups are handled
+// separately in acquisitionModel.ts and the portfolio route).
 //
 // Every figure returned is a plain calculation over stored records, labelled
 // with its formula and inputs so nothing is a hidden or implied number —
@@ -168,6 +168,19 @@ export function computeDebtMetrics(loans: LoanLike[], propertyValue: number | nu
       equity: "property value - total loan balance",
       estimatedAnnualInterest: "sum(current balance x interest rate) per loan — a simple approximation, not an amortisation schedule",
       annualDebtService: "sum(repayment amount x payments per year) per loan",
+    },
+  };
+}
+
+// DSCR and Interest Coverage — spec section 19. Analytical ratios only,
+// never a prediction of lending approval.
+export function computeCoverageRatios(noi: number, annualDebtService: number, estimatedAnnualInterest: number) {
+  return {
+    dscr: annualDebtService ? noi / annualDebtService : null,
+    interestCoverageRatio: estimatedAnnualInterest ? noi / estimatedAnnualInterest : null,
+    formula: {
+      dscr: "NOI / annual debt service (interest + required principal repayments) — an analytical ratio, not a lending approval prediction",
+      interestCoverageRatio: "NOI / annual interest expense",
     },
   };
 }

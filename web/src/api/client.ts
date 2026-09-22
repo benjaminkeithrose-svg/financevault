@@ -37,7 +37,7 @@ export interface Entity {
   properties?: Property[];
   commercialProperties?: CommercialProperty[];
   investmentAccounts?: InvestmentAccount[];
-  taxRecords?: unknown[];
+  taxRecords?: TaxRecord[];
   financialPosition?: {
     byAssetType: Record<string, number>;
     cash: number;
@@ -187,6 +187,95 @@ export interface Settings {
   id: number;
   allowExternalAiProcessing: boolean;
   defaultLandingPage: string;
+}
+
+export interface PropertyPerformanceRow {
+  id: string;
+  name: string;
+  address: string;
+  entityName: string;
+  purchasePrice: number | null;
+  currentValue: number | null;
+  debt: number;
+  equity: number | null;
+  grossRent: number;
+  expenses: number;
+  interest: number;
+  netCashFlow: number;
+  estimatedYield: number | null;
+}
+
+export interface InvestmentPortfolioRow {
+  id: string;
+  institution: string;
+  entityName: string;
+  accountType: string;
+  holdingCount: number;
+  costBase: number;
+  realisedGainLoss: number;
+}
+
+export interface TaxSummaryRow {
+  entityId: string;
+  entityName: string;
+  income: number;
+  expenses: number;
+  capitalGains: number;
+  capitalLosses: number;
+  needsReview: number;
+}
+
+export interface DebtSummaryRow {
+  id: string;
+  name: string;
+  liabilityType: string;
+  entityName: string;
+  lender?: string | null;
+  currentBalance: number | null;
+  interestRate: number | null;
+  repaymentAmount: number | null;
+  securedAsset: string | null;
+  lvr: number | null;
+}
+
+export interface TaxRecord {
+  id: string;
+  financialYearId: string;
+  financialYear?: FinancialYear;
+  entityId: string;
+  entity?: Entity;
+  recordType: string;
+  description: string;
+  amount?: number | null;
+  status: string;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NetWorthBreakdown {
+  cash: number;
+  propertyValue: number;
+  investmentValue: number;
+  superValue: number;
+  vehicleValue: number;
+  otherAssets: number;
+  totalAssets: number;
+  mortgages: number;
+  creditCards: number;
+  personalLoans: number;
+  otherLiabilities: number;
+  totalLiabilities: number;
+  netPosition: number;
+}
+
+export interface NetWorthSnapshot extends NetWorthBreakdown {
+  id: string;
+  asAtDate: string;
+  entityId?: string | null;
+  entity?: Entity | null;
+  notes?: string | null;
+  createdAt: string;
 }
 
 export interface GraphNode {
@@ -447,6 +536,45 @@ export interface CommercialPropertyMetrics {
     formula: { lvr: string; equity: string; estimatedAnnualInterest: string; annualDebtService: string };
   };
   cashFlowAfterFinancing: { value: number; status: string; formula: string };
+  coverage: {
+    dscr: number | null;
+    interestCoverageRatio: number | null;
+    formula: { dscr: string; interestCoverageRatio: string };
+  };
+}
+
+export interface CommercialPortfolioRow {
+  propertyId: string;
+  name: string;
+  propertyValue: number | null;
+  debt: number;
+  equity: number | null;
+  noi: number;
+  netYield: number | null;
+  capRate: number | null;
+  lvr: number | null;
+  occupancyPercent: number | null;
+  waleByRentYears: number | null;
+}
+
+export interface CommercialPortfolio {
+  properties: CommercialPortfolioRow[];
+  portfolio: {
+    numberOfProperties: number;
+    numberOfTenants: number;
+    totalValue: number;
+    totalDebt: number;
+    totalEquity: number;
+    weightedLvr: number | null;
+    totalNoi: number;
+    portfolioNetYield: number | null;
+    totalAnnualRent: number;
+    weightedOccupancy: number | null;
+    weightedWaleByRentYears: number | null;
+    totalAnnualInterest: number;
+    cashFlowAfterFinancing: number;
+  };
+  note: string;
 }
 
 export interface CommercialProperty {
@@ -705,9 +833,42 @@ export const api = {
 
   graph: () => request<Graph>("/graph"),
 
+  taxRecords: {
+    list: (params?: Record<string, string>) =>
+      request<TaxRecord[]>(`/tax-records${params ? `?${new URLSearchParams(params)}` : ""}`),
+    create: (data: Record<string, unknown>) =>
+      request<TaxRecord>("/tax-records", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<TaxRecord>(`/tax-records/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/tax-records/${id}`, { method: "DELETE" }),
+  },
+
+  reports: {
+    propertyPerformance: () =>
+      request<{ rows: PropertyPerformanceRow[]; formula: string }>("/reports/property-performance"),
+    investmentPortfolio: () =>
+      request<{ rows: InvestmentPortfolioRow[]; totals: { totalCostBase: number; realisedGainLoss: number }; note: string }>(
+        "/reports/investment-portfolio"
+      ),
+    taxSummary: (financialYearId?: string) =>
+      request<{ rows: TaxSummaryRow[] }>(`/reports/tax-summary${financialYearId ? `?financialYearId=${financialYearId}` : ""}`),
+    debtSummary: () => request<{ rows: DebtSummaryRow[]; totalDebt: number; formula: string }>("/reports/debt-summary"),
+  },
+
+  netWorth: {
+    preview: (entityId?: string) => request<NetWorthBreakdown>(`/net-worth/preview${entityId ? `?entityId=${entityId}` : ""}`),
+    listSnapshots: (entityId?: string) =>
+      request<NetWorthSnapshot[]>(`/net-worth/snapshots${entityId ? `?entityId=${entityId}` : ""}`),
+    saveSnapshot: (data: Record<string, unknown>) =>
+      request<NetWorthSnapshot>("/net-worth/snapshots", { method: "POST", body: JSON.stringify(data) }),
+    removeSnapshot: (id: string) => request<void>(`/net-worth/snapshots/${id}`, { method: "DELETE" }),
+  },
+
   commercialProperties: {
     list: (entityId?: string) =>
       request<CommercialProperty[]>(`/commercial-properties${entityId ? `?entityId=${entityId}` : ""}`),
+    portfolio: (valuationBasis?: "current" | "purchase") =>
+      request<CommercialPortfolio>(`/commercial-properties/portfolio${valuationBasis ? `?valuationBasis=${valuationBasis}` : ""}`),
     get: (id: string, valuationBasis?: "current" | "purchase") =>
       request<CommercialProperty>(`/commercial-properties/${id}${valuationBasis ? `?valuationBasis=${valuationBasis}` : ""}`),
     create: (data: Record<string, unknown>) =>

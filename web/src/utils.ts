@@ -8,6 +8,14 @@ export function formatDate(value?: string | null): string {
   return new Intl.DateTimeFormat("en-AU", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(value));
 }
 
+// Australian financial year: 1 July -> 30 June, labelled "YYYY-YY".
+export function financialYearLabelForToday(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const startYear = now.getMonth() >= 6 ? year : year - 1; // July onward starts the FY
+  return `${startYear}-${String((startYear + 1) % 100).padStart(2, "0")}`;
+}
+
 export function humanize(value?: string | null): string {
   if (!value) return "—";
   return value

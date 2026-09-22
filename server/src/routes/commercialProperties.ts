@@ -4,6 +4,7 @@ import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
 import {
+  computeCoverageRatios,
   computeDebtMetrics,
   computeIncomeAndNoi,
   computeOccupancy,
@@ -31,7 +32,7 @@ commercialPropertiesRouter.get(
   })
 );
 
-async function loadMetrics(propertyId: string, valuationBasis: "current" | "purchase") {
+export async function loadMetrics(propertyId: string, valuationBasis: "current" | "purchase") {
   const property = await prisma.commercialProperty.findUnique({
     where: { id: propertyId },
     include: { asset: true, tenancies: true, loans: true },
@@ -56,8 +57,10 @@ async function loadMetrics(propertyId: string, valuationBasis: "current" | "purc
   const yields = computeYieldsAndCapRate(income.grossPropertyIncome, income.noi, propertyValue, valuationBasis);
   const debt = computeDebtMetrics(property.loans, propertyValue);
   const cashFlowAfterFinancing = income.noi - debt.annualDebtService;
+  const coverage = computeCoverageRatios(income.noi, debt.annualDebtService, debt.estimatedAnnualInterest);
 
   return {
+    property,
     period: { basis: "trailing 12 months of recorded outgoings; rent is current annualised rent from active leases" },
     occupancy,
     tenantConcentration,
@@ -65,6 +68,7 @@ async function loadMetrics(propertyId: string, valuationBasis: "current" | "purc
     income,
     yields,
     debt,
+    coverage,
     cashFlowAfterFinancing: {
       value: cashFlowAfterFinancing,
       status: "ESTIMATED",
@@ -72,6 +76,77 @@ async function loadMetrics(propertyId: string, valuationBasis: "current" | "purc
     },
   };
 }
+
+// Registered before "/:id" so the literal path isn't swallowed by the param route.
+commercialPropertiesRouter.get(
+  "/portfolio",
+  asyncHandler(async (req, res) => {
+    const valuationBasis = req.query.valuationBasis === "purchase" ? "purchase" : "current";
+    const entityId = req.query.entityId ? String(req.query.entityId) : undefined;
+
+    const properties = await prisma.commercialProperty.findMany({
+      where: entityId ? { entityId } : undefined,
+      select: { id: true },
+    });
+
+    const perProperty = await Promise.all(
+      properties.map(async (p) => {
+        const m = await loadMetrics(p.id, valuationBasis);
+        return m ? { propertyId: p.id, name: m.property.name, metrics: m } : null;
+      })
+    );
+    const rows = perProperty.filter((r): r is NonNullable<typeof r> => r !== null);
+
+    const totalValue = rows.reduce((s, r) => s + (r.metrics.yields.propertyValue ?? 0), 0);
+    const totalDebt = rows.reduce((s, r) => s + r.metrics.debt.totalDebt, 0);
+    const totalEquity = totalValue - totalDebt;
+    const totalNoi = rows.reduce((s, r) => s + r.metrics.income.noi, 0);
+    const totalRent = rows.reduce((s, r) => s + r.metrics.income.grossRent, 0);
+    const totalInterest = rows.reduce((s, r) => s + r.metrics.debt.estimatedAnnualInterest, 0);
+    const totalCashFlow = rows.reduce((s, r) => s + r.metrics.cashFlowAfterFinancing.value, 0);
+    const tenantCount = rows.reduce((s, r) => s + r.metrics.tenantConcentration.tenants.length, 0);
+    const weightedOccupancy = rows.reduce(
+      (s, r) => s + (r.metrics.occupancy.occupancyPercent ?? 0) * (r.metrics.yields.propertyValue ?? 0),
+      0
+    );
+    const weightedWaleRent = rows.reduce(
+      (s, r) => s + (r.metrics.wale.waleByRentYears ?? 0) * r.metrics.income.grossRent,
+      0
+    );
+
+    res.json({
+      properties: rows.map((r) => ({
+        propertyId: r.propertyId,
+        name: r.name,
+        propertyValue: r.metrics.yields.propertyValue,
+        debt: r.metrics.debt.totalDebt,
+        equity: r.metrics.debt.equity,
+        noi: r.metrics.income.noi,
+        netYield: r.metrics.yields.netYield,
+        capRate: r.metrics.yields.capRate,
+        lvr: r.metrics.debt.lvr,
+        occupancyPercent: r.metrics.occupancy.occupancyPercent,
+        waleByRentYears: r.metrics.wale.waleByRentYears,
+      })),
+      portfolio: {
+        numberOfProperties: rows.length,
+        numberOfTenants: tenantCount,
+        totalValue,
+        totalDebt,
+        totalEquity,
+        weightedLvr: totalValue ? totalDebt / totalValue : null,
+        totalNoi,
+        portfolioNetYield: totalValue ? totalNoi / totalValue : null,
+        totalAnnualRent: totalRent,
+        weightedOccupancy: totalValue ? weightedOccupancy / totalValue : null,
+        weightedWaleByRentYears: totalRent ? weightedWaleRent / totalRent : null,
+        totalAnnualInterest: totalInterest,
+        cashFlowAfterFinancing: totalCashFlow,
+      },
+      note: "Underlying per-property metrics only — properties are not ranked or scored against each other.",
+    });
+  })
+);
 
 commercialPropertiesRouter.get(
   "/:id",

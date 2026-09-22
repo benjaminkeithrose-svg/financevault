@@ -8,8 +8,28 @@ hand them to one quickly.
 
 See the project brief for the full design spec. This repository currently
 implements **Stage 1 and Stage 2** of the staged build, plus the Commercial
-Property module, a subsequent architecture correction, and a Visualization
-tab, all described below.
+Property module (Phase 1-3), a subsequent architecture correction, a
+Visualization tab, and Net Worth/Tax/Reports, all described below.
+
+### Net Worth, Tax and Reports
+
+- **Net Worth** (`/net-worth`): a live balance-sheet breakdown (cash,
+  property, shares/investments, super, vehicles, other assets; mortgages,
+  credit cards, personal loans, other liabilities), viewable consolidated
+  or per-entity. "Save snapshot" writes an immutable point-in-time record
+  — later changes to your assets/liabilities never rewrite a snapshot
+  already saved — and any two snapshots can be compared side by side.
+- **Tax** (`/tax`): pick an entity and a financial year to see its income,
+  expenses and capital gains/losses, each with a status
+  (Recorded/Estimated/Needs review/Accountant confirmed — never presented
+  as a final figure), plus the documents already tagged tax-relevant for
+  that entity and year.
+- **Reports** (`/reports`): Property Performance (residential — equity,
+  gross rent, expenses, net cash flow, estimated yield), Investment
+  Portfolio (cost base and realised gain/loss — explicitly honest that
+  there's no live pricing, so unrealised gain/loss isn't shown), Tax
+  Summary by financial year, and Debt Summary with LVR against whatever
+  secures each loan.
 
 ### Visualization
 
@@ -102,7 +122,7 @@ Tax, Reports and Document Packs still have nav entries and placeholder
 screens; their data model already exists in `server/prisma/schema.prisma`
 ahead of the UI.
 
-### Commercial Property & Investment Module (Phase 1 & 2)
+### Commercial Property & Investment Module (Phase 1-3)
 
 Commercial property is a distinct asset class from residential — it isn't
 squeezed into the residential Property UI. Reachable via a Residential /
@@ -138,9 +158,25 @@ Commercial toggle on the Properties page.
 - Loans can now secure either a residential or a commercial property, with
   commercial-specific fields (interest-only vs P&I, repayment frequency,
   loan/establishment/valuation fees).
-- DSCR/interest coverage, acquisition modelling, scenario modelling and a
-  portfolio-level roll-up (spec Phase 3) plus lease-PDF extraction and
-  alerts (Phase 4) are intentionally not built yet.
+- **Phase 3, now built**:
+  - **DSCR and Interest Coverage Ratio** tiles on the property page,
+    labelled as analytical ratios, never a lending-approval prediction.
+  - **Acquisition Model** (`/commercial-properties/acquisition-model`): a
+    standalone calculator — purchase costs, financing, income and
+    expenses in, total acquisition cost/LVR/NOI/yields/DSCR/interest
+    coverage/break-even occupancy out. Not persisted (projected figures,
+    never mixed with actual records) and can optionally pre-fill its
+    income/occupancy from an existing property as a starting point.
+  - **Scenario analysis** on each property's page: add named scenarios
+    that override rent growth/vacancy/interest rate and see NOI, interest
+    expense, cash flow and net yield recomputed against the current base
+    case — figures only, no likely/unlikely labelling.
+  - **Portfolio view** on the Commercial Properties list (once you have
+    more than one): total value/debt/equity, weighted LVR, portfolio NOI
+    and net yield, weighted occupancy and WALE, total rent/interest/cash
+    flow — properties are listed with their own metrics, never ranked or
+    scored against each other.
+- Lease-PDF extraction and alerts (Phase 4) remain intentionally not built.
 
 ### UI styling
 

@@ -33,6 +33,7 @@ const GROUPS: Array<{ label: string; items: NavItem[] }> = [
   {
     label: "",
     items: [
+      { to: "/net-worth", label: "Net Worth" },
       { to: "/tax", label: "Tax" },
       { to: "/reports", label: "Reports" },
       { to: "/packs", label: "Document Packs" },

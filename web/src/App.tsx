@@ -17,6 +17,7 @@ import { Settings } from "./pages/Settings.js";
 import { Properties } from "./pages/Properties.js";
 import { PropertyDetail } from "./pages/PropertyDetail.js";
 import { CommercialPropertyDetail } from "./pages/CommercialPropertyDetail.js";
+import { AcquisitionModel } from "./pages/AcquisitionModel.js";
 import { Liabilities } from "./pages/Liabilities.js";
 import { LiabilityDetail } from "./pages/LiabilityDetail.js";
 import { Investments } from "./pages/Investments.js";
@@ -24,6 +25,9 @@ import { InvestmentAccountDetail } from "./pages/InvestmentAccountDetail.js";
 import { Banking } from "./pages/Banking.js";
 import { AccountDetail } from "./pages/AccountDetail.js";
 import { Assets } from "./pages/Assets.js";
+import { NetWorth } from "./pages/NetWorth.js";
+import { Tax } from "./pages/Tax.js";
+import { Reports } from "./pages/Reports.js";
 
 function TopSearch() {
   const [q, setQ] = useState("");
@@ -75,6 +79,7 @@ export default function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/properties/:id" element={<PropertyDetail />} />
+          <Route path="/commercial-properties/acquisition-model" element={<AcquisitionModel />} />
           <Route path="/commercial-properties/:id" element={<CommercialPropertyDetail />} />
           <Route path="/investments" element={<Investments />} />
           <Route path="/investments/:id" element={<InvestmentAccountDetail />} />
@@ -84,8 +89,9 @@ export default function App() {
           <Route path="/liabilities" element={<Liabilities scope="all" />} />
           <Route path="/liabilities/:id" element={<LiabilityDetail />} />
           <Route path="/assets" element={<Assets />} />
-          <Route path="/tax" element={<Placeholder title="Tax" stage="Stage 3" />} />
-          <Route path="/reports" element={<Placeholder title="Reports" stage="Stage 3" />} />
+          <Route path="/net-worth" element={<NetWorth />} />
+          <Route path="/tax" element={<Tax />} />
+          <Route path="/reports" element={<Reports />} />
           <Route path="/packs" element={<Placeholder title="Document Packs" stage="Stage 4" />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
