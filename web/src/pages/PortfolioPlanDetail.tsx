@@ -16,6 +16,16 @@ function toPercentInput(v: number): string {
 
 const emptyPropertyForm = { name: "", acquisitionYearNumber: "1", purchasePrice: "", initialLvr: "70", initialRent: "" };
 const emptyRefinanceForm = { yearNumber: "", targetLvr: "" };
+const emptyDrawForm = { yearNumber: "", amount: "", interestRate: "", sourceCommercialPropertyId: "" };
+
+// Live headroom check for a real property being considered as an equity
+// source — informational only, never blocks the draw.
+function headroom(cp: CommercialProperty, targetLvr: number): { value: number; debt: number; lvr: number | null; headroomToTarget: number } | null {
+  const value = cp.asset?.currentValue;
+  if (value === null || value === undefined) return null;
+  const debt = (cp.loans || []).reduce((s, l) => s + (l.currentBalance ?? 0), 0);
+  return { value, debt, lvr: value ? debt / value : null, headroomToTarget: targetLvr * value - debt };
+}
 
 export function PortfolioPlanDetail() {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +40,8 @@ export function PortfolioPlanDetail() {
   const [propertyForm, setPropertyForm] = useState(emptyPropertyForm);
   const [refinanceFormFor, setRefinanceFormFor] = useState<string | null>(null);
   const [refinanceForm, setRefinanceForm] = useState(emptyRefinanceForm);
+  const [drawFormFor, setDrawFormFor] = useState<string | null>(null);
+  const [drawForm, setDrawForm] = useState(emptyDrawForm);
 
   function load() {
     if (!id) return;
@@ -119,6 +131,24 @@ export function PortfolioPlanDetail() {
 
   async function removeRefinance(refinanceId: string) {
     await api.portfolioPlans.removeRefinance(refinanceId);
+    load();
+  }
+
+  async function addEquityDraw(propertyId: string) {
+    if (!drawForm.yearNumber || !drawForm.amount) return;
+    await api.portfolioPlans.addEquityDraw(propertyId, {
+      yearNumber: Number(drawForm.yearNumber),
+      amount: Number(drawForm.amount),
+      interestRate: drawForm.interestRate ? Number(drawForm.interestRate) / 100 : null,
+      sourceCommercialPropertyId: drawForm.sourceCommercialPropertyId || null,
+    });
+    setDrawForm(emptyDrawForm);
+    setDrawFormFor(null);
+    load();
+  }
+
+  async function removeEquityDraw(drawId: string) {
+    await api.portfolioPlans.removeEquityDraw(drawId);
     load();
   }
 
@@ -306,6 +336,109 @@ export function PortfolioPlanDetail() {
                       </div>
                     )}
                   </div>
+
+                  <div style={{ marginTop: 12 }}>
+                    <strong style={{ fontSize: 13 }}>Funding (equity pulled from a property you already own)</strong>
+                    <p style={{ color: "var(--text-muted)", fontSize: 12, margin: "4px 0" }}>
+                      Only for equity pulled from a REAL property outside this plan — refinancing a property that's
+                      already IN this plan is costed automatically via its own "Add refinance" above.
+                    </p>
+                    {(pp.equityDraws || []).length === 0 ? (
+                      <p className="empty-state" style={{ padding: "8px 0" }}>
+                        No external funding recorded — this purchase is assumed self-funded.
+                      </p>
+                    ) : (
+                      <ul className="item-card-list">
+                        {(pp.equityDraws || []).map((d) => (
+                          <li key={d.id} className="item-card" style={{ cursor: "default", padding: "8px 12px" }}>
+                            <div className="item-card-body">
+                              <div className="item-card-subtitle">
+                                Year {d.yearNumber} · {formatCurrency(d.amount)} from{" "}
+                                {d.sourceCommercialProperty?.name || "an unspecified source"} at{" "}
+                                {d.interestRate ? pct(d.interestRate) : "the plan's default rate"} ·{" "}
+                                {formatCurrency(d.amount * (d.interestRate ?? plan.interestRate))}/yr cost
+                              </div>
+                            </div>
+                            <button className="btn secondary" onClick={() => removeEquityDraw(d.id)}>
+                              Remove
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {drawFormFor === pp.id ? (
+                      <div style={{ marginTop: 8 }}>
+                        <label>Source property (optional — leave blank for an unspecified source)</label>
+                        <select
+                          value={drawForm.sourceCommercialPropertyId}
+                          onChange={(e) => setDrawForm({ ...drawForm, sourceCommercialPropertyId: e.target.value })}
+                          style={{ maxWidth: 320 }}
+                        >
+                          <option value="">— Unspecified source —</option>
+                          {commercialProperties.map((cp) => (
+                            <option key={cp.id} value={cp.id}>
+                              {cp.name}
+                            </option>
+                          ))}
+                        </select>
+                        {drawForm.sourceCommercialPropertyId &&
+                          (() => {
+                            const source = commercialProperties.find((cp) => cp.id === drawForm.sourceCommercialPropertyId);
+                            const h = source ? headroom(source, plan.refinanceLvrTarget) : null;
+                            return h ? (
+                              <div className="message-box info">
+                                Currently {formatCurrency(h.value)} value, {formatCurrency(h.debt)} debt (
+                                {pct(h.lvr)} LVR) — about {formatCurrency(h.headroomToTarget)} of headroom to the
+                                plan's {pct(plan.refinanceLvrTarget)} target LVR.
+                              </div>
+                            ) : (
+                              <div className="message-box warning">No current value recorded for this property yet.</div>
+                            );
+                          })()}
+                        <div className="toolbar" style={{ marginTop: 8, flexWrap: "wrap" }}>
+                          <input
+                            type="number"
+                            placeholder="Year"
+                            value={drawForm.yearNumber}
+                            onChange={(e) => setDrawForm({ ...drawForm, yearNumber: e.target.value })}
+                            style={{ width: 100 }}
+                          />
+                          <input
+                            type="number"
+                            placeholder="Amount drawn"
+                            value={drawForm.amount}
+                            onChange={(e) => setDrawForm({ ...drawForm, amount: e.target.value })}
+                            style={{ width: 160 }}
+                          />
+                          <input
+                            type="number"
+                            placeholder="Rate % (optional)"
+                            value={drawForm.interestRate}
+                            onChange={(e) => setDrawForm({ ...drawForm, interestRate: e.target.value })}
+                            style={{ width: 160 }}
+                          />
+                          <button className="btn secondary" onClick={() => addEquityDraw(pp.id)}>
+                            Add
+                          </button>
+                          <button
+                            className="btn secondary"
+                            onClick={() => {
+                              setDrawFormFor(null);
+                              setDrawForm(emptyDrawForm);
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="toolbar" style={{ marginTop: 8 }}>
+                        <button className="btn secondary" onClick={() => setDrawFormFor(pp.id)}>
+                          Add funding source
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <button className="btn danger secondary" onClick={() => removeProperty(pp.id)}>
                   Remove property
@@ -373,6 +506,22 @@ export function PortfolioPlanDetail() {
         <div className="card">
           <h3>Projection</h3>
           <p style={{ color: "var(--text-muted)", fontSize: 13 }}>{projection.note}</p>
+
+          {projection.properties.some((p) => p.hasFunding) && (
+            <ul className="item-card-list" style={{ marginBottom: 12 }}>
+              {projection.properties
+                .filter((p) => p.hasFunding)
+                .map((p) => (
+                  <li key={p.planPropertyId} className="message-box info" style={{ listStyle: "none" }}>
+                    {p.name}:{" "}
+                    {p.positivelyGearedFromYear
+                      ? `positively geared (after the cost of its funding) from Year ${p.positivelyGearedFromYear}`
+                      : `not yet positively geared after funding cost within the ${plan.projectionYears}-year projection`}
+                  </li>
+                ))}
+            </ul>
+          )}
+
           <div style={{ overflowX: "auto" }}>
             <table>
               <thead>
@@ -384,6 +533,8 @@ export function PortfolioPlanDetail() {
                   <th>Loan</th>
                   <th>Rent</th>
                   <th>Cashflow</th>
+                  <th>Funding cost</th>
+                  <th>Net after funding</th>
                   <th>Accumulated</th>
                   <th>Redeployment capacity</th>
                   <th>Actual value</th>
@@ -407,6 +558,8 @@ export function PortfolioPlanDetail() {
                       <td>{formatCurrency(row.loan)}</td>
                       <td>{formatCurrency(row.rent)}</td>
                       <td>{formatCurrency(row.cashflow)}</td>
+                      <td>{row.fundingCost ? formatCurrency(row.fundingCost) : "—"}</td>
+                      <td>{row.fundingCost ? formatCurrency(row.netCashflowAfterFunding) : "—"}</td>
                       <td>{formatCurrency(row.accumulatedCashflowSinceTranche)}</td>
                       <td>{formatCurrency(row.redeploymentCapacity)}</td>
                       <td>{row.actual?.propertyValue !== null && row.actual?.propertyValue !== undefined ? formatCurrency(row.actual.propertyValue) : "—"}</td>
@@ -428,6 +581,8 @@ export function PortfolioPlanDetail() {
                 <th>Total loan</th>
                 <th>Total equity</th>
                 <th>Yearly cashflow</th>
+                <th>Funding cost</th>
+                <th>Net after funding</th>
                 <th>Contributions to date</th>
                 <th>Available for redeployment</th>
               </tr>
@@ -441,6 +596,8 @@ export function PortfolioPlanDetail() {
                   <td>{formatCurrency(y.totalLoan)}</td>
                   <td>{formatCurrency(y.totalEquity)}</td>
                   <td>{formatCurrency(y.totalCashflow)}</td>
+                  <td>{y.totalFundingCost ? formatCurrency(y.totalFundingCost) : "—"}</td>
+                  <td>{y.totalFundingCost ? formatCurrency(y.totalCashflowAfterFunding) : "—"}</td>
                   <td>{formatCurrency(y.cumulativeContributions)}</td>
                   <td>{formatCurrency(y.totalAvailableForRedeployment)}</td>
                 </tr>

@@ -740,6 +740,18 @@ export interface PlanRefinance {
   createdAt: string;
 }
 
+export interface PlanEquityDraw {
+  id: string;
+  planPropertyId: string;
+  yearNumber: number;
+  amount: number;
+  interestRate?: number | null;
+  sourceCommercialPropertyId?: string | null;
+  sourceCommercialProperty?: CommercialProperty | null;
+  notes?: string | null;
+  createdAt: string;
+}
+
 export interface PlanProperty {
   id: string;
   planId: string;
@@ -753,6 +765,7 @@ export interface PlanProperty {
   notes?: string | null;
   createdAt: string;
   refinances?: PlanRefinance[];
+  equityDraws?: PlanEquityDraw[];
 }
 
 export interface PortfolioPlan {
@@ -797,6 +810,8 @@ export interface PlanProjectionYearRow {
   growthEquitySinceTranche: number;
   releasableEquity: number;
   redeploymentCapacity: number;
+  fundingCost: number;
+  netCashflowAfterFunding: number;
   actual: PlanActualFigures | null;
 }
 
@@ -806,6 +821,8 @@ export interface PlanPropertyProjection {
   acquisitionYearNumber: number;
   linked: boolean;
   commercialPropertyName: string | null;
+  hasFunding: boolean;
+  positivelyGearedFromYear: number | null;
   rows: PlanProjectionYearRow[];
 }
 
@@ -816,6 +833,8 @@ export interface PortfolioYearTotals {
   totalLoan: number;
   totalEquity: number;
   totalCashflow: number;
+  totalFundingCost: number;
+  totalCashflowAfterFunding: number;
   cumulativeContributions: number;
   totalAvailableForRedeployment: number;
 }
@@ -1108,6 +1127,10 @@ export const api = {
     addRefinance: (propertyId: string, data: Record<string, unknown>) =>
       request<PlanRefinance>(`/portfolio-plans/properties/${propertyId}/refinances`, { method: "POST", body: JSON.stringify(data) }),
     removeRefinance: (refinanceId: string) => request<void>(`/portfolio-plans/refinances/${refinanceId}`, { method: "DELETE" }),
+
+    addEquityDraw: (propertyId: string, data: Record<string, unknown>) =>
+      request<PlanEquityDraw>(`/portfolio-plans/properties/${propertyId}/equity-draws`, { method: "POST", body: JSON.stringify(data) }),
+    removeEquityDraw: (drawId: string) => request<void>(`/portfolio-plans/equity-draws/${drawId}`, { method: "DELETE" }),
   },
 
   documentPacks: {

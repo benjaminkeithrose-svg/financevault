@@ -428,13 +428,14 @@ model CommercialProperty {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tenancies          Tenancy[]
-  loans              Liability[]
-  outgoings          OutgoingRecord[]
-  capitalExpenditure CapitalExpenditureItem[]
-  occupancySnapshots OccupancySnapshot[]
-  annualSnapshots    AnnualPropertySnapshot[]
-  planProperty       PlanProperty?
+  tenancies             Tenancy[]
+  loans                 Liability[]
+  outgoings             OutgoingRecord[]
+  capitalExpenditure    CapitalExpenditureItem[]
+  occupancySnapshots    OccupancySnapshot[]
+  annualSnapshots       AnnualPropertySnapshot[]
+  planProperty          PlanProperty?
+  planEquityDrawSources PlanEquityDraw[]
 
   @@index([entityId])
 }
@@ -664,7 +665,8 @@ model PlanProperty {
   notes     String?
   createdAt DateTime @default(now())
 
-  refinances PlanRefinance[]
+  refinances  PlanRefinance[]
+  equityDraws PlanEquityDraw[]
 
   @@index([planId])
 }
@@ -677,6 +679,32 @@ model PlanRefinance {
   targetLvr      Float? // null = use the plan's default refinanceLvrTarget
   notes          String?
   createdAt      DateTime     @default(now())
+
+  @@index([planPropertyId])
+}
+
+// A cost-bearing funding source for a planned property's deposit — pulling
+// equity from a REAL property you already own, which is NOT itself part of
+// this plan (a PlanRefinance already covers the case of refinancing a
+// property that IS in the plan; its cost is captured there via that
+// property's own higher loan/interest, so this model deliberately doesn't
+// duplicate that path — a draw always points at a real CommercialProperty,
+// or is left unspecified for "money from somewhere not yet decided").
+// Nothing here changes the real property's own loan/liability records —
+// it's a hypothetical cost tracked only within the plan.
+model PlanEquityDraw {
+  id             String       @id @default(cuid())
+  planPropertyId String
+  planProperty   PlanProperty @relation(fields: [planPropertyId], references: [id], onDelete: Cascade)
+  yearNumber     Int // year this funding cost starts applying
+  amount         Float
+  interestRate   Float? // null = use the plan's default interestRate
+
+  sourceCommercialPropertyId String?
+  sourceCommercialProperty   CommercialProperty? @relation(fields: [sourceCommercialPropertyId], references: [id])
+
+  notes     String?
+  createdAt DateTime @default(now())
 
   @@index([planPropertyId])
 }

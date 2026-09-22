@@ -28,7 +28,11 @@ portfolioPlansRouter.get(
         entity: true,
         startFinancialYear: true,
         properties: {
-          include: { refinances: { orderBy: { yearNumber: "asc" } }, commercialProperty: true },
+          include: {
+            refinances: { orderBy: { yearNumber: "asc" } },
+            commercialProperty: true,
+            equityDraws: { include: { sourceCommercialProperty: true }, orderBy: { yearNumber: "asc" } },
+          },
           orderBy: { acquisitionYearNumber: "asc" },
         },
       },
@@ -163,6 +167,35 @@ portfolioPlansRouter.delete(
   })
 );
 
+const equityDrawInput = z.object({
+  yearNumber: z.number().int().min(1),
+  amount: z.number(),
+  interestRate: z.number().optional().nullable(),
+  sourceCommercialPropertyId: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+portfolioPlansRouter.post(
+  "/properties/:propertyId/equity-draws",
+  asyncHandler(async (req, res) => {
+    const parsed = equityDrawInput.parse(req.body);
+    const draw = await prisma.planEquityDraw.create({
+      data: { planPropertyId: req.params.propertyId, ...parsed },
+      include: { sourceCommercialProperty: true },
+    });
+    await logAudit("PLAN_EQUITY_DRAW_ADDED", { targetType: "PlanEquityDraw", targetId: draw.id });
+    res.status(201).json(draw);
+  })
+);
+
+portfolioPlansRouter.delete(
+  "/equity-draws/:drawId",
+  asyncHandler(async (req, res) => {
+    await prisma.planEquityDraw.delete({ where: { id: req.params.drawId } });
+    res.status(204).send();
+  })
+);
+
 // ---------------------------------------------------------------------------
 // Projection engine — always computed live from the plan's stored inputs,
 // never persisted, so changing an assumption is reflected immediately. Each
@@ -191,7 +224,13 @@ portfolioPlansRouter.get(
       where: { id: req.params.id },
       include: {
         startFinancialYear: true,
-        properties: { include: { refinances: { orderBy: { yearNumber: "asc" } }, commercialProperty: true } },
+        properties: {
+          include: {
+            refinances: { orderBy: { yearNumber: "asc" } },
+            commercialProperty: true,
+            equityDraws: { orderBy: { yearNumber: "asc" } },
+          },
+        },
       },
     });
     if (!plan) {
@@ -262,6 +301,10 @@ portfolioPlansRouter.get(
             }
           }
 
+          const activeDraws = property.equityDraws.filter((d) => d.yearNumber <= yearNumber);
+          const fundingCost = activeDraws.reduce((s, d) => s + d.amount * (d.interestRate ?? plan.interestRate), 0);
+          const netCashflowAfterFunding = cashflow - fundingCost;
+
           rows.push({
             yearNumber,
             trancheStartYear,
@@ -276,9 +319,13 @@ portfolioPlansRouter.get(
             growthEquitySinceTranche,
             releasableEquity,
             redeploymentCapacity: accumulatedCashflow + releasableEquity,
+            fundingCost,
+            netCashflowAfterFunding,
             actual,
           });
         }
+
+        const positivelyGearedFromYear = rows.find((r) => r.netCashflowAfterFunding >= 0)?.yearNumber ?? null;
 
         return {
           planPropertyId: property.id,
@@ -286,6 +333,8 @@ portfolioPlansRouter.get(
           acquisitionYearNumber: property.acquisitionYearNumber,
           linked: Boolean(property.commercialPropertyId),
           commercialPropertyName: property.commercialProperty?.name ?? null,
+          hasFunding: property.equityDraws.length > 0,
+          positivelyGearedFromYear,
           rows,
         };
       })
@@ -296,6 +345,7 @@ portfolioPlansRouter.get(
       const totalValue = activeRows.reduce((s, r) => s + r.propertyValue, 0);
       const totalLoan = activeRows.reduce((s, r) => s + r.loan, 0);
       const totalCashflow = activeRows.reduce((s, r) => s + r.cashflow, 0);
+      const totalFundingCost = activeRows.reduce((s, r) => s + r.fundingCost, 0);
       const totalRedeploymentCapacity = activeRows.reduce((s, r) => s + r.redeploymentCapacity, 0);
       const cumulativeContributions = plan.annualContribution * yearNumber;
       return {
@@ -305,6 +355,8 @@ portfolioPlansRouter.get(
         totalLoan,
         totalEquity: totalValue - totalLoan,
         totalCashflow,
+        totalFundingCost,
+        totalCashflowAfterFunding: totalCashflow - totalFundingCost,
         cumulativeContributions,
         totalAvailableForRedeployment: totalRedeploymentCapacity + cumulativeContributions,
       };
