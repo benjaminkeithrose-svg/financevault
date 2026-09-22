@@ -2,7 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
-import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
+import { deleteWithLinks } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 import { financialYearBounds, financialYearLabelForDate } from "../services/financialYear.js";
 
@@ -81,7 +81,22 @@ bankingRouter.put(
   "/accounts/:id",
   asyncHandler(async (req, res) => {
     const parsed = accountInput.partial().parse(req.body);
-    const account = await prisma.account.update({ where: { id: req.params.id }, data: parsed, include: { entity: true } });
+    const existing = await prisma.account.findUnique({ where: { id: req.params.id } });
+    if (!existing) {
+      res.status(404).json({ error: "Bank account not found" });
+      return;
+    }
+    const account = await prisma.$transaction(async (tx) => {
+      // Moving an account to another entity takes its transactions along —
+      // otherwise they'd keep counting toward the old owner's tax figures.
+      if (parsed.entityId && parsed.entityId !== existing.entityId) {
+        await tx.transaction.updateMany({
+          where: { accountId: existing.id, OR: [{ entityId: existing.entityId }, { entityId: null }] },
+          data: { entityId: parsed.entityId },
+        });
+      }
+      return tx.account.update({ where: { id: existing.id }, data: parsed, include: { entity: true } });
+    });
     await logAudit("ACCOUNT_CHANGED", { targetType: "Account", targetId: account.id, data: parsed });
     res.json(account);
   })
@@ -92,15 +107,28 @@ bankingRouter.delete(
   asyncHandler(async (req, res) => {
     const account = await prisma.account.findUnique({
       where: { id: req.params.id },
-      include: { _count: { select: { transactions: true } } },
+      include: { transactions: { select: { id: true } } },
     });
     if (!account) {
       res.status(404).json({ error: "Bank account not found" });
       return;
     }
-    refuseIfInUse("bank account", [{ count: account._count.transactions, one: "transaction", many: "transactions" }]);
-    await deleteWithLinks([{ type: "ACCOUNT", id: account.id }], (tx) => tx.account.delete({ where: { id: account.id } }));
-    await logAudit("ACCOUNT_DELETED", { targetType: "Account", targetId: req.params.id });
+    // Unlike property or share history, bank transactions come from the
+    // bank's CSV export and can simply be imported again, so an account is
+    // deleted together with its transactions (the app warns first) rather
+    // than making someone delete hundreds of rows one by one.
+    await deleteWithLinks(
+      [{ type: "ACCOUNT", id: account.id }, ...account.transactions.map((t) => ({ type: "TRANSACTION", id: t.id }))],
+      async (tx) => {
+        await tx.transaction.deleteMany({ where: { accountId: account.id } });
+        await tx.account.delete({ where: { id: account.id } });
+      }
+    );
+    await logAudit("ACCOUNT_DELETED", {
+      targetType: "Account",
+      targetId: req.params.id,
+      data: { accountName: account.accountName, transactionsDeleted: account.transactions.length },
+    });
     res.status(204).send();
   })
 );

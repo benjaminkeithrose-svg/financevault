@@ -40,8 +40,10 @@ type Tx = Parameters<Extract<Parameters<typeof prisma.$transaction>[0], (...args
 export async function deleteWithLinks(targets: Array<{ type: string; id: string }>, run: (tx: Tx) => Promise<unknown>) {
   await prisma.$transaction(async (tx) => {
     await run(tx);
-    for (const target of targets) {
-      await tx.documentLink.deleteMany({ where: { targetType: target.type, targetId: target.id } });
+    const byType = new Map<string, string[]>();
+    for (const target of targets) byType.set(target.type, [...(byType.get(target.type) ?? []), target.id]);
+    for (const [targetType, ids] of byType) {
+      await tx.documentLink.deleteMany({ where: { targetType, targetId: { in: ids } } });
     }
   });
 }

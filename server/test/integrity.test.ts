@@ -121,6 +121,56 @@ describe("deletes don't take history with them", () => {
     expect(res.body.error).toMatch(/1 parcel/);
   });
 
+  it("deletes a bank account together with its transactions and their document links", async () => {
+    const account = await post("/banking/accounts", {
+      institution: "Bank",
+      accountName: "Old account",
+      accountType: "TRANSACTION",
+      entityId,
+    });
+    const txn = await post(`/banking/accounts/${account.id}/transactions`, {
+      date: iso("2025-01-02"),
+      description: "Coffee",
+      amount: -5,
+    });
+    const doc = await prisma.document.create({
+      data: {
+        originalFilename: "receipt.pdf",
+        storedFilename: "r.pdf",
+        filePath: "/nowhere/r.pdf",
+        mimeType: "application/pdf",
+        fileSize: 1,
+        fileHash: `integrity-txn-${Date.now()}`,
+      },
+    });
+    await prisma.documentLink.create({ data: { documentId: doc.id, targetType: "TRANSACTION", targetId: txn.id } });
+
+    const res = await agent.delete(`/api/banking/accounts/${account.id}`);
+    expect(res.status).toBe(204);
+    expect(await prisma.transaction.count({ where: { accountId: account.id } })).toBe(0);
+    expect(await prisma.documentLink.count({ where: { targetId: txn.id } })).toBe(0);
+    expect(await prisma.document.findUnique({ where: { id: doc.id } })).not.toBeNull();
+  });
+
+  it("moves an account's transactions when the account moves to another entity", async () => {
+    const other = await post("/entities", { name: "New owner", entityType: "COMPANY" });
+    const account = await post("/banking/accounts", {
+      institution: "Bank",
+      accountName: "Moving account",
+      accountType: "SAVINGS",
+      entityId,
+    });
+    const txn = await post(`/banking/accounts/${account.id}/transactions`, {
+      date: iso("2025-01-03"),
+      description: "Interest",
+      amount: 2,
+    });
+    const res = await agent.put(`/api/banking/accounts/${account.id}`).send({ entityId: other.id });
+    expect(res.status).toBe(200);
+    expect((await prisma.transaction.findUnique({ where: { id: txn.id } }))?.entityId).toBe(other.id);
+    await agent.delete(`/api/banking/accounts/${account.id}`);
+  });
+
   it("refuses to delete an entity that still owns things, naming what", async () => {
     const res = await agent.delete(`/api/entities/${entityId}`);
     expect(res.status).toBe(409);
