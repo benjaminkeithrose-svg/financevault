@@ -7,7 +7,9 @@ accounting system — it organises your own records and evidence so you can
 hand them to one quickly.
 
 See the project brief for the full design spec. This repository currently
-implements **Stage 1** of the staged build:
+implements **Stage 1 and Stage 2** of the staged build.
+
+### Stage 1
 
 - Relational data model (entities, documents, financial years, tax
   categories, assets, liabilities, accounts, transactions) designed so later
@@ -26,9 +28,40 @@ implements **Stage 1** of the staged build:
 - Settings page with an explicit, off-by-default "Allow external AI
   processing" toggle — classification runs entirely on-device today.
 
-Properties, Investments, Banking, Loans, Tax, Assets, Liabilities, Reports
-and Document Packs have nav entries and placeholder screens; their data
-model already exists in `server/prisma/schema.prisma` ahead of the UI.
+### Stage 2
+
+- **Properties**: purchase/settlement details, ownership %, current value;
+  creating one also creates its underlying Asset row so it appears in the
+  asset register automatically. Income/expenses/capital are derived from
+  documents linked to the property, grouped by tax category — no separate
+  ledger to keep in sync.
+- **Loans/Liabilities**: a single liability register; the Loans nav shows
+  home/investment loans, Liabilities shows everything (credit cards,
+  personal loans included). A loan can name a property as security, which
+  then shows up on that property's Financing panel.
+- **Investments**: investment accounts with a holdings register (quantity,
+  cost base, disposal, brokerage) and a realised gain/loss roll-up. No
+  market pricing or advice — record-keeping only, per the brief.
+- **Banking**: bank accounts with manual transaction entry; each
+  transaction is auto-assigned a financial year from its date.
+- **Assets**: a generic register for vehicles, equipment, super and other
+  assets not covered by Properties/Investments. Property-backed assets
+  appear here too, read-only, linking back to their property.
+- Every module detail page has a shared document-linking panel: upload a
+  new file or link an existing one, so a document never needs duplicating
+  across a property, a loan and a tax record.
+
+Tax, Reports and Document Packs still have nav entries and placeholder
+screens; their data model already exists in `server/prisma/schema.prisma`
+ahead of the UI.
+
+### UI styling
+
+A `PREFERENCES.md` in this repo sets visual/interaction defaults (light
+theme, card-based navigation, icon-first headers, etc.) that this build
+does not yet follow — by direction, function is being prioritised over
+matching those preferences until more of the app exists. A dedicated
+styling pass is expected once Stage 3 lands.
 
 ## Stack
 
