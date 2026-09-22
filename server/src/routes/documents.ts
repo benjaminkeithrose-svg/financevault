@@ -10,8 +10,9 @@ import { extractText } from "../services/ocr.js";
 import { classifyDocument } from "../services/classification.js";
 import { financialYearBounds } from "../services/financialYear.js";
 import { logAudit } from "../services/audit.js";
+import { resolveStorageDir } from "../services/paths.js";
 
-const STORAGE_DIR = process.env.STORAGE_DIR || "./storage/documents";
+const STORAGE_DIR = resolveStorageDir();
 
 export const documentsRouter = Router();
 

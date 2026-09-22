@@ -11,7 +11,17 @@ implements **Stage 1 and Stage 2** of the staged build, plus the Commercial
 Property module (Phase 1-3), a subsequent architecture correction, a
 Visualization tab, Net Worth/Tax/Reports, Document Packs with payslip
 tracking (Stage 4), a UI/UX pass against `PREFERENCES.md`, fractional/joint
-ownership, and a multi-property Portfolio Plan, all described below.
+ownership, a multi-property Portfolio Plan, a double-click local launcher
+and a one-click backup, all described below.
+
+### Backup
+
+Settings → **Download full backup** streams a single ZIP containing the
+whole database and every original uploaded document — everything needed to
+restore Financial Vault elsewhere. The database is copied via SQLite's own
+`VACUUM INTO`, so a backup taken while the app is in use is always a
+consistent point-in-time copy, never a half-written file. Nothing is
+uploaded anywhere; the file goes straight to your browser's downloads.
 
 ### Portfolio Plan
 

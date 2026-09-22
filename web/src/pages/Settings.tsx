@@ -62,11 +62,23 @@ export function Settings() {
       </div>
 
       <div className="card">
+        <h3 style={{ marginTop: 0 }}>Backup</h3>
+        <p style={{ color: "var(--text-muted)" }}>
+          Downloads one ZIP with a full copy of your database and every uploaded document — everything needed to
+          restore Financial Vault elsewhere. It goes straight to your browser's downloads; nothing is uploaded
+          anywhere.
+        </p>
+        <a className="btn" href="/api/backup" download>
+          Download full backup
+        </a>
+      </div>
+
+      <div className="card">
         <h3 style={{ marginTop: 0 }}>Data & privacy</h3>
         <ul style={{ color: "var(--text-muted)" }}>
           <li>Original documents are stored immutably and identified by a SHA-256 hash.</li>
           <li>Every classification change and confirmation is written to the audit log.</li>
-          <li>Export, backup and encryption-at-rest controls arrive in a later stage.</li>
+          <li>Encryption at rest and stronger authentication arrive in a later stage.</li>
         </ul>
       </div>
     </div>
