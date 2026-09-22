@@ -29,6 +29,8 @@ import { NetWorth } from "./pages/NetWorth.js";
 import { Tax } from "./pages/Tax.js";
 import { Reports } from "./pages/Reports.js";
 import { Packs } from "./pages/Packs.js";
+import { PortfolioPlans } from "./pages/PortfolioPlans.js";
+import { PortfolioPlanDetail } from "./pages/PortfolioPlanDetail.js";
 
 function Home() {
   const [landingPage, setLandingPage] = useState<string | null>(null);
@@ -70,6 +72,8 @@ export default function App() {
           <Route path="/liabilities/:id" element={<LiabilityDetail />} />
           <Route path="/assets" element={<Assets />} />
           <Route path="/assets/:id" element={<AssetDetail />} />
+          <Route path="/portfolio-plans" element={<PortfolioPlans />} />
+          <Route path="/portfolio-plans/:id" element={<PortfolioPlanDetail />} />
           <Route path="/net-worth" element={<NetWorth />} />
           <Route path="/tax" element={<Tax />} />
           <Route path="/reports" element={<Reports />} />

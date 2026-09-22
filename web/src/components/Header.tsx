@@ -19,6 +19,7 @@ const TITLES: Record<string, string> = {
   "/loans": "Loans",
   "/liabilities": "Liabilities",
   "/assets": "Assets",
+  "/portfolio-plans": "Portfolio Plan",
   "/net-worth": "Net Worth",
   "/tax": "Tax",
   "/reports": "Reports",
@@ -38,6 +39,7 @@ const DETAIL_TITLES: Record<string, string> = {
   investments: "Investment Account",
   banking: "Bank Account",
   liabilities: "Liability",
+  "portfolio-plans": "Portfolio Plan",
 };
 
 function getTitle(pathname: string): string {

@@ -136,6 +136,7 @@ model Entity {
   taxRecords           TaxRecord[]
   assetOwnerships      AssetOwnership[]
   netWorthSnapshots    NetWorthSnapshot[]
+  portfolioPlans       PortfolioPlan[]
 
   @@index([entityType])
 }
@@ -195,6 +196,7 @@ model FinancialYear {
   transactions            Transaction[]
   taxRecords              TaxRecord[]
   annualPropertySnapshots AnnualPropertySnapshot[]
+  portfolioPlans          PortfolioPlan[]
 }
 
 // ---------------------------------------------------------------------------
@@ -432,6 +434,7 @@ model CommercialProperty {
   capitalExpenditure CapitalExpenditureItem[]
   occupancySnapshots OccupancySnapshot[]
   annualSnapshots    AnnualPropertySnapshot[]
+  planProperty       PlanProperty?
 
   @@index([entityId])
 }
@@ -595,6 +598,87 @@ model AnnualPropertySnapshot {
   updatedAt DateTime @updatedAt
 
   @@unique([commercialPropertyId, financialYearId])
+}
+
+// ---------------------------------------------------------------------------
+// Portfolio Plan — a persisted, multi-property forward projection (spec:
+// "follow my purchase from inception... all the way through to trending
+// against the predicted"). Unlike the Acquisition Model / Scenario
+// Comparison calculators (deliberately ephemeral), a plan's assumptions are
+// saved so it can be revisited and compared against real outcomes over
+// years — but the year-by-year table itself is always computed live from
+// these inputs, never persisted, so a later assumption change is instantly
+// reflected rather than requiring a re-save.
+//
+// Each PlanProperty models one property's own trajectory (value and rent
+// growing at the plan's rate, an interest-only loan held flat between
+// refinances). PlanRefinance events are chosen by the user, not
+// auto-triggered — this mirrors how the source material (a portfolio
+// compounding illustration) works: it shows how much capital a property
+// has freed up, but the decision of when/what to buy or refinance next is
+// always the user's.
+// ---------------------------------------------------------------------------
+
+model PortfolioPlan {
+  id       String  @id @default(cuid())
+  name     String
+  entityId String?
+  entity   Entity? @relation(fields: [entityId], references: [id])
+
+  startFinancialYearId String
+  startFinancialYear   FinancialYear @relation(fields: [startFinancialYearId], references: [id])
+  projectionYears      Int           @default(10)
+
+  interestRate       Float // e.g. 0.028 — flat, interest-only, applied to each property's current loan balance
+  rentalGrowthRate   Float // e.g. 0.03 — applied to both rent and property value each year (matches source model)
+  capRate            Float // e.g. 0.06 — used to derive a property's starting rent when not entered explicitly
+  annualContribution Float @default(0) // extra cash added to the portfolio pool each year, tracked as a running total
+  refinanceLvrTarget Float // e.g. 0.70 — default LVR a refinance resets a property's loan back up to
+  depositPercent     Float @default(0.3) // default suggested deposit % when adding a new planned property
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  properties PlanProperty[]
+
+  @@index([entityId])
+}
+
+model PlanProperty {
+  id                    String        @id @default(cuid())
+  planId                String
+  plan                  PortfolioPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  name                  String
+  acquisitionYearNumber Int // 1-based year-in-plan this property is acquired
+  purchasePrice         Float
+  initialLvr            Float
+  initialRent           Float? // null = derive from purchasePrice * plan.capRate
+
+  // Once actually purchased, link to the real record so the projection can
+  // show actuals (from its saved AnnualPropertySnapshots) alongside the
+  // prediction. Null means this is still a hypothetical future purchase.
+  commercialPropertyId String?             @unique
+  commercialProperty   CommercialProperty? @relation(fields: [commercialPropertyId], references: [id])
+
+  notes     String?
+  createdAt DateTime @default(now())
+
+  refinances PlanRefinance[]
+
+  @@index([planId])
+}
+
+model PlanRefinance {
+  id             String       @id @default(cuid())
+  planPropertyId String
+  planProperty   PlanProperty @relation(fields: [planPropertyId], references: [id], onDelete: Cascade)
+  yearNumber     Int // plan-year-number this refinance happens
+  targetLvr      Float? // null = use the plan's default refinanceLvrTarget
+  notes          String?
+  createdAt      DateTime     @default(now())
+
+  @@index([planPropertyId])
 }
 
 // ---------------------------------------------------------------------------

@@ -20,6 +20,7 @@ import { netWorthRouter } from "./routes/netWorth.js";
 import { taxRouter } from "./routes/tax.js";
 import { reportsRouter } from "./routes/reports.js";
 import { documentPacksRouter } from "./routes/documentPacks.js";
+import { portfolioPlansRouter } from "./routes/portfolioPlans.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -50,6 +51,7 @@ app.use("/api/net-worth", netWorthRouter);
 app.use("/api/tax-records", taxRouter);
 app.use("/api/reports", reportsRouter);
 app.use("/api/document-packs", documentPacksRouter);
+app.use("/api/portfolio-plans", portfolioPlansRouter);
 
 app.use(errorHandler);
 

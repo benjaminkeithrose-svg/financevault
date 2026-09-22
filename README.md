@@ -10,8 +10,43 @@ See the project brief for the full design spec. This repository currently
 implements **Stage 1 and Stage 2** of the staged build, plus the Commercial
 Property module (Phase 1-3), a subsequent architecture correction, a
 Visualization tab, Net Worth/Tax/Reports, Document Packs with payslip
-tracking (Stage 4), and a UI/UX pass against `PREFERENCES.md`, all described
-below.
+tracking (Stage 4), a UI/UX pass against `PREFERENCES.md`, fractional/joint
+ownership, and a multi-property Portfolio Plan, all described below.
+
+### Portfolio Plan
+
+A saved, multi-property purchase plan — built from a portfolio-compounding
+illustration (a real estate agency's "$100k passive income" style plan) plus
+three of its accompanying single-property calculators (a cashflow-by-
+financing-scenario comparison, a debt paydown projection, and a cash-on-cash
+ROI calculator). Unlike the Acquisition Model / Scenario Comparison
+calculators (deliberately ephemeral — nothing persisted), a Portfolio Plan's
+assumptions and planned properties are saved so you can follow a purchase
+from inception through to trending it against what actually happened.
+
+- **Assumptions**: interest rate, rental/capital growth rate (this model
+  uses one rate for both, matching the source illustration), cap rate
+  (derives a property's starting rent when you don't enter one), default
+  refinance target LVR, default deposit %, an annual cash contribution, and
+  how many years to project.
+- **Properties**: add as many planned properties as you like, each with its
+  own purchase year, price and starting LVR. A property's value and rent
+  both grow at the plan's rate every year; its loan is interest-only and
+  held flat until you add a **refinance** for it at a chosen year, at which
+  point the loan resets to the target LVR against the property's value at
+  that point — released equity becomes visible as that property's
+  "redeployment capacity" (its accumulated cashflow plus what refinancing
+  now would release). Nothing about when to refinance or buy next is
+  auto-decided — the plan surfaces the numbers, you make the call, exactly
+  like the source illustration.
+- **Actual vs predicted**: once a planned property is actually purchased,
+  link it to its real Commercial Property record. From that year on, the
+  projection table shows the real numbers from that property's saved
+  annual snapshots right next to the prediction — a genuine trend of
+  planned-vs-actual, not a guess.
+- The whole year-by-year table is computed live from the saved assumptions
+  every time you view it, never persisted itself, so changing an assumption
+  is reflected immediately rather than needing a recalculation step.
 
 ### UI/UX styling pass
 

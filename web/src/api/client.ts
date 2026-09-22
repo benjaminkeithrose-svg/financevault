@@ -731,6 +731,102 @@ export interface PackPreview {
   generated: PackChip[];
 }
 
+export interface PlanRefinance {
+  id: string;
+  planPropertyId: string;
+  yearNumber: number;
+  targetLvr?: number | null;
+  notes?: string | null;
+  createdAt: string;
+}
+
+export interface PlanProperty {
+  id: string;
+  planId: string;
+  name: string;
+  acquisitionYearNumber: number;
+  purchasePrice: number;
+  initialLvr: number;
+  initialRent?: number | null;
+  commercialPropertyId?: string | null;
+  commercialProperty?: CommercialProperty | null;
+  notes?: string | null;
+  createdAt: string;
+  refinances?: PlanRefinance[];
+}
+
+export interface PortfolioPlan {
+  id: string;
+  name: string;
+  entityId?: string | null;
+  entity?: Entity | null;
+  startFinancialYearId: string;
+  startFinancialYear?: FinancialYear;
+  projectionYears: number;
+  interestRate: number;
+  rentalGrowthRate: number;
+  capRate: number;
+  annualContribution: number;
+  refinanceLvrTarget: number;
+  depositPercent: number;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  properties?: PlanProperty[];
+}
+
+export interface PlanActualFigures {
+  propertyValue: number | null;
+  rent: number | null;
+  debt: number | null;
+  cashFlow: number | null;
+  equity: number | null;
+}
+
+export interface PlanProjectionYearRow {
+  yearNumber: number;
+  trancheStartYear: number;
+  propertyValue: number;
+  loan: number;
+  lvr: number | null;
+  rent: number;
+  interest: number;
+  cashflow: number;
+  equity: number;
+  accumulatedCashflowSinceTranche: number;
+  growthEquitySinceTranche: number;
+  releasableEquity: number;
+  redeploymentCapacity: number;
+  actual: PlanActualFigures | null;
+}
+
+export interface PlanPropertyProjection {
+  planPropertyId: string;
+  name: string;
+  acquisitionYearNumber: number;
+  linked: boolean;
+  commercialPropertyName: string | null;
+  rows: PlanProjectionYearRow[];
+}
+
+export interface PortfolioYearTotals {
+  yearNumber: number;
+  numberOfProperties: number;
+  totalValue: number;
+  totalLoan: number;
+  totalEquity: number;
+  totalCashflow: number;
+  cumulativeContributions: number;
+  totalAvailableForRedeployment: number;
+}
+
+export interface PortfolioPlanProjection {
+  plan: { id: string; name: string; projectionYears: number; startFinancialYearLabel: string };
+  properties: PlanPropertyProjection[];
+  portfolioByYear: PortfolioYearTotals[];
+  note: string;
+}
+
 export interface AuditLogEntry {
   id: string;
   timestamp: string;
@@ -991,6 +1087,27 @@ export const api = {
       }),
     removeAnnualSnapshot: (id: string) =>
       request<void>(`/commercial-properties/annual-snapshots/${id}`, { method: "DELETE" }),
+  },
+
+  portfolioPlans: {
+    list: (entityId?: string) => request<PortfolioPlan[]>(`/portfolio-plans${entityId ? `?entityId=${entityId}` : ""}`),
+    get: (id: string) => request<PortfolioPlan>(`/portfolio-plans/${id}`),
+    create: (data: Record<string, unknown>) =>
+      request<PortfolioPlan>("/portfolio-plans", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<PortfolioPlan>(`/portfolio-plans/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/portfolio-plans/${id}`, { method: "DELETE" }),
+    projection: (id: string) => request<PortfolioPlanProjection>(`/portfolio-plans/${id}/projection`),
+
+    addProperty: (planId: string, data: Record<string, unknown>) =>
+      request<PlanProperty>(`/portfolio-plans/${planId}/properties`, { method: "POST", body: JSON.stringify(data) }),
+    updateProperty: (propertyId: string, data: Record<string, unknown>) =>
+      request<PlanProperty>(`/portfolio-plans/properties/${propertyId}`, { method: "PUT", body: JSON.stringify(data) }),
+    removeProperty: (propertyId: string) => request<void>(`/portfolio-plans/properties/${propertyId}`, { method: "DELETE" }),
+
+    addRefinance: (propertyId: string, data: Record<string, unknown>) =>
+      request<PlanRefinance>(`/portfolio-plans/properties/${propertyId}/refinances`, { method: "POST", body: JSON.stringify(data) }),
+    removeRefinance: (refinanceId: string) => request<void>(`/portfolio-plans/refinances/${refinanceId}`, { method: "DELETE" }),
   },
 
   documentPacks: {
