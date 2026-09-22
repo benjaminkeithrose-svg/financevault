@@ -163,10 +163,10 @@ personal app has to stay in Google's "Testing" publishing status, where
 refresh tokens expire every 7 days — meaning a weekly re-consent through a
 Google Cloud project you'd have to create yourself. An app password is one
 paste and keeps working. The honest cost: an app password grants broader
-IMAP/SMTP access than a read-only scope would, and it's stored in the local
-database, which isn't yet encrypted at rest (see the security posture
-section). It can be revoked at `myaccount.google.com/apppasswords` at any
-time without changing your Google password.
+IMAP/SMTP access than a read-only scope would. It's stored encrypted, under
+a key that only exists while the app is unlocked (see Security), and it can
+be revoked at `myaccount.google.com/apppasswords` at any time without
+changing your Google password.
 
 ### Portfolio Plan
 
@@ -536,21 +536,83 @@ first document to need OCR waits up to 90 seconds, then every later one
 skips OCR immediately rather than repeating the wait — documents are still
 stored and flagged for manual classification, just without extracted text.
 
-## Security posture (Stage 1)
+## Security
 
-- Original documents are immutable and identified by a SHA-256 hash.
-- Every import, classification change and user confirmation is written to
-  an audit log.
-- No external AI processing occurs unless explicitly enabled in Settings
-  (off by default).
-- No payment, money-movement, or bank-credential storage exists anywhere in
-  this codebase.
-- The one credential the app can hold is a Gmail **app password**, stored
-  only if you connect a mailbox for email import. It is kept in the local
-  database (not yet encrypted at rest), is never sent to the browser — the
-  UI is only told whether one is set — and can be revoked from your Google
-  account at any time without changing your real password.
+### What's protected
 
-Encryption at rest, backups, export, and stronger authentication are
-planned for the security-hardening stage of the build, per the project
-brief's staged approach.
+- **Only this computer can reach the app.** The server listens on loopback
+  (127.0.0.1 and ::1) only, so other devices on the same Wi-Fi can't connect.
+  It also refuses requests addressed to any other hostname, which defeats
+  DNS rebinding — a trick where a website points its own domain at your
+  computer to reach local apps through your browser.
+- **Other websites can't read or change anything.** There is no CORS, so a
+  page you visit while the app is running can't read its responses, and
+  changes coming from another origin are refused. (Earlier versions answered
+  `Access-Control-Allow-Origin: *`, which let any website read the whole
+  database — fixed.)
+- **A passcode opens the app.** Set on first launch, minimum 8 characters.
+  Sessions use an `HttpOnly`, `SameSite=Strict` cookie that page scripts
+  can't read and other sites can't send. After 15 minutes without use the
+  app locks itself: the screen is cleared, and the server forgets the
+  encryption key. Repeated wrong guesses are throttled.
+- **Tax file numbers and the Gmail app password are encrypted at rest**
+  with AES-256-GCM. The key is random, and is stored only in wrapped form —
+  encrypted under a key derived from your passcode with scrypt, which is
+  deliberately slow to make guessing expensive. So a copy of the database —
+  from a synced folder, a backup ZIP, or a lost laptop's drive — holds those
+  values only as ciphertext. Encryption is enforced in the database layer on
+  every write, so no part of the app can store them in the clear. Any
+  plaintext values from before the passcode existed are encrypted when you
+  first set it.
+- **Uploaded files can't run as the app.** Only PDFs and ordinary images are
+  shown inline; anything else (HTML, SVG, …) is downloaded instead, so a
+  malicious file posing as a statement can't run scripts with the app's
+  access. The app also can't be framed by other sites.
+- Original documents are immutable and identified by a SHA-256 hash; every
+  import, classification change, confirmation, unlock, failed unlock and
+  lock is written to the audit log; no external AI processing happens unless
+  enabled in Settings (off by default); and there is no payment,
+  money-movement or bank-credential storage anywhere in this codebase.
+
+### What isn't — read this
+
+- **Everything else in the database is not encrypted**: balances,
+  transactions, holdings, document details and the text read out of
+  documents. The original document files aren't encrypted either. That
+  includes the OCR text of a tax return or payslip, which contains your tax
+  file number in plain text. The passcode stops people *using the app*; it
+  does not stop someone with access to your files opening the database
+  directly. Encrypting the whole database needs SQLCipher, a native build
+  that would break the "install Node.js and double-click" setup, so the most
+  sensitive fields are encrypted individually instead.
+- Anyone who can use your computer while the app is unlocked can see what
+  you can see. Malware on the computer is out of scope — it could read the
+  key from memory or capture your passcode as you type it.
+- If your data folder is synced to the cloud, whoever can access that cloud
+  account can read everything except the encrypted fields.
+
+### Passcode and recovery
+
+When you set your passcode you're shown a **recovery key** once. Write it
+down somewhere away from this computer: if you forget your passcode, **Forgot
+passcode?** on the lock screen lets you set a new one with it, and nothing is
+lost. You can change your passcode any time in Settings; the recovery key
+stays the same.
+
+If you've lost both, close the app and run this from the `server` folder:
+
+```bash
+npm run reset-passcode          # shows what would be cleared, changes nothing
+npm run reset-passcode -- --yes # actually does it
+```
+
+The encrypted fields — tax file numbers and the Gmail app password — can't
+be recovered without the passcode or recovery key, so they're cleared (you'd
+re-enter them, and reconnect Gmail). Everything else is kept. This is
+deliberately a command rather than a button on the lock screen: a button
+there would let anyone at the keyboard bypass the lock, whereas running a
+command needs access to the app's files, which already gives access to the
+unencrypted data.
+
+A backup ZIP keeps the encrypted fields encrypted, so restoring one needs
+the passcode (or recovery key) that was current when it was taken.

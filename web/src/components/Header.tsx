@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavMenuList } from "./NavMenu.js";
 import { SearchResults } from "./SearchResults.js";
-import { IconChevronLeft, IconClose, IconHome, IconMenu, IconSearch } from "./icons.js";
+import { IconChevronLeft, IconClose, IconHome, IconLock, IconMenu, IconSearch } from "./icons.js";
+import { lockApp } from "./LockGate.js";
 
 const TITLES: Record<string, string> = {
   "/": "Dashboard",
@@ -91,6 +92,9 @@ export function Header() {
         <div className="app-header-title">{title}</div>
         <button className="icon-btn" aria-label="Search" onClick={() => setSearchOpen(true)}>
           <IconSearch />
+        </button>
+        <button className="icon-btn" aria-label="Lock" title="Lock Financial Vault" onClick={lockApp}>
+          <IconLock />
         </button>
         <button className="icon-btn" aria-label="Menu" onClick={() => setMenuOpen(true)}>
           <IconMenu />

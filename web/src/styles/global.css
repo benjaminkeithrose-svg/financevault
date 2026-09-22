@@ -637,3 +637,30 @@ label {
   margin-bottom: 16px;
   flex-wrap: wrap;
 }
+
+/* Lock screen */
+.lock-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--bg);
+}
+.lock-card {
+  width: 100%;
+  max-width: 420px;
+}
+.lock-card label {
+  margin-top: 12px;
+}
+.recovery-key {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 14px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}

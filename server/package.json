@@ -10,7 +10,8 @@
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "tsx prisma/seed.ts"
+    "prisma:seed": "tsx prisma/seed.ts",
+    "reset-passcode": "tsx scripts/reset-passcode.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -18,7 +19,6 @@
   "dependencies": {
     "@prisma/client": "^5.20.0",
     "archiver": "^8.0.0",
-    "cors": "^2.8.5",
     "csv-parse": "^7.0.2",
     "dotenv": "^18.0.2",
     "express": "^4.21.0",
@@ -32,7 +32,6 @@
   },
   "devDependencies": {
     "@types/archiver": "^8.0.0",
-    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/mailparser": "^3.4.6",
     "@types/multer": "^2.2.0",

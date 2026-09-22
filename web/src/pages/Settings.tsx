@@ -22,6 +22,27 @@ export function Settings() {
     setSettings(updated);
   }
 
+  const [pcCurrent, setPcCurrent] = useState("");
+  const [pcNew, setPcNew] = useState("");
+  const [pcConfirm, setPcConfirm] = useState("");
+  const [pcMessage, setPcMessage] = useState<{ ok: boolean; text: string } | null>(null);
+
+  async function changePasscode() {
+    if (pcNew !== pcConfirm) {
+      setPcMessage({ ok: false, text: "The new passcodes don't match." });
+      return;
+    }
+    try {
+      await api.vault.changePasscode(pcCurrent, pcNew);
+      setPcCurrent("");
+      setPcNew("");
+      setPcConfirm("");
+      setPcMessage({ ok: true, text: "Passcode changed. Your recovery key still works as before." });
+    } catch (e) {
+      setPcMessage({ ok: false, text: (e as Error).message });
+    }
+  }
+
   async function togglePriceLookups() {
     if (!settings) return;
     const updated = await api.settings.update({ allowPriceLookups: !settings.allowPriceLookups });
@@ -85,6 +106,34 @@ export function Settings() {
             Allow external AI processing
           </label>
         )}
+      </div>
+
+      <div className="card">
+        <h3 style={{ marginTop: 0 }}>Passcode</h3>
+        <p style={{ color: "var(--text-muted)" }}>
+          Changing your passcode doesn't re-encrypt anything and doesn't change your recovery key — it just changes
+          what opens the vault.
+        </p>
+        <div className="grid grid-3">
+          <div>
+            <label>Current passcode</label>
+            <input type="password" autoComplete="current-password" value={pcCurrent} onChange={(e) => setPcCurrent(e.target.value)} />
+          </div>
+          <div>
+            <label>New passcode</label>
+            <input type="password" autoComplete="new-password" value={pcNew} onChange={(e) => setPcNew(e.target.value)} />
+          </div>
+          <div>
+            <label>New passcode again</label>
+            <input type="password" autoComplete="new-password" value={pcConfirm} onChange={(e) => setPcConfirm(e.target.value)} />
+          </div>
+        </div>
+        {pcMessage && <div className={`message-box ${pcMessage.ok ? "success" : "warning"}`}>{pcMessage.text}</div>}
+        <div className="toolbar" style={{ marginTop: 8 }}>
+          <button className="btn secondary" onClick={changePasscode} disabled={!pcCurrent || !pcNew}>
+            Change passcode
+          </button>
+        </div>
       </div>
 
       <div className="card">
@@ -177,7 +226,16 @@ export function Settings() {
         <ul style={{ color: "var(--text-muted)" }}>
           <li>Original documents are stored immutably and identified by a SHA-256 hash.</li>
           <li>Every classification change and confirmation is written to the audit log.</li>
-          <li>Encryption at rest and stronger authentication arrive in a later stage.</li>
+          <li>The app only answers this computer — not other devices on your network, and not other websites.</li>
+          <li>
+            Tax file numbers and your email app password are encrypted with a key that only exists while the app is
+            unlocked.
+          </li>
+          <li>
+            Everything else — balances, transactions, documents and their text — is stored unencrypted on this
+            computer. The passcode stops people using the app; it doesn't stop someone with access to your files
+            reading them directly.
+          </li>
         </ul>
       </div>
     </div>

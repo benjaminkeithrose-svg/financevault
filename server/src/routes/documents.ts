@@ -9,6 +9,19 @@ import { ensureFinancialYear, ingestDocument } from "../services/documentIngest.
 
 export const documentsRouter = Router();
 
+// SVG is deliberately absent: it's an image format that can contain script.
+const INLINE_SAFE_TYPES = new Set([
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/gif",
+  "image/webp",
+  "image/bmp",
+  "image/tiff",
+  "image/heic",
+]);
+
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 
 documentsRouter.get(
@@ -82,8 +95,22 @@ documentsRouter.get(
       res.status(404).json({ error: "Document not found" });
       return;
     }
+    const safeName = doc.originalFilename.replace(/["\\\r\n]/g, "_");
     res.setHeader("Content-Type", doc.mimeType);
-    res.setHeader("Content-Disposition", `inline; filename="${doc.originalFilename}"`);
+
+    // Uploaded files are served from the app's own origin, so an HTML or SVG
+    // file shown inline would run its scripts with full access to the app.
+    // Only types that can't carry script are displayed inline (and may be
+    // framed by the app's own preview); anything else is downloaded instead,
+    // with a sandbox policy in case a browser opens it anyway.
+    if (INLINE_SAFE_TYPES.has(doc.mimeType.toLowerCase())) {
+      res.setHeader("Content-Disposition", `inline; filename="${safeName}"`);
+      res.setHeader("X-Frame-Options", "SAMEORIGIN");
+      res.setHeader("Content-Security-Policy", "frame-ancestors 'self'");
+    } else {
+      res.setHeader("Content-Disposition", `attachment; filename="${safeName}"`);
+      res.setHeader("Content-Security-Policy", "sandbox; frame-ancestors 'none'");
+    }
     res.sendFile(path.resolve(doc.filePath));
   })
 );

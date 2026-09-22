@@ -4,6 +4,7 @@ import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
 import { runImport, testConnection } from "../services/emailImport.js";
+import { decryptField } from "../services/fieldCrypto.js";
 
 export const emailImportRouter = Router();
 
@@ -108,7 +109,7 @@ emailImportRouter.post(
       return;
     }
     try {
-      await testConnection(account.emailAddress, account.appPassword);
+      await testConnection(account.emailAddress, decryptField(account.appPassword) ?? "");
       res.json({ ok: true });
     } catch (err) {
       res.status(400).json({ ok: false, error: err instanceof Error ? err.message : String(err) });

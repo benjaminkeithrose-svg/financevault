@@ -1203,3 +1203,36 @@ model SecurityPrice {
   @@unique([securityId, priceDate])
   @@index([securityId])
 }
+
+// ---------------------------------------------------------------------------
+// The vault: what's needed to turn a passcode back into the key that
+// decrypts sensitive fields — and nothing that can do so on its own.
+//
+// A random data key encrypts the fields. That key is stored only in wrapped
+// (encrypted) form, twice: once under a key derived from the passcode, once
+// under a key derived from the recovery key shown at setup. Neither the
+// passcode nor the data key is ever stored, so this row alone — or a whole
+// copy of the database — can't decrypt anything.
+//
+// Changing the passcode only re-wraps the data key; the encrypted fields
+// themselves never need rewriting.
+// ---------------------------------------------------------------------------
+
+model Vault {
+  id Int @id @default(1)
+
+  // scrypt parameters are stored so they can be raised later without
+  // breaking vaults created under the old ones.
+  kdfN Int
+  kdfR Int
+  kdfP Int
+
+  passcodeSalt       String
+  keyWrappedByPasscode String
+
+  recoverySalt         String
+  keyWrappedByRecovery String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

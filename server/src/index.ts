@@ -1,6 +1,5 @@
 import "dotenv/config";
 import express from "express";
-import cors from "cors";
 import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -29,15 +28,27 @@ import { backupRouter } from "./routes/backup.js";
 import { emailImportRouter } from "./routes/emailImport.js";
 import { importBatchesRouter } from "./routes/importBatches.js";
 import { transactionImportRouter } from "./routes/transactionImport.js";
+import { vaultRouter, requireSession } from "./routes/vault.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import { rejectCrossOriginWrites, requireLoopbackHost, securityHeaders } from "./middleware/localOnly.js";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 4000;
 
-app.use(cors());
+// No CORS: the web app is served from this same origin (and proxied to it in
+// development), so no other origin ever needs to read these responses. The
+// old wide-open CORS let any website visited while the app was running read
+// the entire database with a single fetch.
+app.use(requireLoopbackHost);
+app.use(securityHeaders);
+app.use(rejectCrossOriginWrites);
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
+
+// The only API routes reachable while locked are the ones that unlock it.
+app.use("/api/vault", vaultRouter);
+app.use("/api", requireSession);
 
 app.use("/api/entities", entitiesRouter);
 app.use("/api/people", peopleRouter);
@@ -79,6 +90,11 @@ if (fs.existsSync(webDist)) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`Financial Vault server listening on port ${PORT}`);
+// Loopback only. Listening on every interface (the old default) made the
+// whole database readable by anyone on the same Wi-Fi. Both IPv4 and IPv6
+// loopback are bound so "localhost" works whichever one it resolves to;
+// the IPv6 one is optional since some machines have it disabled.
+app.listen(PORT, "127.0.0.1", () => {
+  console.log(`Financial Vault running at http://localhost:${PORT} (this computer only)`);
 });
+app.listen(PORT, "::1").on("error", () => {});

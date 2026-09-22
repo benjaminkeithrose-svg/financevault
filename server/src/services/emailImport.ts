@@ -2,6 +2,7 @@ import { ImapFlow } from "imapflow";
 import { simpleParser } from "mailparser";
 import { prisma } from "../db.js";
 import { ingestDocument } from "./documentIngest.js";
+import { decryptField } from "./fieldCrypto.js";
 
 const GMAIL_IMAP_HOST = "imap.gmail.com";
 const GMAIL_IMAP_PORT = 993;
@@ -117,7 +118,7 @@ export async function runImport(emailAccountId: string): Promise<SyncResult> {
   const result: SyncResult = { imported: 0, duplicates: 0, skipped: 0, items: [] };
   if (account.rules.length === 0) return result;
 
-  const client = connect(account.emailAddress, account.appPassword);
+  const client = connect(account.emailAddress, decryptField(account.appPassword) ?? "");
   try {
     await client.connect();
   } catch (err) {

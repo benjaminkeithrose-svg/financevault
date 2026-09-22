@@ -1497,6 +1497,14 @@ export const api = {
     },
   },
 
+  vault: {
+    changePasscode: (currentPasscode: string, newPasscode: string) =>
+      request<{ changed: boolean }>("/vault/change-passcode", {
+        method: "POST",
+        body: JSON.stringify({ currentPasscode, newPasscode }),
+      }),
+  },
+
   importBatches: {
     list: () => request<ImportBatchSummary[]>("/import-batches"),
     create: (name: string) =>
