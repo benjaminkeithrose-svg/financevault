@@ -218,6 +218,7 @@ export interface Settings {
   defaultLandingPage: string;
   customStorageDir?: string | null;
   effectiveStorageDir: string;
+  allowPriceLookups: boolean;
 }
 
 export interface PropertyPerformanceRow {
@@ -243,7 +244,50 @@ export interface InvestmentPortfolioRow {
   accountType: string;
   holdingCount: number;
   costBase: number;
-  realisedGainLoss: number;
+  marketValue: number;
+  unrealisedGain: number | null;
+  unpricedCount: number;
+  realisedNetGain: number;
+  frankingCredits: number;
+}
+
+export interface CapitalGainsReport {
+  financialYear: FinancialYear;
+  rows: Array<{
+    id: string;
+    disposalDate: string;
+    code: string;
+    entityName: string;
+    entityType: string;
+    quantity: number;
+    proceeds: number;
+    costBase: number;
+    grossGain: number;
+    discountAmount: number;
+    netGain: number;
+    parcels: Array<{ acquisitionDate: string; quantity: number; costBase: number; grossGain: number; discountEligible: boolean }>;
+  }>;
+  dividends: Array<{
+    id: string;
+    paymentDate: string;
+    code: string;
+    entityName: string;
+    frankedAmount: number;
+    unfrankedAmount: number;
+    frankingCredit: number;
+  }>;
+  totals: {
+    disposalCount: number;
+    totalProceeds: number;
+    totalCostBase: number;
+    totalGrossGains: number;
+    totalLosses: number;
+    totalDiscount: number;
+    netCapitalGain: number;
+    dividendIncome: number;
+    frankingCredits: number;
+  };
+  note: string;
 }
 
 export interface TaxSummaryRow {
@@ -678,18 +722,109 @@ export interface CommercialProperty {
   updatedAt: string;
 }
 
-export interface InvestmentHolding {
+export interface Security {
   id: string;
-  investmentAccountId: string;
   code: string;
-  quantity?: number | null;
-  acquisitionDate?: string | null;
-  purchasePrice?: number | null;
-  disposalDate?: string | null;
-  salePrice?: number | null;
-  costBase?: number | null;
-  brokerage?: number | null;
+  name?: string | null;
+  assetClass: "SHARE" | "ETF" | "MANAGED_FUND" | "CRYPTO" | "SUPER" | "BOND" | "OTHER";
+  exchange?: string | null;
+  priceSource: "MANUAL" | "YAHOO" | "COINGECKO";
+  providerSymbol?: string | null;
+  currency: string;
+  latestPrice?: number | null;
+  priceDate?: string | null;
+}
+
+export interface InvestmentParcel {
+  id: string;
+  acquisitionDate: string;
+  acquisitionType: string;
+  quantity: number;
+  remainingQuantity: number;
+  unitPrice: number;
+  brokerage: number;
+  costBase: number;
   notes?: string | null;
+}
+
+export interface InvestmentPosition {
+  securityId: string;
+  security: Security;
+  quantity: number;
+  costBase: number;
+  averageUnitCost: number;
+  latestPrice: number | null;
+  priceDate: string | null;
+  priceSource: string | null;
+  marketValue: number | null;
+  unrealisedGain: number | null;
+  discountEligibleQuantity: number;
+  parcels: InvestmentParcel[];
+}
+
+export interface DisposalAllocationResult {
+  parcelId: string;
+  quantity: number;
+  acquisitionDate: string;
+  costBase: number;
+  proceeds: number;
+  grossGain: number;
+  discountEligible: boolean;
+  discountAmount: number;
+  netGain: number;
+}
+
+export interface DisposalResult {
+  proceeds: number;
+  costBase: number;
+  grossGain: number;
+  discountAmount: number;
+  netGain: number;
+  allocations: DisposalAllocationResult[];
+  unallocatedQuantity: number;
+}
+
+export interface InvestmentDisposal {
+  id: string;
+  securityId: string;
+  security: Security;
+  disposalDate: string;
+  quantity: number;
+  unitPrice: number;
+  brokerage: number;
+  method: string;
+  financialYear?: FinancialYear | null;
+  result: DisposalResult;
+}
+
+export interface InvestmentDividend {
+  id: string;
+  securityId: string;
+  security: Security;
+  paymentDate: string;
+  frankedAmount: number;
+  unfrankedAmount: number;
+  frankingCredit: number;
+  capitalGainsAmount: number;
+  foreignIncome: number;
+  foreignTaxCredit: number;
+  reinvestedParcelId?: string | null;
+  financialYear?: FinancialYear | null;
+  notes?: string | null;
+}
+
+export interface DisposalPreview {
+  available: number;
+  entityType: string;
+  allocations: Array<{ parcelId: string; quantity: number }>;
+  result: DisposalResult;
+  parcels: Array<{ id: string; acquisitionDate: string; remainingQuantity: number; unitPrice: number; costBase: number }>;
+}
+
+export interface PriceRefreshResult {
+  updated: number;
+  failures: Array<{ code: string; reason: string }>;
+  note?: string;
 }
 
 export interface InvestmentAccount {
@@ -700,7 +835,17 @@ export interface InvestmentAccount {
   entity?: Entity;
   accountType: string;
   notes?: string | null;
-  holdings: InvestmentHolding[];
+  positions?: InvestmentPosition[];
+  disposals?: InvestmentDisposal[];
+  dividends?: InvestmentDividend[];
+  totals?: {
+    costBase: number;
+    marketValue: number;
+    unpricedCount: number;
+    realisedNetGain: number;
+    frankingCredits: number;
+  };
+  _count?: { parcels: number };
   documents?: Document[];
   realisedGainLoss?: number;
   createdAt: string;
@@ -1115,12 +1260,37 @@ export const api = {
     update: (id: string, data: Record<string, unknown>) =>
       request<InvestmentAccount>(`/investments/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     remove: (id: string) => request<void>(`/investments/${id}`, { method: "DELETE" }),
-    addHolding: (accountId: string, data: Record<string, unknown>) =>
-      request<InvestmentHolding>(`/investments/${accountId}/holdings`, { method: "POST", body: JSON.stringify(data) }),
-    updateHolding: (holdingId: string, data: Record<string, unknown>) =>
-      request<InvestmentHolding>(`/investments/holdings/${holdingId}`, { method: "PUT", body: JSON.stringify(data) }),
-    removeHolding: (holdingId: string) =>
-      request<void>(`/investments/holdings/${holdingId}`, { method: "DELETE" }),
+
+    listSecurities: (q?: string) =>
+      request<Security[]>(`/investments/securities${q ? `?q=${encodeURIComponent(q)}` : ""}`),
+    createSecurity: (data: Record<string, unknown>) =>
+      request<Security>("/investments/securities", { method: "POST", body: JSON.stringify(data) }),
+    updateSecurity: (id: string, data: Record<string, unknown>) =>
+      request<Security>(`/investments/securities/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    setPrice: (securityId: string, price: number, priceDate?: string) =>
+      request<unknown>(`/investments/securities/${securityId}/prices`, {
+        method: "POST",
+        body: JSON.stringify({ price, priceDate }),
+      }),
+    refreshPrices: () => request<PriceRefreshResult>("/investments/prices/refresh", { method: "POST" }),
+
+    addParcel: (accountId: string, data: Record<string, unknown>) =>
+      request<InvestmentParcel>(`/investments/${accountId}/parcels`, { method: "POST", body: JSON.stringify(data) }),
+    updateParcel: (parcelId: string, data: Record<string, unknown>) =>
+      request<InvestmentParcel>(`/investments/parcels/${parcelId}`, { method: "PUT", body: JSON.stringify(data) }),
+    removeParcel: (parcelId: string) => request<void>(`/investments/parcels/${parcelId}`, { method: "DELETE" }),
+
+    disposalPreview: (accountId: string, params: Record<string, string | number>) => {
+      const qs = new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)])).toString();
+      return request<DisposalPreview>(`/investments/${accountId}/disposal-preview?${qs}`);
+    },
+    addDisposal: (accountId: string, data: Record<string, unknown>) =>
+      request<InvestmentDisposal>(`/investments/${accountId}/disposals`, { method: "POST", body: JSON.stringify(data) }),
+    removeDisposal: (disposalId: string) => request<void>(`/investments/disposals/${disposalId}`, { method: "DELETE" }),
+
+    addDividend: (accountId: string, data: Record<string, unknown>) =>
+      request<InvestmentDividend>(`/investments/${accountId}/dividends`, { method: "POST", body: JSON.stringify(data) }),
+    removeDividend: (dividendId: string) => request<void>(`/investments/dividends/${dividendId}`, { method: "DELETE" }),
   },
 
   banking: {
@@ -1169,9 +1339,20 @@ export const api = {
     propertyPerformance: () =>
       request<{ rows: PropertyPerformanceRow[]; formula: string }>("/reports/property-performance"),
     investmentPortfolio: () =>
-      request<{ rows: InvestmentPortfolioRow[]; totals: { totalCostBase: number; realisedGainLoss: number }; note: string }>(
-        "/reports/investment-portfolio"
-      ),
+      request<{
+        rows: InvestmentPortfolioRow[];
+        totals: {
+          totalCostBase: number;
+          totalMarketValue: number;
+          totalUnrealisedGain: number | null;
+          unpricedCount: number;
+          realisedNetGain: number;
+          frankingCredits: number;
+        };
+        note: string;
+      }>("/reports/investment-portfolio"),
+    capitalGains: (financialYearId: string) =>
+      request<CapitalGainsReport>(`/reports/capital-gains?financialYearId=${financialYearId}`),
     taxSummary: (financialYearId?: string) =>
       request<{ rows: TaxSummaryRow[] }>(`/reports/tax-summary${financialYearId ? `?financialYearId=${financialYearId}` : ""}`),
     debtSummary: () => request<{ rows: DebtSummaryRow[]; totalDebt: number; formula: string }>("/reports/debt-summary"),

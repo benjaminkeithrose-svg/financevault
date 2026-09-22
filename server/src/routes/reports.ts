@@ -214,3 +214,109 @@ reportsRouter.get(
     res.json({ rows, totalDebt, formula: "LVR = loan balance / current value of the property securing it" });
   })
 );
+
+// ---------------------------------------------------------------------------
+// Capital gains for a financial year — the summary an accountant actually
+// needs. Gains and losses are kept apart because losses offset gains BEFORE
+// the discount is applied; netting them first would overstate the discount
+// and understate the tax.
+// ---------------------------------------------------------------------------
+
+reportsRouter.get(
+  "/capital-gains",
+  asyncHandler(async (req, res) => {
+    const financialYearId = req.query.financialYearId ? String(req.query.financialYearId) : undefined;
+    if (!financialYearId) {
+      res.status(400).json({ error: "financialYearId is required" });
+      return;
+    }
+
+    const financialYear = await prisma.financialYear.findUnique({ where: { id: financialYearId } });
+    if (!financialYear) {
+      res.status(404).json({ error: "Financial year not found" });
+      return;
+    }
+
+    const disposals = await prisma.investmentDisposal.findMany({
+      where: { financialYearId },
+      include: {
+        security: true,
+        allocations: { include: { parcel: true } },
+        investmentAccount: { include: { entity: true } },
+      },
+      orderBy: { disposalDate: "asc" },
+    });
+
+    const dividends = await prisma.investmentDividend.findMany({
+      where: { financialYearId },
+      include: { security: true, investmentAccount: { include: { entity: true } } },
+      orderBy: { paymentDate: "asc" },
+    });
+
+    const rows = disposals.map((d) => {
+      const parcelsById = new Map(d.allocations.map((a) => [a.parcelId, a.parcel]));
+      const result = computeDisposal(
+        d,
+        d.allocations.map((a) => ({ parcelId: a.parcelId, quantity: a.quantity })),
+        parcelsById,
+        d.investmentAccount.entity.entityType
+      );
+      return {
+        id: d.id,
+        disposalDate: d.disposalDate,
+        code: d.security.code,
+        entityName: d.investmentAccount.entity.name,
+        entityType: d.investmentAccount.entity.entityType,
+        quantity: d.quantity,
+        proceeds: result.proceeds,
+        costBase: result.costBase,
+        grossGain: result.grossGain,
+        discountAmount: result.discountAmount,
+        netGain: result.netGain,
+        parcels: result.allocations.map((a) => ({
+          acquisitionDate: a.acquisitionDate,
+          quantity: a.quantity,
+          costBase: a.costBase,
+          grossGain: a.grossGain,
+          discountEligible: a.discountEligible,
+        })),
+      };
+    });
+
+    const gains = rows.filter((r) => r.grossGain > 0);
+    const losses = rows.filter((r) => r.grossGain < 0);
+    const totalGrossGains = gains.reduce((s, r) => s + r.grossGain, 0);
+    const totalLosses = Math.abs(losses.reduce((s, r) => s + r.grossGain, 0));
+    const totalDiscount = rows.reduce((s, r) => s + r.discountAmount, 0);
+
+    res.json({
+      financialYear,
+      rows,
+      dividends: dividends.map((d) => ({
+        id: d.id,
+        paymentDate: d.paymentDate,
+        code: d.security.code,
+        entityName: d.investmentAccount.entity.name,
+        frankedAmount: d.frankedAmount,
+        unfrankedAmount: d.unfrankedAmount,
+        frankingCredit: d.frankingCredit,
+        capitalGainsAmount: d.capitalGainsAmount,
+        foreignIncome: d.foreignIncome,
+        foreignTaxCredit: d.foreignTaxCredit,
+      })),
+      totals: {
+        disposalCount: rows.length,
+        totalProceeds: rows.reduce((s, r) => s + r.proceeds, 0),
+        totalCostBase: rows.reduce((s, r) => s + r.costBase, 0),
+        totalGrossGains,
+        totalLosses,
+        totalDiscount,
+        netCapitalGain: rows.reduce((s, r) => s + r.netGain, 0),
+        dividendIncome: dividends.reduce((s, d) => s + d.frankedAmount + d.unfrankedAmount, 0),
+        frankingCredits: dividends.reduce((s, d) => s + d.frankingCredit, 0),
+      },
+      note:
+        "Calculated from the parcels and disposals you recorded. Capital losses offset gains before the CGT discount is applied, and losses carried forward from earlier years are not included here. Figures are for your accountant to confirm, not tax advice.",
+    });
+  })
+);

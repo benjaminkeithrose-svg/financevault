@@ -11,9 +11,10 @@ implements **Stage 1 and Stage 2** of the staged build, plus the Commercial
 Property module (Phase 1-4), a subsequent architecture correction, a
 Visualization tab, Net Worth/Tax/Reports, Document Packs with payslip
 tracking (Stage 4), a UI/UX pass against `PREFERENCES.md`, fractional/joint
-ownership, a multi-property Portfolio Plan, bulk folder import, CSV
-transaction import, Gmail email import, a double-click local launcher and a
-one-click backup, all described below.
+ownership, a multi-property Portfolio Plan, parcel-level investment and
+CGT tracking, bulk folder import, CSV transaction import, Gmail email
+import, a double-click local launcher and a one-click backup, all described
+below.
 
 ### Backup
 
@@ -38,6 +39,50 @@ and needs a manual edit plus restart to move, which the Settings page's own
 text explains. If you use the app from two computers sharing a synced
 folder, avoid running it on both at once — the SQLite database itself
 isn't safe to sync live, only the documents folder is.
+
+### Investments, shares, ETFs and crypto
+
+Record-keeping and valuation for shares, ETFs, managed funds, crypto and
+super — explicitly **not** a trading platform. Nothing here places orders,
+connects to a broker, streams quotes, or suggests what to buy or sell.
+
+**Parcels, because Australian CGT is parcel-level.** Every purchase is its
+own parcel with its own date and cost base. The 50% CGT discount depends on
+how long *that* parcel was held, so one sale can be part discounted and part
+not — which the app shows you per parcel rather than as a single blended
+number. Sales draw from the oldest parcels first, and a preview shows the
+gain, the discount and which parcels it would come from **before** anything
+is recorded, because that choice has real tax consequences.
+
+The discount rate follows the owning entity: half for individuals, joint
+owners and trusts, a third for super funds and SMSFs, none for companies.
+Losses are never discounted. The twelve-month test excludes the day of
+acquisition, so exactly twelve months does not qualify.
+
+**Dividends carry their franking.** Franked and unfranked amounts and the
+franking credit are recorded separately, since that is the point of the
+record for an Australian investor. A dividend reinvestment creates the
+parcel it actually bought, at the reinvestment price — otherwise the cost
+base of those units quietly disappears.
+
+**Prices.** Settings → **Market price lookups** (off by default) lets the app
+fetch prices from Yahoo Finance for shares and ETFs and CoinGecko for
+crypto, neither of which needs an account or API key. A lookup discloses
+only *which codes you hold* — never quantities, values, accounts or anything
+identifying you — and prices refresh only when you press the button; nothing
+polls in the background. Entering prices by hand is a first-class path, and
+the normal one for managed funds and super where no free feed exists.
+Prices are kept as dated history, so a net worth snapshot keeps the price it
+was actually taken with. Where no price is known, market value is shown as
+unknown rather than falling back to cost, which would read as a zero gain.
+
+**Reports → Capital Gains** gives a per-financial-year summary: every
+disposal with its proceeds, cost base, gross gain, discount and net, plus
+dividend income and franking credits — the figures an accountant asks for.
+Gains and losses are reported separately because losses offset gains
+*before* the discount applies. As everywhere else in this app, these are
+calculations from your own records for your accountant to confirm, not tax
+advice.
 
 ### Bulk import
 

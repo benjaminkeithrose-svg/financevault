@@ -86,7 +86,7 @@ export function Investments() {
               to={`/investments/${a.id}`}
               title={a.institution}
               subtitle={`${humanize(a.accountType)} · ${a.entity?.name || "No entity"}`}
-              right={<span className="tag">{a.holdings.length} holdings</span>}
+              right={<span className="tag">{a._count?.parcels ?? 0} parcels</span>}
             />
           ))}
         </ul>

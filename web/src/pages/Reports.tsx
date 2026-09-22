@@ -2,15 +2,16 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   api,
+  CapitalGainsReport,
   DebtSummaryRow,
   FinancialYear,
   InvestmentPortfolioRow,
   PropertyPerformanceRow,
   TaxSummaryRow,
 } from "../api/client.js";
-import { formatCurrency } from "../utils.js";
+import { formatCurrency, formatDate } from "../utils.js";
 
-const TABS = ["Property Performance", "Investment Portfolio", "Tax Summary", "Debt Summary"] as const;
+const TABS = ["Property Performance", "Investment Portfolio", "Capital Gains", "Tax Summary", "Debt Summary"] as const;
 type Tab = (typeof TABS)[number];
 
 function pct(v: number | null | undefined) {
@@ -40,6 +41,7 @@ export function Reports() {
 
       {tab === "Property Performance" && <PropertyPerformance />}
       {tab === "Investment Portfolio" && <InvestmentPortfolio />}
+      {tab === "Capital Gains" && <CapitalGains />}
       {tab === "Tax Summary" && <TaxSummary />}
       {tab === "Debt Summary" && <DebtSummary />}
     </div>
@@ -98,9 +100,7 @@ function PropertyPerformance() {
 }
 
 function InvestmentPortfolio() {
-  const [data, setData] = useState<{ rows: InvestmentPortfolioRow[]; totals: { totalCostBase: number; realisedGainLoss: number }; note: string } | null>(
-    null
-  );
+  const [data, setData] = useState<Awaited<ReturnType<typeof api.reports.investmentPortfolio>> | null>(null);
 
   useEffect(() => {
     api.reports.investmentPortfolio().then(setData);
@@ -117,8 +117,18 @@ function InvestmentPortfolio() {
           <div className="value">{formatCurrency(data.totals.totalCostBase)}</div>
         </div>
         <div className="stat-tile">
-          <div className="label">Realised gain / loss</div>
-          <div className="value">{formatCurrency(data.totals.realisedGainLoss)}</div>
+          <div className="label">Market value</div>
+          <div className="value">{formatCurrency(data.totals.totalMarketValue)}</div>
+        </div>
+        <div className="stat-tile">
+          <div className="label">Unrealised</div>
+          <div className="value">
+            {data.totals.totalUnrealisedGain === null ? "—" : formatCurrency(data.totals.totalUnrealisedGain)}
+          </div>
+        </div>
+        <div className="stat-tile">
+          <div className="label">Realised (net)</div>
+          <div className="value">{formatCurrency(data.totals.realisedNetGain)}</div>
         </div>
       </div>
       {data.rows.length === 0 ? (
@@ -132,7 +142,10 @@ function InvestmentPortfolio() {
               <th>Type</th>
               <th>Holdings</th>
               <th>Cost base</th>
-              <th>Realised gain / loss</th>
+              <th>Market value</th>
+              <th>Unrealised</th>
+              <th>Realised (net of CGT discount)</th>
+              <th>Franking credits</th>
             </tr>
           </thead>
           <tbody>
@@ -145,7 +158,10 @@ function InvestmentPortfolio() {
                 <td>{r.accountType}</td>
                 <td>{r.holdingCount}</td>
                 <td>{formatCurrency(r.costBase)}</td>
-                <td>{formatCurrency(r.realisedGainLoss)}</td>
+                <td>{r.unpricedCount > 0 ? `${formatCurrency(r.marketValue)} (${r.unpricedCount} unpriced)` : formatCurrency(r.marketValue)}</td>
+                <td>{r.unrealisedGain === null ? "—" : formatCurrency(r.unrealisedGain)}</td>
+                <td>{formatCurrency(r.realisedNetGain)}</td>
+                <td>{formatCurrency(r.frankingCredits)}</td>
               </tr>
             ))}
           </tbody>
@@ -262,6 +278,133 @@ function DebtSummary() {
             ))}
           </tbody>
         </table>
+      )}
+    </div>
+  );
+}
+
+function CapitalGains() {
+  const [financialYears, setFinancialYears] = useState<FinancialYear[]>([]);
+  const [financialYearId, setFinancialYearId] = useState("");
+  const [data, setData] = useState<CapitalGainsReport | null>(null);
+
+  useEffect(() => {
+    api.financialYears.list().then(setFinancialYears);
+  }, []);
+
+  useEffect(() => {
+    if (!financialYearId) return;
+    api.reports.capitalGains(financialYearId).then(setData).catch(() => setData(null));
+  }, [financialYearId]);
+
+  return (
+    <div className="card">
+      <h3 style={{ marginTop: 0 }}>Capital gains</h3>
+      <label>Financial year</label>
+      <select value={financialYearId} onChange={(e) => setFinancialYearId(e.target.value)}>
+        <option value="">Choose a financial year…</option>
+        {financialYears.map((fy) => (
+          <option key={fy.id} value={fy.id}>
+            {fy.label}
+          </option>
+        ))}
+      </select>
+
+      {data && (
+        <>
+          <div className="grid grid-4" style={{ marginTop: 16 }}>
+            <div className="stat-tile">
+              <div className="label">Gross gains</div>
+              <div className="value">{formatCurrency(data.totals.totalGrossGains)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Losses</div>
+              <div className="value">{formatCurrency(data.totals.totalLosses)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">CGT discount</div>
+              <div className="value">{formatCurrency(data.totals.totalDiscount)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Net capital gain</div>
+              <div className="value">{formatCurrency(data.totals.netCapitalGain)}</div>
+            </div>
+          </div>
+
+          <h3>Disposals ({data.totals.disposalCount})</h3>
+          {data.rows.length === 0 ? (
+            <p className="empty-state">No sales recorded in this year.</p>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Code</th>
+                  <th>Entity</th>
+                  <th>Units</th>
+                  <th>Proceeds</th>
+                  <th>Cost base</th>
+                  <th>Gross gain</th>
+                  <th>Discount</th>
+                  <th>Net</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.rows.map((r) => (
+                  <tr key={r.id}>
+                    <td>{formatDate(r.disposalDate)}</td>
+                    <td>{r.code}</td>
+                    <td>{r.entityName}</td>
+                    <td>{r.quantity}</td>
+                    <td>{formatCurrency(r.proceeds)}</td>
+                    <td>{formatCurrency(r.costBase)}</td>
+                    <td>{formatCurrency(r.grossGain)}</td>
+                    <td>{formatCurrency(r.discountAmount)}</td>
+                    <td>{formatCurrency(r.netGain)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+
+          <h3>Dividends and distributions</h3>
+          {data.dividends.length === 0 ? (
+            <p className="empty-state">No dividends recorded in this year.</p>
+          ) : (
+            <>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Code</th>
+                    <th>Entity</th>
+                    <th>Franked</th>
+                    <th>Unfranked</th>
+                    <th>Franking credit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.dividends.map((d) => (
+                    <tr key={d.id}>
+                      <td>{formatDate(d.paymentDate)}</td>
+                      <td>{d.code}</td>
+                      <td>{d.entityName}</td>
+                      <td>{formatCurrency(d.frankedAmount)}</td>
+                      <td>{formatCurrency(d.unfrankedAmount)}</td>
+                      <td>{formatCurrency(d.frankingCredit)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                Dividend income {formatCurrency(data.totals.dividendIncome)} · franking credits{" "}
+                {formatCurrency(data.totals.frankingCredits)}
+              </p>
+            </>
+          )}
+
+          <p style={{ color: "var(--text-muted)", fontSize: 13 }}>{data.note}</p>
+        </>
       )}
     </div>
   );

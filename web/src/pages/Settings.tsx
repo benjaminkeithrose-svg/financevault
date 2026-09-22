@@ -22,6 +22,12 @@ export function Settings() {
     setSettings(updated);
   }
 
+  async function togglePriceLookups() {
+    if (!settings) return;
+    const updated = await api.settings.update({ allowPriceLookups: !settings.allowPriceLookups });
+    setSettings(updated);
+  }
+
   async function setLandingPage(defaultLandingPage: string) {
     const updated = await api.settings.update({ defaultLandingPage });
     setSettings(updated);
@@ -77,6 +83,29 @@ export function Settings() {
               onChange={toggleAi}
             />
             Allow external AI processing
+          </label>
+        )}
+      </div>
+
+      <div className="card">
+        <h3 style={{ marginTop: 0 }}>Market price lookups</h3>
+        <p style={{ color: "var(--text-muted)" }}>
+          Lets the app look up prices for the shares, ETFs and crypto you hold, so its valuations and your net worth
+          stay current. This is the only part of the investment module that reaches the internet. A lookup discloses
+          only <strong>which codes you hold</strong> to the price provider — never quantities, values, account details
+          or anything identifying you. Prices only ever refresh when you ask; nothing runs in the background.
+          Everything still works with prices you enter by hand, which is the normal path for managed funds and super
+          where no free feed exists.
+        </p>
+        {settings && (
+          <label style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8 }}>
+            <input
+              type="checkbox"
+              style={{ width: "auto" }}
+              checked={settings.allowPriceLookups}
+              onChange={togglePriceLookups}
+            />
+            Allow market price lookups
           </label>
         )}
       </div>

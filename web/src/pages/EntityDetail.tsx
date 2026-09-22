@@ -162,7 +162,7 @@ export function EntityDetail() {
               ))}
               {(entity.investmentAccounts || []).map((a) => (
                 <li key={a.id} style={{ marginBottom: 6 }}>
-                  📈 <Link to={`/investments/${a.id}`}>{a.institution}</Link> ({a.holdings.length} holdings)
+                  📈 <Link to={`/investments/${a.id}`}>{a.institution}</Link> ({a._count?.parcels ?? 0} holdings)
                 </li>
               ))}
               {(entity.assets || [])
