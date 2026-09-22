@@ -106,7 +106,7 @@ function PayPeriodRow({ period, onChange }: { period: PayPeriod; onChange: () =>
           ) : (
             <input
               type="number"
-              placeholder="Amount (optional)"
+              placeholder="Amount"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               style={{ width: 120 }}

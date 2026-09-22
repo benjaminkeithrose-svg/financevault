@@ -72,6 +72,11 @@ export function LiabilityDetail() {
       </div>
 
       <div className="card">
+        {(liability.securityProperty || liability.securityCommercialProperty) && (
+          <div className="message-box info">
+            Secured by: {liability.securityProperty?.address || liability.securityCommercialProperty?.name}
+          </div>
+        )}
         <label>Name</label>
         <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
         <label>Lender</label>

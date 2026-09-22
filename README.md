@@ -9,8 +9,43 @@ hand them to one quickly.
 See the project brief for the full design spec. This repository currently
 implements **Stage 1 and Stage 2** of the staged build, plus the Commercial
 Property module (Phase 1-3), a subsequent architecture correction, a
-Visualization tab, Net Worth/Tax/Reports, and Document Packs with payslip
-tracking (Stage 4), all described below.
+Visualization tab, Net Worth/Tax/Reports, Document Packs with payslip
+tracking (Stage 4), and a UI/UX pass against `PREFERENCES.md`, all described
+below.
+
+### UI/UX styling pass
+
+The app was rebuilt visually against `PREFERENCES.md` now that enough of it
+exists to make that worthwhile. This was a presentation-only pass — no
+schema, API or business-logic changes.
+
+- **Light theme**: pale background, white cards with a 3px accent stripe
+  down the left edge and a faint shadow, one accent colour for actions,
+  uppercase grey section headings, 40px+ touch targets, 16px inputs (so
+  phones don't zoom in).
+- **Navigation**: the permanent sidebar and always-visible search bar are
+  gone. A header now shows a back chevron (goes up one level in the app's
+  structure, not through browser history) and a home icon, plus a search
+  icon that opens full-screen search and a menu icon that opens a
+  full-screen list of every section — hand-rolled SVG icons, no icon
+  library added.
+- **Lists → cards**: the top-level record lists (Documents, Inbox, People,
+  Entities, Assets, Liabilities/Loans, Properties, Commercial Properties,
+  Investments, Banking) are now tap-to-open cards carrying just a name and
+  one or two identifying details, with a value/status badge on the right.
+  A new `/assets/:id` detail page was added so every asset card has
+  somewhere to go. Dense ledger-style data inside a detail page (tenancy
+  outgoings, transactions, pay-period tracking) was deliberately kept as
+  tables — that's data comparison, not a list of records to tap into.
+- **Chips and segmented controls**: multi/single-select option sets
+  (document status filters, commercial property type selection, Document
+  Pack chips) use pill-shaped chips; the two-option Residential/Commercial
+  toggle uses a segmented control.
+- **Not changed in this pass**: the no-Save-button/Done-and-discard-drafts
+  entry-screen behaviour from `PREFERENCES.md` is a real behavioural
+  change, not a visual one — "Add"/"Create"/"Save" buttons still work as
+  explicit actions, just restyled. A future pass could take this on
+  separately.
 
 ### Document Packs and pay tracking
 
@@ -208,10 +243,10 @@ Commercial toggle on the Properties page.
 ### UI styling
 
 A `PREFERENCES.md` in this repo sets visual/interaction defaults (light
-theme, card-based navigation, icon-first headers, etc.) that this build
-does not yet follow — by direction, function is being prioritised over
-matching those preferences until more of the app exists. A dedicated
-styling pass is expected once Stage 3 lands.
+theme, card-based navigation, icon-first headers, etc.). These were
+deliberately not followed while the app was function-first through Stage 3
+— see "UI/UX styling pass" above for the pass that brought the build in
+line with them.
 
 ## Stack
 

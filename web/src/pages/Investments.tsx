@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { api, Entity, InvestmentAccount } from "../api/client.js";
+import { ItemCard } from "../components/ItemCard.js";
 import { humanize } from "../utils.js";
 
 const ACCOUNT_TYPES = ["SHARES", "ETF", "MANAGED_FUND", "TERM_DEPOSIT", "BOND", "OTHER"];
@@ -76,34 +76,21 @@ export function Investments() {
         </div>
       )}
 
-      <div className="card">
-        {accounts.length === 0 ? (
-          <p className="empty-state">No investment accounts yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Institution</th>
-                <th>Type</th>
-                <th>Entity</th>
-                <th>Holdings</th>
-              </tr>
-            </thead>
-            <tbody>
-              {accounts.map((a) => (
-                <tr key={a.id}>
-                  <td>
-                    <Link to={`/investments/${a.id}`}>{a.institution}</Link>
-                  </td>
-                  <td>{humanize(a.accountType)}</td>
-                  <td>{a.entity?.name || "—"}</td>
-                  <td>{a.holdings.length}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {accounts.length === 0 ? (
+        <p className="empty-state">No investment accounts yet.</p>
+      ) : (
+        <ul className="item-card-list">
+          {accounts.map((a) => (
+            <ItemCard
+              key={a.id}
+              to={`/investments/${a.id}`}
+              title={a.institution}
+              subtitle={`${humanize(a.accountType)} · ${a.entity?.name || "No entity"}`}
+              right={<span className="tag">{a.holdings.length} holdings</span>}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

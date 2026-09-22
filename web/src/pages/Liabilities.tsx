@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { api, CommercialProperty, Entity, Liability, Property } from "../api/client.js";
+import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency, humanize } from "../utils.js";
 
 const ALL_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN", "CREDIT_CARD", "PERSONAL_LOAN", "OTHER"];
@@ -209,40 +209,21 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
         </div>
       )}
 
-      <div className="card">
-        {liabilities.length === 0 ? (
-          <p className="empty-state">Nothing here yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Entity</th>
-                <th>Lender</th>
-                <th>Balance</th>
-                <th>Rate</th>
-                <th>Security</th>
-              </tr>
-            </thead>
-            <tbody>
-              {liabilities.map((l) => (
-                <tr key={l.id}>
-                  <td>
-                    <Link to={`/liabilities/${l.id}`}>{l.name}</Link>
-                  </td>
-                  <td>{humanize(l.liabilityType)}</td>
-                  <td>{l.entity?.name || "—"}</td>
-                  <td>{l.lender || "—"}</td>
-                  <td>{formatCurrency(l.currentBalance)}</td>
-                  <td>{l.interestRate ? `${l.interestRate}%` : "—"}</td>
-                  <td>{l.securityProperty?.address || l.securityCommercialProperty?.name || "—"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {liabilities.length === 0 ? (
+        <p className="empty-state">Nothing here yet.</p>
+      ) : (
+        <ul className="item-card-list">
+          {liabilities.map((l) => (
+            <ItemCard
+              key={l.id}
+              to={`/liabilities/${l.id}`}
+              title={l.name}
+              subtitle={`${humanize(l.liabilityType)} · ${l.entity?.name || "No entity"}${l.lender ? ` · ${l.lender}` : ""}${l.interestRate ? ` · ${l.interestRate}%` : ""}`}
+              right={<strong>{formatCurrency(l.currentBalance)}</strong>}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

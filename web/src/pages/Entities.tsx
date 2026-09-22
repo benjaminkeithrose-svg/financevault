@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { api, Entity } from "../api/client.js";
+import { ItemCard } from "../components/ItemCard.js";
 import { humanize } from "../utils.js";
 
 // Legal/ownership vehicles only — an Entity is who owns things, never the
@@ -64,34 +64,21 @@ export function Entities() {
         </div>
       )}
 
-      <div className="card">
-        {entities.length === 0 ? (
-          <p className="empty-state">No entities yet. Start with yourself.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>ABN</th>
-                <th>Documents</th>
-              </tr>
-            </thead>
-            <tbody>
-              {entities.map((e) => (
-                <tr key={e.id}>
-                  <td>
-                    <Link to={`/entities/${e.id}`}>{e.name}</Link>
-                  </td>
-                  <td>{humanize(e.entityType)}</td>
-                  <td>{e.abn || "—"}</td>
-                  <td>{e._count?.documents ?? 0}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {entities.length === 0 ? (
+        <p className="empty-state">No entities yet. Start with yourself.</p>
+      ) : (
+        <ul className="item-card-list">
+          {entities.map((e) => (
+            <ItemCard
+              key={e.id}
+              to={`/entities/${e.id}`}
+              title={e.name}
+              subtitle={`${humanize(e.entityType)}${e.abn ? ` · ABN ${e.abn}` : ""}`}
+              right={<span className="tag">{e._count?.documents ?? 0} docs</span>}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { api, Account, Entity } from "../api/client.js";
+import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency, humanize } from "../utils.js";
 
 const ACCOUNT_TYPES = ["TRANSACTION", "SAVINGS", "OFFSET", "CREDIT_CARD", "OTHER"];
@@ -100,38 +100,21 @@ export function Banking() {
         </div>
       )}
 
-      <div className="card">
-        {accounts.length === 0 ? (
-          <p className="empty-state">No accounts yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Institution</th>
-                <th>Account</th>
-                <th>Type</th>
-                <th>Entity</th>
-                <th>Balance</th>
-                <th>Transactions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {accounts.map((a) => (
-                <tr key={a.id}>
-                  <td>{a.institution}</td>
-                  <td>
-                    <Link to={`/banking/${a.id}`}>{a.accountName}</Link>
-                  </td>
-                  <td>{humanize(a.accountType)}</td>
-                  <td>{a.entity?.name || "—"}</td>
-                  <td>{formatCurrency(a.currentBalance)}</td>
-                  <td>{a._count?.transactions ?? 0}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {accounts.length === 0 ? (
+        <p className="empty-state">No accounts yet.</p>
+      ) : (
+        <ul className="item-card-list">
+          {accounts.map((a) => (
+            <ItemCard
+              key={a.id}
+              to={`/banking/${a.id}`}
+              title={`${a.institution} ${a.accountName}`}
+              subtitle={`${humanize(a.accountType)} · ${a.entity?.name || "No entity"} · ${a._count?.transactions ?? 0} transactions`}
+              right={<strong>{formatCurrency(a.currentBalance)}</strong>}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

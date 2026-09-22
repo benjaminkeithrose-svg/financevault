@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import { api, Document } from "../api/client.js";
+import { ItemCard } from "../components/ItemCard.js";
 import { formatDate, humanize } from "../utils.js";
 
 export function Inbox() {
@@ -74,56 +74,42 @@ export function Inbox() {
       </div>
 
       {error && (
-        <div className="card" style={{ borderColor: "var(--danger)", color: "var(--danger)" }}>
+        <div className="message-box warning" style={{ marginTop: 16 }}>
           {error}
         </div>
       )}
 
-      <div className="card" style={{ marginTop: 16 }}>
-        <h3 style={{ marginTop: 0 }}>Review queue ({documents.length})</h3>
-        {documents.length === 0 ? (
-          <p className="empty-state">Nothing waiting on you right now.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>File</th>
-                <th>Proposed type</th>
-                <th>Entity match</th>
-                <th>Confidence</th>
-                <th>Status</th>
-                <th>Uploaded</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {documents.map((d) => (
-                <tr key={d.id}>
-                  <td>
-                    <Link to={`/documents/${d.id}`}>{d.originalFilename}</Link>
-                  </td>
-                  <td>{d.documentType || <em>Unclassified</em>}</td>
-                  <td>{d.entity?.name || <em>None found</em>}</td>
-                  <td>
-                    {d.confidenceScore !== null && d.confidenceScore !== undefined
-                      ? `${Math.round(d.confidenceScore * 100)}%`
-                      : "—"}
-                  </td>
-                  <td>
-                    <span className={`badge status-${d.reviewStatus}`}>{humanize(d.reviewStatus)}</span>
-                  </td>
-                  <td>{formatDate(d.uploadDate)}</td>
-                  <td>
-                    <button className="btn secondary" onClick={() => confirm(d.id)}>
-                      Confirm
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <h3 className="nav-group-label" style={{ marginTop: 24 }}>
+        Review queue ({documents.length})
+      </h3>
+      {documents.length === 0 ? (
+        <p className="empty-state">Nothing waiting on you right now.</p>
+      ) : (
+        <ul className="item-card-list">
+          {documents.map((d) => (
+            <ItemCard
+              key={d.id}
+              to={`/documents/${d.id}`}
+              title={d.originalFilename}
+              subtitle={`${d.documentType || "Unclassified"} · ${d.entity?.name || "No entity match"} · ${formatDate(d.uploadDate)}`}
+              right={
+                <>
+                  <span className={`badge status-${d.reviewStatus}`}>{humanize(d.reviewStatus)}</span>
+                  <button
+                    className="btn secondary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      confirm(d.id);
+                    }}
+                  >
+                    Confirm
+                  </button>
+                </>
+              }
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

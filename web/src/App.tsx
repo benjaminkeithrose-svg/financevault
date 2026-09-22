@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import { NavSidebar } from "./components/NavSidebar.js";
+import { Route, Routes } from "react-router-dom";
+import { Header } from "./components/Header.js";
 import { api } from "./api/client.js";
 import { Dashboard } from "./pages/Dashboard.js";
 import { Visualization } from "./pages/Visualization.js";
@@ -24,30 +24,11 @@ import { InvestmentAccountDetail } from "./pages/InvestmentAccountDetail.js";
 import { Banking } from "./pages/Banking.js";
 import { AccountDetail } from "./pages/AccountDetail.js";
 import { Assets } from "./pages/Assets.js";
+import { AssetDetail } from "./pages/AssetDetail.js";
 import { NetWorth } from "./pages/NetWorth.js";
 import { Tax } from "./pages/Tax.js";
 import { Reports } from "./pages/Reports.js";
 import { Packs } from "./pages/Packs.js";
-
-function TopSearch() {
-  const [q, setQ] = useState("");
-  const navigate = useNavigate();
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (q.trim()) navigate(`/search?q=${encodeURIComponent(q.trim())}`);
-      }}
-      style={{ marginBottom: 20 }}
-    >
-      <input
-        placeholder='Search everything — "insurance for investment properties in 2025-26"…'
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-      />
-    </form>
-  );
-}
 
 function Home() {
   const [landingPage, setLandingPage] = useState<string | null>(null);
@@ -63,9 +44,8 @@ function Home() {
 export default function App() {
   return (
     <div className="app-shell">
-      <NavSidebar />
+      <Header />
       <main className="main-content">
-        <TopSearch />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/visualization" element={<Visualization />} />
@@ -89,6 +69,7 @@ export default function App() {
           <Route path="/liabilities" element={<Liabilities scope="all" />} />
           <Route path="/liabilities/:id" element={<LiabilityDetail />} />
           <Route path="/assets" element={<Assets />} />
+          <Route path="/assets/:id" element={<AssetDetail />} />
           <Route path="/net-worth" element={<NetWorth />} />
           <Route path="/tax" element={<Tax />} />
           <Route path="/reports" element={<Reports />} />

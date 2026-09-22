@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { api, Person } from "../api/client.js";
+import { ItemCard } from "../components/ItemCard.js";
 import { humanize } from "../utils.js";
 
 export function People() {
@@ -46,36 +46,26 @@ export function People() {
         </div>
       )}
 
-      <div className="card">
-        {people.length === 0 ? (
-          <p className="empty-state">No people yet. Start with yourself.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Relationships</th>
-              </tr>
-            </thead>
-            <tbody>
-              {people.map((p) => (
-                <tr key={p.id}>
-                  <td>
-                    <Link to={`/people/${p.id}`}>{p.name}</Link>
-                  </td>
-                  <td>
-                    {(p.entityRelationships || []).length === 0
-                      ? "—"
-                      : (p.entityRelationships || [])
-                          .map((r) => `${humanize(r.relationshipType)} of ${r.entity?.name}`)
-                          .join(", ")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {people.length === 0 ? (
+        <p className="empty-state">No people yet. Start with yourself.</p>
+      ) : (
+        <ul className="item-card-list">
+          {people.map((p) => (
+            <ItemCard
+              key={p.id}
+              to={`/people/${p.id}`}
+              title={p.name}
+              subtitle={
+                (p.entityRelationships || []).length === 0
+                  ? "No relationships yet"
+                  : (p.entityRelationships || [])
+                      .map((r) => `${humanize(r.relationshipType)} of ${r.entity?.name}`)
+                      .join(", ")
+              }
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

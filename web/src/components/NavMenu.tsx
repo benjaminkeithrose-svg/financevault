@@ -8,7 +8,7 @@ interface NavItem {
 // Grouped per the "who owns it" architecture: People and Entities are the
 // ownership layer; Assets/Liabilities are what they own and owe. Keeping
 // this distinction visible in the nav, not just in the data model.
-const GROUPS: Array<{ label: string; items: NavItem[] }> = [
+export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
   {
     label: "",
     items: [
@@ -42,34 +42,22 @@ const GROUPS: Array<{ label: string; items: NavItem[] }> = [
   },
 ];
 
-export function NavSidebar() {
+// The full list of sections, used inside the header's full-screen menu
+// overlay (PREFERENCES.md: options that aren't needed constantly go behind
+// a menu, not as a permanent on-screen control).
+export function NavMenuList({ onNavigate }: { onNavigate: () => void }) {
   return (
-    <nav className="sidebar">
-      <h1>
-        Financial Vault
-        <span>Private · Local-first</span>
-      </h1>
-      {GROUPS.map((group, i) => (
-        <div key={i} style={{ marginBottom: 10 }}>
-          {group.label && (
-            <div
-              style={{
-                fontSize: 11,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                color: "var(--text-muted)",
-                padding: "8px 12px 4px",
-              }}
-            >
-              {group.label}
-            </div>
-          )}
+    <nav>
+      {NAV_GROUPS.map((group, i) => (
+        <div key={i}>
+          {group.label && <div className="nav-group-label">{group.label}</div>}
           {group.items.map((s) => (
             <NavLink
               key={s.to}
               to={s.to}
               end={s.to === "/"}
               className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
+              onClick={onNavigate}
             >
               {s.label}
             </NavLink>

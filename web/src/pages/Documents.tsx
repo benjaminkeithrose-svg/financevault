@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { api, Document } from "../api/client.js";
+import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
+
+const STATUSES = ["", "PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"];
 
 export function Documents() {
   const [params, setParams] = useSearchParams();
@@ -32,60 +35,33 @@ export function Documents() {
         onChange={(e) => setQ(e.target.value)}
       />
 
-      <div className="toolbar">
-        {["", "PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"].map(
-          (status) => (
-            <button
-              key={status || "all"}
-              className={`btn ${reviewStatus === status ? "" : "secondary"}`}
-              onClick={() => setParams(status ? { reviewStatus: status } : {})}
-            >
-              {status ? humanize(status) : "All"}
-            </button>
-          )
-        )}
+      <div className="chip-row" style={{ marginBottom: 16 }}>
+        {STATUSES.map((status) => (
+          <button
+            key={status || "all"}
+            className={`chip ${reviewStatus === status ? "selected" : ""}`}
+            onClick={() => setParams(status ? { reviewStatus: status } : {})}
+          >
+            {status ? humanize(status) : "All"}
+          </button>
+        ))}
       </div>
 
-      <div className="card">
-        {documents.length === 0 ? (
-          <p className="empty-state">No documents match.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>File</th>
-                <th>Type</th>
-                <th>Entity</th>
-                <th>Financial Year</th>
-                <th>Amount</th>
-                <th>Tax Relevance</th>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {documents.map((d) => (
-                <tr key={d.id}>
-                  <td>
-                    <Link to={`/documents/${d.id}`}>{d.originalFilename}</Link>
-                  </td>
-                  <td>{d.documentType || "—"}</td>
-                  <td>{d.entity?.name || "—"}</td>
-                  <td>{d.financialYear?.label || "—"}</td>
-                  <td>{formatCurrency(d.amount)}</td>
-                  <td>
-                    <span className={`badge relevance-${d.taxRelevance}`}>{humanize(d.taxRelevance)}</span>
-                  </td>
-                  <td>
-                    <span className={`badge status-${d.reviewStatus}`}>{humanize(d.reviewStatus)}</span>
-                  </td>
-                  <td>{formatDate(d.documentDate || d.uploadDate)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {documents.length === 0 ? (
+        <p className="empty-state">No documents match.</p>
+      ) : (
+        <ul className="item-card-list">
+          {documents.map((d) => (
+            <ItemCard
+              key={d.id}
+              to={`/documents/${d.id}`}
+              title={d.originalFilename}
+              subtitle={`${d.documentType || "Unclassified"} · ${d.entity?.name || "No entity"} · ${formatDate(d.documentDate || d.uploadDate)}${d.amount ? ` · ${formatCurrency(d.amount)}` : ""}`}
+              right={<span className={`badge status-${d.reviewStatus}`}>{humanize(d.reviewStatus)}</span>}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

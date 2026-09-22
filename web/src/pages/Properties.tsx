@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { api, Entity, Property } from "../api/client.js";
+import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency } from "../utils.js";
 import { CommercialProperties } from "./CommercialProperties.js";
 
@@ -81,36 +81,21 @@ function ResidentialProperties() {
         </div>
       )}
 
-      <div className="card">
-        {properties.length === 0 ? (
-          <p className="empty-state">No properties yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Address</th>
-                <th>Entity</th>
-                <th>Purchase price</th>
-                <th>Current value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {properties.map((p) => (
-                <tr key={p.id}>
-                  <td>
-                    <Link to={`/properties/${p.id}`}>{p.asset?.name}</Link>
-                  </td>
-                  <td>{p.address}</td>
-                  <td>{p.entity?.name}</td>
-                  <td>{formatCurrency(p.purchasePrice)}</td>
-                  <td>{formatCurrency(p.asset?.currentValue)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {properties.length === 0 ? (
+        <p className="empty-state">No properties yet.</p>
+      ) : (
+        <ul className="item-card-list">
+          {properties.map((p) => (
+            <ItemCard
+              key={p.id}
+              to={`/properties/${p.id}`}
+              title={p.asset?.name}
+              subtitle={`${p.address} · ${p.entity?.name}`}
+              right={<strong>{formatCurrency(p.asset?.currentValue)}</strong>}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -131,11 +116,11 @@ export function Properties() {
         </div>
       </div>
 
-      <div className="toolbar">
-        <button className={`btn ${view === "residential" ? "" : "secondary"}`} onClick={() => setView("residential")}>
+      <div className="segmented" style={{ marginBottom: 16 }}>
+        <button className={view === "residential" ? "selected" : ""} onClick={() => setView("residential")}>
           Residential
         </button>
-        <button className={`btn ${view === "commercial" ? "" : "secondary"}`} onClick={() => setView("commercial")}>
+        <button className={view === "commercial" ? "selected" : ""} onClick={() => setView("commercial")}>
           Commercial
         </button>
       </div>

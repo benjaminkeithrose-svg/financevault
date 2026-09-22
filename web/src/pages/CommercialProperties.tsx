@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, CommercialPortfolio, CommercialProperty, Entity } from "../api/client.js";
+import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency, humanize } from "../utils.js";
 
 function pct(v: number | null | undefined): string {
@@ -163,14 +164,13 @@ export function CommercialProperties() {
             ))}
           </select>
           <label>Property type(s) — select all that apply</label>
-          <div className="toolbar" style={{ flexWrap: "wrap" }}>
+          <div className="chip-row">
             {PROPERTY_TYPES.map((t) => (
               <button
                 key={t}
                 type="button"
-                className={`btn ${propertyTypes.includes(t) ? "" : "secondary"}`}
+                className={`chip ${propertyTypes.includes(t) ? "selected" : ""}`}
                 onClick={() => toggleType(t)}
-                style={{ padding: "4px 10px", fontSize: 12 }}
               >
                 {humanize(t)}
               </button>
@@ -216,36 +216,21 @@ export function CommercialProperties() {
         </div>
       )}
 
-      <div className="card">
-        {properties.length === 0 ? (
-          <p className="empty-state">No commercial properties yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Entity</th>
-                <th>Tenancies</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {properties.map((p) => (
-                <tr key={p.id}>
-                  <td>
-                    <Link to={`/commercial-properties/${p.id}`}>{p.name}</Link>
-                  </td>
-                  <td>{p.propertyTypes.split(",").map(humanize).join(" / ")}</td>
-                  <td>{p.entity?.name || "—"}</td>
-                  <td>{p.tenancies?.length ?? 0}</td>
-                  <td>{formatCurrency(p.asset?.currentValue)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {properties.length === 0 ? (
+        <p className="empty-state">No commercial properties yet.</p>
+      ) : (
+        <ul className="item-card-list">
+          {properties.map((p) => (
+            <ItemCard
+              key={p.id}
+              to={`/commercial-properties/${p.id}`}
+              title={p.name}
+              subtitle={`${p.propertyTypes.split(",").map(humanize).join(" / ")} · ${p.entity?.name || "No entity"} · ${p.tenancies?.length ?? 0} tenanc${(p.tenancies?.length ?? 0) === 1 ? "y" : "ies"}`}
+              right={<strong>{formatCurrency(p.asset?.currentValue)}</strong>}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

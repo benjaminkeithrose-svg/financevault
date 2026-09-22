@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { api, Asset, Entity } from "../api/client.js";
+import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 
 const STANDALONE_TYPES = ["VEHICLE", "SHARES", "MANAGED_FUND", "EQUIPMENT", "SUPERANNUATION", "CASH", "OTHER"];
@@ -103,40 +103,21 @@ export function Assets() {
         </div>
       )}
 
-      <div className="card">
-        {assets.length === 0 ? (
-          <p className="empty-state">No assets recorded yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Entity</th>
-                <th>Acquired</th>
-                <th>Current value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {assets.map((a) => (
-                <tr key={a.id}>
-                  <td>
-                    {a.property ? (
-                      <Link to={`/properties/${a.property.id}`}>{a.name}</Link>
-                    ) : (
-                      a.name
-                    )}
-                  </td>
-                  <td>{humanize(a.assetType)}</td>
-                  <td>{a.entity?.name || "—"}</td>
-                  <td>{formatDate(a.acquisitionDate)}</td>
-                  <td>{formatCurrency(a.currentValue)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {assets.length === 0 ? (
+        <p className="empty-state">No assets recorded yet.</p>
+      ) : (
+        <ul className="item-card-list">
+          {assets.map((a) => (
+            <ItemCard
+              key={a.id}
+              to={a.property ? `/properties/${a.property.id}` : `/assets/${a.id}`}
+              title={a.name}
+              subtitle={`${humanize(a.assetType)} · ${a.entity?.name || "No entity"}${a.acquisitionDate ? ` · Acquired ${formatDate(a.acquisitionDate)}` : ""}`}
+              right={<strong>{formatCurrency(a.currentValue)}</strong>}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
