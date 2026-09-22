@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../db.js";
+import { computeDisposal } from "../services/cgt.js";
+import { positionsForAccount } from "../services/positions.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 
 export const reportsRouter = Router();
@@ -64,41 +66,86 @@ reportsRouter.get(
 );
 
 // ---------------------------------------------------------------------------
-// Investment portfolio — spec section 22. No live market pricing (record-
-// keeping only, per the brief), so unrealised gain/loss is explicitly
-// reported as unavailable rather than guessed at.
+// Investment portfolio — now parcel-level, with market value where a price
+// is known. The previous version computed realised gain as
+// (salePrice - costBase - brokerage) with no reference to quantity at all,
+// so a sale of 100 units was reported as if it were one.
 // ---------------------------------------------------------------------------
 
 reportsRouter.get(
   "/investment-portfolio",
   asyncHandler(async (_req, res) => {
-    const accounts = await prisma.investmentAccount.findMany({ include: { entity: true, holdings: true } });
+    const accounts = await prisma.investmentAccount.findMany({ include: { entity: true } });
 
+    const rows = [];
     let totalCostBase = 0;
-    let realisedGainLoss = 0;
-    const rows = accounts.map((a) => {
-      const costBase = a.holdings.reduce((s, h) => s + (h.costBase ?? h.purchasePrice ?? 0), 0);
-      const realised = a.holdings
-        .filter((h) => h.disposalDate && h.salePrice !== null)
-        .reduce((s, h) => s + ((h.salePrice ?? 0) - (h.costBase ?? h.purchasePrice ?? 0) - (h.brokerage ?? 0)), 0);
+    let totalMarketValue = 0;
+    let totalRealisedNetGain = 0;
+    let totalFrankingCredits = 0;
+    let unpricedCount = 0;
+
+    for (const account of accounts) {
+      const positions = await positionsForAccount(account.id);
+      const disposals = await prisma.investmentDisposal.findMany({
+        where: { investmentAccountId: account.id },
+        include: { allocations: { include: { parcel: true } } },
+      });
+      const dividends = await prisma.investmentDividend.findMany({
+        where: { investmentAccountId: account.id },
+      });
+
+      const costBase = positions.reduce((s, p) => s + p.costBase, 0);
+      const marketValue = positions.reduce((s, p) => s + (p.marketValue ?? 0), 0);
+      const unpriced = positions.filter((p) => p.marketValue === null && p.quantity > 0).length;
+
+      const realisedNetGain = disposals.reduce((sum, d) => {
+        const parcelsById = new Map(d.allocations.map((a) => [a.parcelId, a.parcel]));
+        return (
+          sum +
+          computeDisposal(
+            d,
+            d.allocations.map((a) => ({ parcelId: a.parcelId, quantity: a.quantity })),
+            parcelsById,
+            account.entity.entityType
+          ).netGain
+        );
+      }, 0);
+
+      const frankingCredits = dividends.reduce((s, d) => s + d.frankingCredit, 0);
+
       totalCostBase += costBase;
-      realisedGainLoss += realised;
-      return {
-        id: a.id,
-        institution: a.institution,
-        entityName: a.entity.name,
-        accountType: a.accountType,
-        holdingCount: a.holdings.length,
+      totalMarketValue += marketValue;
+      totalRealisedNetGain += realisedNetGain;
+      totalFrankingCredits += frankingCredits;
+      unpricedCount += unpriced;
+
+      rows.push({
+        id: account.id,
+        institution: account.institution,
+        entityName: account.entity.name,
+        accountType: account.accountType,
+        holdingCount: positions.length,
         costBase,
-        realisedGainLoss: realised,
-      };
-    });
+        marketValue,
+        unrealisedGain: unpriced > 0 ? null : marketValue - costBase,
+        unpricedCount: unpriced,
+        realisedNetGain,
+        frankingCredits,
+      });
+    }
 
     res.json({
       rows,
-      totals: { totalCostBase, realisedGainLoss },
+      totals: {
+        totalCostBase,
+        totalMarketValue,
+        totalUnrealisedGain: unpricedCount > 0 ? null : totalMarketValue - totalCostBase,
+        unpricedCount,
+        realisedNetGain: totalRealisedNetGain,
+        frankingCredits: totalFrankingCredits,
+      },
       note:
-        "Current value, unrealised gain/loss, distribution income and fees are not shown — this application does not fetch live market prices or track dividend/distribution transactions. Cost base and realised gain/loss come from your own recorded holdings.",
+        "Calculated from the parcels, disposals and dividends you recorded, using the most recent price held for each security. Realised gains apply the CGT discount per parcel based on how long it was held and the owning entity type. These are calculated figures for your accountant to confirm, not tax advice.",
     });
   })
 );

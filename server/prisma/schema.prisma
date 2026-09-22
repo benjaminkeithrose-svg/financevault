@@ -198,6 +198,8 @@ model FinancialYear {
   taxRecords              TaxRecord[]
   annualPropertySnapshots AnnualPropertySnapshot[]
   portfolioPlans          PortfolioPlan[]
+  investmentDisposals     InvestmentDisposal[]
+  investmentDividends     InvestmentDividend[]
 }
 
 // ---------------------------------------------------------------------------
@@ -726,26 +728,11 @@ model InvestmentAccount {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  holdings InvestmentHolding[]
+  parcels   InvestmentParcel[]
+  disposals InvestmentDisposal[]
+  dividends InvestmentDividend[]
 
   @@index([entityId])
-}
-
-model InvestmentHolding {
-  id                  String            @id @default(cuid())
-  investmentAccountId String
-  investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
-  code                String // e.g. ASX ticker
-  quantity            Float?
-  acquisitionDate     DateTime?
-  purchasePrice       Float?
-  disposalDate        DateTime?
-  salePrice           Float?
-  costBase            Float?
-  brokerage           Float?
-  notes               String?
-
-  @@index([investmentAccountId])
 }
 
 // ---------------------------------------------------------------------------
@@ -895,6 +882,11 @@ model Settings {
   // isn't covered — relocating it needs server/.env (DATABASE_URL) and a
   // restart, since Prisma's connection is fixed at process start.
   customStorageDir          String?
+  // Off by default. When on, the app may look up market prices for the
+  // securities you hold. A lookup discloses which codes you hold to the
+  // price provider — never quantities, values, accounts or anything
+  // identifying. Everything still works with prices entered by hand.
+  allowPriceLookups         Boolean @default(false)
 }
 
 // ---------------------------------------------------------------------------
@@ -1040,4 +1032,174 @@ model ImportBatchFile {
   createdAt DateTime @default(now())
 
   @@index([batchId])
+}
+
+// ---------------------------------------------------------------------------
+// Investments — parcel-level, because Australian CGT is parcel-level.
+//
+// The 50% CGT discount depends on how long a SPECIFIC parcel was held, and a
+// partial sale draws from parcels the owner nominates. A single flat row per
+// holding can't express "bought CBA three times, sold half", so acquisitions,
+// disposals and the allocation between them are separate records.
+//
+// This is record-keeping for tax and net worth, not a trading platform:
+// nothing here places orders, connects to a broker, or streams quotes.
+// ---------------------------------------------------------------------------
+
+// A tradeable thing that can be held and priced. One row per code, shared
+// across every account and entity that holds it, so a price is fetched once.
+model Security {
+  id         String  @id @default(cuid())
+  code       String  @unique // ASX ticker, crypto symbol, APIR code, or a name for unlisted things
+  name       String?
+  assetClass String // SHARE | ETF | MANAGED_FUND | CRYPTO | SUPER | BOND | OTHER
+  exchange   String? // e.g. ASX, NASDAQ
+
+  // How a price is obtained. MANUAL is a first-class option, not a failure
+  // case — managed funds and super rarely have a usable free feed, so their
+  // prices are entered by hand and dated like any other.
+  priceSource String @default("MANUAL") // MANUAL | YAHOO | COINGECKO
+  // The provider's own identifier when it differs from `code`
+  // (Yahoo wants "CBA.AX" for ASX; CoinGecko wants "bitcoin", not "BTC").
+  providerSymbol String?
+
+  currency String @default("AUD")
+  notes    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parcels   InvestmentParcel[]
+  disposals InvestmentDisposal[]
+  dividends InvestmentDividend[]
+  prices    SecurityPrice[]
+
+  @@index([assetClass])
+}
+
+// One acquisition. Quantity is Float because crypto is held to 8 decimals.
+model InvestmentParcel {
+  id                  String            @id @default(cuid())
+  investmentAccountId String
+  investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+  securityId          String
+  security            Security          @relation(fields: [securityId], references: [id])
+
+  acquisitionDate DateTime
+  quantity        Float
+  unitPrice       Float
+  brokerage       Float @default(0)
+
+  // Where the parcel came from. A dividend reinvestment creates a real parcel
+  // at the reinvestment price — a common way for cost base records to rot if
+  // it isn't recorded as an acquisition in its own right.
+  acquisitionType String @default("PURCHASE") // PURCHASE | DRP | BONUS_ISSUE | TRANSFER_IN | SPLIT_ADJUSTMENT
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  allocations DisposalAllocation[]
+
+  @@index([investmentAccountId])
+  @@index([securityId])
+}
+
+// One sale. What it actually drew from is recorded in DisposalAllocation
+// rather than inferred, so the cost base and discount eligibility behind a
+// realised gain can still be explained years later.
+model InvestmentDisposal {
+  id                  String            @id @default(cuid())
+  investmentAccountId String
+  investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+  securityId          String
+  security            Security          @relation(fields: [securityId], references: [id])
+
+  disposalDate DateTime
+  quantity     Float
+  unitPrice    Float
+  brokerage    Float  @default(0)
+  // How parcels were picked. Recorded because it's a decision with tax
+  // consequences, and the ATO expects consistency.
+  method       String @default("FIFO") // FIFO | SPECIFIC
+
+  financialYearId String?
+  financialYear   FinancialYear? @relation(fields: [financialYearId], references: [id])
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  allocations DisposalAllocation[]
+
+  @@index([investmentAccountId])
+  @@index([securityId])
+  @@index([financialYearId])
+}
+
+// How much of a disposal came out of which parcel.
+model DisposalAllocation {
+  id         String             @id @default(cuid())
+  disposalId String
+  disposal   InvestmentDisposal @relation(fields: [disposalId], references: [id], onDelete: Cascade)
+  parcelId   String
+  parcel     InvestmentParcel   @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+
+  quantity Float
+
+  @@index([disposalId])
+  @@index([parcelId])
+}
+
+// A dividend or distribution. Franking is split out because franked and
+// unfranked amounts are taxed differently and the franking credit is claimed
+// separately — for Australian investors this is the point of the record.
+model InvestmentDividend {
+  id                  String            @id @default(cuid())
+  investmentAccountId String
+  investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+  securityId          String
+  security            Security          @relation(fields: [securityId], references: [id])
+
+  paymentDate DateTime
+  frankedAmount   Float @default(0)
+  unfrankedAmount Float @default(0)
+  frankingCredit  Float @default(0)
+  // Managed funds and ETFs distribute these separately on an annual tax
+  // statement; they aren't ordinary income and affect the cost base.
+  capitalGainsAmount Float @default(0)
+  foreignIncome      Float @default(0)
+  foreignTaxCredit   Float @default(0)
+
+  // Set when the dividend was reinvested, pointing at the parcel it created,
+  // so the cost base trail from dividend to new units stays explicit.
+  reinvestedParcelId String? @unique
+
+  financialYearId String?
+  financialYear   FinancialYear? @relation(fields: [financialYearId], references: [id])
+
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([investmentAccountId])
+  @@index([securityId])
+  @@index([financialYearId])
+}
+
+// A price on a date. Kept as dated history rather than a single "latest"
+// field so an immutable net worth snapshot keeps the price it was actually
+// taken with, instead of silently changing when prices refresh.
+model SecurityPrice {
+  id         String   @id @default(cuid())
+  securityId String
+  security   Security @relation(fields: [securityId], references: [id], onDelete: Cascade)
+
+  priceDate DateTime
+  price     Float
+  source    String // MANUAL | YAHOO | COINGECKO
+
+  createdAt DateTime @default(now())
+
+  @@unique([securityId, priceDate])
+  @@index([securityId])
 }
