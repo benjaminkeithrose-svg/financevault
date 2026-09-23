@@ -476,7 +476,7 @@ commercialPropertiesRouter.get(
       res.json({ found: false, suggestion: null, sourceDocument: null });
       return;
     }
-    const suggestion = extractLeaseTerms(leaseDoc.ocrText || "");
+    const suggestion = extractLeaseTerms(leaseDoc.textExtractionEnabled ? leaseDoc.ocrText || "" : "");
     res.json({
       found: true,
       suggestion,

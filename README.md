@@ -575,7 +575,13 @@ ownership layer with the things being owned. This has been corrected:
   entity, financial year, amount and renewal date for user confirmation.
 - Entity graph with generic, non-hard-coded relationships (owns, trustee of,
   beneficiary of, director of, etc).
-- Search across document metadata/OCR text and entity records.
+- Search across document metadata/OCR text and entity records. OCR text
+  can be wrong (especially for a photographed rather than scanned page), so
+  each document has a **Turn off** button (`textExtractionEnabled` on
+  `Document`) that stops its extracted text being searched or shown, without
+  touching the file or deleting the text — turning it back on brings it
+  back as it was. Search (`routes/search.ts`, `routes/documents.ts`) and
+  the commercial property lease-term suggester both honour it.
 - Dashboard with document review queues, upcoming renewals, a financial
   snapshot and a tax summary labelled Recorded/Estimated/Needs review (never
   presented as definitive tax advice).

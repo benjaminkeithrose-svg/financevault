@@ -86,6 +86,12 @@ export function DocumentDetail() {
     load();
   }
 
+  async function toggleTextExtraction() {
+    if (!id || !doc) return;
+    await api.documents.update(id, { textExtractionEnabled: !doc.textExtractionEnabled });
+    load();
+  }
+
   const isImage = doc.mimeType.startsWith("image/");
   const isPdf = doc.mimeType === "application/pdf";
 
@@ -204,10 +210,28 @@ export function DocumentDetail() {
 
           {doc.ocrText && (
             <div className="card">
-              <h3 style={{ marginTop: 0 }}>Extracted text</h3>
-              <pre style={{ whiteSpace: "pre-wrap", fontSize: 13, color: "var(--text-muted)", maxHeight: 240, overflow: "auto" }}>
-                {doc.ocrText}
-              </pre>
+              <div className="toolbar" style={{ justifyContent: "space-between" }}>
+                <h3 style={{ margin: 0 }}>Extracted text</h3>
+                <button className="btn secondary" onClick={toggleTextExtraction}>
+                  {doc.textExtractionEnabled ? "Turn off" : "Turn back on"}
+                </button>
+              </div>
+              {doc.textExtractionEnabled ? (
+                <>
+                  <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                    Read automatically from the file. Not always right — turn it off if it's wrong; the file itself is
+                    untouched either way.
+                  </p>
+                  <pre style={{ whiteSpace: "pre-wrap", fontSize: 13, color: "var(--text-muted)", maxHeight: 240, overflow: "auto" }}>
+                    {doc.ocrText}
+                  </pre>
+                </>
+              ) : (
+                <p className="empty-state">
+                  Turned off for this file — it won't be searched or shown. Turn it back on to see it again; nothing
+                  was deleted.
+                </p>
+              )}
             </div>
           )}
 

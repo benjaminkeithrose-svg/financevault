@@ -281,6 +281,7 @@ export interface Document {
   taxRelevance: string;
   confidenceScore?: number | null;
   ocrText?: string | null;
+  textExtractionEnabled: boolean;
   aiSummary?: string | null;
   tags?: string | null;
   notes?: string | null;

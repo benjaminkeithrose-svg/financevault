@@ -347,11 +347,15 @@ model Document {
   taxCategory   TaxCategory? @relation(fields: [taxCategoryId], references: [id])
   taxRelevance  String       @default("UNKNOWN") // UNKNOWN | NOT_RELEVANT | POSSIBLE | CONFIRMED
 
-  confidenceScore Float? // 0-1, set by the classifier
-  ocrText         String?
-  aiSummary       String?
-  tags            String? // comma-separated
-  notes           String?
+  confidenceScore       Float? // 0-1, set by the classifier
+  ocrText               String?
+  // Extracted text from images/scans is sometimes badly wrong, so it can be
+  // turned off per file — stops it being searched or shown, without
+  // touching the original file or needing it re-scanned.
+  textExtractionEnabled Boolean @default(true)
+  aiSummary             String?
+  tags                  String? // comma-separated
+  notes                 String?
 
   retentionDate DateTime?
   reviewStatus  String    @default("PENDING_CLASSIFICATION") // PENDING_CLASSIFICATION | NEEDS_CONFIRMATION | MISSING_INFORMATION | CONFIRMED | ARCHIVED

@@ -39,7 +39,9 @@ documentsRouter.get(
     if (q) {
       where.OR = [
         { originalFilename: { contains: q } },
-        { ocrText: { contains: q } },
+        // Only matched when the file's extracted text is switched on —
+        // wrong OCR text shouldn't surface a document by accident.
+        { AND: [{ ocrText: { contains: q } }, { textExtractionEnabled: true }] },
         { notes: { contains: q } },
         { supplier: { contains: q } },
         { documentType: { contains: q } },
@@ -167,6 +169,7 @@ const updateInput = z.object({
   reviewStatus: z
     .enum(["PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"])
     .optional(),
+  textExtractionEnabled: z.boolean().optional(),
 });
 
 documentsRouter.put(
@@ -183,7 +186,14 @@ documentsRouter.put(
     }
 
     const doc = await prisma.document.update({ where: { id: req.params.id }, data });
-    await logAudit("DOCUMENT_CLASSIFIED", { targetType: "Document", targetId: doc.id, documentId: doc.id, data });
+    // Turning the extracted text on or off isn't a classification change.
+    const textToggleOnly = Object.keys(rest).length === 1 && parsed.textExtractionEnabled !== undefined && financialYearLabel === undefined;
+    await logAudit(textToggleOnly ? (parsed.textExtractionEnabled ? "DOCUMENT_TEXT_TURNED_ON" : "DOCUMENT_TEXT_TURNED_OFF") : "DOCUMENT_CLASSIFIED", {
+      targetType: "Document",
+      targetId: doc.id,
+      documentId: doc.id,
+      data,
+    });
     res.json(doc);
   })
 );

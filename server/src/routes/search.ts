@@ -22,7 +22,9 @@ searchRouter.get(
         where: {
           OR: [
             { originalFilename: { contains: q } },
-            { ocrText: { contains: q } },
+            // Only matched when the file's extracted text is switched on —
+            // wrong OCR text shouldn't surface a document by accident.
+            { AND: [{ ocrText: { contains: q } }, { textExtractionEnabled: true }] },
             { notes: { contains: q } },
             { supplier: { contains: q } },
             { documentType: { contains: q } },

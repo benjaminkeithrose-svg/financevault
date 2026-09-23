@@ -422,6 +422,12 @@ const SECTIONS: Section[] = [
           Uploading the same file twice is detected and the copy is skipped. Tax file numbers found in a document's
           text are masked before the text is saved.
         </p>
+        <h4>When the extracted text is wrong</h4>
+        <p>
+          Text read from a scanned image can come out garbled. On the document's page, the <strong>Extracted text</strong>{" "}
+          card has a <strong>Turn off</strong> button — it stops that file's text being searched or shown, without
+          touching the file itself. <strong>Turn back on</strong> brings it back; nothing is deleted either way.
+        </p>
         <h4>Archive or delete</h4>
         <p>At the bottom of a document's page:</p>
         <ul>
