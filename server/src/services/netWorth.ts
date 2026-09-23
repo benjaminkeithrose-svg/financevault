@@ -36,7 +36,8 @@ const MORTGAGE_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN"];
 export async function computeLiveBreakdown(entityId?: string) {
   const where = entityId ? { entityId } : {};
   const [assets, accounts, liabilities, investmentAccounts] = await Promise.all([
-    prisma.asset.findMany({ where }),
+    // Sub-assets are part of their parent's value, so only top-level assets count.
+    prisma.asset.findMany({ where: { ...where, parentAssetId: null } }),
     prisma.account.findMany({ where }),
     prisma.liability.findMany({ where }),
     prisma.investmentAccount.findMany({ where }),

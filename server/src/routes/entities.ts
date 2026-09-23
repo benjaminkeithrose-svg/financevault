@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
-import { asyncHandler } from "../middleware/errorHandler.js";
-import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
+import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
+import { deleteWithLinks, entityDependents, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 import { parseTfnInput, revealTfn, tfnSummary } from "../services/tfnAccess.js";
 import { computeFinancialPosition } from "../services/financialPosition.js";
@@ -41,6 +41,8 @@ entitiesRouter.get(
       orderBy: { name: "asc" },
       include: {
         _count: { select: { documents: true, assets: true, liabilities: true } },
+        personalFor: { select: { id: true, name: true } },
+        personRelationships: { include: { person: { select: { id: true, name: true } } } },
       },
     });
     res.json(entities);
@@ -57,7 +59,8 @@ entitiesRouter.get(
         relationshipsTo: { include: { fromEntity: true } },
         personRelationships: { include: { person: true } },
         documents: { orderBy: { uploadDate: "desc" }, take: 25 },
-        assets: true,
+        personalFor: { select: { id: true, name: true } },
+        assets: { where: { parentAssetId: null } },
         liabilities: true,
         accounts: true,
         properties: true,
@@ -125,47 +128,46 @@ entitiesRouter.get(
 entitiesRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
+    const entity = await prisma.entity.findUnique({ where: { id: req.params.id }, include: { personalFor: true } });
+    if (!entity) {
+      res.status(404).json({ error: "Entity not found" });
+      return;
+    }
+    if (entity.personalFor) {
+      throw new HttpError(
+        409,
+        `This is ${entity.personalFor.name}'s personal entity — it's removed together with them. Delete the person instead.`
+      );
+    }
+    refuseIfInUse("entity", await entityDependents(entity.id));
+    await deleteWithLinks([{ type: "ENTITY", id: entity.id }], (tx) => tx.entity.delete({ where: { id: entity.id } }));
+    await logAudit("ENTITY_DELETED", { targetType: "Entity", targetId: req.params.id });
+    res.status(204).send();
+  })
+);
+
+// Adds the family members ticked on the "who else is in this trust?" list.
+entitiesRouter.post(
+  "/:id/beneficiaries",
+  asyncHandler(async (req, res) => {
+    const { personIds } = z.object({ personIds: z.array(z.string()).min(1) }).parse(req.body);
     const entity = await prisma.entity.findUnique({
       where: { id: req.params.id },
-      include: {
-        _count: {
-          select: {
-            assets: true,
-            accounts: true,
-            liabilities: true,
-            investmentAccounts: true,
-            documents: true,
-            transactions: true,
-            taxRecords: true,
-            assetOwnerships: true,
-            netWorthSnapshots: true,
-            portfolioPlans: true,
-            emailImportRules: true,
-          },
-        },
-      },
+      include: { personRelationships: { where: { relationshipType: "BENEFICIARY" } } },
     });
     if (!entity) {
       res.status(404).json({ error: "Entity not found" });
       return;
     }
-    const c = entity._count;
-    refuseIfInUse("entity", [
-      { count: c.assets, one: "asset or property", many: "assets and properties" },
-      { count: c.accounts, one: "bank account", many: "bank accounts" },
-      { count: c.liabilities, one: "loan", many: "loans" },
-      { count: c.investmentAccounts, one: "investment account", many: "investment accounts" },
-      { count: c.documents, one: "document", many: "documents" },
-      { count: c.transactions, one: "transaction", many: "transactions" },
-      { count: c.taxRecords, one: "tax record", many: "tax records" },
-      { count: c.assetOwnerships, one: "asset ownership share", many: "asset ownership shares" },
-      { count: c.netWorthSnapshots, one: "net worth snapshot", many: "net worth snapshots" },
-      { count: c.portfolioPlans, one: "portfolio plan", many: "portfolio plans" },
-      { count: c.emailImportRules, one: "email import rule", many: "email import rules" },
-    ]);
-    await deleteWithLinks([{ type: "ENTITY", id: entity.id }], (tx) => tx.entity.delete({ where: { id: entity.id } }));
-    await logAudit("ENTITY_DELETED", { targetType: "Entity", targetId: req.params.id });
-    res.status(204).send();
+    const already = new Set(entity.personRelationships.map((r) => r.personId));
+    const toAdd = [...new Set(personIds)].filter((id) => !already.has(id));
+    await prisma.$transaction(
+      toAdd.map((personId) =>
+        prisma.personEntityRelationship.create({ data: { personId, entityId: entity.id, relationshipType: "BENEFICIARY" } })
+      )
+    );
+    await logAudit("BENEFICIARIES_ADDED", { targetType: "Entity", targetId: entity.id, data: { count: toAdd.length } });
+    res.status(201).json({ added: toAdd.length });
   })
 );
 

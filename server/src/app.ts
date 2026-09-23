@@ -28,6 +28,8 @@ import { emailImportRouter } from "./routes/emailImport.js";
 import { importBatchesRouter } from "./routes/importBatches.js";
 import { transactionImportRouter } from "./routes/transactionImport.js";
 import { vaultRouter, requireSession } from "./routes/vault.js";
+import { identityRouter } from "./routes/identity.js";
+import { calendarRouter } from "./routes/calendar.js";
 import { apiNotFound, errorHandler } from "./middleware/errorHandler.js";
 import { rejectCrossOriginWrites, requireLoopbackHost, securityHeaders } from "./middleware/localOnly.js";
 
@@ -50,6 +52,8 @@ app.use("/api", requireSession);
 
 app.use("/api/entities", entitiesRouter);
 app.use("/api/people", peopleRouter);
+app.use("/api/identity", identityRouter);
+app.use("/api/calendar", calendarRouter);
 app.use("/api/documents", documentsRouter);
 app.use("/api/financial-years", financialYearsRouter);
 app.use("/api/tax-categories", taxCategoriesRouter);

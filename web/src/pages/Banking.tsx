@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { api, Account, Entity } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency, humanize } from "../utils.js";
+import { DraftNotice, FormActions } from "../components/FormActions.js";
+import { useDraft } from "../hooks/useDraft.js";
 
 const ACCOUNT_TYPES = ["TRANSACTION", "SAVINGS", "OFFSET", "CREDIT_CARD", "OTHER"];
 
 export function Banking() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
+  const [form, setForm, draft] = useDraft("bank-accounts:new", {
     institution: "",
     accountName: "",
     accountNumber: "",
@@ -18,6 +19,7 @@ export function Banking() {
     accountType: "TRANSACTION",
     currentBalance: "",
   });
+  const [showForm, setShowForm] = useState(draft.restored);
 
   function load() {
     api.banking.listAccounts().then(setAccounts);
@@ -40,7 +42,7 @@ export function Banking() {
       currentBalance: form.currentBalance ? Number(form.currentBalance) : null,
       openingBalance: form.currentBalance ? Number(form.currentBalance) : null,
     });
-    setForm({ institution: "", accountName: "", accountNumber: "", bsb: "", entityId: "", accountType: "TRANSACTION", currentBalance: "" });
+    draft.clear();
     setShowForm(false);
     load();
   }
@@ -50,7 +52,7 @@ export function Banking() {
       <div className="page-header">
         <div>
           <h2>Banking</h2>
-          <p>Bank accounts and their transactions. CSV/OFX import arrives in a later stage.</p>
+          <p>Bank accounts and their transactions, imported from your bank's CSV export.</p>
         </div>
         <button className="btn" onClick={() => setShowForm((v) => !v)}>
           {showForm ? "Cancel" : "New account"}
@@ -59,6 +61,7 @@ export function Banking() {
 
       {showForm && (
         <div className="card">
+          <DraftNotice draft={draft} />
           <label>Institution</label>
           <input value={form.institution} onChange={(e) => setForm({ ...form, institution: e.target.value })} placeholder="CBA" />
           <label>Account name</label>
@@ -92,11 +95,7 @@ export function Banking() {
           </select>
           <label>Current balance</label>
           <input type="number" value={form.currentBalance} onChange={(e) => setForm({ ...form, currentBalance: e.target.value })} />
-          <div className="toolbar" style={{ marginTop: 16 }}>
-            <button className="btn" onClick={create}>
-              Create
-            </button>
-          </div>
+          <FormActions onSubmit={create} draft={draft} label="Create" />
         </div>
       )}
 

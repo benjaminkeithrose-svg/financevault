@@ -50,13 +50,59 @@ model Person {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
+  // Every person has their own personal (INDIVIDUAL) entity, created with
+  // them, so things they own personally can be recorded without setting the
+  // person up twice.
+  entityId       String?   @unique
+  personalEntity Entity?   @relation("PersonalEntity", fields: [entityId], references: [id], onDelete: SetNull)
+
   entityRelationships PersonEntityRelationship[]
   payPeriodEntries    PayPeriodEntry[]
+  familyFrom          PersonRelationship[]       @relation("FamilyFrom")
+  familyTo            PersonRelationship[]       @relation("FamilyTo")
+  identityRecords     IdentityRecord[]
   // Documents reference this Person via the polymorphic DocumentLink
   // (targetType = PERSON, targetId = this.id) — no direct relation field,
   // consistent with how every other linkable record works.
 
   @@index([name])
+}
+
+// Family links between people. PARENT means fromPerson is a parent of
+// toPerson; PARTNER is stored once and read both ways.
+model PersonRelationship {
+  id               String   @id @default(cuid())
+  fromPersonId     String
+  toPersonId       String
+  relationshipType String // PARTNER | PARENT
+  createdAt        DateTime @default(now())
+
+  fromPerson Person @relation("FamilyFrom", fields: [fromPersonId], references: [id], onDelete: Cascade)
+  toPerson   Person @relation("FamilyTo", fields: [toPersonId], references: [id], onDelete: Cascade)
+
+  @@unique([fromPersonId, toPersonId, relationshipType])
+  @@index([toPersonId])
+}
+
+// A person's ID and cover documents — the things a broker or lender asks
+// to see. Numbers are encrypted like TFNs (see db.ts); scans attach through
+// DocumentLink with targetType IDENTITY_RECORD.
+model IdentityRecord {
+  id              String    @id @default(cuid())
+  personId        String
+  person          Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  kind            String // PRIVATE_HEALTH | MEDICARE | DRIVERS_LICENCE | PASSPORT | BIRTH_CERTIFICATE | CITIZENSHIP | PROOF_OF_AGE | OTHER
+  label           String? // e.g. "Bupa Gold Hospital + Extras", "NSW licence"
+  issuer          String? // insurer, issuing state or country
+  number          String? // encrypted
+  referenceNumber String? // encrypted — Medicare IRN, licence card number
+  issueDate       DateTime?
+  expiryDate      DateTime?
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([personId])
 }
 
 // One expected/actual pay period for a Person whose income is tracked
@@ -125,6 +171,7 @@ model Entity {
   relationshipsTo     EntityRelationship[]       @relation("RelationshipTo")
   // People who hold a role in relation to this entity (trustee, director, beneficiary, ...)
   personRelationships PersonEntityRelationship[]
+  personalFor         Person?                    @relation("PersonalEntity")
 
   documents            Document[]
   assets               Asset[]
@@ -320,7 +367,17 @@ model Asset {
   year               Int?
   registration       String?
   registrationExpiry DateTime?
-  identifier         String? // VIN, or hull identification number for a boat
+  identifier         String? // VIN, hull identification number, or an item's serial number
+
+  // Sub-assets: an item that belongs to another asset — an air conditioner
+  // in a rental, the washing machine at home, an outboard on a boat. Its
+  // value is part of the parent's, so it's never added to totals itself.
+  parentAssetId  String?
+  parent         Asset?    @relation("SubAssets", fields: [parentAssetId], references: [id])
+  children       Asset[]   @relation("SubAssets")
+  itemCategory   String? // APPLIANCE | HEATING_COOLING | HOT_WATER | SOLAR | POOL_SPA | SECURITY | FURNITURE | ELECTRONICS | FIXTURE | EQUIPMENT | OTHER
+  warrantyExpiry DateTime?
+  maintenance    MaintenanceRecord[]
 
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
@@ -332,6 +389,24 @@ model Asset {
 
   @@index([entityId])
   @@index([assetType])
+  @@index([parentAssetId])
+}
+
+// Service, repair and running-cost history for an asset or sub-asset.
+model MaintenanceRecord {
+  id          String    @id @default(cuid())
+  assetId     String
+  asset       Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  date        DateTime
+  kind        String // SERVICE | REPAIR | INSPECTION | INSTALLATION | PART | OTHER
+  description String
+  cost        Float?
+  provider    String?
+  nextDueDate DateTime? // when the next service is due — shows in the expiry calendar
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  @@index([assetId])
 }
 
 model Liability {

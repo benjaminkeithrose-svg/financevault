@@ -58,6 +58,13 @@ export function EntityDetail() {
         </div>
       </div>
 
+      {entity.personalFor && (
+        <div className="message-box info">
+          This is <Link to={`/people/${entity.personalFor.id}`}>{entity.personalFor.name}</Link>'s personal entity —
+          everything they hold in their own name. Their tax file number, family and ID are on their page.
+        </div>
+      )}
+
       {fp && (
         <div className="card">
           <h3 style={{ marginTop: 0 }}>Financial position</h3>
@@ -115,12 +122,14 @@ export function EntityDetail() {
                 <td>ACN</td>
                 <td>{entity.acn || "—"}</td>
               </tr>
-              <tr>
-                <td>TFN</td>
-                <td>
-                  <TfnField owner="entity" id={entity.id} hasTfn={entity.hasTfn} tfnMasked={entity.tfnMasked} onSaved={load} />
-                </td>
-              </tr>
+              {!entity.personalFor && (
+                <tr>
+                  <td>TFN</td>
+                  <td>
+                    <TfnField owner="entity" id={entity.id} hasTfn={entity.hasTfn} tfnMasked={entity.tfnMasked} onSaved={load} />
+                  </td>
+                </tr>
+              )}
               <tr>
                 <td>Established</td>
                 <td>{formatDate(entity.establishmentDate)}</td>
@@ -278,13 +287,15 @@ export function EntityDetail() {
           </table>
         )}
       </div>
-      <DeleteSection
-        title="Delete this entity"
-        note="Only possible once nothing is recorded against it — assets, accounts, loans, documents and so on. If anything is, you'll be told what to remove or move first."
-        question={`Delete ${entity.name}? This can't be undone.`}
-        action={() => api.entities.remove(entity.id)}
-        redirectTo="/entities"
-      />
+      {!entity.personalFor && (
+        <DeleteSection
+          title="Delete this entity"
+          note="Only possible once nothing is recorded against it — assets, accounts, loans, documents and so on. If anything is, you'll be told what to remove or move first."
+          question={`Delete ${entity.name}? This can't be undone.`}
+          action={() => api.entities.remove(entity.id)}
+          redirectTo="/entities"
+        />
+      )}
     </div>
   );
 }

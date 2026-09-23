@@ -3,6 +3,8 @@ import { api, Entity, FinancialYear, PortfolioPlan } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { financialYearLabelForToday, formatCurrency } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
+import { DraftNotice, FormActions } from "../components/FormActions.js";
+import { useDraft } from "../hooks/useDraft.js";
 
 const emptyForm = {
   name: "",
@@ -21,8 +23,12 @@ export function PortfolioPlans() {
   const [plans, setPlans] = useState<PortfolioPlan[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [financialYears, setFinancialYears] = useState<FinancialYear[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm, draft] = useDraft("portfolio-plans:new", emptyForm);
+  const [showForm, setShowForm] = useState(draft.restored);
+  // The current financial year is the default start, applied without
+  // touching the form — otherwise an untouched form would count as a draft.
+  const [defaultFyId, setDefaultFyId] = useState("");
+  const startFinancialYearId = form.startFinancialYearId || defaultFyId;
 
   function load() {
     api.portfolioPlans.list().then(setPlans);
@@ -34,16 +40,16 @@ export function PortfolioPlans() {
     api.financialYears.list().then((years) => {
       setFinancialYears(years);
       const current = years.find((y) => y.label === financialYearLabelForToday());
-      if (current) setForm((f) => ({ ...f, startFinancialYearId: current.id }));
+      if (current) setDefaultFyId(current.id);
     });
   }, []);
 
   async function create() {
-    if (!form.name.trim() || !form.startFinancialYearId) return;
+    if (!form.name.trim() || !startFinancialYearId) return;
     await api.portfolioPlans.create({
       name: form.name,
       entityId: form.entityId || null,
-      startFinancialYearId: form.startFinancialYearId,
+      startFinancialYearId,
       projectionYears: Number(form.projectionYears),
       interestRate: Number(form.interestRate) / 100,
       rentalGrowthRate: Number(form.rentalGrowthRate) / 100,
@@ -52,7 +58,7 @@ export function PortfolioPlans() {
       refinanceLvrTarget: Number(form.refinanceLvrTarget) / 100,
       depositPercent: Number(form.depositPercent) / 100,
     });
-    setForm({ ...emptyForm, startFinancialYearId: form.startFinancialYearId });
+    draft.clear();
     setShowForm(false);
     load();
   }
@@ -71,6 +77,7 @@ export function PortfolioPlans() {
 
       {showForm && (
         <div className="card">
+          <DraftNotice draft={draft} />
           <label>Plan name</label>
           <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Commercial portfolio plan" />
           <div className="grid grid-2">
@@ -87,7 +94,7 @@ export function PortfolioPlans() {
             </div>
             <div>
               <label>Starting financial year</label>
-              <select value={form.startFinancialYearId} onChange={(e) => setForm({ ...form, startFinancialYearId: e.target.value })}>
+              <select value={startFinancialYearId} onChange={(e) => setForm({ ...form, startFinancialYearId: e.target.value })}>
                 <option value="">— Select —</option>
                 {financialYears.map((y) => (
                   <option key={y.id} value={y.id}>
@@ -144,11 +151,7 @@ export function PortfolioPlans() {
             onChange={(e) => setForm({ ...form, projectionYears: e.target.value })}
             style={{ maxWidth: 160 }}
           />
-          <div className="toolbar" style={{ marginTop: 16 }}>
-            <button className="btn" onClick={create}>
-              Create plan
-            </button>
-          </div>
+          <FormActions onSubmit={create} draft={draft} label="Create plan" />
         </div>
       )}
 

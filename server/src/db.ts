@@ -11,6 +11,7 @@ const ENCRYPTED_FIELDS: Record<string, string[]> = {
   Person: ["tfn"],
   Entity: ["tfn"],
   EmailAccount: ["appPassword"],
+  IdentityRecord: ["number", "referenceNumber"],
 };
 
 function encryptInPlace(data: unknown, fields: string[]) {
@@ -34,6 +35,7 @@ const base = new PrismaClient({
   omit: {
     person: { tfn: true },
     entity: { tfn: true },
+    identityRecord: { number: true, referenceNumber: true },
   },
 });
 

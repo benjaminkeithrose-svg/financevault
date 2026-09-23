@@ -8,7 +8,7 @@ const GENERATED_KEYS = ["ASSETS_LIABILITIES", "TAX_SUMMARY", "INCOME_SUMMARY"];
 
 const PRESETS: Record<string, { categories: string[]; generated: string[] }> = {
   "Broker Pack": {
-    categories: ["Property", "Finance", "Commercial Property", "Income"],
+    categories: ["Property", "Finance", "Commercial Property", "Income", "ID"],
     generated: ["ASSETS_LIABILITIES", "INCOME_SUMMARY"],
   },
   "Accountant Pack": {

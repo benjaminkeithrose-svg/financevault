@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { api, Document, Entity, FinancialYear, TaxRecord } from "../api/client.js";
 import { financialYearLabelForToday, formatCurrency, humanize, confirmThenDelete } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
+import { DraftNotice, FormActions } from "../components/FormActions.js";
+import { useDraft } from "../hooks/useDraft.js";
 
 const RECORD_TYPES = ["INCOME", "EXPENSE", "CAPITAL_GAIN", "CAPITAL_LOSS"];
 const STATUSES = ["RECORDED", "ESTIMATED", "NEEDS_REVIEW", "ACCOUNTANT_CONFIRMED"];
@@ -16,8 +18,8 @@ export function Tax() {
   const [financialYearId, setFinancialYearId] = useState("");
   const [records, setRecords] = useState<TaxRecord[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm, draft] = useDraft("tax-records:new", emptyForm);
+  const [showForm, setShowForm] = useState(draft.restored);
 
   useEffect(() => {
     api.entities.list().then(setEntities);
@@ -59,7 +61,7 @@ export function Tax() {
       amount: form.amount ? Number(form.amount) : null,
       status: form.status,
     });
-    setForm(emptyForm);
+    draft.clear();
     setShowForm(false);
     loadRecords();
   }
@@ -168,6 +170,7 @@ export function Tax() {
         <>
           {showForm && (
             <div className="card">
+              <DraftNotice draft={draft} />
               <label>Type</label>
               <select value={form.recordType} onChange={(e) => setForm({ ...form, recordType: e.target.value })}>
                 {RECORD_TYPES.map((t) => (
@@ -194,11 +197,7 @@ export function Tax() {
                   </select>
                 </div>
               </div>
-              <div className="toolbar" style={{ marginTop: 12 }}>
-                <button className="btn" onClick={addRecord}>
-                  Add
-                </button>
-              </div>
+              <FormActions onSubmit={addRecord} draft={draft} label="Add" />
             </div>
           )}
 

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { api, Entity, Liability, Property } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
+import { ItemsPanel } from "../components/ItemsPanel.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
@@ -210,6 +211,8 @@ export function PropertyDetail() {
       </div>
 
       {property.asset && <AssetOwnershipPanel asset={property.asset} entities={entities} onChange={load} />}
+
+      <ItemsPanel parentAssetId={property.assetId} title="Items in this property" />
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>

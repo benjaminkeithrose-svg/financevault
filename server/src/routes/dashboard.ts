@@ -128,7 +128,7 @@ dashboardRouter.get(
     }> = [];
     if (!entityId) {
       const allEntities = await prisma.entity.findMany({
-        include: { assets: true, accounts: true, liabilities: true, investmentAccounts: true },
+        include: { assets: { where: { parentAssetId: null } }, accounts: true, liabilities: true, investmentAccounts: true },
       });
       byEntity = [];
       for (const e of allEntities) {

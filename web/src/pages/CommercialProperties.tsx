@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { api, CommercialPortfolio, CommercialProperty, Entity } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency, humanize } from "../utils.js";
+import { DraftNotice, FormActions } from "../components/FormActions.js";
+import { useDraft } from "../hooks/useDraft.js";
 
 function pct(v: number | null | undefined): string {
   if (v === null || v === undefined) return "—";
@@ -39,9 +41,9 @@ const emptyForm = {
 export function CommercialProperties() {
   const [properties, setProperties] = useState<CommercialProperty[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
-  const [showForm, setShowForm] = useState(false);
   const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm, draft] = useDraft("commercial-properties:new", emptyForm);
+  const [showForm, setShowForm] = useState(draft.restored);
   const [portfolio, setPortfolio] = useState<CommercialPortfolio | null>(null);
 
   function load() {
@@ -72,7 +74,7 @@ export function CommercialProperties() {
       currentValue: form.currentValue ? Number(form.currentValue) : null,
       nla: form.nla ? Number(form.nla) : null,
     });
-    setForm(emptyForm);
+    draft.clear();
     setPropertyTypes([]);
     setShowForm(false);
     load();
@@ -152,6 +154,7 @@ export function CommercialProperties() {
 
       {showForm && (
         <div className="card">
+          <DraftNotice draft={draft} />
           <label>Property name</label>
           <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Industrial Unit 4" />
           <label>Owning entity</label>
@@ -208,11 +211,7 @@ export function CommercialProperties() {
               <input type="number" value={form.currentValue} onChange={(e) => setForm({ ...form, currentValue: e.target.value })} />
             </div>
           </div>
-          <div className="toolbar" style={{ marginTop: 16 }}>
-            <button className="btn" onClick={create}>
-              Create
-            </button>
-          </div>
+          <FormActions onSubmit={create} draft={draft} label="Create" />
         </div>
       )}
 

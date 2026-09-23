@@ -3,6 +3,8 @@ import { api, Asset, Entity } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { EMPTY_VEHICLE_FIELDS, VehicleFields, vehicleFieldsPayload } from "../components/VehicleFields.js";
 import { HelpLink } from "../components/HelpLink.js";
+import { DraftNotice, FormActions } from "../components/FormActions.js";
+import { useDraft } from "../hooks/useDraft.js";
 import { describeVehicle, formatCurrency, formatDate, humanize, vehicleTypeLabel } from "../utils.js";
 
 const STANDALONE_TYPES = ["VEHICLE", "SHARES", "MANAGED_FUND", "EQUIPMENT", "SUPERANNUATION", "CASH", "OTHER"];
@@ -24,8 +26,11 @@ const emptyForm = (assetType: string) => ({
 export function Assets({ only }: { only?: "VEHICLE" }) {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState<Record<string, string>>(emptyForm(only ?? "VEHICLE"));
+  const [form, setForm, draft] = useDraft<Record<string, string>>(
+    only ? "vehicles:new" : "assets:new",
+    emptyForm(only ?? "VEHICLE")
+  );
+  const [showForm, setShowForm] = useState(draft.restored);
   const isVehicle = form.assetType === "VEHICLE";
 
   function load() {
@@ -36,7 +41,6 @@ export function Assets({ only }: { only?: "VEHICLE" }) {
   useEffect(() => {
     api.entities.list().then(setEntities);
   }, []);
-  useEffect(() => setForm(emptyForm(only ?? "VEHICLE")), [only]);
 
   async function create() {
     if (!form.name.trim() || !form.entityId) return;
@@ -49,7 +53,7 @@ export function Assets({ only }: { only?: "VEHICLE" }) {
       currentValue: form.currentValue ? Number(form.currentValue) : null,
       ...(isVehicle ? vehicleFieldsPayload(form) : {}),
     });
-    setForm(emptyForm(only ?? "VEHICLE"));
+    draft.clear();
     setShowForm(false);
     load();
   }
@@ -86,6 +90,7 @@ export function Assets({ only }: { only?: "VEHICLE" }) {
 
       {showForm && (
         <div className="card">
+          <DraftNotice draft={draft} />
           <label>Name</label>
           <input
             value={form.name}
@@ -134,11 +139,7 @@ export function Assets({ only }: { only?: "VEHICLE" }) {
           </div>
           <label>Current estimated value</label>
           <input type="number" value={form.currentValue} onChange={(e) => setForm({ ...form, currentValue: e.target.value })} />
-          <div className="toolbar" style={{ marginTop: 16 }}>
-            <button className="btn" onClick={create}>
-              Create
-            </button>
-          </div>
+          <FormActions onSubmit={create} draft={draft} />
         </div>
       )}
 

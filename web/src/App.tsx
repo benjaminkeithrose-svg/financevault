@@ -7,9 +7,8 @@ import { Visualization } from "./pages/Visualization.js";
 import { Inbox } from "./pages/Inbox.js";
 import { Documents } from "./pages/Documents.js";
 import { DocumentDetail } from "./pages/DocumentDetail.js";
-import { Entities } from "./pages/Entities.js";
 import { EntityDetail } from "./pages/EntityDetail.js";
-import { People } from "./pages/People.js";
+import { PeopleAndEntities } from "./pages/PeopleAndEntities.js";
 import { PersonDetail } from "./pages/PersonDetail.js";
 import { Search } from "./pages/Search.js";
 import { Settings } from "./pages/Settings.js";
@@ -34,6 +33,9 @@ import { BulkImport } from "./pages/BulkImport.js";
 import { PortfolioPlans } from "./pages/PortfolioPlans.js";
 import { PortfolioPlanDetail } from "./pages/PortfolioPlanDetail.js";
 import { LoadFailed } from "./components/LoadFailed.js";
+import { NavMenuList } from "./components/NavMenu.js";
+import { IconPin } from "./components/icons.js";
+import { usePinnedMenu } from "./hooks/usePinnedMenu.js";
 import { Help } from "./pages/Help.js";
 
 function Home() {
@@ -48,9 +50,18 @@ function Home() {
 }
 
 export default function App() {
+  const [pinned, setPinned] = usePinnedMenu();
   return (
-    <div className="app-shell">
+    <div className={`app-shell${pinned ? " menu-pinned" : ""}`}>
       <Header />
+      {pinned && (
+        <aside className="side-nav" aria-label="Menu">
+          <button className="btn secondary side-nav-unpin" onClick={() => setPinned(false)}>
+            <IconPin /> Unpin
+          </button>
+          <NavMenuList onNavigate={() => {}} />
+        </aside>
+      )}
       <main className="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -58,9 +69,9 @@ export default function App() {
           <Route path="/inbox" element={<Inbox />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/documents/:id" element={<DocumentDetail />} />
-          <Route path="/people" element={<People />} />
+          <Route path="/people" element={<PeopleAndEntities />} />
           <Route path="/people/:id" element={<PersonDetail />} />
-          <Route path="/entities" element={<Entities />} />
+          <Route path="/entities" element={<PeopleAndEntities />} />
           <Route path="/entities/:id" element={<EntityDetail />} />
           <Route path="/search" element={<Search />} />
           <Route path="/properties" element={<Properties />} />

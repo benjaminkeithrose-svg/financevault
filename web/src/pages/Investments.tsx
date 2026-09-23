@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import { api, Entity, InvestmentAccount } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { humanize } from "../utils.js";
+import { DraftNotice, FormActions } from "../components/FormActions.js";
+import { useDraft } from "../hooks/useDraft.js";
 
 const ACCOUNT_TYPES = ["SHARES", "ETF", "MANAGED_FUND", "TERM_DEPOSIT", "BOND", "OTHER"];
 
 export function Investments() {
   const [accounts, setAccounts] = useState<InvestmentAccount[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ institution: "", accountRef: "", entityId: "", accountType: "SHARES" });
+  const [form, setForm, draft] = useDraft("investment-accounts:new", { institution: "", accountRef: "", entityId: "", accountType: "SHARES" });
+  const [showForm, setShowForm] = useState(draft.restored);
 
   function load() {
     api.investments.list().then(setAccounts);
@@ -28,7 +30,7 @@ export function Investments() {
       entityId: form.entityId,
       accountType: form.accountType,
     });
-    setForm({ institution: "", accountRef: "", entityId: "", accountType: "SHARES" });
+    draft.clear();
     setShowForm(false);
     load();
   }
@@ -47,6 +49,7 @@ export function Investments() {
 
       {showForm && (
         <div className="card">
+          <DraftNotice draft={draft} />
           <label>Institution</label>
           <input value={form.institution} onChange={(e) => setForm({ ...form, institution: e.target.value })} placeholder="CommSec" />
           <label>Account reference (optional)</label>
@@ -68,11 +71,7 @@ export function Investments() {
               </option>
             ))}
           </select>
-          <div className="toolbar" style={{ marginTop: 16 }}>
-            <button className="btn" onClick={create}>
-              Create
-            </button>
-          </div>
+          <FormActions onSubmit={create} draft={draft} label="Create" />
         </div>
       )}
 

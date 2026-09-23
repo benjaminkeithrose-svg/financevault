@@ -66,3 +66,46 @@ export function IconLock() {
     </svg>
   );
 }
+
+export function IconBin() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 7h16" />
+      <path d="M9 7V4h6v3" />
+      <path d="M6 7l1 13h10l1-13" />
+    </svg>
+  );
+}
+
+export function IconPin() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 4h6l-1 6 4 3H6l4-3z" />
+      <path d="M12 13v7" />
+    </svg>
+  );
+}
+
+export function IconPlus() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+export function IconMinus() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12h14" />
+    </svg>
+  );
+}
+
+export function IconFit() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+    </svg>
+  );
+}

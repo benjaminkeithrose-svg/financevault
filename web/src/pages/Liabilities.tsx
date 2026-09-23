@@ -4,6 +4,8 @@ import { api, Asset, CommercialProperty, Entity, Liability, Property } from "../
 import { ItemCard } from "../components/ItemCard.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { describeVehicle, formatCurrency, liabilityTypeLabel, REPAYMENT_FREQUENCIES } from "../utils.js";
+import { DraftNotice, FormActions } from "../components/FormActions.js";
+import { useDraft } from "../hooks/useDraft.js";
 
 const ALL_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN", "VEHICLE_LOAN", "CREDIT_CARD", "PERSONAL_LOAN", "OTHER"];
 const LOAN_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN"];
@@ -34,9 +36,9 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
   const [properties, setProperties] = useState<Property[]>([]);
   const [commercialProperties, setCommercialProperties] = useState<CommercialProperty[]>([]);
   const [vehicles, setVehicles] = useState<Asset[]>([]);
-  const [showForm, setShowForm] = useState(false);
   const [securityKind, setSecurityKind] = useState<"none" | "residential" | "commercial">("none");
-  const [form, setForm] = useState(emptyForm(scope === "loans" ? "HOME_LOAN" : "CREDIT_CARD"));
+  const [form, setForm, draft] = useDraft(`liabilities:${scope}:new`, emptyForm(scope === "loans" ? "HOME_LOAN" : "CREDIT_CARD"));
+  const [showForm, setShowForm] = useState(draft.restored);
 
   const allowedTypes = scope === "loans" ? LOAN_TYPES : ALL_TYPES;
   const isCard = form.liabilityType === "CREDIT_CARD";
@@ -89,7 +91,7 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
       securityAssetId: VEHICLE_LINKABLE.includes(form.liabilityType) ? form.securityAssetId || null : null,
       interestOnly: isCommercial ? form.interestOnly : null,
     });
-    setForm(emptyForm(form.liabilityType));
+    draft.clear();
     setSecurityKind("none");
     setShowForm(false);
     load();
@@ -127,6 +129,7 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
 
       {showForm && (
         <div className="card">
+          <DraftNotice draft={draft} />
           <label>Name</label>
           <input
             value={form.name}
@@ -287,11 +290,7 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
               </select>
             </>
           )}
-          <div className="toolbar" style={{ marginTop: 16 }}>
-            <button className="btn" onClick={create}>
-              Create
-            </button>
-          </div>
+          <FormActions onSubmit={create} draft={draft} label="Create" />
         </div>
       )}
 

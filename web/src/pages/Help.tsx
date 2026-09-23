@@ -39,6 +39,16 @@ const SECTIONS: Section[] = [
           The only thing it needs is Node.js. If the start file says Node.js isn't installed, get the LTS version from{" "}
           <code>nodejs.org</code>, install it, and double-click the start file again.
         </p>
+        <h4>Getting around</h4>
+        <p>
+          The ☰ button opens the menu. On a computer screen, <strong>Pin to side</strong> in that menu keeps it down the
+          left-hand side while you work; <strong>Unpin</strong> puts it away again.
+        </p>
+        <p>
+          If you leave a form half-filled, what you've typed is kept as a draft on this computer and is there when you come
+          back. <strong>Clear</strong> beside the form's main button empties it and throws the draft away. Card and ID
+          numbers are never kept in drafts.
+        </p>
       </>
     ),
   },
@@ -80,30 +90,31 @@ const SECTIONS: Section[] = [
   {
     id: "how-it-fits",
     title: "How it's organised: people, entities and what they own",
-    keywords: "trust company smsf super fund joint owner structure",
+    keywords: "trust company smsf super fund joint owner structure personal entity family partner child",
     body: (
       <>
-        <p>Everything in Financial Vault hangs off three layers. Getting them right first makes the rest easy.</p>
+        <p>Everything in Financial Vault hangs off three layers.</p>
         <ul>
           <li>
-            <strong>People</strong> are real humans — you, your partner, your kids.
+            <strong>People</strong> — you, your partner, your kids. Every person is automatically also their own{" "}
+            <strong>personal entity</strong>, for anything held in their own name, so nobody is set up twice.
           </li>
           <li>
-            <strong>Entities</strong> are what legally owns things and pays tax: you personally (an "individual"
-            entity), a joint ownership, a family trust, a company, an SMSF. A person is linked to entities with a role
-            such as owner, trustee, director or beneficiary.
+            <strong>Trusts, companies and super funds</strong> — the structures around people. A person is linked to them
+            with a role such as trustee, director, appointor, beneficiary or member.
           </li>
           <li>
-            <strong>Assets and liabilities</strong> — properties, bank accounts, investments, loans, cars — each belong
-            to one entity.
+            <strong>Assets and liabilities</strong> — properties, bank accounts, investments, vehicles, loans — each belong
+            to one person's personal entity or to one structure.
           </li>
         </ul>
         <p>
-          So if your family trust owns a warehouse, the warehouse belongs to the <em>trust</em> entity, and you're linked
-          to the trust as trustee. Totals, tax and capital gains are worked out per entity, the way the ATO sees them.
+          All of them are in one list: <Link to="/people">People &amp; entities</Link>. Open a person to see what they
+          hold in their own name, their family, their ID, and the structures they're part of.
         </p>
         <p>
-          <Link to="/visualization">Visualization</Link> draws this structure as a diagram.
+          Totals, tax and capital gains are worked out per entity, the way the ATO sees them.{" "}
+          <Link to="/visualization">Visualization</Link> draws it all as a diagram.
         </p>
       </>
     ),
@@ -115,11 +126,12 @@ const SECTIONS: Section[] = [
     body: (
       <ol>
         <li>
-          Add yourself (and anyone else) under <Link to="/people">People</Link>.
+          Add yourself and your family under <Link to="/people">People &amp; entities</Link> → <strong>New</strong> →{" "}
+          <strong>Person</strong>. Use the Family option to say who's whose partner or child as you go.
         </li>
         <li>
-          Add an entity for each owner under <Link to="/entities">Entities</Link> — usually one for you personally, plus
-          any trust, company or SMSF — and link people to them.
+          Add each trust, company or SMSF (<strong>New</strong> → <strong>Trust, company or fund</strong>), then open a
+          person and give them their role in it. See <a href="#family-trust">Family and the family trust</a>.
         </li>
         <li>
           Add your bank accounts under <Link to="/banking">Banking</Link> and import each one's transactions from a CSV
@@ -136,6 +148,48 @@ const SECTIONS: Section[] = [
           Take a backup (<Link to="/settings">Settings</Link> → <strong>Download full backup</strong>).
         </li>
       </ol>
+    ),
+  },
+  {
+    id: "family-trust",
+    title: "Family and the family trust",
+    keywords: "partner spouse wife husband child children parent beneficiary trustee appointor settlor",
+    body: (
+      <>
+        <p>
+          On a person's page, <strong>Family</strong> links them to their partner, children and parents. You can also do
+          it while adding someone new.
+        </p>
+        <p>
+          When a parent is made <strong>trustee</strong>, <strong>appointor</strong> or <strong>settlor</strong> of a
+          trust, Financial Vault shows their partner and children in a list, all ticked. Untick anyone who shouldn't be
+          in it, then confirm, and the rest are added as <strong>beneficiaries</strong>. Nobody is added without that
+          confirmation, and anyone already a beneficiary isn't offered again.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "id-cover",
+    title: "ID and cover: licence, Medicare, passport, health insurance",
+    keywords: "drivers licence medicare passport private health insurance identity id documents broker",
+    body: (
+      <>
+        <p>
+          On a person's page, <strong>ID &amp; cover</strong> → <strong>Add</strong> records private health insurance, a
+          Medicare card, driver's licence, passport and similar. Enter the number and expiry date, save, then tap the
+          record to attach the scan.
+        </p>
+        <p>
+          Numbers are stored encrypted, like tax file numbers, and shown with only the last three digits.{" "}
+          <strong>Show</strong> reveals the full number, and each reveal is recorded in the audit log.
+        </p>
+        <p>
+          When a broker asks for ID, <Link to="/packs">Document Packs</Link> has an <strong>ID documents</strong> option
+          (ticked in the Broker Pack) that adds the scans for the people connected to that entity. Expiry dates appear
+          in the expiry calendar.
+        </p>
+      </>
     ),
   },
   {
@@ -484,6 +538,60 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "items",
+    title: "Items in a property: appliances, warranties and servicing",
+    keywords: "sub-asset air conditioner washing machine dryer hot water solar warranty service repair maintenance receipt",
+    body: (
+      <>
+        <p>
+          On a property's page, <strong>Items in this property</strong> → <strong>Add item</strong> records things like
+          an air conditioner, hot water system, washing machine or dryer: make, model, serial number, when you bought it,
+          what it cost and when the warranty ends.
+        </p>
+        <p>
+          Open an item to attach its receipt, manual and warranty, and to keep its <strong>service &amp; running costs</strong>:
+          each service or repair with the date, who did it, what it cost and when it's next due. The item shows its total
+          cost to own — purchase plus everything spent since — to help decide whether to repair or replace. Items can hold
+          their own parts too (a pool pump under the pool, say).
+        </p>
+        <p>
+          Vehicles and boats have the same service log. An item's value is part of the property's value, so items are
+          never added to net worth a second time.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "calendar",
+    title: "Expiry calendar",
+    keywords: "calendar expiry expiries renewal reminder ics google apple outlook due dates",
+    body: (
+      <>
+        <p>
+          The bottom of the <Link to="/visualization">Visualization</Link> page lists everything that expires or falls due,
+          month by month: ID and health cover, insurance and other document renewals, vehicle rego, warranties, services
+          due, lease expiries and rent reviews, and fixed-rate loan periods. Tap one to open it.
+        </p>
+        <h4>Putting the dates in your own calendar</h4>
+        <ol>
+          <li>
+            Click <strong>Add to my calendar</strong>. A file called <code>financial-vault-expiries.ics</code> downloads.
+          </li>
+          <li>
+            Open the file. Apple Calendar and Outlook offer to add the events. For Google Calendar, go to{" "}
+            <code>calendar.google.com</code>, click the gear icon, choose <strong>Import &amp; export</strong>, select the
+            file and click <strong>Import</strong>.
+          </li>
+        </ol>
+        <p>
+          Each date comes with a reminder two weeks before. Importing again later updates the same events rather than
+          doubling them up. The file holds only what's due and when — never numbers or amounts — but it does leave this
+          computer once it's in an online calendar.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "net-worth",
     title: "Dashboard and net worth",
     keywords: "totals balance sheet snapshot compare",
@@ -615,7 +723,11 @@ const SECTIONS: Section[] = [
             capital gains record.
           </li>
           <li>
-            A <strong>vehicle or boat</strong> with a loan linked to it.
+            A <strong>vehicle or boat</strong> with a loan linked to it, or anything with items under it.
+          </li>
+          <li>
+            A <strong>person</strong> who still holds anything in their own name — their personal entity goes with them,
+            so it has to be empty first.
           </li>
           <li>
             An <strong>entity</strong> that still owns or owes anything, or has documents filed against it.

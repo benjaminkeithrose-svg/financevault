@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavMenuList } from "./NavMenu.js";
 import { SearchResults } from "./SearchResults.js";
-import { IconChevronLeft, IconClose, IconHome, IconLock, IconMenu, IconSearch } from "./icons.js";
+import { IconChevronLeft, IconClose, IconHome, IconLock, IconMenu, IconPin, IconSearch } from "./icons.js";
+import { usePinnedMenu } from "../hooks/usePinnedMenu.js";
 import { lockApp } from "./LockGate.js";
 
 const TITLES: Record<string, string> = {
@@ -10,8 +11,8 @@ const TITLES: Record<string, string> = {
   "/visualization": "Visualization",
   "/inbox": "Inbox",
   "/documents": "Documents",
-  "/people": "People",
-  "/entities": "Entities",
+  "/people": "People & Entities",
+  "/entities": "People & Entities",
   "/search": "Search",
   "/properties": "Properties",
   "/commercial-properties/acquisition-model": "Acquisition Model",
@@ -73,6 +74,7 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [pinned, setPinned] = usePinnedMenu();
 
   useEffect(() => {
     setSearchOpen(false);
@@ -133,6 +135,16 @@ export function Header() {
               <IconClose />
             </button>
             <div className="app-header-title">Financial Vault</div>
+            {/* Docking needs room beside the page, so it's offered on wider screens only. */}
+            <button
+              className="btn secondary pin-toggle"
+              onClick={() => {
+                setPinned(!pinned);
+                setMenuOpen(false);
+              }}
+            >
+              <IconPin /> {pinned ? "Unpin" : "Pin to side"}
+            </button>
           </div>
           <div className="overlay-body">
             <NavMenuList onNavigate={() => setMenuOpen(false)} />

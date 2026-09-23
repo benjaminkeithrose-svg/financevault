@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { TfnField } from "../components/TfnField.js";
 import { Link, useParams } from "react-router-dom";
-import { api, Document, Entity, FinancialYear, PayPeriod, Person } from "../api/client.js";
+import { api, Document, Entity, FamilySuggestion, FinancialYear, PayPeriod, Person } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
-import { financialYearLabelForToday, formatCurrency, formatDate, humanize, confirmThenDelete } from "../utils.js";
+import { familySummary, financialYearLabelForToday, formatCurrency, formatDate, humanize, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
+import { FamilyPanel } from "../components/FamilyPanel.js";
+import { IdentityPanel } from "../components/IdentityPanel.js";
+import { TrustFamilyPrompt } from "../components/TrustFamilyPrompt.js";
 
 const RELATIONSHIP_TYPES = [
   "SETTLOR",
@@ -181,6 +184,12 @@ export function PersonDetail() {
   const [financialYears, setFinancialYears] = useState<FinancialYear[]>([]);
   const [financialYearId, setFinancialYearId] = useState("");
   const [periods, setPeriods] = useState<PayPeriod[]>([]);
+  const [people, setPeople] = useState<Person[]>([]);
+  const [personalEntity, setPersonalEntity] = useState<Entity | null>(null);
+  const [prompt, setPrompt] = useState<{ entityId: string; entityName: string; suggestions: FamilySuggestion[] } | null>(
+    null
+  );
+  const [relError, setRelError] = useState<string | null>(null);
 
   function load() {
     if (!id) return;
@@ -189,6 +198,10 @@ export function PersonDetail() {
 
   useEffect(load, [id]);
   useEffect(() => {
+    if (person?.entityId) api.entities.get(person.entityId).then(setPersonalEntity).catch(() => setPersonalEntity(null));
+  }, [person?.entityId]);
+  useEffect(() => {
+    api.people.list().then(setPeople);
     api.entities.list().then(setEntities);
     api.financialYears.list().then((years) => {
       setFinancialYears(years);
@@ -220,15 +233,28 @@ export function PersonDetail() {
 
   async function addRelationship() {
     if (!id || !relEntityId) return;
-    await api.people.addRelationship({
-      personId: id,
-      entityId: relEntityId,
-      relationshipType: relType,
-      ownershipPercent: relPercent ? Number(relPercent) : null,
-    });
-    setRelEntityId("");
-    setRelPercent("");
-    load();
+    setRelError(null);
+    try {
+      const created = await api.people.addRelationship({
+        personId: id,
+        entityId: relEntityId,
+        relationshipType: relType,
+        ownershipPercent: relPercent ? Number(relPercent) : null,
+      });
+      // Setting up a family trust: offer the rest of the family.
+      if (created.familySuggestions.length > 0) {
+        setPrompt({
+          entityId: created.entityId,
+          entityName: created.entity?.name ?? "the trust",
+          suggestions: created.familySuggestions,
+        });
+      }
+      setRelEntityId("");
+      setRelPercent("");
+      load();
+    } catch (err) {
+      setRelError((err as Error).message);
+    }
   }
 
   async function removeRelationship(relId: string) {
@@ -245,9 +271,50 @@ export function PersonDetail() {
       <div className="page-header">
         <div>
           <h2>{person.name}</h2>
-          <p>Person — relationships to the legal entities that own assets on their behalf or with their involvement.</p>
+          <p>{familySummary(person) || "Person"} · also their own entity for anything held in their own name.</p>
         </div>
       </div>
+
+      {prompt && (
+        <TrustFamilyPrompt
+          entityId={prompt.entityId}
+          entityName={prompt.entityName}
+          suggestions={prompt.suggestions}
+          onDone={() => {
+            setPrompt(null);
+            load();
+          }}
+        />
+      )}
+
+      {personalEntity?.financialPosition && (
+        <div className="card">
+          <div className="toolbar" style={{ justifyContent: "space-between" }}>
+            <h3 style={{ margin: 0 }}>Held in their own name</h3>
+            <Link className="btn secondary" to={`/entities/${personalEntity.id}`}>
+              Open
+            </Link>
+          </div>
+          <div className="grid grid-3" style={{ marginTop: 12 }}>
+            <div className="stat-tile">
+              <div className="label">Assets</div>
+              <div className="value">{formatCurrency(personalEntity.financialPosition.totalAssets)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Liabilities</div>
+              <div className="value">{formatCurrency(personalEntity.financialPosition.totalLiabilities)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Net</div>
+              <div className="value">{formatCurrency(personalEntity.financialPosition.netAssets)}</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <FamilyPanel person={person} people={people} onChange={load} />
+
+      <IdentityPanel personId={person.id} />
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Tax file number</h3>
@@ -255,7 +322,7 @@ export function PersonDetail() {
       </div>
 
       <div className="card">
-        <h3 style={{ marginTop: 0 }}>Relationships to entities</h3>
+        <h3 style={{ marginTop: 0 }}>Roles in trusts, companies and funds</h3>
         {(person.entityRelationships || []).length === 0 ? (
           <p className="empty-state">No relationships recorded yet.</p>
         ) : (
@@ -312,6 +379,7 @@ export function PersonDetail() {
             <input type="number" value={relPercent} onChange={(e) => setRelPercent(e.target.value)} />
           </div>
         </div>
+        {relError && <div className="message-box warning">{relError}</div>}
         <div className="toolbar" style={{ marginTop: 12 }}>
           <button className="btn secondary" onClick={addRelationship}>
             Add relationship
@@ -379,8 +447,8 @@ export function PersonDetail() {
       </div>
       <DeleteSection
         title="Delete this person"
-        note="Removes the person, their links to entities and their pay-period log. Entities, assets and documents are not deleted."
-        question={`Delete ${person.name}? Their entity relationships and pay-period log are removed too. This can't be undone.`}
+        note="Removes the person with their personal entity, family links, ID records and pay-period log. Not possible while anything is still held in their own name. Documents are kept."
+        question={`Delete ${person.name}? Their personal entity, family links, ID records and pay-period log are removed too. This can't be undone.`}
         action={() => api.people.remove(person.id)}
         redirectTo="/people"
       />

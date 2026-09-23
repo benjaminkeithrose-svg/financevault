@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { app } from "./app.js";
 import { runPrivacyCleanup } from "./services/privacyCleanup.js";
+import { ensurePersonalEntities } from "./services/personalEntity.js";
 
 const PORT = Number(process.env.PORT) || 4000;
 
@@ -13,6 +14,14 @@ runPrivacyCleanup()
     }
   })
   .catch((err) => console.error("Privacy cleanup failed:", err));
+
+// Everyone recorded before people and entities were joined up gets their
+// personal entity now. Does nothing once everyone has one.
+ensurePersonalEntities()
+  .then((created) => {
+    if (created) console.log(`Created a personal entity for ${created} existing ${created === 1 ? "person" : "people"}.`);
+  })
+  .catch((err) => console.error("Setting up personal entities failed:", err));
 
 // Loopback only. Listening on every interface (the old default) made the
 // whole database readable by anyone on the same Wi-Fi. Both IPv4 and IPv6

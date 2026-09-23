@@ -26,37 +26,56 @@ export interface GraphEdge {
 graphRouter.get(
   "/",
   asyncHandler(async (_req, res) => {
-    const [people, entities, assets, accounts, investmentAccounts, liabilities] = await Promise.all([
+    const [people, entities, assets, accounts, investmentAccounts, liabilities, family] = await Promise.all([
       prisma.person.findMany({ include: { entityRelationships: true } }),
       prisma.entity.findMany({ include: { relationshipsFrom: true } }),
-      prisma.asset.findMany({ include: { property: true, commercialProperty: true } }),
+      prisma.asset.findMany({ where: { parentAssetId: null }, include: { property: true, commercialProperty: true } }),
       prisma.account.findMany(),
       prisma.investmentAccount.findMany(),
       prisma.liability.findMany(),
+      prisma.personRelationship.findMany(),
     ]);
 
     const nodes: GraphNode[] = [];
     const edges: GraphEdge[] = [];
 
+    // A person and their personal entity are one box: what they hold in their
+    // own name hangs straight off the person, rather than a second
+    // "individual" box beside every person.
+    const personOfEntity = new Map(people.filter((p) => p.entityId).map((p) => [p.entityId!, p.id]));
+    const ent = (entityId: string) => {
+      const personId = personOfEntity.get(entityId);
+      return personId ? `person:${personId}` : `entity:${entityId}`;
+    };
+
     for (const p of people) {
       nodes.push({ id: `person:${p.id}`, type: "PERSON", label: p.name, route: `/people/${p.id}` });
     }
     for (const e of entities) {
+      if (personOfEntity.has(e.id)) continue;
       nodes.push({ id: `entity:${e.id}`, type: "ENTITY", label: e.name, sublabel: e.entityType, route: `/entities/${e.id}` });
     }
     for (const p of people) {
       for (const r of p.entityRelationships) {
-        edges.push({ from: `person:${p.id}`, to: `entity:${r.entityId}`, label: r.relationshipType });
+        if (r.entityId === p.entityId) continue;
+        edges.push({ from: `person:${p.id}`, to: ent(r.entityId), label: r.relationshipType });
       }
+    }
+    for (const f of family) {
+      edges.push({
+        from: `person:${f.fromPersonId}`,
+        to: `person:${f.toPersonId}`,
+        label: f.relationshipType === "PARTNER" ? "Partner" : "Parent of",
+      });
     }
     for (const e of entities) {
       for (const r of e.relationshipsFrom) {
-        edges.push({ from: `entity:${e.id}`, to: `entity:${r.toEntityId}`, label: r.relationshipType });
+        edges.push({ from: ent(e.id), to: ent(r.toEntityId), label: r.relationshipType });
       }
     }
 
     for (const a of assets) {
-      let route = "/assets";
+      let route = `/assets/${a.id}`;
       if (a.property) route = `/properties/${a.property.id}`;
       else if (a.commercialProperty) route = `/commercial-properties/${a.commercialProperty.id}`;
       nodes.push({
@@ -67,7 +86,7 @@ graphRouter.get(
         value: a.currentValue,
         route,
       });
-      edges.push({ from: `entity:${a.entityId}`, to: `asset:${a.id}`, label: "Owns" });
+      edges.push({ from: ent(a.entityId), to: `asset:${a.id}`, label: "Owns" });
     }
 
     for (const a of accounts) {
@@ -79,7 +98,7 @@ graphRouter.get(
         value: a.currentBalance,
         route: `/banking/${a.id}`,
       });
-      edges.push({ from: `entity:${a.entityId}`, to: `account:${a.id}`, label: "Owns" });
+      edges.push({ from: ent(a.entityId), to: `account:${a.id}`, label: "Owns" });
     }
 
     for (const a of investmentAccounts) {
@@ -90,7 +109,7 @@ graphRouter.get(
         sublabel: a.accountType,
         route: `/investments/${a.id}`,
       });
-      edges.push({ from: `entity:${a.entityId}`, to: `investment:${a.id}`, label: "Owns" });
+      edges.push({ from: ent(a.entityId), to: `investment:${a.id}`, label: "Owns" });
     }
 
     for (const l of liabilities) {
@@ -102,7 +121,7 @@ graphRouter.get(
         value: l.currentBalance,
         route: `/liabilities/${l.id}`,
       });
-      edges.push({ from: `entity:${l.entityId}`, to: `liability:${l.id}`, label: "Owes" });
+      edges.push({ from: ent(l.entityId), to: `liability:${l.id}`, label: "Owes" });
       if (l.securityPropertyId) {
         const secured = assets.find((a) => a.property?.id === l.securityPropertyId);
         if (secured) edges.push({ from: `liability:${l.id}`, to: `asset:${secured.id}`, label: "Secured by" });

@@ -29,6 +29,8 @@ export interface Entity {
   createdAt: string;
   updatedAt: string;
   _count?: { documents: number; assets: number; liabilities: number };
+  /** Set when this is a person's own personal entity. */
+  personalFor?: { id: string; name: string } | null;
   relationshipsFrom?: EntityRelationship[];
   relationshipsTo?: EntityRelationship[];
   personRelationships?: PersonEntityRelationship[];
@@ -59,10 +61,73 @@ export interface Person {
   contactInfo?: string | null;
   notes?: string | null;
   payFrequency?: string | null;
+  /** Their own personal (individual) entity, created with them. */
+  entityId?: string | null;
+  personalEntity?: Entity | null;
   entityRelationships?: PersonEntityRelationship[];
+  familyFrom?: Array<{ id: string; relationshipType: string; toPersonId: string; toPerson: { id: string; name: string } }>;
+  familyTo?: Array<{ id: string; relationshipType: string; fromPersonId: string; fromPerson: { id: string; name: string } }>;
   documents?: Document[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface FamilySuggestion {
+  personId: string;
+  name: string;
+  relation: "PARTNER" | "CHILD";
+}
+
+export interface IdentityRecord {
+  id: string;
+  personId: string;
+  kind: string;
+  label?: string | null;
+  issuer?: string | null;
+  issueDate?: string | null;
+  expiryDate?: string | null;
+  notes?: string | null;
+  numberMasked: string | null;
+  referenceMasked: string | null;
+  documentCount?: number;
+}
+
+export interface CalendarEvent {
+  id: string;
+  date: string;
+  category: "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN";
+  title: string;
+  detail: string | null;
+  route: string;
+}
+
+export interface MaintenanceRecord {
+  id: string;
+  assetId: string;
+  date: string;
+  kind: string;
+  description: string;
+  cost?: number | null;
+  provider?: string | null;
+  nextDueDate?: string | null;
+  notes?: string | null;
+}
+
+export interface ItemNode {
+  id: string;
+  name: string;
+  itemCategory: string | null;
+  make: string | null;
+  model: string | null;
+  acquisitionDate: string | null;
+  acquisitionCost: number | null;
+  warrantyExpiry: string | null;
+  maintenanceCost: number;
+  lifetimeCost: number;
+  lastServiced: string | null;
+  nextDue: string | null;
+  documentCount: number;
+  children: ItemNode[];
 }
 
 export interface PayPeriodEntry {
@@ -426,6 +491,14 @@ export interface Asset {
   registrationExpiry?: string | null;
   identifier?: string | null;
   securedLoans?: Liability[];
+  parentAssetId?: string | null;
+  parent?: { id: string; name: string; assetType: string; property?: { id: string } | null; commercialProperty?: { id: string } | null } | null;
+  itemCategory?: string | null;
+  warrantyExpiry?: string | null;
+  maintenance?: MaintenanceRecord[];
+  items?: ItemNode[];
+  lifetimeCost?: number;
+  commercialProperty?: { id: string; name: string } | null;
   property?: Property | null;
   documents?: Document[];
   ownerships?: AssetOwnership[];
@@ -1208,6 +1281,8 @@ export const api = {
     addRelationship: (data: Partial<EntityRelationship>) =>
       request<EntityRelationship>("/entities/relationships", { method: "POST", body: JSON.stringify(data) }),
     removeRelationship: (id: string) => request<void>(`/entities/relationships/${id}`, { method: "DELETE" }),
+    addBeneficiaries: (id: string, personIds: string[]) =>
+      request<{ added: number }>(`/entities/${id}/beneficiaries`, { method: "POST", body: JSON.stringify({ personIds }) }),
   },
 
   people: {
@@ -1219,8 +1294,14 @@ export const api = {
       request<Person>(`/people/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     remove: (id: string) => request<void>(`/people/${id}`, { method: "DELETE" }),
     addRelationship: (data: Partial<PersonEntityRelationship>) =>
-      request<PersonEntityRelationship>("/people/relationships", { method: "POST", body: JSON.stringify(data) }),
+      request<PersonEntityRelationship & { familySuggestions: FamilySuggestion[] }>("/people/relationships", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
     removeRelationship: (id: string) => request<void>(`/people/relationships/${id}`, { method: "DELETE" }),
+    addFamily: (data: { personId: string; relatedPersonId: string; relation: "PARTNER" | "CHILD" | "PARENT" }) =>
+      request<unknown>("/people/family", { method: "POST", body: JSON.stringify(data) }),
+    removeFamily: (id: string) => request<void>(`/people/family/${id}`, { method: "DELETE" }),
     payPeriods: (personId: string, financialYearId: string) =>
       request<{ payFrequency: string | null; periods: PayPeriod[] }>(
         `/people/${personId}/pay-periods?financialYearId=${financialYearId}`
@@ -1357,6 +1438,19 @@ export const api = {
       request<void>(`/banking/transactions/${transactionId}`, { method: "DELETE" }),
   },
 
+  identity: {
+    forPerson: (personId: string) => request<IdentityRecord[]>(`/identity/person/${personId}`),
+    create: (data: Record<string, unknown>) =>
+      request<IdentityRecord>("/identity", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<IdentityRecord>(`/identity/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    reveal: (id: string) => request<{ number: string | null; referenceNumber: string | null }>(`/identity/${id}/reveal`),
+    remove: (id: string) => request<void>(`/identity/${id}`, { method: "DELETE" }),
+  },
+  calendar: {
+    list: () => request<CalendarEvent[]>("/calendar"),
+    icsUrl: `${BASE}/calendar/expiries.ics`,
+  },
   assets: {
     list: (params?: Record<string, string>) => request<Asset[]>(`/assets${params ? `?${new URLSearchParams(params)}` : ""}`),
     get: (id: string) => request<Asset>(`/assets/${id}`),
@@ -1364,6 +1458,9 @@ export const api = {
     update: (id: string, data: Record<string, unknown>) =>
       request<Asset>(`/assets/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     remove: (id: string) => request<void>(`/assets/${id}`, { method: "DELETE" }),
+    addMaintenance: (assetId: string, data: Record<string, unknown>) =>
+      request<MaintenanceRecord>(`/assets/${assetId}/maintenance`, { method: "POST", body: JSON.stringify(data) }),
+    removeMaintenance: (recordId: string) => request<void>(`/assets/maintenance/${recordId}`, { method: "DELETE" }),
     addOwnership: (assetId: string, data: Record<string, unknown>) =>
       request<AssetOwnership>(`/assets/${assetId}/ownerships`, { method: "POST", body: JSON.stringify(data) }),
     updateOwnership: (ownershipId: string, data: Record<string, unknown>) =>

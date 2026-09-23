@@ -21,6 +21,53 @@ below.
 that screen. **Print this guide** on the Help page gives a paper or PDF copy.
 This README is the technical reference.
 
+### People, family and structures
+
+Every person is also an entity: adding a person creates their personal
+(INDIVIDUAL) entity in the same step and links it, so nothing is set up
+twice; renaming the person renames it (unless it was given its own name),
+and it's deleted with them — which is refused while it still holds
+anything. People recorded before this get one on the next start, adopting
+a hand-made individual entity they were the sole owner of where one exists.
+People and the trusts/companies/funds around them share one list, **People
+& entities**, and the Visualization draws a person and their personal
+entity as one box.
+
+People can be linked as partners and as parent/child. When someone becomes
+trustee, appointor or settlor of a trust, their partner and children not
+already beneficiaries are offered in a ticked list; only those left ticked
+are added.
+
+Each person has **ID & cover** records (private health, Medicare,
+licence, passport and so on) with scans attached. The numbers are
+encrypted like TFNs, shown masked, and revealed only on request (audited);
+the reset-passcode script clears them along with the other encrypted
+fields. The Broker Pack's **ID documents** chip bundles the scans for the
+people connected to an entity.
+
+### Items, servicing and the expiry calendar
+
+Any asset can hold **items** (sub-assets) — an air conditioner in a
+rental, a washing machine at home, an outboard on a boat — each with make,
+model, serial, purchase date and price, warranty expiry, documents and a
+**service log** (date, work, cost, provider, next due). An item's total
+cost to own is its price plus everything spent since. Items are part of
+their parent's value and never counted in totals; an asset with items under
+it can't be deleted.
+
+The **expiry calendar** at the bottom of Visualization gathers ID and cover
+expiries, document renewal dates, rego, warranties, services due, lease
+expiries and rent reviews, and fixed-rate and loan-term ends. **Add to my
+calendar** downloads an `.ics` file (all-day events, a reminder two weeks
+before, stable ids so re-importing updates rather than duplicates).
+
+### Working in the app
+
+The menu can be pinned down the left on wide screens (remembered in the
+browser). Create forms keep a draft in the browser when left half-filled
+and offer **Clear** beside their main button; secret numbers are never
+drafted.
+
 ### Vehicles, boats and borrowing
 
 **Vehicles & boats** (menu → Assets) records cars, motorcycles, boats, jet

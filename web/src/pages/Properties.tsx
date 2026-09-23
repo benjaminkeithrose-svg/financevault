@@ -4,12 +4,14 @@ import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency } from "../utils.js";
 import { CommercialProperties } from "./CommercialProperties.js";
 import { HelpLink } from "../components/HelpLink.js";
+import { DraftNotice, FormActions } from "../components/FormActions.js";
+import { useDraft } from "../hooks/useDraft.js";
 
 function ResidentialProperties() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: "", entityId: "", address: "", state: "", purchaseDate: "", purchasePrice: "" });
+  const [form, setForm, draft] = useDraft("properties:new", { name: "", entityId: "", address: "", state: "", purchaseDate: "", purchasePrice: "" });
+  const [showForm, setShowForm] = useState(draft.restored);
 
   function load() {
     api.properties.list().then(setProperties);
@@ -30,7 +32,7 @@ function ResidentialProperties() {
       purchaseDate: form.purchaseDate ? new Date(form.purchaseDate).toISOString() : null,
       purchasePrice: form.purchasePrice ? Number(form.purchasePrice) : null,
     });
-    setForm({ name: "", entityId: "", address: "", state: "", purchaseDate: "", purchasePrice: "" });
+    draft.clear();
     setShowForm(false);
     load();
   }
@@ -45,6 +47,7 @@ function ResidentialProperties() {
 
       {showForm && (
         <div className="card">
+          <DraftNotice draft={draft} />
           <label>Display name</label>
           <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Property 1" />
           <label>Owning entity</label>
@@ -74,11 +77,7 @@ function ResidentialProperties() {
             value={form.purchasePrice}
             onChange={(e) => setForm({ ...form, purchasePrice: e.target.value })}
           />
-          <div className="toolbar" style={{ marginTop: 16 }}>
-            <button className="btn" onClick={create}>
-              Create
-            </button>
-          </div>
+          <FormActions onSubmit={create} draft={draft} label="Create" />
         </div>
       )}
 

@@ -3,18 +3,33 @@ import { Link } from "react-router-dom";
 import { api, Document, DocumentLink } from "../api/client.js";
 import { formatDate, humanize, confirmThenDelete } from "../utils.js";
 
-export function DocumentLinker({ targetType, targetId }: { targetType: string; targetId: string }) {
+export function DocumentLinker({
+  targetType,
+  targetId,
+  onChange,
+}: {
+  targetType: string;
+  targetId: string;
+  /** Called after a document is linked, uploaded or unlinked. */
+  onChange?: () => void;
+}) {
   const [links, setLinks] = useState<Array<DocumentLink & { document: Document }>>([]);
   const [allDocuments, setAllDocuments] = useState<Document[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  function load() {
+  function refresh() {
     api.documents.byTarget(targetType, targetId).then(setLinks);
   }
 
-  useEffect(load, [targetType, targetId]);
+  useEffect(refresh, [targetType, targetId]);
+
+  // After a change: reload this list and tell the parent (e.g. a scan count).
+  function load() {
+    refresh();
+    onChange?.();
+  }
 
   async function openPicker() {
     setPickerOpen(true);

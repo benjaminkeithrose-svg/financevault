@@ -5,6 +5,8 @@ import { DocumentLinker } from "../components/DocumentLinker.js";
 import { TransactionCsvImport } from "../components/TransactionCsvImport.js";
 import { formatCurrency, formatDate, humanize, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
+import { DraftNotice, FormActions } from "../components/FormActions.js";
+import { useDraft } from "../hooks/useDraft.js";
 
 const ACCOUNT_TYPES = ["TRANSACTION", "SAVINGS", "OFFSET", "CREDIT_CARD", "OTHER"];
 const STATUSES = ["UNREVIEWED", "CATEGORISED", "MATCHED", "RECONCILED", "NEEDS_REVIEW"];
@@ -16,8 +18,8 @@ export function AccountDetail() {
   const [account, setAccount] = useState<Account | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [taxCategories, setTaxCategories] = useState<TaxCategory[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState(emptyTxn);
+  const [form, setForm, draft] = useDraft(`transactions:${id}:new`, emptyTxn);
+  const [showForm, setShowForm] = useState(draft.restored);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [editing, setEditing] = useState(false);
   const [details, setDetails] = useState<Record<string, string>>({});
@@ -96,7 +98,7 @@ export function AccountDetail() {
       counterparty: form.counterparty || null,
       taxCategoryId: form.taxCategoryId || null,
     });
-    setForm(emptyTxn);
+    draft.clear();
     setShowForm(false);
     load();
   }
@@ -226,6 +228,7 @@ export function AccountDetail() {
 
         {showForm && (
           <div style={{ marginTop: 12 }}>
+            <DraftNotice draft={draft} />
             <div className="grid grid-2">
               <div>
                 <label>Date</label>
@@ -255,11 +258,7 @@ export function AccountDetail() {
                 </select>
               </div>
             </div>
-            <div className="toolbar" style={{ marginTop: 12 }}>
-              <button className="btn" onClick={addTransaction}>
-                Add
-              </button>
-            </div>
+            <FormActions onSubmit={addTransaction} draft={draft} label="Add" />
           </div>
         )}
 

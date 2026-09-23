@@ -3,7 +3,9 @@ import { Link, useParams } from "react-router-dom";
 import { api, Asset, Entity } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
-import { describeVehicle, formatCurrency, humanize, monthlyEquivalent, vehicleTypeLabel } from "../utils.js";
+import { describeVehicle, formatCurrency, humanize, itemCategoryLabel, ITEM_CATEGORIES, monthlyEquivalent, vehicleTypeLabel } from "../utils.js";
+import { ItemsPanel } from "../components/ItemsPanel.js";
+import { MaintenancePanel } from "../components/MaintenancePanel.js";
 import { EMPTY_VEHICLE_FIELDS, VehicleFields, vehicleFieldsPayload } from "../components/VehicleFields.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { LoadFailed } from "../components/LoadFailed.js";
@@ -41,6 +43,8 @@ export function AssetDetail() {
         registration: a.registration || "",
         registrationExpiry: toDateInput(a.registrationExpiry),
         identifier: a.identifier || "",
+        itemCategory: a.itemCategory || "APPLIANCE",
+        warrantyExpiry: toDateInput(a.warrantyExpiry),
       });
     }).catch((e: Error) => setLoadError(e.message));
   }
@@ -55,6 +59,17 @@ export function AssetDetail() {
     return <div className="empty-state">Loading…</div>;
   }
 
+  const isItem = !!asset.parentAssetId;
+  const parentRoute = asset.parent
+    ? asset.parent.property
+      ? `/properties/${asset.parent.property.id}`
+      : asset.parent.commercialProperty
+        ? `/commercial-properties/${asset.parent.commercialProperty.id}`
+        : `/assets/${asset.parent.id}`
+    : null;
+  // Things that get serviced and have parts: vehicles, equipment, items.
+  const hasUpkeep = isItem || ["VEHICLE", "EQUIPMENT", "OTHER"].includes(asset.assetType);
+
   async function save() {
     if (!id) return;
     setSaving(true);
@@ -64,9 +79,19 @@ export function AssetDetail() {
         assetType: form.assetType,
         acquisitionDate: form.acquisitionDate ? new Date(form.acquisitionDate).toISOString() : null,
         acquisitionCost: form.acquisitionCost ? Number(form.acquisitionCost) : null,
-        currentValue: form.currentValue ? Number(form.currentValue) : null,
         notes: form.notes || null,
+        // An item's value is part of what it sits under, so it has none of its own.
+        ...(isItem ? {} : { currentValue: form.currentValue ? Number(form.currentValue) : null }),
         ...(form.assetType === "VEHICLE" ? vehicleFieldsPayload(form) : {}),
+        ...(isItem
+          ? {
+              itemCategory: form.itemCategory,
+              make: form.make || null,
+              model: form.model || null,
+              identifier: form.identifier || null,
+              warrantyExpiry: form.warrantyExpiry ? new Date(form.warrantyExpiry).toISOString() : null,
+            }
+          : {}),
       });
       load();
     } finally {
@@ -75,7 +100,7 @@ export function AssetDetail() {
   }
 
   const isVehicle = asset.assetType === "VEHICLE";
-  const backTo = isVehicle ? "/vehicles" : "/assets";
+  const backTo = parentRoute ?? (isVehicle ? "/vehicles" : "/assets");
   const loans = asset.securedLoans ?? [];
 
   return (
@@ -84,8 +109,16 @@ export function AssetDetail() {
         <div>
           <h2>{asset.name}</h2>
           <p>
-            {isVehicle ? `${vehicleTypeLabel(asset.vehicleType)} · ${describeVehicle(asset)}` : humanize(asset.assetType)} ·{" "}
-            <Link to={`/entities/${asset.entityId}`}>{asset.entity?.name}</Link>
+            {isItem && asset.parent && parentRoute ? (
+              <>
+                {itemCategoryLabel(asset.itemCategory)} · part of <Link to={parentRoute}>{asset.parent.name}</Link>
+              </>
+            ) : (
+              <>
+                {isVehicle ? `${vehicleTypeLabel(asset.vehicleType)} · ${describeVehicle(asset)}` : humanize(asset.assetType)} ·{" "}
+                <Link to={`/entities/${asset.entityId}`}>{asset.entity?.name}</Link>
+              </>
+            )}
           </p>
         </div>
       </div>
@@ -93,18 +126,55 @@ export function AssetDetail() {
       <div className="card">
         <label>Name</label>
         <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-        <label>Type</label>
-        <select value={form.assetType} onChange={(e) => setForm({ ...form, assetType: e.target.value })}>
-          {STANDALONE_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t === "VEHICLE" ? "Vehicle or boat" : humanize(t)}
-            </option>
-          ))}
-        </select>
+        {isItem ? (
+          <div className="grid grid-2">
+            <div>
+              <label>Kind</label>
+              <select value={form.itemCategory} onChange={(e) => setForm({ ...form, itemCategory: e.target.value })}>
+                {ITEM_CATEGORIES.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label>Make</label>
+              <input value={form.make} onChange={(e) => setForm({ ...form, make: e.target.value })} />
+            </div>
+            <div>
+              <label>Model</label>
+              <input value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} />
+            </div>
+            <div>
+              <label>Serial number</label>
+              <input value={form.identifier} onChange={(e) => setForm({ ...form, identifier: e.target.value })} />
+            </div>
+            <div>
+              <label>Warranty ends</label>
+              <input
+                type="date"
+                value={form.warrantyExpiry}
+                onChange={(e) => setForm({ ...form, warrantyExpiry: e.target.value })}
+              />
+            </div>
+          </div>
+        ) : (
+          <>
+            <label>Type</label>
+            <select value={form.assetType} onChange={(e) => setForm({ ...form, assetType: e.target.value })}>
+              {STANDALONE_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t === "VEHICLE" ? "Vehicle or boat" : humanize(t)}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
         {form.assetType === "VEHICLE" && <VehicleFields form={form} onChange={setForm} />}
         <div className="grid grid-2">
           <div>
-            <label>{form.assetType === "VEHICLE" ? "Purchase date" : "Acquisition date"}</label>
+            <label>{form.assetType === "VEHICLE" || isItem ? "Purchase date" : "Acquisition date"}</label>
             <input
               type="date"
               value={form.acquisitionDate}
@@ -112,7 +182,7 @@ export function AssetDetail() {
             />
           </div>
           <div>
-            <label>{form.assetType === "VEHICLE" ? "Purchase price" : "Acquisition cost"}</label>
+            <label>{form.assetType === "VEHICLE" || isItem ? "Purchase price" : "Acquisition cost"}</label>
             <input
               type="number"
               value={form.acquisitionCost}
@@ -120,8 +190,16 @@ export function AssetDetail() {
             />
           </div>
         </div>
-        <label>Current estimated value</label>
-        <input type="number" value={form.currentValue} onChange={(e) => setForm({ ...form, currentValue: e.target.value })} />
+        {!isItem && (
+          <>
+            <label>Current estimated value</label>
+            <input
+              type="number"
+              value={form.currentValue}
+              onChange={(e) => setForm({ ...form, currentValue: e.target.value })}
+            />
+          </>
+        )}
         <label>Notes</label>
         <textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
         <div className="toolbar" style={{ marginTop: 16 }}>
@@ -164,7 +242,18 @@ export function AssetDetail() {
         </div>
       )}
 
-      <AssetOwnershipPanel asset={asset} entities={entities} onChange={load} />
+      {hasUpkeep && (
+        <MaintenancePanel
+          assetId={asset.id}
+          records={asset.maintenance ?? []}
+          purchaseCost={asset.acquisitionCost}
+          onChange={load}
+        />
+      )}
+
+      {hasUpkeep && <ItemsPanel parentAssetId={asset.id} title={isItem ? "Parts and add-ons" : "Items and add-ons"} />}
+
+      {!isItem && <AssetOwnershipPanel asset={asset} entities={entities} onChange={load} />}
 
       <div className="card">
         <h3>Documents</h3>
@@ -172,13 +261,19 @@ export function AssetDetail() {
       </div>
 
       <DeleteSection
-        title={isVehicle ? "Delete this vehicle" : "Delete this asset"}
+        title={isItem ? "Delete this item" : isVehicle ? "Delete this vehicle" : "Delete this asset"}
         note={
-          isVehicle
-            ? "Not possible while a loan is linked to it — delete the loan or unlink it first. Linked documents are kept."
-            : "Removes the asset from your records and totals. Linked documents are kept."
+          isItem
+            ? "Removes the item and its service history. Not possible while other items sit under it. Linked documents are kept."
+            : isVehicle
+              ? "Not possible while a loan is linked to it — delete the loan or unlink it first. Linked documents are kept."
+              : "Removes the asset from your records and totals. Linked documents are kept."
         }
-        question={`Delete ${asset.name}? This can't be undone.`}
+        question={`Delete ${asset.name}${
+          (asset.maintenance?.length ?? 0) > 0
+            ? ` and its ${asset.maintenance!.length} service ${asset.maintenance!.length === 1 ? "entry" : "entries"}`
+            : ""
+        }? This can't be undone.`}
         action={() => api.assets.remove(asset.id)}
         redirectTo={backTo}
       />

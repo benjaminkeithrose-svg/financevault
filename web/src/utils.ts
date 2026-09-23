@@ -103,3 +103,50 @@ const LIABILITY_TYPE_LABELS: Record<string, string> = {
 export function liabilityTypeLabel(type: string): string {
   return LIABILITY_TYPE_LABELS[type] ?? humanize(type);
 }
+
+/** "Partner of Sam · Parent of Kid One, Kid Two" from a person's family links. */
+export function familySummary(p: {
+  familyFrom?: Array<{ relationshipType: string; toPerson: { name: string } }>;
+  familyTo?: Array<{ relationshipType: string; fromPerson: { name: string } }>;
+}): string {
+  const partners = [
+    ...(p.familyFrom ?? []).filter((f) => f.relationshipType === "PARTNER").map((f) => f.toPerson.name),
+    ...(p.familyTo ?? []).filter((f) => f.relationshipType === "PARTNER").map((f) => f.fromPerson.name),
+  ];
+  const children = (p.familyFrom ?? []).filter((f) => f.relationshipType === "PARENT").map((f) => f.toPerson.name);
+  const parents = (p.familyTo ?? []).filter((f) => f.relationshipType === "PARENT").map((f) => f.fromPerson.name);
+  return [
+    partners.length ? `Partner of ${partners.join(", ")}` : "",
+    children.length ? `Parent of ${children.join(", ")}` : "",
+    parents.length ? `Child of ${parents.join(", ")}` : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
+export const ITEM_CATEGORIES: Array<{ value: string; label: string }> = [
+  { value: "APPLIANCE", label: "Appliance" },
+  { value: "HEATING_COOLING", label: "Heating / cooling" },
+  { value: "HOT_WATER", label: "Hot water" },
+  { value: "SOLAR", label: "Solar / battery" },
+  { value: "POOL_SPA", label: "Pool / spa" },
+  { value: "SECURITY", label: "Security / smart home" },
+  { value: "FURNITURE", label: "Furniture" },
+  { value: "ELECTRONICS", label: "Electronics" },
+  { value: "FIXTURE", label: "Fixture / fitting" },
+  { value: "EQUIPMENT", label: "Tools / equipment" },
+  { value: "OTHER", label: "Other" },
+];
+
+export function itemCategoryLabel(value?: string | null): string {
+  return ITEM_CATEGORIES.find((c) => c.value === value)?.label ?? "Item";
+}
+
+/** "expired" / "soon" (within 60 days) / null, for highlighting a date. */
+export function dueState(date?: string | null): "expired" | "soon" | null {
+  if (!date) return null;
+  const days = (new Date(date).getTime() - Date.now()) / 86_400_000;
+  if (days < 0) return "expired";
+  if (days <= 60) return "soon";
+  return null;
+}

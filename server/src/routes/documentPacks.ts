@@ -47,6 +47,23 @@ async function documentsForCategory(entityId: string, financialYearId: string | 
   });
 }
 
+/**
+ * Scans of ID and cover (licence, Medicare, passport, health insurance) for
+ * the people connected to this entity — what a broker asks for to verify
+ * identity. Only included when that chip is ticked.
+ */
+async function idDocuments(entityId: string) {
+  const personIds = await connectedPersonIds(entityId);
+  if (personIds.length === 0) return [];
+  const records = await prisma.identityRecord.findMany({ where: { personId: { in: personIds } }, select: { id: true } });
+  const links = await prisma.documentLink.findMany({
+    where: { targetType: "IDENTITY_RECORD", targetId: { in: records.map((r) => r.id) } },
+    include: { document: true },
+  });
+  const byId = new Map(links.map((l) => [l.document.id, l.document]));
+  return [...byId.values()];
+}
+
 async function incomeDocuments(entityId: string, financialYearId: string | undefined) {
   const personIds = await connectedPersonIds(entityId);
 
@@ -85,7 +102,7 @@ async function incomeDocuments(entityId: string, financialYearId: string | undef
 
 export async function assetsLiabilitiesCsv(entityId: string): Promise<string> {
   const [assets, liabilities, accounts] = await Promise.all([
-    prisma.asset.findMany({ where: { entityId } }),
+    prisma.asset.findMany({ where: { entityId, parentAssetId: null } }),
     prisma.liability.findMany({
       where: { entityId },
       include: { securityProperty: true, securityCommercialProperty: true, securityAsset: true },
@@ -207,9 +224,10 @@ documentPacksRouter.get(
     );
     const income = await incomeDocuments(entityId, financialYearId);
     categories.push({ key: "Income", label: "Income (payslips & PAYG)", count: income.length });
+    categories.push({ key: "ID", label: "ID documents (licence, Medicare, passport…)", count: (await idDocuments(entityId)).length });
 
     const [assetCount, liabilityCount, accountCount, taxRecordCount] = await Promise.all([
-      prisma.asset.count({ where: { entityId } }),
+      prisma.asset.count({ where: { entityId, parentAssetId: null } }),
       prisma.liability.count({ where: { entityId } }),
       prisma.account.count({ where: { entityId } }),
       prisma.taxRecord.count({ where: { entityId, ...(financialYearId ? { financialYearId } : {}) } }),
@@ -247,6 +265,10 @@ documentPacksRouter.post(
     for (const category of categories) {
       if (category === "Income") {
         for (const d of await incomeDocuments(entityId, financialYearId)) documentsById.set(d.id, d);
+        continue;
+      }
+      if (category === "ID") {
+        for (const d of await idDocuments(entityId)) documentsById.set(d.id, d);
         continue;
       }
       if (!(DOCUMENT_CATEGORIES as readonly string[]).includes(category)) continue;

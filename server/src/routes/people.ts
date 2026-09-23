@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
-import { asyncHandler } from "../middleware/errorHandler.js";
-import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
+import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
+import { deleteWithLinks, entityDependents, refuseIfInUse } from "../services/deletion.js";
+import { createPersonalEntity } from "../services/personalEntity.js";
+import { FOUNDING_TRUST_ROLES, trustFamilySuggestions } from "../services/family.js";
 import { logAudit } from "../services/audit.js";
 import { parseTfnInput, revealTfn, tfnSummary } from "../services/tfnAccess.js";
 
@@ -13,7 +15,12 @@ peopleRouter.get(
   asyncHandler(async (_req, res) => {
     const people = await prisma.person.findMany({
       orderBy: { name: "asc" },
-      include: { entityRelationships: { include: { entity: true } } },
+      include: {
+        entityRelationships: { include: { entity: true } },
+        personalEntity: true,
+        familyFrom: { include: { toPerson: { select: { id: true, name: true } } } },
+        familyTo: { include: { fromPerson: { select: { id: true, name: true } } } },
+      },
     });
     res.json(people);
   })
@@ -24,7 +31,12 @@ peopleRouter.get(
   asyncHandler(async (req, res) => {
     const person = await prisma.person.findUnique({
       where: { id: req.params.id },
-      include: { entityRelationships: { include: { entity: true } } },
+      include: {
+        entityRelationships: { include: { entity: true } },
+        personalEntity: true,
+        familyFrom: { include: { toPerson: { select: { id: true, name: true } } } },
+        familyTo: { include: { fromPerson: { select: { id: true, name: true } } } },
+      },
     });
     if (!person) {
       res.status(404).json({ error: "Person not found" });
@@ -64,7 +76,13 @@ peopleRouter.post(
       res.status(400).json({ error: tfn.error });
       return;
     }
-    const person = await prisma.person.create({ data: { ...personData(parsed), tfn: tfn.value } });
+    // The person and their personal entity are created together, so nobody
+    // has to set themselves up twice.
+    const person = await prisma.$transaction(async (tx) => {
+      const created = await tx.person.create({ data: { ...personData(parsed), tfn: tfn.value } });
+      await createPersonalEntity(tx, created.id, created.name);
+      return created;
+    });
     await logAudit("PERSON_CREATED", { targetType: "Person", targetId: person.id, data: { name: person.name } });
     res.status(201).json({ ...person, ...(await tfnSummary("person", person.id)) });
   })
@@ -79,9 +97,22 @@ peopleRouter.put(
       res.status(400).json({ error: tfn.error });
       return;
     }
-    const person = await prisma.person.update({
-      where: { id: req.params.id },
-      data: { ...personData(parsed), tfn: tfn.value },
+    const before = await prisma.person.findUnique({ where: { id: req.params.id }, include: { personalEntity: true } });
+    if (!before) {
+      res.status(404).json({ error: "Person not found" });
+      return;
+    }
+    const person = await prisma.$transaction(async (tx) => {
+      const updated = await tx.person.update({
+        where: { id: req.params.id },
+        data: { ...personData(parsed), tfn: tfn.value },
+      });
+      // A rename follows through to their personal entity — unless that
+      // entity was given its own name (e.g. "Ben (Personal)"), which is kept.
+      if (parsed.name && before.personalEntity && before.personalEntity.name === before.name) {
+        await tx.entity.update({ where: { id: before.personalEntity.id }, data: { name: parsed.name } });
+      }
+      return updated;
     });
     await logAudit("PERSON_CHANGED", { targetType: "Person", targetId: person.id, data: parsed });
     res.json({ ...person, ...(await tfnSummary("person", person.id)) });
@@ -104,7 +135,23 @@ peopleRouter.get(
 peopleRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    await deleteWithLinks([{ type: "PERSON", id: req.params.id }], (tx) => tx.person.delete({ where: { id: req.params.id } }));
+    const person = await prisma.person.findUnique({
+      where: { id: req.params.id },
+      include: { identityRecords: { select: { id: true } } },
+    });
+    if (!person) {
+      res.status(404).json({ error: "Person not found" });
+      return;
+    }
+    // Their personal entity goes with them, so it has to be empty first.
+    if (person.entityId) refuseIfInUse("person's personal entity", await entityDependents(person.entityId));
+    const targets = [{ type: "PERSON", id: person.id }];
+    if (person.entityId) targets.push({ type: "ENTITY", id: person.entityId });
+    for (const r of person.identityRecords) targets.push({ type: "IDENTITY_RECORD", id: r.id });
+    await deleteWithLinks(targets, async (tx) => {
+      await tx.person.delete({ where: { id: person.id } });
+      if (person.entityId) await tx.entity.delete({ where: { id: person.entityId } });
+    });
     await logAudit("PERSON_DELETED", { targetType: "Person", targetId: req.params.id });
     res.status(204).send();
   })
@@ -136,7 +183,13 @@ peopleRouter.post(
       targetType: "PersonEntityRelationship",
       targetId: relationship.id,
     });
-    res.status(201).json(relationship);
+    // Setting up a family trust: offer the rest of the family as
+    // beneficiaries. Nothing is added here — the person ticks who to include.
+    const familySuggestions =
+      relationship.entity.entityType === "TRUST" && FOUNDING_TRUST_ROLES.includes(relationship.relationshipType)
+        ? await trustFamilySuggestions(relationship.personId, relationship.entityId)
+        : [];
+    res.status(201).json({ ...relationship, familySuggestions });
   })
 );
 
@@ -144,6 +197,55 @@ peopleRouter.delete(
   "/relationships/:id",
   asyncHandler(async (req, res) => {
     await prisma.personEntityRelationship.delete({ where: { id: req.params.id } });
+    res.status(204).send();
+  })
+);
+
+// ---------------------------------------------------------------------------
+// Family links between people (partner, parent/child).
+// ---------------------------------------------------------------------------
+
+const familyInput = z.object({
+  personId: z.string(),
+  relatedPersonId: z.string(),
+  // Read as "relatedPerson is my …": PARTNER, CHILD or PARENT.
+  relation: z.enum(["PARTNER", "CHILD", "PARENT"]),
+});
+
+peopleRouter.post(
+  "/family",
+  asyncHandler(async (req, res) => {
+    const { personId, relatedPersonId, relation } = familyInput.parse(req.body);
+    if (personId === relatedPersonId) throw new HttpError(400, "A person can't be related to themselves.");
+    // Stored one way: PARENT always points from parent to child; a
+    // partnership is stored once, whichever side it was added from.
+    const [fromPersonId, toPersonId, relationshipType] =
+      relation === "PARTNER"
+        ? [personId, relatedPersonId, "PARTNER"]
+        : relation === "CHILD"
+          ? [personId, relatedPersonId, "PARENT"]
+          : [relatedPersonId, personId, "PARENT"];
+    const existing = await prisma.personRelationship.findFirst({
+      where: {
+        relationshipType,
+        OR: [
+          { fromPersonId, toPersonId },
+          ...(relationshipType === "PARTNER" ? [{ fromPersonId: toPersonId, toPersonId: fromPersonId }] : []),
+        ],
+      },
+    });
+    if (existing) throw new HttpError(409, "That family link is already recorded.");
+    const link = await prisma.personRelationship.create({ data: { fromPersonId, toPersonId, relationshipType } });
+    await logAudit("FAMILY_LINK_CREATED", { targetType: "PersonRelationship", targetId: link.id, data: { relationshipType } });
+    res.status(201).json(link);
+  })
+);
+
+peopleRouter.delete(
+  "/family/:id",
+  asyncHandler(async (req, res) => {
+    await prisma.personRelationship.delete({ where: { id: req.params.id } });
+    await logAudit("FAMILY_LINK_DELETED", { targetType: "PersonRelationship", targetId: req.params.id });
     res.status(204).send();
   })
 );

@@ -5,7 +5,8 @@ interface NavItem {
   label: string;
 }
 
-// Grouped per the "who owns it" architecture: People and Entities are the
+// Grouped per the "who owns it" architecture: people (each also their own
+// personal entity) and the trusts/companies/funds around them are the
 // ownership layer; Assets/Liabilities are what they own and owe. Keeping
 // this distinction visible in the nav, not just in the data model.
 export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
@@ -20,8 +21,7 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
       { to: "/email-import", label: "Email import" },
     ],
   },
-  { label: "People", items: [{ to: "/people", label: "People" }] },
-  { label: "Entities", items: [{ to: "/entities", label: "Entities" }] },
+  { label: "Who owns it", items: [{ to: "/people", label: "People & entities" }] },
   {
     label: "Assets",
     items: [
