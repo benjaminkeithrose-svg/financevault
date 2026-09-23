@@ -287,3 +287,71 @@ trust with nobody able to use the losses).
 **Needs:** idea 3 (reference library) plus Revenue NSW land tax rules for
 trusts; each person's expected income; idea 4 (profitability) for the
 rent/cost/loan figures.
+
+---
+
+## 10. PAYG employees — deductions by occupation, salary packaging and car benefits
+
+**Why:** most first-time investors are PAYG employees. Knowing exactly what
+each person's occupation lets them claim — and what their employer lets them
+package — maximises the refund. E.g. sales (with a car allowance) and
+teaching.
+
+**Per person:** occupation, employer, employment type (full-time, part-time,
+casual), pay frequency (already tracked), and the benefits they get — car
+allowance, novated lease, company car, fuel card, phone, laptop and so on.
+Ties into the Fact Find's employment section, which isn't tracked yet.
+
+**Occupation deduction checklist:** the ATO publishes an occupation guide
+for dozens of jobs (including sales and marketing, and teachers and
+education professionals), listing what can and can't be claimed. The app
+would turn the relevant guide into a year-round checklist: each allowable
+item, whether a receipt or record is on file, and what's still missing
+before 30 June. Includes the general rules — work-from-home (fixed-rate or
+actual-cost method), car (cents per km or logbook), self-education, tools
+and equipment (immediate deduction under $300, otherwise depreciated).
+
+**Car: allowance vs novated lease vs company car** — a side-by-side
+calculator for the person's real numbers:
+- Car allowance: taxed as income; car expenses claimed by cents per km
+  (capped) or logbook.
+- Novated lease: paid from pre-tax salary; fringe benefits tax applies
+  (statutory or employee-contribution method). Electric cars under the
+  luxury car tax threshold are currently exempt from FBT — confirm the
+  current rules when building.
+- Company car, fuel card: fringe benefits and their reportable amount.
+
+**Other packaging:** salary sacrifice to super (links to the super caps),
+FBT-exempt work items such as a laptop or phone used mainly for work, and
+anything the employer or industry offers (e.g. some public-sector and
+not-for-profit employers allow wider packaging).
+
+**Important link to borrowing (idea 7):** deductions claimed in the tax
+return don't reduce the gross salary lenders use for PAYG income. Salary
+packaging does reduce it on the payslip — some lenders add some of it back,
+others don't, and a novated lease is counted as a commitment. So the app
+shows both results: tax saved, and the effect on borrowing capacity —
+worth timing packaging around a loan application. Confirm lender treatment
+with the broker.
+
+**Scrutiny:** the ATO compares work-related claims with others in the same
+occupation. Every claim links to its receipt or record and to the ATO
+occupation guide, so a high claim is backed by evidence.
+
+**To gather:** the ATO occupation guides for each person's job; the ATO
+pages on car expenses, work-from-home expenses, self-education, salary
+sacrifice, and FBT on cars and novated leases (including the electric car
+exemption); each person's employment contract or benefits summary.
+
+---
+
+## 11. Turn features on or off
+
+**Why:** not everyone needs every part of the app — SMSF, commercial
+property, salary packaging, car benefits, Gmail import and so on. Hidden
+features keep the menu and pages simple.
+
+**Idea:** Settings → "Features": a switch for each module. Switched off,
+it disappears from the menu, dashboard and pages, but its data is kept and
+it comes back exactly as it was when switched on. Some features could also
+be switched per person (e.g. car allowance only for the person who has one).
