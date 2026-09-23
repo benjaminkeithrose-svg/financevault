@@ -343,6 +343,20 @@ pages on car expenses, work-from-home expenses, self-education, salary
 sacrifice, and FBT on cars and novated leases (including the electric car
 exemption); each person's employment contract or benefits summary.
 
+**Addition — income statement (payment summary):**
+- Each person's end-of-year income statement (from myGov; older years a
+  PAYG payment summary) read into their year: gross salary, tax withheld,
+  each allowance (e.g. car allowance) shown separately, reportable fringe
+  benefits, reportable employer super contributions (salary sacrifice),
+  and any lump sums.
+- Checked against the payslips logged in pay tracking — flags a difference.
+- Feeds the deduction checklist (a car allowance on the statement prompts
+  the car claim), the tax estimate, the car comparison, and borrowing
+  capacity (gross income as lenders see it).
+- The app already has a "PAYG Summary / Income Statement" document type;
+  this reads the figures out of it (checked by the person, since the text
+  read from a scan can be wrong).
+
 ---
 
 ## 11. Turn features on or off
@@ -383,20 +397,6 @@ withdrawn or replaced.
 
 **Depends on:** ideas 1 (Tax reference type), 3 (library), 8 and 10
 (checklists), 2 (debt allocation).
-
-**Addition — income statement (payment summary):**
-- Each person's end-of-year income statement (from myGov; older years a
-  PAYG payment summary) read into their year: gross salary, tax withheld,
-  each allowance (e.g. car allowance) shown separately, reportable fringe
-  benefits, reportable employer super contributions (salary sacrifice),
-  and any lump sums.
-- Checked against the payslips logged in pay tracking — flags a difference.
-- Feeds the deduction checklist (a car allowance on the statement prompts
-  the car claim), the tax estimate, the car comparison, and borrowing
-  capacity (gross income as lenders see it).
-- The app already has a "PAYG Summary / Income Statement" document type;
-  this reads the figures out of it (checked by the person, since the text
-  read from a scan can be wrong).
 
 ---
 
