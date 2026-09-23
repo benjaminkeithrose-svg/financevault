@@ -482,3 +482,32 @@ keyhole logo sits small in the header and on the lock screen.
 - **Consistency sweep:** one accent colour, red only for delete and errors,
   touch targets ≥ 40px (PREFERENCES.md) — re-checked across every page in
   every theme, on desktop and phone.
+
+---
+
+## 16. Easier updates — drop the new version in, no moving folders
+
+**Why:** today an update means renaming folders, unzipping and running the
+copy script (START HERE.txt). It should be as simple as dropping in the
+new download.
+
+**Idea:**
+- **Data lives in its own folder**, separate from the program (e.g.
+  Documents/Financial Vault Data) — records, documents and settings. This
+  was gap item 17, skipped earlier; it's what makes a simple update
+  possible, because the program files can then be replaced without touching
+  the data. Existing data is moved there once, automatically, on the first
+  start after the change.
+- **Updates folder:** drop the new ZIP (as downloaded, not unzipped) into an
+  "Updates" folder inside Financial Vault. Next time it starts, it:
+  1. checks the ZIP is a genuine, newer Financial Vault version;
+  2. takes a full backup automatically;
+  3. replaces the program files (never the data);
+  4. installs and updates the database layout;
+  5. keeps the previous version so it can be put back with one click;
+  6. deletes the ZIP and shows "Updated to version X — here's what's new".
+- **Or from inside the app:** Settings → "Install an update" → choose the
+  ZIP → same steps, then it restarts itself.
+- If anything fails, it puts the previous version back and says so —
+  records are never at risk.
+- Works offline — no update server, nothing downloaded automatically.
