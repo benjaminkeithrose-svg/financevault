@@ -230,3 +230,60 @@ for the accountant instead.
 
 **Needs:** the ATO reference library (idea 3), each person's expected income,
 debt allocation (idea 2), depreciation schedules.
+
+**Refined after discussion — "go harder, legally":**
+- Every item gets a risk rating so nothing is dropped just for being less
+  conservative:
+  - **Settled** — clearly allowed; claim it confidently with records.
+  - **Arguable** — a reasonable position, but take it to the accountant with
+    the reasoning and sources; consider a private binding ruling.
+  - **ATO-targeted** — in an ATO taxpayer alert or outside a PCG "low-risk
+    zone"; shown so the family knows where the line is.
+- Where the ATO publishes risk zones (e.g. PCG 2022/2 for trust
+  distributions), the app shows which zone the family's numbers fall in.
+- **Private binding rulings:** for arguable positions, the app can prepare
+  the facts for the accountant to ask the ATO in advance. A favourable
+  ruling binds the ATO — the legal way to take a harder position with
+  certainty.
+- The best protection against scrutiny is the paper trail: each claim links
+  to its evidence and ATO source, so it stands up if questioned.
+
+---
+
+## 9. Structure comparison — "who should own the next property, and why"
+
+**Why:** the right owner is decided at purchase. Moving a property later
+usually costs capital gains tax and stamp duty, so it's worth modelling
+before buying. Also a record of *why* each existing property is owned the
+way it is.
+
+**Compare for a proposed purchase** (using the family's own incomes,
+the property's expected rent, costs and loan):
+- **Individual / joint:** negative gearing losses reduce the owner's own
+  tax straight away; 50% CGT discount; main residence exemption possible;
+  land tax threshold available.
+- **Discretionary (family) trust:** income can go to lower-taxed family
+  members each year; 50% CGT discount flows through; asset protection. But
+  losses are trapped in the trust (no negative gearing against salaries);
+  NSW land tax may apply without the usual threshold; s100A and family
+  trust election rules.
+- **Unit trust:** fixed shares (e.g. unrelated co-investors); losses also
+  stay in the trust.
+- **Company:** flat company rate (a passive rental company usually pays 30%,
+  not the 25% base rate); no CGT discount; Division 7A if money is taken out.
+- **SMSF:** 15% tax on rent, 10% on gains held over 12 months, 0% in pension
+  phase; strict borrowing (LRBA) and related-party rules; commercial
+  property can be leased to the family business at market rent.
+
+**Output:** estimated tax each year and on a future sale for each option,
+side by side, with the trade-offs in plain English, each rule linked to its
+ATO or Revenue NSW source. Shown as modelling for the accountant, not a
+decision.
+
+**For existing properties:** a "why it's owned this way" note on each, and
+a flag where the structure looks costly (e.g. a loss-making property in a
+trust with nobody able to use the losses).
+
+**Needs:** idea 3 (reference library) plus Revenue NSW land tax rules for
+trusts; each person's expected income; idea 4 (profitability) for the
+rent/cost/loan figures.
