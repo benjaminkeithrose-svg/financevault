@@ -103,10 +103,44 @@ export interface IdentityRecord {
   documentCount?: number;
 }
 
+export interface InsurancePolicy {
+  id: string;
+  kind: string;
+  insurer?: string | null;
+  coverAmount?: number | null;
+  premium?: number | null;
+  premiumFrequency?: "MONTHLY" | "QUARTERLY" | "ANNUALLY" | null;
+  renewalDate?: string | null;
+  assetId?: string | null;
+  asset?: { id: string; name: string; property?: { id: string } | null; commercialProperty?: { id: string } | null } | null;
+  personId?: string | null;
+  person?: { id: string; name: string } | null;
+  entityId?: string | null;
+  entity?: { id: string; name: string } | null;
+  heldInSuper: boolean;
+  notes?: string | null;
+  policyNumberMasked: string | null;
+  documentCount: number;
+}
+
+export interface EstateDocument {
+  id: string;
+  personId: string;
+  kind: string;
+  signedDate?: string | null;
+  expiryDate?: string | null;
+  reviewDate?: string | null;
+  heldBy?: string | null;
+  fundEntityId?: string | null;
+  fund?: { id: string; name: string } | null;
+  notes?: string | null;
+  documentCount?: number;
+}
+
 export interface CalendarEvent {
   id: string;
   date: string;
-  category: "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF";
+  category: "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF" | "INSURANCE" | "ESTATE";
   title: string;
   detail: string | null;
   route: string;
@@ -420,6 +454,23 @@ export interface DebtSummaryRow {
   monthlyRepayment: number | null;
   securedAsset: string | null;
   lvr: number | null;
+  offsetBalance: number;
+  netOfOffset: number | null;
+  interestSavedPerYear: number;
+}
+
+export interface IncomeSpending {
+  from: string;
+  to: string;
+  accounts: Array<{ id: string; name: string }>;
+  months: Array<{ month: string; moneyIn: number; moneyOut: number; net: number }>;
+  monthsCovered: number;
+  averageMonthlyIn: number;
+  averageMonthlyOut: number;
+  averageMonthlyNet: number;
+  byCategory: Array<{ name: string; group: string; moneyIn: number; moneyOut: number }>;
+  transfersLeftOut: number;
+  note: string;
 }
 
 export interface DebtSummary {
@@ -428,6 +479,8 @@ export interface DebtSummary {
   totalCreditLimits: number;
   cardsWithoutLimit: number;
   totalMonthlyRepayments: number;
+  totalOffset: number;
+  totalInterestSavedPerYear: number;
   loansWithoutRepayment: number;
   formula: string;
 }
@@ -757,6 +810,7 @@ export interface Liability {
   holdingTrustEntityId?: string | null;
   holdingTrust?: Entity | null;
   ownerships?: Array<{ id: string; ownerEntityId: string; ownerEntity?: Entity; ownershipPercent: number; notes?: string | null }>;
+  offsetAccounts?: Array<{ id: string; institution: string; accountName: string; currentBalance: number | null }>;
   interestOnly?: boolean | null;
   loanTermYears?: number | null;
   repaymentFrequency?: string | null;
@@ -1163,6 +1217,7 @@ export interface InvestmentAccount {
   realisedGainLoss?: number;
   createdAt: string;
   updatedAt: string;
+  ownerships?: Array<{ id: string; ownerEntityId: string; ownerEntity?: Entity; ownershipPercent: number }>;
 }
 
 export interface Transaction {
@@ -1200,6 +1255,10 @@ export interface Account {
   _count?: { transactions: number };
   createdAt: string;
   updatedAt: string;
+  offsetForLiabilityId?: string | null;
+  offsetFor?: { id: string; name: string; currentBalance: number | null; interestRate: number | null } | null;
+  ownerships?: Array<{ id: string; ownerEntityId: string; ownerEntity?: Entity; ownershipPercent: number }>;
+  accountNumberMasked?: string | null;
 }
 
 export interface PackChip {
@@ -1583,6 +1642,9 @@ export const api = {
   investments: {
     list: (entityId?: string) => request<InvestmentAccount[]>(`/investments${entityId ? `?entityId=${entityId}` : ""}`),
     get: (id: string) => request<InvestmentAccount>(`/investments/${id}`),
+    addOwnership: (accountId: string, data: Record<string, unknown>) =>
+      request<unknown>(`/investments/${accountId}/ownerships`, { method: "POST", body: JSON.stringify(data) }),
+    removeOwnership: (ownershipId: string) => request<void>(`/investments/ownerships/${ownershipId}`, { method: "DELETE" }),
     create: (data: Record<string, unknown>) =>
       request<InvestmentAccount>("/investments", { method: "POST", body: JSON.stringify(data) }),
     update: (id: string, data: Record<string, unknown>) =>
@@ -1629,6 +1691,10 @@ export const api = {
     updateAccount: (id: string, data: Record<string, unknown>) =>
       request<Account>(`/banking/accounts/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     removeAccount: (id: string) => request<void>(`/banking/accounts/${id}`, { method: "DELETE" }),
+    revealNumber: (id: string) => request<{ accountNumber: string | null }>(`/banking/accounts/${id}/account-number`),
+    addOwnership: (accountId: string, data: Record<string, unknown>) =>
+      request<unknown>(`/banking/accounts/${accountId}/ownerships`, { method: "POST", body: JSON.stringify(data) }),
+    removeOwnership: (ownershipId: string) => request<void>(`/banking/ownerships/${ownershipId}`, { method: "DELETE" }),
     addTransaction: (accountId: string, data: Record<string, unknown>) =>
       request<Transaction>(`/banking/accounts/${accountId}/transactions`, { method: "POST", body: JSON.stringify(data) }),
     updateTransaction: (transactionId: string, data: Record<string, unknown>) =>
@@ -1645,6 +1711,25 @@ export const api = {
       request<IdentityRecord>(`/identity/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     reveal: (id: string) => request<{ number: string | null; referenceNumber: string | null }>(`/identity/${id}/reveal`),
     remove: (id: string) => request<void>(`/identity/${id}`, { method: "DELETE" }),
+  },
+  insurance: {
+    list: (params?: Record<string, string>) =>
+      request<InsurancePolicy[]>(`/insurance${params ? `?${new URLSearchParams(params)}` : ""}`),
+    get: (id: string) => request<InsurancePolicy>(`/insurance/${id}`),
+    create: (data: Record<string, unknown>) =>
+      request<InsurancePolicy>("/insurance", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<InsurancePolicy>(`/insurance/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    reveal: (id: string) => request<{ policyNumber: string | null }>(`/insurance/${id}/reveal`),
+    remove: (id: string) => request<void>(`/insurance/${id}`, { method: "DELETE" }),
+  },
+  estate: {
+    forPerson: (personId: string) => request<EstateDocument[]>(`/estate/person/${personId}`),
+    create: (data: Record<string, unknown>) =>
+      request<EstateDocument>("/estate", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<EstateDocument>(`/estate/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/estate/${id}`, { method: "DELETE" }),
   },
   tree: {
     get: () => request<AssetTreeData>("/tree"),
@@ -1729,6 +1814,10 @@ export const api = {
     taxSummary: (financialYearId?: string) =>
       request<{ rows: TaxSummaryRow[] }>(`/reports/tax-summary${financialYearId ? `?financialYearId=${financialYearId}` : ""}`),
     debtSummary: () => request<DebtSummary>("/reports/debt-summary"),
+    incomeSpending: (params: { months: number; entityId?: string }) =>
+      request<IncomeSpending>(
+        `/reports/income-spending?${new URLSearchParams({ months: String(params.months), ...(params.entityId ? { entityId: params.entityId } : {}) })}`
+      ),
   },
 
   netWorth: {

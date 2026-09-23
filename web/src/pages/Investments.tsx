@@ -4,6 +4,7 @@ import { ItemCard } from "../components/ItemCard.js";
 import { humanize } from "../utils.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
 import { useDraft } from "../hooks/useDraft.js";
+import { OwnersPicker, useOwners, withOwners } from "../components/OwnersPicker.js";
 
 const ACCOUNT_TYPES = ["SHARES", "ETF", "MANAGED_FUND", "TERM_DEPOSIT", "BOND", "OTHER"];
 
@@ -11,6 +12,8 @@ export function Investments() {
   const [accounts, setAccounts] = useState<InvestmentAccount[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [form, setForm, draft] = useDraft("investment-accounts:new", { institution: "", accountRef: "", entityId: "", accountType: "SHARES" });
+  const owners = useOwners("investment-accounts:new");
+  const formDraft = withOwners(draft, owners);
   const [showForm, setShowForm] = useState(draft.restored);
 
   function load() {
@@ -23,14 +26,16 @@ export function Investments() {
   }, []);
 
   async function create() {
-    if (!form.institution.trim() || !form.entityId) return;
+    if (!form.institution.trim() || !form.entityId || owners.problem(form.entityId)) return;
     await api.investments.create({
       institution: form.institution,
       accountRef: form.accountRef || null,
       entityId: form.entityId,
+      owners: owners.payload(form.entityId),
       accountType: form.accountType,
     });
     draft.clear();
+    owners.draft.clear();
     setShowForm(false);
     load();
   }
@@ -49,20 +54,12 @@ export function Investments() {
 
       {showForm && (
         <div className="card">
-          <DraftNotice draft={draft} />
+          <DraftNotice draft={formDraft} />
           <label>Institution</label>
           <input value={form.institution} onChange={(e) => setForm({ ...form, institution: e.target.value })} placeholder="CommSec" />
           <label>Account reference (optional)</label>
           <input value={form.accountRef} onChange={(e) => setForm({ ...form, accountRef: e.target.value })} />
-          <label>Entity</label>
-          <select value={form.entityId} onChange={(e) => setForm({ ...form, entityId: e.target.value })}>
-            <option value="">— Select —</option>
-            {entities.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.name}
-              </option>
-            ))}
-          </select>
+          <OwnersPicker entities={entities} primaryId={form.entityId} onPrimary={(entityId) => setForm({ ...form, entityId })} owners={owners} />
           <label>Type</label>
           <select value={form.accountType} onChange={(e) => setForm({ ...form, accountType: e.target.value })}>
             {ACCOUNT_TYPES.map((t) => (
@@ -71,7 +68,7 @@ export function Investments() {
               </option>
             ))}
           </select>
-          <FormActions onSubmit={create} draft={draft} label="Create" />
+          <FormActions onSubmit={create} draft={formDraft} label="Create" />
         </div>
       )}
 

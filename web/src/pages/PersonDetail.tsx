@@ -8,6 +8,8 @@ import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { FamilyPanel } from "../components/FamilyPanel.js";
 import { IdentityPanel } from "../components/IdentityPanel.js";
+import { InsurancePanel } from "../components/InsurancePanel.js";
+import { EstatePanel } from "../components/EstatePanel.js";
 import { TrustFamilyPrompt } from "../components/TrustFamilyPrompt.js";
 
 const RELATIONSHIP_TYPES = [
@@ -315,6 +317,10 @@ export function PersonDetail() {
       <FamilyPanel person={person} people={people} onChange={load} />
 
       <IdentityPanel personId={person.id} />
+
+      <InsurancePanel personId={person.id} title="Life & income cover" defaultHolderId={person.entityId} />
+
+      <EstatePanel personId={person.id} />
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Tax file number</h3>

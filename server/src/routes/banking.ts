@@ -4,6 +4,9 @@ import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { deleteWithLinks } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
+import { decryptField } from "../services/fieldCrypto.js";
+import { maskNumber } from "./identity.js";
+import { checkOwners, checkRoomFor, ownersInput } from "../services/ownership.js";
 import { financialYearBounds, financialYearLabelForDate } from "../services/financialYear.js";
 
 export const bankingRouter = Router();
@@ -40,6 +43,8 @@ bankingRouter.get(
       include: {
         entity: true,
         transactions: { orderBy: { date: "desc" }, include: { taxCategory: true, financialYear: true } },
+        ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } },
+        offsetFor: { select: { id: true, name: true, currentBalance: true, interestRate: true } },
       },
     });
     if (!account) {
@@ -51,7 +56,8 @@ bankingRouter.get(
       include: { document: true },
       orderBy: { createdAt: "desc" },
     });
-    res.json({ ...account, documents: links.map((l) => l.document) });
+    const secret = await prisma.account.findUnique({ where: { id: account.id }, select: { accountNumber: true } });
+    res.json({ ...account, accountNumberMasked: maskNumber(decryptField(secret?.accountNumber)), documents: links.map((l) => l.document) });
   })
 );
 
@@ -65,13 +71,25 @@ const accountInput = z.object({
   currency: z.string().optional(),
   openingBalance: z.number().optional().nullable(),
   currentBalance: z.number().optional().nullable(),
+  // The loan this account offsets, if it's an offset account.
+  offsetForLiabilityId: z.string().optional().nullable(),
+  owners: ownersInput,
 });
 
 bankingRouter.post(
   "/accounts",
   asyncHandler(async (req, res) => {
-    const parsed = accountInput.parse(req.body);
-    const account = await prisma.account.create({ data: parsed, include: { entity: true } });
+    const { owners: ownersRaw, ...parsed } = accountInput.parse(req.body);
+    // A joint account: the first owner is the one on record, the split is kept alongside.
+    const owners = checkOwners(ownersRaw);
+    if (owners) parsed.entityId = owners[0].entityId;
+    const account = await prisma.account.create({
+      data: {
+        ...parsed,
+        ...(owners ? { ownerships: { create: owners.map((o) => ({ ownerEntityId: o.entityId, ownershipPercent: o.percent })) } } : {}),
+      },
+      include: { entity: true },
+    });
     await logAudit("ACCOUNT_CREATED", { targetType: "Account", targetId: account.id });
     res.status(201).json(account);
   })
@@ -80,7 +98,7 @@ bankingRouter.post(
 bankingRouter.put(
   "/accounts/:id",
   asyncHandler(async (req, res) => {
-    const parsed = accountInput.partial().parse(req.body);
+    const parsed = accountInput.omit({ owners: true }).partial().parse(req.body);
     const existing = await prisma.account.findUnique({ where: { id: req.params.id } });
     if (!existing) {
       res.status(404).json({ error: "Bank account not found" });
@@ -99,6 +117,37 @@ bankingRouter.put(
     });
     await logAudit("ACCOUNT_CHANGED", { targetType: "Account", targetId: account.id, data: parsed });
     res.json(account);
+  })
+);
+
+/** The full account number, on request only — recorded in the audit log. */
+bankingRouter.get(
+  "/accounts/:id/account-number",
+  asyncHandler(async (req, res) => {
+    const secret = await prisma.account.findUnique({ where: { id: req.params.id }, select: { accountNumber: true } });
+    await logAudit("ACCOUNT_NUMBER_REVEALED", { targetType: "Account", targetId: req.params.id });
+    res.json({ accountNumber: decryptField(secret?.accountNumber) });
+  })
+);
+
+// A joint account's split — same rules as an asset's.
+bankingRouter.post(
+  "/accounts/:id/ownerships",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ ownerEntityId: z.string(), ownershipPercent: z.number().gt(0).max(100) }).parse(req.body);
+    checkRoomFor(await prisma.accountOwnership.findMany({ where: { accountId: req.params.id } }), parsed.ownershipPercent);
+    const row = await prisma.accountOwnership.create({ data: { accountId: req.params.id, ...parsed }, include: { ownerEntity: true } });
+    await logAudit("ACCOUNT_OWNERSHIP_ADDED", { targetType: "Account", targetId: req.params.id });
+    res.status(201).json(row);
+  })
+);
+
+bankingRouter.delete(
+  "/ownerships/:ownershipId",
+  asyncHandler(async (req, res) => {
+    const row = await prisma.accountOwnership.delete({ where: { id: req.params.ownershipId } });
+    await logAudit("ACCOUNT_OWNERSHIP_REMOVED", { targetType: "Account", targetId: row.accountId });
+    res.status(204).send();
   })
 );
 

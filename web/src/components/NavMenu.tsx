@@ -38,6 +38,7 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
       { to: "/banking", label: "Bank accounts" },
       { to: "/super", label: "Super" },
       { to: "/assets", label: "Other assets" },
+      { to: "/insurance", label: "Insurance" },
     ],
   },
   {

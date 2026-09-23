@@ -38,6 +38,7 @@ import { ThemePicker } from "./components/ThemePicker.js";
 import { IconPin } from "./components/icons.js";
 import { usePinnedMenu } from "./hooks/usePinnedMenu.js";
 import { Help } from "./pages/Help.js";
+import { Insurance, InsuranceDetail } from "./pages/InsuranceDetail.js";
 import { AssetTree } from "./pages/AssetTree.js";
 
 function Home() {
@@ -98,6 +99,8 @@ export default function App() {
           <Route path="/super" element={<Assets key="super" list="SUPER" />} />
           <Route path="/vehicles" element={<Assets key="vehicles" list="VEHICLE" />} />
           <Route path="/assets/:id" element={<AssetDetail />} />
+          <Route path="/insurance" element={<Insurance />} />
+          <Route path="/insurance/:id" element={<InsuranceDetail />} />
           <Route path="/portfolio-plans" element={<PortfolioPlans />} />
           <Route path="/portfolio-plans/:id" element={<PortfolioPlanDetail />} />
           <Route path="/net-worth" element={<NetWorth />} />

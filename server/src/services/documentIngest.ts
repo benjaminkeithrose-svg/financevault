@@ -8,6 +8,7 @@ import { financialYearBounds } from "./financialYear.js";
 import { logAudit } from "./audit.js";
 import { getEffectiveStorageDir } from "./paths.js";
 import { redactTfns } from "./tfn.js";
+import { writeDocumentFile } from "./documentFiles.js";
 
 export async function ensureFinancialYear(label: string | null) {
   if (!label) return null;
@@ -52,7 +53,7 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
   await fs.mkdir(storageDir, { recursive: true });
   const storedFilename = `${fileHash}${path.extname(input.originalFilename)}`;
   const filePath = path.join(storageDir, storedFilename);
-  await fs.writeFile(filePath, input.buffer);
+  await writeDocumentFile(filePath, input.buffer);
 
   const { text } = await extractText(input.buffer, input.mimeType);
 

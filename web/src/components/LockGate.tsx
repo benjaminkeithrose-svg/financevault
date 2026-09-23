@@ -214,7 +214,7 @@ export function LockGate({ children }: { children: ReactNode }) {
           >
             <p>Set a passcode to open Financial Vault.</p>
             <p style={{ color: "var(--text-muted)", fontSize: 14 }}>
-              It locks the app, and it's also the key that encrypts your tax file numbers and email app password.
+              It locks the app, and it's also the key that encrypts your documents, tax file numbers and account numbers.
               It's never stored anywhere — so choose something you'll remember, at least {minLength} characters. A
               short phrase works well.
             </p>
@@ -241,7 +241,7 @@ export function LockGate({ children }: { children: ReactNode }) {
           <>
             <p>
               <strong>Write down this recovery key.</strong> If you ever forget your passcode, it's the only way back in
-              without losing your encrypted details. It won't be shown again.
+              without losing your documents and encrypted details. It won't be shown again.
             </p>
             <div className="recovery-key">
               {/* Each group is unbreakable so a wrap can only fall between groups. */}

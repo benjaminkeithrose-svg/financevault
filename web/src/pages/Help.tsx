@@ -106,7 +106,7 @@ const SECTIONS: Section[] = [
         <p>
           The first time you open Financial Vault you choose a passcode (at least 8 characters). You're then shown a{" "}
           <strong>recovery key</strong>, once only. Write it down and keep it away from this computer. If you forget your
-          passcode, it's the only way back in without losing your tax file numbers.
+          passcode, it's the only way back in without losing your documents and tax file numbers.
         </p>
         <p>
           The app locks itself after 15 minutes without use. You can lock it straight away with the padlock at the top
@@ -126,8 +126,10 @@ const SECTIONS: Section[] = [
         <p>
           There's deliberately no button for this, since a button on the lock screen would let anyone at your keyboard
           get in. Close the app, open a terminal in the <code>server</code> folder and run{" "}
-          <code>npm run reset-passcode -- --yes</code>. Everything is kept except the encrypted items — tax file numbers
-          and the Gmail connection — which you'd re-enter.
+          <code>npm run reset-passcode</code> first: it lists what would be lost and changes nothing. Then{" "}
+          <code>npm run reset-passcode -- --yes</code> does it. The encrypted numbers (tax file, ID, account and policy
+          numbers) and the Gmail connection are cleared, to be re-entered. <strong>Your document files can't be opened
+          again</strong> — their details stay, but the files are lost. This is why the recovery key matters.
         </p>
       </>
     ),
@@ -157,6 +159,33 @@ const SECTIONS: Section[] = [
           <li>An item's figure is what it cost; its value is already part of the asset it sits under.</li>
           <li>Loans not secured on a particular asset are under <strong>Other debts</strong>; sold assets under <strong>Sold</strong>.</li>
         </ul>
+      </>
+    ),
+  },
+  {
+    id: "worth-doing",
+    title: "“Worth doing” on the dashboard",
+    keywords: "checklist getting started reminders backup reminder stale values out of date valuation nudges monthly snapshot",
+    body: (
+      <>
+        <p>The dashboard's <strong>Worth doing</strong> card lists a few things to keep your records useful. Each one goes away once it's done.</p>
+        <ul>
+          <li>
+            <strong>Getting started</strong> — the first steps: add your people and link their family, any trusts or
+            companies, your assets, loans and documents, and take a first backup. <strong>Hide this list</strong> puts it away for good.
+          </li>
+          <li>
+            <strong>Backup</strong> — shown when there's never been a full backup, or the last one was over 30 days ago.
+          </li>
+          <li>
+            <strong>Values not checked for a year</strong> — anything whose value hasn't been updated in over twelve
+            months. Open it and change the value, or tap <strong>Still right</strong> if it hasn't changed.
+          </li>
+        </ul>
+        <p>
+          Once a month the app also saves the family's net worth to <Link to="/net-worth">Net Worth</Link> by itself, so the
+          history builds up without you having to remember.
+        </p>
       </>
     ),
   },
@@ -255,7 +284,8 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <p>
-          <strong>Owned by more than one person.</strong> When adding a property, vehicle, other asset or loan, choose the
+          <strong>Owned by more than one person.</strong> When adding a property, vehicle, other asset, loan, bank account or
+          investment account, choose the
           first owner under <strong>Owned by</strong> (or <strong>Owed by</strong>), then <strong>+ Add another owner</strong>.
           The shares start out even — 50/50, or 25% each for four — and can be changed; they must add up to 100%. Owners can
           be people or entities in any mix. Something already recorded can be split later in <strong>Who owns it</strong>{" "}
@@ -297,6 +327,53 @@ const SECTIONS: Section[] = [
           When a broker asks for ID, <Link to="/packs">Document Packs</Link> has an <strong>ID documents</strong> option
           (ticked in the Broker Pack) that adds the scans for the people connected to that entity. Expiry dates appear
           in the expiry calendar.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "insurance",
+    title: "Insurance: every policy and what it covers",
+    keywords: "insurance policy building contents landlord strata car boat life tpd trauma income protection premium renewal insurer",
+    body: (
+      <>
+        <p>
+          Each policy hangs off what it covers. On a property, vehicle or other asset, <strong>Insurance</strong> →{" "}
+          <strong>Add a policy</strong> records building, landlord, car or boat cover. On a person's page,{" "}
+          <strong>Life &amp; income cover</strong> records life, TPD, trauma and income protection — tick{" "}
+          <strong>Held through a super fund</strong> when it is. <Link to="/insurance">Insurance</Link> in the menu lists
+          every policy in one place, soonest renewal first, and can add one for anything.
+        </p>
+        <p>
+          Open a policy to attach its schedule and certificates, or to change it. The policy number is stored encrypted
+          and shown with only its last three digits; <strong>Show</strong> reveals it and is recorded in the audit log.
+        </p>
+        <p>
+          Renewal dates go into the expiry calendar, and each policy appears in the asset tree under what it covers.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "estate",
+    title: "Wills, powers of attorney and super nominations",
+    keywords: "will estate power of attorney enduring guardianship advance care directive binding death benefit nomination bdbn lapsing reversionary executor solicitor",
+    body: (
+      <>
+        <p>
+          On a person's page, <strong>Will &amp; estate papers</strong> → <strong>Add</strong> records their will, powers
+          of attorney, guardianship, advance care directive and super death benefit nominations: when each was signed,
+          where the original is kept, and when to look at it again. Tap one to attach a scan.
+        </p>
+        <p>
+          <strong>Lapsing nominations.</strong> A lapsing binding death benefit nomination usually stops being binding
+          three years after it's signed. Leave <strong>Lapses on</strong> blank and it's set to three years after the
+          signing date; that date goes into the expiry calendar so it can be re-signed in time. Check your fund's rules —
+          some differ, and non-lapsing nominations don't run out.
+        </p>
+        <p>
+          A <strong>Look at it again by</strong> date — after a marriage, separation, new child or property purchase —
+          also goes into the calendar.
         </p>
       </>
     ),
@@ -529,6 +606,36 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "selling",
+    title: "Selling something",
+    keywords: "sold sell sale disposal capital gain main residence exemption cost base selling costs improvements stamp duty",
+    body: (
+      <>
+        <p>
+          On a property, vehicle or other asset's page, <strong>Sold it?</strong> → <strong>Mark as sold</strong>. Enter
+          the sale date and price, and the selling costs (agent, legal, advertising). For a property, also enter the
+          buying costs (stamp duty, legal) and what was spent on improvements, and whether it was your main residence.
+        </p>
+        <p>
+          A sold asset stays on record — with its documents, loans and history — under <strong>Sold</strong> in its list
+          and in the asset tree. It drops out of every total from the sale date. Deleting is only for things entered by
+          mistake.
+        </p>
+        <p>
+          <strong>The capital gain</strong> for property, shares held outside an investment account, collectibles and
+          similar is worked out for each owner by their share, and shown in <Link to="/reports">Reports</Link> →{" "}
+          <strong>Capital gains</strong> for the year of the sale. Gain = sale price − (purchase price + buying costs +
+          improvements + selling costs). The main residence exemption applies to people only, not trusts or companies,
+          and can be full or a percentage. Cars and personal items don't have a capital gain worked out. Check the
+          figures with your accountant.
+        </p>
+        <p>
+          <strong>It wasn't sold — undo</strong> on the same card puts it back if it was marked sold by mistake.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "properties",
     title: "Properties",
     keywords: "residential commercial tenancy lease rent outgoings capex lvr yield wale noi",
@@ -644,6 +751,52 @@ const SECTIONS: Section[] = [
         </p>
         <p>
           These are the figures a lender starts from. How much they'll lend depends on their own rules — ask your broker.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "income-spending",
+    title: "Income and spending for a loan application",
+    keywords: "living expenses income spending cash flow budget monthly average loan application lender hem",
+    body: (
+      <>
+        <p>
+          <Link to="/reports">Reports</Link> → <strong>Income &amp; Spending</strong> adds up what came into and went out
+          of your bank accounts each month, from the transactions you've imported, with the monthly averages a lender asks
+          for. Choose the last 3, 6 or 12 months, and everyone's accounts or one person's.
+        </p>
+        <ul>
+          <li>Only whole months count — the current month isn't finished.</li>
+          <li>
+            Money moved between your own accounts isn't income or spending. A payment out matched by the same amount into
+            another of your accounts within three days is left out as a transfer.
+          </li>
+          <li>Averages start from the first month with transactions, so three months of statements give a three-month average.</li>
+          <li>
+            Money out includes loan repayments. Lenders ask for those separately (see <strong>Debt Summary</strong>), so
+            take them off when you fill in living expenses.
+          </li>
+        </ul>
+        <p>Give each transaction a category on its account's page and the report breaks the totals down by category too.</p>
+      </>
+    ),
+  },
+  {
+    id: "offsets",
+    title: "Offset accounts",
+    keywords: "offset account interest saving mortgage home loan",
+    body: (
+      <>
+        <p>
+          When adding a bank account, choose the type <strong>Offset</strong>, then pick the loan it offsets. On an
+          existing account, use <strong>Edit</strong>.
+        </p>
+        <p>
+          The loan's page then shows the offset balance, the balance interest is actually charged on, and roughly how much
+          interest the offset saves each year (offset balance × interest rate). <strong>Debt Summary</strong> in Reports
+          shows the same. Your net worth isn't changed by it — the money in the offset is already counted as a bank
+          balance, and lenders still count the full loan.
         </p>
       </>
     ),
@@ -943,8 +1096,22 @@ const SECTIONS: Section[] = [
         <p>
           <Link to="/settings">Settings</Link> → <strong>Download full backup</strong> saves one ZIP file with your whole
           database and every original document. It's safe to take while you're using the app. Keep copies somewhere other
-          than this computer. Tax file numbers and the Gmail connection stay encrypted inside it, so restoring needs the
-          passcode (or recovery key) you had when you took it.
+          than this computer. Documents, tax file numbers, account and policy numbers and the Gmail connection stay
+          encrypted inside it, so restoring needs the passcode (or recovery key) you had when you took it — and the
+          documents in it can only be opened through Financial Vault.
+        </p>
+        <h4>Restoring from a backup</h4>
+        <ol>
+          <li>Start a fresh copy of Financial Vault (a new download, or on a new computer). Don't set a passcode.</li>
+          <li>
+            On the first screen, under <strong>Moving from another computer, or starting over from a backup?</strong>,
+            choose your backup ZIP and click <strong>Restore from this backup</strong>.
+          </li>
+          <li>When it says it's done, unlock with the passcode you had when the backup was taken.</li>
+        </ol>
+        <p>
+          Restoring only works on a copy with no records in it, so it can never overwrite what you have. The dashboard
+          reminds you when your last backup is over 30 days old.
         </p>
         <p>
           <strong>Document storage location</strong> in Settings can point new uploads at a folder inside Google Drive,
@@ -964,17 +1131,23 @@ const SECTIONS: Section[] = [
         <ul>
           <li>Only this computer can open the app, and it needs your passcode.</li>
           <li>
-            Tax file numbers and the Gmail app password are encrypted. TFNs show as <code>••• ••• 123</code>;{" "}
-            <strong>Show</strong> reveals one, and each reveal is logged.
+            Tax file numbers, ID numbers, bank account numbers, insurance policy numbers and the Gmail app password are
+            encrypted. They show with only their last digits; <strong>Show</strong> reveals one, and each reveal is logged.
+          </li>
+          <li>
+            Document files are encrypted in the documents folder, so a copy of that folder — a synced folder, a backup,
+            a lost laptop's drive — can't be opened without Financial Vault and your passcode. Documents from before this
+            version are encrypted in the background the first time you unlock.
           </li>
           <li>Nothing is sent anywhere, except price lookups you've switched on and Gmail imports you run.</li>
         </ul>
         <h4>What isn't protected</h4>
         <p>
-          Everything else — balances, transactions, holdings — and the original document files are stored unencrypted
-          on your computer. The passcode stops people using the app; it doesn't stop someone with access to your files
-          opening them directly. A scanned tax return still shows its TFN to anyone who opens that PDF. Protect the
-          computer itself with a login password and disk encryption (FileVault on a Mac, BitLocker on Windows).
+          Everything else — names, balances, transactions, holdings, and the text read out of documents for searching — is
+          stored unencrypted in the database on your computer. The passcode stops people using the app; it doesn't stop
+          someone with access to your files reading the database directly. A document you download or put in a pack is
+          an ordinary, unencrypted copy. Protect the computer itself with a login password and disk encryption
+          (FileVault on a Mac, BitLocker on Windows).
         </p>
       </>
     ),

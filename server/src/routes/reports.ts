@@ -5,6 +5,7 @@ import { capitalGainsForYear } from "../services/cgtReport.js";
 import { describeVehicle, monthlyRepayment } from "../services/debts.js";
 import { positionsForAccount } from "../services/positions.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { incomeAndSpending } from "../services/cashflow.js";
 
 export const reportsRouter = Router();
 
@@ -214,11 +215,15 @@ reportsRouter.get(
         securityProperty: { include: { asset: true } },
         securityCommercialProperty: { include: { asset: true } },
         securityAsset: true,
+        offsetAccounts: { select: { currentBalance: true } },
       },
       orderBy: { createdAt: "asc" },
     });
 
     const rows = liabilities.map((l) => {
+      // Offset accounts reduce the balance interest is charged on.
+      const offset = l.offsetAccounts.reduce((s, a) => s + Math.max(0, a.currentBalance ?? 0), 0);
+      const offsetUsed = Math.min(offset, l.currentBalance ?? 0);
       const securedValue =
         l.securityProperty?.asset.currentValue ??
         l.securityCommercialProperty?.asset.currentValue ??
@@ -237,6 +242,9 @@ reportsRouter.get(
         repaymentAmount: l.repaymentAmount,
         repaymentFrequency: l.repaymentFrequency,
         monthlyRepayment: monthlyRepayment(l),
+        offsetBalance: offset,
+        netOfOffset: l.currentBalance === null ? null : l.currentBalance - offsetUsed,
+        interestSavedPerYear: l.interestRate && offsetUsed > 0 ? (offsetUsed * l.interestRate) / 100 : 0,
         securedAsset:
           l.securityProperty?.address ??
           l.securityCommercialProperty?.name ??
@@ -252,12 +260,28 @@ reportsRouter.get(
       totalCreditLimits: cards.reduce((s, r) => s + (r.creditLimit ?? 0), 0),
       cardsWithoutLimit: cards.filter((r) => r.creditLimit === null).length,
       totalMonthlyRepayments: rows.reduce((s, r) => s + (r.monthlyRepayment ?? 0), 0),
+      totalOffset: rows.reduce((s, r) => s + Math.min(r.offsetBalance, r.currentBalance ?? 0), 0),
+      totalInterestSavedPerYear: rows.reduce((s, r) => s + r.interestSavedPerYear, 0),
       // Cards are excluded here: their repayment is the lender's calculation
       // on the limit, not a fixed amount, so no figure is expected.
       loansWithoutRepayment: rows.filter((r) => r.liabilityType !== "CREDIT_CARD" && r.monthlyRepayment === null).length,
       formula:
         "LVR = balance / current value of what secures it; monthly repayment = repayment amount x payments per year / 12 (monthly if no frequency is recorded)",
     });
+  })
+);
+
+// ---------------------------------------------------------------------------
+// Income and spending — month by month from bank transactions, with the
+// averages a lender asks for. Optionally for one owner's accounts.
+// ---------------------------------------------------------------------------
+
+reportsRouter.get(
+  "/income-spending",
+  asyncHandler(async (req, res) => {
+    const months = Math.min(24, Math.max(1, Number(req.query.months) || 12));
+    const entityId = typeof req.query.entityId === "string" && req.query.entityId ? req.query.entityId : undefined;
+    res.json(await incomeAndSpending({ months, entityId }));
   })
 );
 

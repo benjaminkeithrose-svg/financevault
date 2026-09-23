@@ -2,6 +2,7 @@ import { randomBytes, scrypt as scryptCallback, type ScryptOptions } from "node:
 import { prisma } from "../db.js";
 import { logAudit } from "./audit.js";
 import { clearDataKey, isEncrypted, openBytes, sealBytes, setDataKey, hasDataKey } from "./fieldCrypto.js";
+import { encryptStoredDocuments } from "./documentFiles.js";
 
 /**
  * Passcode handling, key wrapping and sessions.
@@ -166,11 +167,18 @@ export async function vaultStatus() {
  * run repeatedly: values already encrypted are left alone.
  */
 async function encryptRemainingPlaintext() {
-  const [people, entities, accounts] = await Promise.all([
+  const [people, entities, accounts, bankAccounts] = await Promise.all([
     prisma.person.findMany({ where: { tfn: { not: null } }, select: { id: true, tfn: true } }),
     prisma.entity.findMany({ where: { tfn: { not: null } }, select: { id: true, tfn: true } }),
     prisma.emailAccount.findMany({ select: { id: true, appPassword: true } }),
+    // Bank account numbers, encrypted since this version.
+    prisma.account.findMany({ where: { accountNumber: { not: null } }, select: { id: true, accountNumber: true } }),
   ]);
+  for (const b of bankAccounts) {
+    if (b.accountNumber && !isEncrypted(b.accountNumber)) {
+      await prisma.account.update({ where: { id: b.id }, data: { accountNumber: b.accountNumber } });
+    }
+  }
   for (const p of people) {
     if (p.tfn && !isEncrypted(p.tfn)) await prisma.person.update({ where: { id: p.id }, data: { tfn: p.tfn } });
   }
@@ -182,6 +190,9 @@ async function encryptRemainingPlaintext() {
       await prisma.emailAccount.update({ where: { id: a.id }, data: { appPassword: a.appPassword } });
     }
   }
+  // Document files can be many and large, so they're sealed in the
+  // background; the app is usable meanwhile and reads either form.
+  encryptStoredDocuments().catch((err) => console.error("Encrypting stored documents stopped:", (err as Error).message));
 }
 
 function assertPasscode(passcode: string) {
@@ -308,6 +319,7 @@ export async function recoverVault(recoveryKey: string, newPasscode: string): Pr
 
   setDataKey(dataKey);
   dataKey.fill(0);
+  await encryptRemainingPlaintext();
   await logAudit("VAULT_RECOVERED", { targetType: "Vault" });
   return newSession();
 }

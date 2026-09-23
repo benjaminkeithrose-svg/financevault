@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { api, Account, Entity, TaxCategory } from "../api/client.js";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { api, Account, Entity, Liability, TaxCategory } from "../api/client.js";
+import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { TransactionCsvImport } from "../components/TransactionCsvImport.js";
 import { formatCurrency, formatDate, humanize, confirmThenDelete } from "../utils.js";
@@ -23,6 +24,8 @@ export function AccountDetail() {
   const [entities, setEntities] = useState<Entity[]>([]);
   const [editing, setEditing] = useState(false);
   const [details, setDetails] = useState<Record<string, string>>({});
+  const [loans, setLoans] = useState<Liability[]>([]);
+  const [revealed, setRevealed] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -35,6 +38,7 @@ export function AccountDetail() {
   useEffect(() => {
     api.taxCategories.list().then(setTaxCategories);
     api.entities.list().then(setEntities).catch(() => {});
+    api.liabilities.list().then((all) => setLoans(all.filter((l) => l.liabilityType !== "CREDIT_CARD"))).catch(() => {});
   }, []);
 
   if (!account) {
@@ -48,10 +52,12 @@ export function AccountDetail() {
       accountName: account.accountName,
       institution: account.institution,
       bsb: account.bsb ?? "",
-      accountNumber: account.accountNumber ?? "",
+      // Stored encrypted: typed only to change it.
+      accountNumber: "",
       accountType: account.accountType,
       entityId: account.entityId,
       currentBalance: account.currentBalance?.toString() ?? "",
+      offsetForLiabilityId: account.offsetForLiabilityId ?? "",
     });
     setSaveError(null);
     setEditing(true);
@@ -64,10 +70,11 @@ export function AccountDetail() {
         accountName: details.accountName,
         institution: details.institution,
         bsb: details.bsb || null,
-        accountNumber: details.accountNumber || null,
+        ...(details.accountNumber ? { accountNumber: details.accountNumber } : {}),
         accountType: details.accountType,
         entityId: details.entityId,
         currentBalance: details.currentBalance === "" ? null : Number(details.currentBalance),
+        offsetForLiabilityId: details.accountType === "OFFSET" ? details.offsetForLiabilityId || null : null,
       });
       setEditing(false);
       load();
@@ -144,6 +151,22 @@ export function AccountDetail() {
         {!editing ? (
           <p style={{ marginBottom: 0 }}>
             {humanize(account.accountType)} · owned by {account.entity?.name ?? "—"}
+            {account.accountNumberMasked && (
+              <>
+                {" "}
+                · {account.bsb ? `${account.bsb} ` : ""}
+                {revealed ?? account.accountNumberMasked}{" "}
+                <button className="link-button" onClick={() => (revealed ? setRevealed(null) : void api.banking.revealNumber(account.id).then((r) => setRevealed(r.accountNumber)))}>
+                  {revealed ? "Hide" : "Show"}
+                </button>
+              </>
+            )}
+            {account.offsetFor && (
+              <>
+                {" "}
+                · offsets <Link to={`/liabilities/${account.offsetFor.id}`}>{account.offsetFor.name}</Link>
+              </>
+            )}
           </p>
         ) : (
           <div style={{ marginTop: 12 }}>
@@ -161,8 +184,9 @@ export function AccountDetail() {
                 <input value={details.bsb} onChange={(e) => setDetails({ ...details, bsb: e.target.value })} />
               </div>
               <div>
-                <label>Account number</label>
+                <label>Account number{account.accountNumberMasked ? ` (now ${account.accountNumberMasked} — leave empty to keep)` : ""}</label>
                 <input
+                  autoComplete="off"
                   value={details.accountNumber}
                   onChange={(e) => setDetails({ ...details, accountNumber: e.target.value })}
                 />
@@ -187,6 +211,19 @@ export function AccountDetail() {
                 />
               </div>
             </div>
+            {details.accountType === "OFFSET" && (
+              <>
+                <label>Offsets which loan?</label>
+                <select value={details.offsetForLiabilityId} onChange={(e) => setDetails({ ...details, offsetForLiabilityId: e.target.value })}>
+                  <option value="">— Not linked —</option>
+                  {loans.map((l) => (
+                    <option key={l.id} value={l.id}>
+                      {l.name}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
             <label>Owned by</label>
             <select value={details.entityId} onChange={(e) => setDetails({ ...details, entityId: e.target.value })}>
               {entities.map((e) => (
@@ -307,6 +344,8 @@ export function AccountDetail() {
       </div>
 
       <TransactionCsvImport accountId={account.id} onImported={load} />
+
+      <AssetOwnershipPanel kind="account" asset={account} entities={entities} onChange={load} />
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>

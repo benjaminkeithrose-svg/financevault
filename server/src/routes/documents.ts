@@ -4,7 +4,8 @@ import { z } from "zod";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { prisma } from "../db.js";
-import { asyncHandler } from "../middleware/errorHandler.js";
+import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
+import { readDocumentFile } from "../services/documentFiles.js";
 import { logAudit } from "../services/audit.js";
 import { ensureFinancialYear, ingestDocument } from "../services/documentIngest.js";
 
@@ -97,6 +98,13 @@ documentsRouter.get(
       res.status(404).json({ error: "Document not found" });
       return;
     }
+    let bytes: Buffer;
+    try {
+      bytes = await readDocumentFile(path.resolve(doc.filePath));
+    } catch (e) {
+      if ((e as { status?: number }).status) throw e;
+      throw new HttpError(404, "The file for this document is missing from the documents folder.");
+    }
     const safeName = doc.originalFilename.replace(/["\\\r\n]/g, "_");
     res.setHeader("Content-Type", doc.mimeType);
 
@@ -113,7 +121,8 @@ documentsRouter.get(
       res.setHeader("Content-Disposition", `attachment; filename="${safeName}"`);
       res.setHeader("Content-Security-Policy", "sandbox; frame-ancestors 'none'");
     }
-    res.sendFile(path.resolve(doc.filePath));
+    res.setHeader("Content-Length", bytes.length);
+    res.end(bytes);
   })
 );
 
@@ -204,6 +213,10 @@ const linkInput = z.object({
     "INVESTMENT_ACCOUNT",
     "TRANSACTION",
     "TAX_RECORD",
+    "IDENTITY_RECORD",
+    "MAINTENANCE",
+    "INSURANCE_POLICY",
+    "ESTATE_DOCUMENT",
   ]),
   targetId: z.string(),
   label: z.string().optional().nullable(),

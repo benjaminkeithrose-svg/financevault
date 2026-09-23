@@ -1,5 +1,6 @@
+import { HelpLink } from "../components/HelpLink.js";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { api, Asset, Entity, Liability } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { DEBT_LISTS, debtListFor, describeVehicle, formatCurrency, liabilityTypeLabel, monthlyEquivalent, REPAYMENT_FREQUENCIES } from "../utils.js";
@@ -253,6 +254,8 @@ export function LiabilityDetail() {
         </div>
       </div>
 
+      {(liability.offsetAccounts ?? []).length > 0 && <OffsetCard liability={liability} />}
+
       <AssetOwnershipPanel kind="loan" asset={liability} entities={entities} onChange={load} />
 
       <div className="card">
@@ -266,6 +269,43 @@ export function LiabilityDetail() {
         action={() => api.liabilities.remove(liability.id)}
         redirectTo={DEBT_LISTS[debtListFor(liability.liabilityType)].route}
       />
+    </div>
+  );
+}
+
+/** Offset accounts linked to this loan: what they hold, and roughly what they save. */
+function OffsetCard({ liability }: { liability: Liability }) {
+  const offsets = liability.offsetAccounts ?? [];
+  const held = offsets.reduce((s, a) => s + Math.max(0, a.currentBalance ?? 0), 0);
+  const used = Math.min(held, liability.currentBalance ?? 0);
+  const saved = liability.interestRate ? (used * liability.interestRate) / 100 : null;
+  return (
+    <div className="card">
+      <h3 style={{ marginTop: 0 }}>
+        Offset accounts <HelpLink topic="offsets" />
+      </h3>
+      <ul className="plain-list">
+        {offsets.map((a) => (
+          <li key={a.id}>
+            <Link to={`/banking/${a.id}`}>
+              {a.institution} — {a.accountName}
+            </Link>
+            <span>{formatCurrency(a.currentBalance)}</span>
+          </li>
+        ))}
+      </ul>
+      <p style={{ marginBottom: 0 }}>
+        Interest is charged on {formatCurrency((liability.currentBalance ?? 0) - used)} rather than{" "}
+        {formatCurrency(liability.currentBalance)}
+        {saved !== null ? (
+          <>
+            {" "}
+            — about <strong>{formatCurrency(saved)} a year</strong> less at {liability.interestRate}%.
+          </>
+        ) : (
+          ". Add the interest rate to see what that saves."
+        )}
+      </p>
     </div>
   );
 }

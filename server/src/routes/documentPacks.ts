@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { ZipArchive, ArchiverError } from "archiver";
 import { prisma } from "../db.js";
+import { shareOf } from "../services/ownership.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { readDocumentFile } from "../services/documentFiles.js";
 import { DOCUMENT_TYPES } from "../services/documentTypes.js";
 import { describeVehicle, monthlyRepayment } from "../services/debts.js";
 
@@ -101,50 +103,67 @@ async function incomeDocuments(entityId: string, financialYearId: string | undef
 }
 
 export async function assetsLiabilitiesCsv(entityId: string): Promise<string> {
+  // Anything this entity owns or owes part of, not just what's in its name.
+  const ownedBy = { OR: [{ entityId }, { ownerships: { some: { ownerEntityId: entityId } } }] };
   const [assets, liabilities, accounts] = await Promise.all([
-    prisma.asset.findMany({ where: { entityId, parentAssetId: null } }),
+    prisma.asset.findMany({ where: { AND: [ownedBy, { parentAssetId: null }, { disposalDate: null }] }, include: { ownerships: true } }),
     prisma.liability.findMany({
-      where: { entityId },
-      include: { securityProperty: true, securityCommercialProperty: true, securityAsset: true },
+      where: ownedBy,
+      include: { securityProperty: true, securityCommercialProperty: true, securityAsset: true, ownerships: true },
     }),
-    prisma.account.findMany({ where: { entityId } }),
+    prisma.account.findMany({ where: ownedBy, include: { ownerships: true } }),
   ]);
 
+  const pct = (share: number) => `${Math.round(share * 10000) / 100}%`;
+  const amount = (v: number | null, share: number) => (v === null ? "" : (v * share).toFixed(2));
+
   // Laid out the way a broker's assets-and-liabilities form asks for it:
-  // card limits and monthly repayments matter as much as balances.
-  const rows: string[][] = [["Type", "Name", "Value/Balance", "Detail", "Credit limit", "Monthly repayment", "Secured by / for"]];
+  // card limits and monthly repayments matter as much as balances. Jointly
+  // held things show this entity's share and the full amount.
+  const rows: string[][] = [["Type", "Name", "Share", "Value/Balance (share)", "Full value/balance", "Detail", "Credit limit", "Monthly repayment (share)", "Secured by / for"]];
+  let totalAssets = 0;
+  let totalLiabilities = 0;
+  let totalLimits = 0;
+  let totalMonthly = 0;
   for (const a of assets) {
+    const share = shareOf(a, entityId);
     const detail = a.assetType === "VEHICLE" ? `${a.vehicleType ?? "VEHICLE"}: ${describeVehicle(a)}` : a.assetType;
-    rows.push(["Asset", a.name, String(a.currentValue ?? ""), detail, "", "", ""]);
+    rows.push(["Asset", a.name, pct(share), amount(a.currentValue, share), String(a.currentValue ?? ""), detail, "", "", ""]);
+    totalAssets += (a.currentValue ?? 0) * share;
   }
   for (const acc of accounts) {
-    rows.push(["Bank Account", `${acc.institution} ${acc.accountName}`, String(acc.currentBalance ?? ""), acc.accountType, "", "", ""]);
+    const share = shareOf(acc, entityId);
+    rows.push(["Bank Account", `${acc.institution} ${acc.accountName}`, pct(share), amount(acc.currentBalance, share), String(acc.currentBalance ?? ""), acc.accountType, "", "", ""]);
+    totalAssets += (acc.currentBalance ?? 0) * share;
   }
   for (const l of liabilities) {
+    const share = shareOf(l, entityId);
     const monthly = monthlyRepayment(l);
     const securedBy =
       l.securityProperty?.address ?? l.securityCommercialProperty?.name ?? (l.securityAsset ? describeVehicle(l.securityAsset) : "");
     rows.push([
       "Liability",
       l.name,
+      pct(share),
+      amount(l.currentBalance, share),
       String(l.currentBalance ?? ""),
       [l.liabilityType, l.lender].filter(Boolean).join(" — "),
       l.creditLimit !== null ? String(l.creditLimit) : "",
-      monthly !== null ? monthly.toFixed(2) : "",
+      monthly !== null ? (monthly * share).toFixed(2) : "",
       securedBy,
     ]);
+    totalLiabilities += (l.currentBalance ?? 0) * share;
+    // Lenders count the whole limit of a card someone can draw on.
+    if (l.liabilityType === "CREDIT_CARD") totalLimits += l.creditLimit ?? 0;
+    totalMonthly += (monthly ?? 0) * share;
   }
 
-  const totalAssets = assets.reduce((s, a) => s + (a.currentValue ?? 0), 0) + accounts.reduce((s, a) => s + (a.currentBalance ?? 0), 0);
-  const totalLiabilities = liabilities.reduce((s, l) => s + (l.currentBalance ?? 0), 0);
-  const totalLimits = liabilities.reduce((s, l) => s + (l.liabilityType === "CREDIT_CARD" ? l.creditLimit ?? 0 : 0), 0);
-  const totalMonthly = liabilities.reduce((s, l) => s + (monthlyRepayment(l) ?? 0), 0);
   rows.push([]);
-  rows.push(["Total assets", "", String(totalAssets), ""]);
-  rows.push(["Total liabilities", "", String(totalLiabilities), ""]);
-  rows.push(["Net position", "", String(totalAssets - totalLiabilities), ""]);
-  rows.push(["Total credit card limits", "", "", "", String(totalLimits)]);
-  rows.push(["Total monthly repayments", "", "", "", "", totalMonthly.toFixed(2)]);
+  rows.push(["Total assets (share)", "", "", totalAssets.toFixed(2)]);
+  rows.push(["Total liabilities (share)", "", "", totalLiabilities.toFixed(2)]);
+  rows.push(["Net position (share)", "", "", (totalAssets - totalLiabilities).toFixed(2)]);
+  rows.push(["Total credit card limits (full limits)", "", "", "", "", "", totalLimits.toFixed(2)]);
+  rows.push(["Total monthly repayments (share)", "", "", "", "", "", "", totalMonthly.toFixed(2)]);
 
   return toCsv(rows);
 }
@@ -286,9 +305,15 @@ documentPacksRouter.post(
 
     const indexRows: string[][] = [["Document", "Type", "Entity", "Date", "Financial Year", "Source"]];
     for (const doc of documentsById.values()) {
-      archive.file(doc.filePath, { name: `documents/${doc.originalFilename}` });
+      let bytes: Buffer | null = null;
+      try {
+        bytes = await readDocumentFile(doc.filePath);
+      } catch {
+        // A file missing from the documents folder is listed, not fatal.
+      }
+      if (bytes) archive.append(bytes, { name: `documents/${doc.originalFilename}` });
       const fy = doc.financialYearId ? (await prisma.financialYear.findUnique({ where: { id: doc.financialYearId } }))?.label : "";
-      indexRows.push([doc.originalFilename, doc.documentType ?? "", entity.name, doc.documentDate?.toISOString().slice(0, 10) ?? "", fy ?? "", doc.source]);
+      indexRows.push([bytes ? doc.originalFilename : `${doc.originalFilename} (file missing)`, doc.documentType ?? "", entity.name, doc.documentDate?.toISOString().slice(0, 10) ?? "", fy ?? "", doc.source]);
     }
     archive.append(toCsv(indexRows), { name: "document_index.csv" });
 

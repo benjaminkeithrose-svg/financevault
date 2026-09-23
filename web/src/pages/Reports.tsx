@@ -4,6 +4,8 @@ import {
   api,
   CapitalGainsReport,
   DebtSummary as DebtSummaryData,
+  Entity,
+  IncomeSpending as IncomeSpendingData,
   FinancialYear,
   InvestmentPortfolioRow,
   PropertyPerformanceRow,
@@ -12,7 +14,7 @@ import {
 import { formatCurrency, formatDate, liabilityTypeLabel } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
 
-const TABS = ["Property Performance", "Investment Portfolio", "Capital Gains", "Tax Summary", "Debt Summary"] as const;
+const TABS = ["Property Performance", "Investment Portfolio", "Capital Gains", "Tax Summary", "Debt Summary", "Income & Spending"] as const;
 type Tab = (typeof TABS)[number];
 
 function pct(v: number | null | undefined) {
@@ -45,6 +47,7 @@ export function Reports() {
       {tab === "Capital Gains" && <CapitalGains />}
       {tab === "Tax Summary" && <TaxSummary />}
       {tab === "Debt Summary" && <DebtSummary />}
+      {tab === "Income & Spending" && <IncomeSpending />}
     </div>
   );
 }
@@ -262,6 +265,13 @@ function DebtSummary() {
           <div className="value">{formatCurrency(data.totalMonthlyRepayments)}</div>
         </div>
       </div>
+      {data.totalOffset > 0 && (
+        <p style={{ fontSize: 14 }}>
+          Offset accounts hold {formatCurrency(data.totalOffset)} against these loans, saving about{" "}
+          <strong>{formatCurrency(data.totalInterestSavedPerYear)} a year</strong> in interest. Lenders still count the full loan
+          balance.
+        </p>
+      )}
       {(data.cardsWithoutLimit > 0 || data.loansWithoutRepayment > 0) && (
         <div className="message-box warning">
           {data.cardsWithoutLimit > 0 &&
@@ -302,7 +312,10 @@ function DebtSummary() {
                 <td>{liabilityTypeLabel(r.liabilityType)}</td>
                 <td>{r.entityName}</td>
                 <td>{r.lender || "—"}</td>
-                <td>{formatCurrency(r.currentBalance)}</td>
+                <td>
+                  {formatCurrency(r.currentBalance)}
+                  {r.offsetBalance > 0 && <div className="cap-explain">{formatCurrency(r.netOfOffset)} after offset</div>}
+                </td>
                 <td>{r.liabilityType === "CREDIT_CARD" ? formatCurrency(r.creditLimit) : "—"}</td>
                 <td>{r.interestRate ? `${r.interestRate}%` : "—"}</td>
                 <td>{r.monthlyRepayment !== null ? formatCurrency(r.monthlyRepayment) : "—"}</td>
@@ -312,6 +325,134 @@ function DebtSummary() {
             ))}
           </tbody>
         </table>
+      )}
+    </div>
+  );
+}
+
+function monthLabel(key: string) {
+  const [y, m] = key.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, 1)).toLocaleDateString("en-AU", { month: "short", year: "numeric", timeZone: "UTC" });
+}
+
+/** Money in and out each month from bank transactions — the living-expense figures a lender asks for. */
+function IncomeSpending() {
+  const [months, setMonths] = useState(12);
+  const [entityId, setEntityId] = useState("");
+  const [entities, setEntities] = useState<Entity[]>([]);
+  const [data, setData] = useState<IncomeSpendingData | null>(null);
+
+  useEffect(() => {
+    api.entities.list().then(setEntities).catch(() => {});
+  }, []);
+  useEffect(() => {
+    setData(null);
+    api.reports.incomeSpending({ months, entityId: entityId || undefined }).then(setData);
+  }, [months, entityId]);
+
+  return (
+    <div className="card">
+      <p style={{ marginTop: 0, color: "var(--text-muted)", fontSize: 13 }}>
+        What comes in and goes out of your bank accounts each month — the income and living-expense figures a lender asks for
+        on a loan application. <HelpLink topic="income-spending" />
+      </p>
+      <div className="grid grid-2">
+        <div>
+          <label>Period</label>
+          <select value={months} onChange={(e) => setMonths(Number(e.target.value))}>
+            <option value={3}>Last 3 months</option>
+            <option value={6}>Last 6 months</option>
+            <option value={12}>Last 12 months</option>
+          </select>
+        </div>
+        <div>
+          <label>Whose accounts</label>
+          <select value={entityId} onChange={(e) => setEntityId(e.target.value)}>
+            <option value="">Everyone's</option>
+            {entities.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {!data ? (
+        <div className="empty-state">Loading…</div>
+      ) : data.monthsCovered === 0 ? (
+        <p className="empty-state">
+          No bank transactions in this period. Import a statement on a bank account's page (<Link to="/banking">Bank accounts</Link>)
+          and the figures appear here.
+        </p>
+      ) : (
+        <>
+          <div className="grid grid-3" style={{ margin: "16px 0" }}>
+            <div className="stat-tile">
+              <div className="label">Money in, a month</div>
+              <div className="value">{formatCurrency(data.averageMonthlyIn)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Money out, a month</div>
+              <div className="value">{formatCurrency(data.averageMonthlyOut)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Left over, a month</div>
+              <div className="value">{formatCurrency(data.averageMonthlyNet)}</div>
+            </div>
+          </div>
+          <p className="cap-explain">
+            Averaged over {data.monthsCovered} month{data.monthsCovered === 1 ? "" : "s"}, from {data.accounts.length} account
+            {data.accounts.length === 1 ? "" : "s"}.
+            {data.transfersLeftOut > 0 &&
+              ` ${data.transfersLeftOut} transaction${data.transfersLeftOut === 1 ? " was" : "s were"} left out as money moved between your own accounts.`}{" "}
+            Money out includes loan repayments — a lender adds those separately, so take them off when you fill in living
+            expenses.
+          </p>
+
+          <h3>Month by month</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Money in</th>
+                <th>Money out</th>
+                <th>Left over</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.months.map((m) => (
+                <tr key={m.month}>
+                  <td>{monthLabel(m.month)}</td>
+                  <td>{formatCurrency(m.moneyIn)}</td>
+                  <td>{formatCurrency(m.moneyOut)}</td>
+                  <td>{formatCurrency(m.net)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <h3>By category</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Money in</th>
+                <th>Money out</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.byCategory.map((c) => (
+                <tr key={c.name}>
+                  <td>{c.name}</td>
+                  <td>{c.moneyIn ? formatCurrency(c.moneyIn) : "—"}</td>
+                  <td>{c.moneyOut ? formatCurrency(c.moneyOut) : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="cap-explain">{data.note}</p>
+        </>
       )}
     </div>
   );

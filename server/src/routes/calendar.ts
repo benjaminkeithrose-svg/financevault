@@ -2,6 +2,8 @@ import { Router } from "express";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { smsfCalendarDates } from "../services/smsf.js";
+import { policyKindLabel } from "./tree.js";
+import { ESTATE_KINDS } from "./estate.js";
 
 /**
  * Everything with an expiry or renewal date, in one list: ID documents and
@@ -13,7 +15,7 @@ import { smsfCalendarDates } from "../services/smsf.js";
  */
 export const calendarRouter = Router();
 
-export type CalendarCategory = "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF";
+export type CalendarCategory = "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF" | "INSURANCE" | "ESTATE";
 
 export interface CalendarEvent {
   id: string;
@@ -153,6 +155,50 @@ export async function collectEvents(from: Date, to: Date): Promise<CalendarEvent
         title: `Loan term ends — ${l.name}`,
         detail: l.lender,
         route: `/liabilities/${l.id}`,
+      });
+    }
+  }
+
+  const [policies, estate] = await Promise.all([
+    prisma.insurancePolicy.findMany({
+      where: { renewalDate: range },
+      include: { asset: { select: { id: true, name: true } }, person: { select: { id: true, name: true } } },
+    }),
+    prisma.estateDocument.findMany({
+      where: { OR: [{ expiryDate: range }, { reviewDate: range }] },
+      include: { person: { select: { id: true, name: true } } },
+    }),
+  ]);
+  for (const p of policies) {
+    events.push({
+      id: `policy-${p.id}`,
+      date: day(p.renewalDate!),
+      category: "INSURANCE",
+      title: `${policyKindLabel(p.kind)} renews — ${p.asset?.name ?? p.person?.name ?? p.insurer ?? "policy"}`,
+      detail: [p.insurer, p.premium ? `premium $${p.premium.toLocaleString("en-AU")}` : null].filter(Boolean).join(" · ") || null,
+      route: `/insurance/${p.id}`,
+    });
+  }
+  for (const e of estate) {
+    const label = ESTATE_KINDS[e.kind] ?? "Estate paper";
+    if (inRange(e.expiryDate)) {
+      events.push({
+        id: `estate-expiry-${e.id}`,
+        date: day(e.expiryDate!),
+        category: "ESTATE",
+        title: `${label} lapses — ${e.person.name}`,
+        detail: "Re-sign it before then so it stays binding.",
+        route: `/people/${e.person.id}`,
+      });
+    }
+    if (inRange(e.reviewDate)) {
+      events.push({
+        id: `estate-review-${e.id}`,
+        date: day(e.reviewDate!),
+        category: "ESTATE",
+        title: `Review ${label.toLowerCase()} — ${e.person.name}`,
+        detail: e.heldBy ? `Original held by ${e.heldBy}` : null,
+        route: `/people/${e.person.id}`,
       });
     }
   }

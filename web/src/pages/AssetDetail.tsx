@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { api, Asset, Entity } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { SoldPanel } from "../components/SoldPanel.js";
+import { InsurancePanel } from "../components/InsurancePanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { assetListRoute, assetTypeLabel, describeVehicle, formatCurrency, humanize, itemCategoryLabel, ITEM_CATEGORIES, monthlyEquivalent, vehicleTypeLabel } from "../utils.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
@@ -268,6 +269,14 @@ export function AssetDetail() {
       {hasUpkeep && <ItemsPanel parentAssetId={asset.id} title={isItem ? "Parts and add-ons" : "Items and add-ons"} />}
 
       {!isItem && <AssetOwnershipPanel asset={asset} entities={entities} onChange={load} />}
+
+      {!isItem && asset.assetType !== "SUPERANNUATION" && (
+        <InsurancePanel
+          assetId={asset.id}
+          defaultKind={isVehicle ? (["BOAT", "JET_SKI"].includes(asset.vehicleType ?? "") ? "BOAT" : "MOTOR") : "OTHER"}
+          defaultHolderId={asset.entityId}
+        />
+      )}
 
       <div className="card">
         <h3>Documents</h3>

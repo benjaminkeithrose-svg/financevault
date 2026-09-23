@@ -29,7 +29,7 @@ export function AssetOwnershipPanel({
   asset: { id: string; entityId: string; entity?: Entity | null; ownerships?: ShareRow[] };
   entities: Entity[];
   onChange: () => void;
-  kind?: "asset" | "loan";
+  kind?: "asset" | "loan" | "account" | "investment";
 }) {
   const [showForm, setShowForm] = useState(false);
   const [ownerEntityId, setOwnerEntityId] = useState("");
@@ -52,6 +52,8 @@ export function AssetOwnershipPanel({
     try {
       const data = { ownerEntityId, ownershipPercent: Number(percent) };
       if (kind === "loan") await api.liabilities.addOwnership(asset.id, data);
+      else if (kind === "account") await api.banking.addOwnership(asset.id, data);
+      else if (kind === "investment") await api.investments.addOwnership(asset.id, data);
       else await api.assets.addOwnership(asset.id, { ...data, ownershipType: "LEGAL" });
       setOwnerEntityId("");
       setPercent("");
@@ -63,7 +65,14 @@ export function AssetOwnershipPanel({
   }
 
   async function remove(row: ShareRow) {
-    const action = () => (kind === "loan" ? api.liabilities.removeOwnership(row.id) : api.assets.removeOwnership(row.id));
+    const action = () =>
+      kind === "loan"
+        ? api.liabilities.removeOwnership(row.id)
+        : kind === "account"
+          ? api.banking.removeOwnership(row.id)
+          : kind === "investment"
+            ? api.investments.removeOwnership(row.id)
+            : api.assets.removeOwnership(row.id);
     if (await confirmThenDelete(`Remove ${row.ownerEntity?.name ?? "this owner"}'s ${row.ownershipPercent}% share?`, action)) onChange();
   }
 

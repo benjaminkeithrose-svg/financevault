@@ -3,11 +3,13 @@ import { useParams } from "react-router-dom";
 import {
   api,
   DisposalPreview,
+  Entity,
   InvestmentAccount,
   InvestmentPosition,
   Security,
 } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
+import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { formatCurrency, formatCurrencyExact, formatDate, humanize, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
@@ -43,6 +45,10 @@ export function InvestmentAccountDetail() {
   const { id } = useParams<{ id: string }>();
   const [account, setAccount] = useState<InvestmentAccount | null>(null);
   const [securities, setSecurities] = useState<Security[]>([]);
+  const [entities, setEntities] = useState<Entity[]>([]);
+  useEffect(() => {
+    api.entities.list().then(setEntities).catch(() => {});
+  }, []);
   const [error, setError] = useState<string | null>(null);
 
   const [showParcel, setShowParcel] = useState(false);
@@ -656,6 +662,8 @@ export function InvestmentAccountDetail() {
           </table>
         )}
       </div>
+
+      <AssetOwnershipPanel kind="investment" asset={account} entities={entities} onChange={load} />
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>

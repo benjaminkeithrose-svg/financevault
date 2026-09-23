@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { api, CommercialProperty, Entity, FinancialYear, LeaseExtractionResponse } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { SoldPanel } from "../components/SoldPanel.js";
+import { InsurancePanel } from "../components/InsurancePanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
 import { ScenarioComparison } from "../components/ScenarioComparison.js";
@@ -1128,6 +1129,8 @@ export function CommercialPropertyDetail() {
       {property.asset && <AssetOwnershipPanel asset={property.asset} entities={entities} onChange={load} />}
 
       <ItemsPanel parentAssetId={property.assetId} title="Plant & equipment" />
+
+      <InsurancePanel assetId={property.assetId} defaultKind="BUILDING" defaultHolderId={property.asset?.entityId} />
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>

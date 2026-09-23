@@ -1,3 +1,4 @@
+import { HelpLink } from "./HelpLink.js";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { api, DashboardSummary } from "../api/client.js";
@@ -36,7 +37,9 @@ export function WorthDoing({ summary, onChange }: { summary: DashboardSummary; o
 
   return (
     <div className="card worth-doing">
-      <h3 style={{ marginTop: 0 }}>Worth doing</h3>
+      <h3 style={{ marginTop: 0 }}>
+        Worth doing <HelpLink topic="worth-doing" />
+      </h3>
 
       {showChecklist && (
         <div className="worth-block">

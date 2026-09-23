@@ -12,6 +12,8 @@ const CATEGORY_LABEL: Record<CalendarEvent["category"], string> = {
   LEASE: "Lease",
   LOAN: "Loan",
   SMSF: "SMSF",
+  INSURANCE: "Insurance",
+  ESTATE: "Estate",
 };
 
 const CATEGORY_COLOUR: Record<CalendarEvent["category"], string> = {
@@ -23,6 +25,8 @@ const CATEGORY_COLOUR: Record<CalendarEvent["category"], string> = {
   LEASE: "#35c98f",
   LOAN: "#64748b",
   SMSF: "#7c3aed",
+  INSURANCE: "#0ea5e9",
+  ESTATE: "#64748b",
 };
 
 function monthLabel(key: string): string {

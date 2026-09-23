@@ -173,8 +173,16 @@ documents themselves.
 ### Backup
 
 Settings → **Download full backup** streams a single ZIP containing the
-whole database and every original uploaded document — everything needed to
-restore Financial Vault elsewhere. The database is copied via SQLite's own
+whole database and every original uploaded document (still encrypted) —
+everything needed to restore Financial Vault elsewhere. On a fresh copy
+with no passcode set, the first screen's **Restore from this backup** loads
+one (`POST /api/vault/restore`, `services/restore.ts`): it checks the file
+is a Financial Vault backup, sets the empty database aside, brings the
+backup's database up to the current version with `prisma migrate deploy`,
+unpacks the documents into the storage folder and relinks them, and puts
+everything back if any step fails. It refuses when a vault already exists,
+so it can't overwrite records. The dashboard reminds you when the last
+backup is more than 30 days old. The database is copied via SQLite's own
 `VACUUM INTO`, so a backup taken while the app is in use is always a
 consistent point-in-time copy, never a half-written file. Nothing is
 uploaded anywhere; the file goes straight to your browser's downloads.
@@ -193,6 +201,38 @@ and needs a manual edit plus restart to move, which the Settings page's own
 text explains. If you use the app from two computers sharing a synced
 folder, avoid running it on both at once — the SQLite database itself
 isn't safe to sync live, only the documents folder is.
+
+### Insurance, estate papers and reports for lenders
+
+- **Insurance** (`routes/insurance.ts`, `/insurance` in the menu): each
+  policy hangs off what it covers — an asset, or a person for life/TPD/
+  trauma/income cover (optionally held in super) — with insurer, encrypted
+  policy number, cover, premium and renewal date. Renewals go into the
+  expiry calendar; policies appear in the asset tree.
+- **Wills and estate papers** (`routes/estate.ts`, on each person's page):
+  will, powers of attorney, guardianship, advance care directive, and super
+  death benefit nominations. A lapsing binding nomination defaults to
+  lapsing three years after signing; lapse and review dates go into the
+  calendar.
+- **Joint bank and investment accounts** take owners with percentages like
+  properties and loans, and count by share in each owner's figures and in
+  the Broker Pack statement (which now shows each line's share and full
+  amount).
+- **Offset accounts**: a bank account of type Offset names the loan it
+  offsets; the loan page and Debt Summary show the balance interest is
+  charged on and roughly the interest saved.
+- **Income & Spending** (Reports, `services/cashflow.ts`): money in and out
+  by month over the last 3/6/12 whole months from bank transactions, by
+  category, with monthly averages from the first month on record.
+  Transfers between your own accounts (an out matched by the same amount
+  into another account within three days) are left out.
+- **Selling**: marking an asset sold keeps it on record, drops it from
+  totals from the sale date, and works out the capital gain per owner for
+  property and similar assets (cost base = purchase + buying costs +
+  improvements + selling costs; main residence exemption for people only).
+- **Worth doing** on the dashboard: a getting-started checklist, the backup
+  reminder, and values not updated for a year. A net worth snapshot is
+  saved automatically once a month.
 
 ### Investments, shares, ETFs and crypto
 
@@ -766,7 +806,8 @@ stored and flagged for manual classification, just without extracted text.
   can't read and other sites can't send. After 15 minutes without use the
   app locks itself: the screen is cleared, and the server forgets the
   encryption key. Repeated wrong guesses are throttled.
-- **Tax file numbers and the Gmail app password are encrypted at rest**
+- **Tax file numbers, ID numbers, bank account numbers, insurance policy
+  numbers and the Gmail app password are encrypted at rest**
   with AES-256-GCM. The key is random, and is stored only in wrapped form —
   encrypted under a key derived from your passcode with scrypt, which is
   deliberately slow to make guessing expensive. So a copy of the database —
@@ -788,24 +829,32 @@ stored and flagged for manual classification, just without extracted text.
   TFN grouping or labelled as one on the same line — about one in eleven
   random numbers pass the check digit alone, so invoice and reference
   numbers are left alone.
+- **Document files are encrypted at rest** with the same key (AES-256-GCM,
+  whole file, a `FVAULT` marker at the start). Everything that reads a
+  file's contents goes through `services/documentFiles.ts`: viewing,
+  Document Packs (which get ordinary decrypted copies, since they're for
+  sending on). Backups copy the files still sealed. Files from before this
+  version, or saved while locked by a background import, are sealed in the
+  background after the next unlock; unsealed files still read normally
+  until then.
 - **Uploaded files can't run as the app.** Only PDFs and ordinary images are
   shown inline; anything else (HTML, SVG, …) is downloaded instead, so a
   malicious file posing as a statement can't run scripts with the app's
   access. The app also can't be framed by other sites.
 - Original documents are immutable and identified by a SHA-256 hash; every
   import, classification change, confirmation, unlock, failed unlock and
-  lock is written to the audit log; no external AI processing happens unless
-  enabled in Settings (off by default); and there is no payment,
+  lock is written to the audit log; no external AI processing happens; and
+  there is no payment,
   money-movement or bank-credential storage anywhere in this codebase.
 
 ### What isn't — read this
 
-- **Everything else in the database is not encrypted**: balances,
-  transactions, holdings and document details. The original document
-  files aren't encrypted either — so a scanned tax return still shows your
-  tax file number to anyone who opens the PDF itself. The passcode stops
-  people *using the app*; it does not stop someone with access to your
-  files opening the database or documents directly. Encrypting the whole
+- **Everything else in the database is not encrypted**: names, balances,
+  transactions, holdings, document details and the text read out of
+  documents for searching (with TFNs masked). The passcode stops people
+  *using the app*; it does not stop someone with access to your files
+  reading the database directly. A document downloaded from the app or put
+  in a pack is an ordinary unencrypted copy. Encrypting the whole
   database needs SQLCipher, a native build that would break the "install
   Node.js and double-click" setup, so the most sensitive fields are
   protected individually instead.
@@ -813,7 +862,8 @@ stored and flagged for manual classification, just without extracted text.
   you can see. Malware on the computer is out of scope — it could read the
   key from memory or capture your passcode as you type it.
 - If your data folder is synced to the cloud, whoever can access that cloud
-  account can read everything except the encrypted fields.
+  account can read everything except the encrypted fields and document
+  files.
 
 ### Passcode and recovery
 
@@ -830,9 +880,13 @@ npm run reset-passcode          # shows what would be cleared, changes nothing
 npm run reset-passcode -- --yes # actually does it
 ```
 
-The encrypted fields — tax file numbers and the Gmail app password — can't
-be recovered without the passcode or recovery key, so they're cleared (you'd
-re-enter them, and reconnect Gmail). Everything else is kept. This is
+The encrypted fields — tax file numbers, ID, account and policy numbers and
+the Gmail app password — can't be recovered without the passcode or
+recovery key, so they're cleared (you'd re-enter them, and reconnect
+Gmail). **Encrypted document files can't be opened again either**: their
+records and searchable text are kept, but the files are lost, and the
+script says how many before doing anything. Keep the recovery key safe.
+Everything else is kept. This is
 deliberately a command rather than a button on the lock screen: a button
 there would let anyone at the keyboard bypass the lock, whereas running a
 command needs access to the app's files, which already gives access to the

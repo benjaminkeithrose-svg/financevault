@@ -1593,3 +1593,38 @@ label {
   color: var(--text-muted);
   font-weight: 600;
 }
+
+/* A tick box with its words beside it. */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  min-height: 40px;
+}
+.checkbox-row input {
+  width: auto;
+}
+
+/* Label / value pairs on a record's page. */
+.detail-list {
+  display: grid;
+  grid-template-columns: minmax(120px, max-content) 1fr;
+  gap: 8px 16px;
+  margin: 0;
+}
+.detail-list dt {
+  color: var(--text-muted);
+}
+.detail-list dd {
+  margin: 0;
+}
+@media (max-width: 480px) {
+  .detail-list {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .detail-list dd {
+    margin-bottom: 8px;
+  }
+}

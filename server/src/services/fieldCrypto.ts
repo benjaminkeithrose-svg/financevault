@@ -64,3 +64,36 @@ export function decryptField(value: string | null | undefined): string | null {
   if (!dataKey) throw Object.assign(new Error("Financial Vault is locked."), { status: 423 });
   return openBytes(dataKey, value.slice(PREFIX.length)).toString("utf8");
 }
+
+// ---------------------------------------------------------------------------
+// Document files. Each stored file is sealed whole with the same key:
+// a marker, then the IV, the tag and the ciphertext. A file without the
+// marker is from before encryption (or was saved while locked) and is read
+// as it is, then sealed the next time the vault is unlocked.
+// ---------------------------------------------------------------------------
+
+const FILE_MAGIC = Buffer.from("FVAULT\x01\x00", "latin1");
+
+export function isSealedFile(bytes: Buffer): boolean {
+  return bytes.length >= FILE_MAGIC.length + 28 && bytes.subarray(0, FILE_MAGIC.length).equals(FILE_MAGIC);
+}
+
+/** Seals a file's bytes, or returns null when locked (the caller stores it as-is for now). */
+export function sealFile(plaintext: Buffer): Buffer | null {
+  if (!dataKey) return null;
+  const iv = randomBytes(12);
+  const cipher = createCipheriv("aes-256-gcm", dataKey, iv);
+  const ciphertext = Buffer.concat([cipher.update(plaintext), cipher.final()]);
+  return Buffer.concat([FILE_MAGIC, iv, cipher.getAuthTag(), ciphertext]);
+}
+
+export function openFile(bytes: Buffer): Buffer {
+  if (!isSealedFile(bytes)) return bytes;
+  if (!dataKey) throw Object.assign(new Error("Financial Vault is locked."), { status: 423 });
+  const start = FILE_MAGIC.length;
+  const iv = bytes.subarray(start, start + 12);
+  const tag = bytes.subarray(start + 12, start + 28);
+  const decipher = createDecipheriv("aes-256-gcm", dataKey, iv);
+  decipher.setAuthTag(tag);
+  return Buffer.concat([decipher.update(bytes.subarray(start + 28)), decipher.final()]);
+}

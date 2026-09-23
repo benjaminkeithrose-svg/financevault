@@ -4,6 +4,7 @@ import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
+import { checkOwners, checkRoomFor, ownersInput } from "../services/ownership.js";
 import { financialYearBounds, financialYearLabelForDate } from "../services/financialYear.js";
 import {
   allocateFifo,
@@ -136,7 +137,7 @@ investmentsRouter.get(
   asyncHandler(async (req, res) => {
     const account = await prisma.investmentAccount.findUnique({
       where: { id: req.params.id },
-      include: { entity: true },
+      include: { entity: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } },
     });
     if (!account) {
       res.status(404).json({ error: "Investment account not found" });
@@ -199,13 +200,46 @@ const accountInput = z.object({
   entityId: z.string(),
   accountType: z.string().min(1), // SHARES | ETF | MANAGED_FUND | TERM_DEPOSIT | BOND | CRYPTO | OTHER
   notes: z.string().optional().nullable(),
+  owners: ownersInput,
 });
+
+// A joint account's split — same rules as an asset's.
+investmentsRouter.post(
+  "/:id/ownerships",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ ownerEntityId: z.string(), ownershipPercent: z.number().gt(0).max(100) }).parse(req.body);
+    checkRoomFor(await prisma.investmentAccountOwnership.findMany({ where: { investmentAccountId: req.params.id } }), parsed.ownershipPercent);
+    const row = await prisma.investmentAccountOwnership.create({
+      data: { investmentAccountId: req.params.id, ...parsed },
+      include: { ownerEntity: true },
+    });
+    await logAudit("INVESTMENT_OWNERSHIP_ADDED", { targetType: "InvestmentAccount", targetId: req.params.id });
+    res.status(201).json(row);
+  })
+);
+
+investmentsRouter.delete(
+  "/ownerships/:ownershipId",
+  asyncHandler(async (req, res) => {
+    const row = await prisma.investmentAccountOwnership.delete({ where: { id: req.params.ownershipId } });
+    await logAudit("INVESTMENT_OWNERSHIP_REMOVED", { targetType: "InvestmentAccount", targetId: row.investmentAccountId });
+    res.status(204).send();
+  })
+);
 
 investmentsRouter.post(
   "/",
   asyncHandler(async (req, res) => {
-    const parsed = accountInput.parse(req.body);
-    const account = await prisma.investmentAccount.create({ data: parsed, include: { entity: true } });
+    const { owners: ownersRaw, ...parsed } = accountInput.parse(req.body);
+    const owners = checkOwners(ownersRaw);
+    if (owners) parsed.entityId = owners[0].entityId;
+    const account = await prisma.investmentAccount.create({
+      data: {
+        ...parsed,
+        ...(owners ? { ownerships: { create: owners.map((o) => ({ ownerEntityId: o.entityId, ownershipPercent: o.percent })) } } : {}),
+      },
+      include: { entity: true },
+    });
     await logAudit("INVESTMENT_ACCOUNT_CREATED", { targetType: "InvestmentAccount", targetId: account.id });
     res.status(201).json(account);
   })
@@ -214,7 +248,7 @@ investmentsRouter.post(
 investmentsRouter.put(
   "/:id",
   asyncHandler(async (req, res) => {
-    const parsed = accountInput.partial().parse(req.body);
+    const parsed = accountInput.omit({ owners: true }).partial().parse(req.body);
     const account = await prisma.investmentAccount.update({
       where: { id: req.params.id },
       data: parsed,

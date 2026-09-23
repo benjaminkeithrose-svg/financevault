@@ -17,7 +17,7 @@ liabilitiesRouter.get(
     if (liabilityType) where.liabilityType = liabilityType;
     const liabilities = await prisma.liability.findMany({
       where,
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } }, offsetAccounts: { select: { id: true, institution: true, accountName: true, currentBalance: true } } },
       orderBy: { createdAt: "desc" },
     });
     res.json(liabilities);
@@ -29,7 +29,7 @@ liabilitiesRouter.get(
   asyncHandler(async (req, res) => {
     const liability = await prisma.liability.findUnique({
       where: { id: req.params.id },
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } }, offsetAccounts: { select: { id: true, institution: true, accountName: true, currentBalance: true } } },
     });
     if (!liability) {
       res.status(404).json({ error: "Liability not found" });
@@ -91,7 +91,7 @@ liabilitiesRouter.post(
         ...toData(parsed),
         ...(owners ? { ownerships: { create: owners.map((o) => ({ ownerEntityId: o.entityId, ownershipPercent: o.percent })) } } : {}),
       },
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } }, offsetAccounts: { select: { id: true, institution: true, accountName: true, currentBalance: true } } },
     });
     await logAudit("LIABILITY_CREATED", { targetType: "Liability", targetId: liability.id });
     res.status(201).json(liability);
@@ -105,7 +105,7 @@ liabilitiesRouter.put(
     const liability = await prisma.liability.update({
       where: { id: req.params.id },
       data: toData(parsed as z.infer<typeof liabilityInput>),
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } }, offsetAccounts: { select: { id: true, institution: true, accountName: true, currentBalance: true } } },
     });
     await logAudit("LIABILITY_CHANGED", { targetType: "Liability", targetId: liability.id, data: parsed });
     res.json(liability);
