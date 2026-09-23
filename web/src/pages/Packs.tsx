@@ -4,12 +4,12 @@ import { financialYearLabelForToday } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
 
 const DOCUMENT_CATEGORY_KEYS = ["Tax", "Property", "Investment", "Personal", "Finance", "Trust/Company", "Commercial Property", "Income"];
-const GENERATED_KEYS = ["ASSETS_LIABILITIES", "TAX_SUMMARY", "INCOME_SUMMARY"];
+const GENERATED_KEYS = ["ASSETS_LIABILITIES", "TAX_SUMMARY", "INCOME_SUMMARY", "FACT_FIND"];
 
 const PRESETS: Record<string, { categories: string[]; generated: string[] }> = {
   "Broker Pack": {
     categories: ["Property", "Finance", "Commercial Property", "Income", "ID"],
-    generated: ["ASSETS_LIABILITIES", "INCOME_SUMMARY"],
+    generated: ["ASSETS_LIABILITIES", "INCOME_SUMMARY", "FACT_FIND"],
   },
   "Accountant Pack": {
     categories: ["Tax", "Property", "Investment", "Trust/Company", "Commercial Property", "Income"],

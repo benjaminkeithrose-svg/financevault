@@ -34,6 +34,7 @@ import { smsfRouter } from "./routes/smsf.js";
 import { treeRouter } from "./routes/tree.js";
 import { insuranceRouter } from "./routes/insurance.js";
 import { estateRouter } from "./routes/estate.js";
+import { advisersRouter } from "./routes/advisers.js";
 import { apiNotFound, errorHandler } from "./middleware/errorHandler.js";
 import { rejectCrossOriginWrites, requireLoopbackHost, securityHeaders } from "./middleware/localOnly.js";
 
@@ -62,6 +63,7 @@ app.use("/api/smsf", smsfRouter);
 app.use("/api/tree", treeRouter);
 app.use("/api/insurance", insuranceRouter);
 app.use("/api/estate", estateRouter);
+app.use("/api/advisers", advisersRouter);
 app.use("/api/documents", documentsRouter);
 app.use("/api/financial-years", financialYearsRouter);
 app.use("/api/tax-categories", taxCategoriesRouter);

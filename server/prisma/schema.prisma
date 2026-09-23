@@ -44,11 +44,24 @@ model Person {
   name         String
   dateOfBirth  DateTime?
   tfn          String?
-  contactInfo  String? // JSON blob: address, phone, email
+  contactInfo  String? // JSON blob: address, phone, email — superseded by the explicit fields below; kept for compatibility, unused by the app
   notes        String?
   payFrequency String? // WEEKLY | FORTNIGHTLY | MONTHLY — used to work out expected pay periods for gap detection. Null = not tracked.
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+
+  // Personal and contact details — what a lender's fact find asks for.
+  phone                 String?
+  email                 String?
+  currentAddress        String?
+  previousAddress       String? // shown on a fact find when under 3 years at the current address
+  maritalStatus         String? // SINGLE | MARRIED | DE_FACTO | SEPARATED | DIVORCED | WIDOWED | OTHER
+  motherMaidenName      String? // encrypted — used as a security question by many institutions
+  nextOfKinName         String?
+  nextOfKinRelationship String?
+  nextOfKinPhone        String?
+  nextOfKinAddress      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Every person has their own personal (INDIVIDUAL) entity, created with
   // them, so things they own personally can be recorded without setting the
@@ -1586,4 +1599,20 @@ model EstateDocument {
   updatedAt    DateTime  @updatedAt
 
   @@index([personId])
+}
+
+// Accountant, solicitor, real estate agent, financial adviser — one list
+// for the whole family, reused whenever a broker or accountant asks who
+// else to contact.
+model Adviser {
+  id               String   @id @default(cuid())
+  kind             String // ACCOUNTANT | SOLICITOR | REAL_ESTATE_AGENT | FINANCIAL_ADVISER | OTHER
+  firm             String?
+  contactFirstName String?
+  contactSurname   String?
+  phone            String?
+  email            String?
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }

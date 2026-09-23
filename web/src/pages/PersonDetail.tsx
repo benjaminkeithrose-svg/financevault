@@ -11,6 +11,7 @@ import { IdentityPanel } from "../components/IdentityPanel.js";
 import { InsurancePanel } from "../components/InsurancePanel.js";
 import { EstatePanel } from "../components/EstatePanel.js";
 import { TrustFamilyPrompt } from "../components/TrustFamilyPrompt.js";
+import { PersonalDetailsPanel } from "../components/PersonalDetailsPanel.js";
 
 const RELATIONSHIP_TYPES = [
   "SETTLOR",
@@ -313,6 +314,8 @@ export function PersonDetail() {
           </div>
         </div>
       )}
+
+      <PersonalDetailsPanel person={person} onChange={load} />
 
       <FamilyPanel person={person} people={people} onChange={load} />
 

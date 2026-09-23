@@ -233,6 +233,20 @@ isn't safe to sync live, only the documents folder is.
 - **Worth doing** on the dashboard: a getting-started checklist, the backup
   reminder, and values not updated for a year. A net worth snapshot is
   saved automatically once a month.
+- **Personal & contact details, and a Fact Find pack**: each person's page
+  has phone, email, current/previous address, marital status and next of
+  kin (`routes/people.ts`); mother's maiden name is kept encrypted like a
+  TFN, since it's a security-question answer, not an address. A family-wide
+  **Professional advisers** list (`routes/advisers.ts`, `/advisers`) keeps
+  the accountant, solicitor, real estate agent and financial adviser in one
+  place. Document Packs' **Fact Find** summary
+  (`factFindCsv` in `routes/documentPacks.ts`) is laid out with the broad
+  sections every Australian broker's fact find asks for — personal/family/
+  ID/employment/assets/liabilities/insurance/advisers, filled in from your
+  own records — leaving blank what's a one-off answer for that application
+  (loan purpose, the responsible-lending questions) or isn't tracked
+  (employer details, a forward expense estimate). It never includes an
+  encrypted number; tick the ID documents chip for scans instead.
 
 ### Investments, shares, ETFs and crypto
 

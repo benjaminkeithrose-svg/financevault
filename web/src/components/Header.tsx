@@ -28,6 +28,7 @@ const TITLES: Record<string, string> = {
   "/super": "Super",
   "/assets": "Other Assets",
   "/insurance": "Insurance",
+  "/advisers": "Professional Advisers",
   "/loans": "Property Loans",
   "/vehicle-loans": "Vehicle & Boat Loans",
   "/credit-cards": "Credit Cards",

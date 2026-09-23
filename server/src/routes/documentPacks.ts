@@ -6,6 +6,10 @@ import { asyncHandler } from "../middleware/errorHandler.js";
 import { readDocumentFile } from "../services/documentFiles.js";
 import { DOCUMENT_TYPES } from "../services/documentTypes.js";
 import { describeVehicle, monthlyRepayment } from "../services/debts.js";
+import { computeLiveBreakdown } from "../services/netWorth.js";
+import { incomeAndSpending } from "../services/cashflow.js";
+import { policyKindLabel } from "./tree.js";
+import { ADVISER_KINDS } from "./advisers.js";
 
 export const documentPacksRouter = Router();
 
@@ -26,7 +30,28 @@ export const documentPacksRouter = Router();
 
 const DOCUMENT_CATEGORIES = ["Tax", "Property", "Investment", "Personal", "Finance", "Trust/Company", "Commercial Property"] as const;
 const INCOME_DOCUMENT_TYPES = ["Payslip", "PAYG Summary / Income Statement"];
-const GENERATED_SUMMARIES = ["ASSETS_LIABILITIES", "TAX_SUMMARY", "INCOME_SUMMARY"] as const;
+const GENERATED_SUMMARIES = ["ASSETS_LIABILITIES", "TAX_SUMMARY", "INCOME_SUMMARY", "FACT_FIND"] as const;
+
+const MARITAL_STATUS_LABELS: Record<string, string> = {
+  SINGLE: "Single",
+  MARRIED: "Married",
+  DE_FACTO: "De facto",
+  SEPARATED: "Separated",
+  DIVORCED: "Divorced",
+  WIDOWED: "Widowed",
+  OTHER: "Other",
+};
+
+const IDENTITY_KIND_LABELS: Record<string, string> = {
+  PRIVATE_HEALTH: "Private health insurance",
+  MEDICARE: "Medicare card",
+  DRIVERS_LICENCE: "Driver's licence",
+  PASSPORT: "Passport",
+  BIRTH_CERTIFICATE: "Birth certificate",
+  CITIZENSHIP: "Citizenship certificate",
+  PROOF_OF_AGE: "Proof of age card",
+  OTHER: "Other ID or cover",
+};
 
 function categoryToDocumentTypes(category: string): string[] {
   return DOCUMENT_TYPES.filter((d) => d.category === category).map((d) => d.name);
@@ -211,6 +236,166 @@ async function incomeSummaryCsv(entityId: string, financialYearId: string | unde
   return toCsv(rows);
 }
 
+const PAY_FREQUENCY_LABELS: Record<string, string> = { WEEKLY: "Weekly", FORTNIGHTLY: "Fortnightly", MONTHLY: "Monthly" };
+const PREMIUM_FREQUENCY_LABELS: Record<string, string> = { MONTHLY: "a month", QUARTERLY: "a quarter", ANNUALLY: "a year" };
+const fmtDate = (d: Date | null | undefined) => (d ? d.toISOString().slice(0, 10) : "");
+const fmtMoney = (v: number | null | undefined) => (v === null || v === undefined ? "" : v.toFixed(2));
+
+/**
+ * A broker's "fact find" laid out with the same broad sections every
+ * Australian lender's version asks for — filled in from your own records
+ * where Financial Vault holds it, left blank where it's a one-off answer
+ * for this particular application (loan purpose, the responsible-lending
+ * questions, what you'd like help with) or something the app doesn't track
+ * (employer details, a forward expense budget). Never includes an
+ * encrypted number (TFN, ID, account or policy number) — those stay in the
+ * app; attach the ID/document chips instead if a scan is wanted.
+ */
+export async function factFindCsv(entityId: string): Promise<string> {
+  const personIds = await connectedPersonIds(entityId);
+  const people = await prisma.person.findMany({
+    where: { id: { in: personIds } },
+    include: {
+      familyFrom: { include: { toPerson: { select: { id: true, name: true } } } },
+      familyTo: { include: { fromPerson: { select: { id: true, name: true } } } },
+      identityRecords: true,
+    },
+    orderBy: { name: "asc" },
+  });
+
+  const rows: string[][] = [["Field", "Value"]];
+  const section = (title: string) => {
+    rows.push([]);
+    rows.push([title]);
+  };
+
+  section("PERSONAL & CONTACT DETAILS");
+  if (people.length === 0) rows.push(["No one linked to this entity yet", ""]);
+  for (const p of people) {
+    rows.push([`${p.name} — Date of birth`, fmtDate(p.dateOfBirth)]);
+    rows.push([`${p.name} — Marital status`, p.maritalStatus ? (MARITAL_STATUS_LABELS[p.maritalStatus] ?? p.maritalStatus) : ""]);
+    rows.push([`${p.name} — Phone`, p.phone ?? ""]);
+    rows.push([`${p.name} — Email`, p.email ?? ""]);
+    rows.push([`${p.name} — Current address`, p.currentAddress ?? ""]);
+    rows.push([`${p.name} — Previous address (if under 3 years)`, p.previousAddress ?? ""]);
+  }
+
+  section("FAMILY");
+  for (const p of people) {
+    const partner = p.familyFrom.find((r) => r.relationshipType === "PARTNER")?.toPerson.name ?? p.familyTo.find((r) => r.relationshipType === "PARTNER")?.fromPerson.name;
+    const children = p.familyFrom.filter((r) => r.relationshipType === "PARENT").map((r) => r.toPerson.name);
+    rows.push([`${p.name} — Partner`, partner ?? ""]);
+    rows.push([`${p.name} — Children`, children.join(", ")]);
+    const kin = [p.nextOfKinName, p.nextOfKinRelationship, p.nextOfKinPhone, p.nextOfKinAddress].filter(Boolean).join(" · ");
+    rows.push([`${p.name} — Next of kin`, kin]);
+  }
+
+  section("IDENTIFICATION");
+  let anyId = false;
+  for (const p of people) {
+    for (const r of p.identityRecords) {
+      anyId = true;
+      const detail = [r.issuer, r.expiryDate ? `expires ${fmtDate(r.expiryDate)}` : null].filter(Boolean).join(" — ");
+      rows.push([`${p.name} — ${IDENTITY_KIND_LABELS[r.kind] ?? "ID"}`, detail]);
+    }
+  }
+  if (!anyId) rows.push(["No ID or cover recorded", ""]);
+  rows.push(["Numbers and scans", "Numbers are kept encrypted and left out of this summary — tick the ID documents chip to attach the scans."]);
+
+  section("EMPLOYMENT & INCOME");
+  for (const p of people) {
+    rows.push([`${p.name} — Pay frequency`, p.payFrequency ? (PAY_FREQUENCY_LABELS[p.payFrequency] ?? p.payFrequency) : "Not tracked"]);
+  }
+  rows.push(["Employer, role and income breakdown", "Not tracked in Financial Vault — fill in by hand. If the Income Summary chip is ticked, payslip totals are in that file."]);
+
+  section("MONTHLY EXPENSES");
+  rows.push(["Note", "The figures below are your actual average spending by category over the last 12 months, from bank transactions — most fact finds want your own forward estimate of ongoing costs, so use this as a reference, not a substitute."]);
+  const cashflow = await incomeAndSpending({ months: 12, entityId });
+  if (cashflow.monthsCovered === 0) {
+    rows.push(["No bank transactions on record", ""]);
+  } else {
+    for (const c of cashflow.byCategory.filter((c) => c.moneyOut > 0)) {
+      rows.push([`${c.name} — average per month`, fmtMoney(c.moneyOut / cashflow.monthsCovered)]);
+    }
+    rows.push(["All categories — average money out per month", fmtMoney(cashflow.averageMonthlyOut)]);
+    rows.push(["All categories — average money in per month", fmtMoney(cashflow.averageMonthlyIn)]);
+  }
+
+  section("ASSETS & LIABILITIES (TOP LINE)");
+  const b = await computeLiveBreakdown(entityId, { lookThrough: true });
+  rows.push(["Property", fmtMoney(b.propertyValue)]);
+  rows.push(["Vehicles", fmtMoney(b.vehicleValue)]);
+  rows.push(["Investments", fmtMoney(b.investmentValue)]);
+  rows.push(["Super", fmtMoney(b.superValue)]);
+  rows.push(["Cash (bank accounts)", fmtMoney(b.cash)]);
+  rows.push(["Other assets", fmtMoney(b.otherAssets)]);
+  rows.push(["Total assets", fmtMoney(b.totalAssets)]);
+  rows.push(["Mortgages", fmtMoney(b.mortgages)]);
+  rows.push(["Credit cards", fmtMoney(b.creditCards)]);
+  rows.push(["Personal loans", fmtMoney(b.personalLoans)]);
+  rows.push(["Vehicle loans", fmtMoney(b.vehicleLoans)]);
+  rows.push(["Other liabilities", fmtMoney(b.otherLiabilities)]);
+  rows.push(["Total liabilities", fmtMoney(b.totalLiabilities)]);
+  rows.push(["Net position", fmtMoney(b.netPosition)]);
+  rows.push(["Full breakdown", "See the attached Assets & Liabilities Statement for each property, loan, account and its ownership share."]);
+
+  section("INSURANCE");
+  const policies = await prisma.insurancePolicy.findMany({
+    where: {
+      OR: [
+        { entityId },
+        { personId: { in: personIds } },
+        { asset: { OR: [{ entityId }, { ownerships: { some: { ownerEntityId: entityId } } }] } },
+      ],
+    },
+    include: { asset: { select: { name: true } }, person: { select: { name: true } }, entity: { select: { name: true } } },
+    orderBy: { kind: "asc" },
+  });
+  if (policies.length === 0) rows.push(["No insurance recorded", ""]);
+  for (const p of policies) {
+    const covers = p.asset?.name ?? p.person?.name ?? p.entity?.name ?? "";
+    const premium = p.premium !== null ? `${fmtMoney(p.premium)} ${PREMIUM_FREQUENCY_LABELS[p.premiumFrequency ?? "ANNUALLY"] ?? ""}` : "";
+    const detail = [
+      covers ? `covers ${covers}` : null,
+      p.coverAmount ? `cover ${fmtMoney(p.coverAmount)}` : null,
+      premium ? `premium ${premium}` : null,
+      p.renewalDate ? `renews ${fmtDate(p.renewalDate)}` : null,
+      p.heldInSuper ? "held in super" : null,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    rows.push([`${policyKindLabel(p.kind)} — ${p.insurer ?? "insurer not recorded"}`, detail]);
+  }
+
+  section("PROFESSIONAL ADVISERS");
+  const advisers = await prisma.adviser.findMany({ orderBy: { kind: "asc" } });
+  if (advisers.length === 0) rows.push(["No advisers recorded", "Fill in by hand if you'd like your broker to liaise with your accountant or solicitor."]);
+  for (const a of advisers) {
+    const detail = [a.firm, [a.contactFirstName, a.contactSurname].filter(Boolean).join(" "), a.phone, a.email].filter(Boolean).join(" · ");
+    rows.push([ADVISER_KINDS[a.kind] ?? a.kind, detail]);
+  }
+
+  section("LOAN OBJECTIVES & FEATURES (for this application)");
+  rows.push(["Purpose of this loan", ""]);
+  rows.push(["Preferred loan features (offset, redraw, fixed/variable, interest only, etc.)", ""]);
+  rows.push(["Preferred lenders / lenders to avoid", ""]);
+
+  section("YOUR FINANCIAL POSITION (for this application)");
+  rows.push(["Any financial judgments or legal proceedings against you?", ""]);
+  rows.push(["Any difficulty meeting financial commitments in the past two years?", ""]);
+  rows.push(["Are any existing debts currently in arrears?", ""]);
+  rows.push(["Concerned about rising interest rates?", ""]);
+  rows.push(["Expecting any changes to your financial situation that could affect repayments?", ""]);
+
+  section("WHAT YOU'D LIKE HELP WITH (optional)");
+  rows.push(["Areas of interest — insurance, debt/budgeting, super, investment, life events, home & property, health, estate planning, financial structures, retirement, other", ""]);
+
+  rows.push([]);
+  rows.push([`Generated by Financial Vault on ${fmtDate(new Date())}. Blank fields are for you to fill in by hand for this application.`]);
+
+  return toCsv(rows);
+}
+
 function toCsv(rows: string[][]): string {
   return rows
     .map((row) =>
@@ -256,6 +441,7 @@ documentPacksRouter.get(
       { key: "ASSETS_LIABILITIES", label: "Assets & Liabilities Statement", count: assetCount + liabilityCount + accountCount },
       { key: "TAX_SUMMARY", label: "Tax Summary", count: taxRecordCount },
       { key: "INCOME_SUMMARY", label: "Income Summary", count: income.length },
+      { key: "FACT_FIND", label: "Fact Find (for a broker)", count: 1 },
     ];
 
     res.json({ categories, generated });
@@ -325,6 +511,9 @@ documentPacksRouter.post(
     }
     if (generated.includes("INCOME_SUMMARY")) {
       archive.append(await incomeSummaryCsv(entityId, financialYearId), { name: "income_summary.csv" });
+    }
+    if (generated.includes("FACT_FIND")) {
+      archive.append(await factFindCsv(entityId), { name: "fact_find.csv" });
     }
 
     await archive.finalize();

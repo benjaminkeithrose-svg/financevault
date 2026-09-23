@@ -8,7 +8,7 @@ import { encryptField, isEncrypted } from "./services/fieldCrypto.js";
  * unencrypted through this client.
  */
 const ENCRYPTED_FIELDS: Record<string, string[]> = {
-  Person: ["tfn"],
+  Person: ["tfn", "motherMaidenName"],
   Entity: ["tfn"],
   EmailAccount: ["appPassword"],
   IdentityRecord: ["number", "referenceNumber"],
@@ -35,7 +35,7 @@ function encryptInPlace(data: unknown, fields: string[]) {
 // by accident; the few places that need one have to ask for it by name.
 const base = new PrismaClient({
   omit: {
-    person: { tfn: true },
+    person: { tfn: true, motherMaidenName: true },
     entity: { tfn: true },
     identityRecord: { number: true, referenceNumber: true },
     insurancePolicy: { policyNumber: true },

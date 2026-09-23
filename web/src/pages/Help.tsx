@@ -309,6 +309,26 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "personal-details",
+    title: "Personal & contact details, and professional advisers",
+    keywords: "phone email address marital status next of kin mother's maiden name accountant solicitor real estate agent financial adviser fact find broker",
+    body: (
+      <>
+        <p>
+          On a person's page, <strong>Personal & contact details</strong> records phone, email, current and previous
+          address, marital status, and next of kin — the things a broker's fact find always asks for. <strong>Mother's
+          maiden name</strong> is kept separately, encrypted like a tax file number, since it's a security-question
+          answer rather than an address.
+        </p>
+        <p>
+          <Link to="/advisers">Professional advisers</Link> (in the menu, under People & entities) keeps your
+          accountant, solicitor, real estate agent and financial adviser in one place — add each once, and they're
+          pulled straight into the Fact Find document pack below.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "id-cover",
     title: "ID and cover: licence, Medicare, passport, health insurance",
     keywords: "drivers licence medicare passport private health insurance identity id documents broker",
@@ -910,6 +930,17 @@ const SECTIONS: Section[] = [
         <p>
           Only what you tick goes in. The summaries (assets and liabilities, tax, income) are spreadsheets built fresh
           from your records at that moment, and every pack includes an index listing each document in it.
+        </p>
+        <h4>Fact Find</h4>
+        <p>
+          The <strong>Fact Find</strong> summary is laid out with the same broad sections every broker's fact find
+          asks for — personal and contact details, family, ID (kind and expiry, not the number), employment, assets
+          and liabilities, insurance, and your professional advisers — filled in from your own records. Anything
+          that's a one-off answer for that particular loan (why you want it, the responsible-lending questions, what
+          you'd like help with) or something Financial Vault doesn't track (employer details, your own forward
+          expense estimate) is left blank for you to fill in by hand. Encrypted numbers — TFNs, ID numbers, account
+          and policy numbers — are never included; tick the ID documents chip if the broker wants to see the scans
+          themselves.
         </p>
       </>
     ),

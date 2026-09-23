@@ -72,6 +72,17 @@ export interface Person {
   contactInfo?: string | null;
   notes?: string | null;
   payFrequency?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  currentAddress?: string | null;
+  previousAddress?: string | null;
+  maritalStatus?: string | null;
+  hasMotherMaidenName?: boolean;
+  motherMaidenNameMasked?: string | null;
+  nextOfKinName?: string | null;
+  nextOfKinRelationship?: string | null;
+  nextOfKinPhone?: string | null;
+  nextOfKinAddress?: string | null;
   /** Their own personal (individual) entity, created with them. */
   entityId?: string | null;
   personalEntity?: Entity | null;
@@ -79,6 +90,19 @@ export interface Person {
   familyFrom?: Array<{ id: string; relationshipType: string; toPersonId: string; toPerson: { id: string; name: string } }>;
   familyTo?: Array<{ id: string; relationshipType: string; fromPersonId: string; fromPerson: { id: string; name: string } }>;
   documents?: Document[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Adviser {
+  id: string;
+  kind: string;
+  firm?: string | null;
+  contactFirstName?: string | null;
+  contactSurname?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  notes?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -1544,6 +1568,7 @@ export const api = {
     list: () => request<Person[]>("/people"),
     get: (id: string) => request<Person>(`/people/${id}`),
     revealTfn: (id: string) => request<{ tfn: string | null }>(`/people/${id}/tfn`),
+    revealMotherMaidenName: (id: string) => request<{ motherMaidenName: string | null }>(`/people/${id}/mother-maiden-name`),
     create: (data: Partial<Person>) => request<Person>("/people", { method: "POST", body: JSON.stringify(data) }),
     update: (id: string, data: Partial<Person>) =>
       request<Person>(`/people/${id}`, { method: "PUT", body: JSON.stringify(data) }),
@@ -1564,6 +1589,14 @@ export const api = {
     logPayPeriod: (personId: string, data: Record<string, unknown>) =>
       request<PayPeriodEntry>(`/people/${personId}/pay-periods`, { method: "PUT", body: JSON.stringify(data) }),
     removePayPeriodEntry: (entryId: string) => request<void>(`/people/pay-periods/${entryId}`, { method: "DELETE" }),
+  },
+
+  advisers: {
+    list: () => request<Adviser[]>("/advisers"),
+    create: (data: Record<string, unknown>) => request<Adviser>("/advisers", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<Adviser>(`/advisers/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/advisers/${id}`, { method: "DELETE" }),
   },
 
   documents: {

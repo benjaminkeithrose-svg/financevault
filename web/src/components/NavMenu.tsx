@@ -27,7 +27,7 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
       { to: "/email-import", label: "Import from Gmail" },
     ],
   },
-  { label: "Who owns it", items: [{ to: "/people", label: "People & entities" }] },
+  { label: "Who owns it", items: [{ to: "/people", label: "People & entities" }, { to: "/advisers", label: "Professional advisers" }] },
   // Each kind of asset or debt has one home — no catch-all list repeating them.
   {
     label: "Assets",

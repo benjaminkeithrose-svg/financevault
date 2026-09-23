@@ -7,7 +7,19 @@ import { prisma } from "../db.js";
  * itself would undo the encryption on the field. Scrubbing here rather than
  * at each call site means a new route can't reintroduce the leak.
  */
-const SECRET_KEYS = new Set(["tfn", "apppassword", "passcode", "newpasscode", "currentpasscode", "recoverykey"]);
+const SECRET_KEYS = new Set([
+  "tfn",
+  "apppassword",
+  "passcode",
+  "newpasscode",
+  "currentpasscode",
+  "recoverykey",
+  "mothermaidenname",
+  "accountnumber",
+  "policynumber",
+  "number",
+  "referencenumber",
+]);
 
 export function scrubSecrets(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(scrubSecrets);

@@ -7,6 +7,16 @@ import { createPersonalEntity } from "../services/personalEntity.js";
 import { FOUNDING_TRUST_ROLES, trustFamilySuggestions } from "../services/family.js";
 import { logAudit } from "../services/audit.js";
 import { parseTfnInput, revealTfn, tfnSummary } from "../services/tfnAccess.js";
+import { decryptField } from "../services/fieldCrypto.js";
+
+/** A fixed placeholder — no partial characters, since a security-question answer shouldn't hint at its own length. */
+const HIDDEN = "•••••• (hidden)";
+
+async function motherMaidenNameSummary(personId: string) {
+  const row = await prisma.person.findUnique({ where: { id: personId }, select: { motherMaidenName: true } });
+  const value = row?.motherMaidenName ? decryptField(row.motherMaidenName) : null;
+  return { hasMotherMaidenName: value !== null, motherMaidenNameMasked: value ? HIDDEN : null };
+}
 
 export const peopleRouter = Router();
 
@@ -47,7 +57,12 @@ peopleRouter.get(
       include: { document: true },
       orderBy: { createdAt: "desc" },
     });
-    res.json({ ...person, ...(await tfnSummary("person", person.id)), documents: links.map((l) => l.document) });
+    res.json({
+      ...person,
+      ...(await tfnSummary("person", person.id)),
+      ...(await motherMaidenNameSummary(person.id)),
+      documents: links.map((l) => l.document),
+    });
   })
 );
 
@@ -58,13 +73,41 @@ const personInput = z.object({
   contactInfo: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
   payFrequency: z.string().optional().nullable(), // WEEKLY | FORTNIGHTLY | MONTHLY
+  phone: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  currentAddress: z.string().optional().nullable(),
+  previousAddress: z.string().optional().nullable(),
+  maritalStatus: z.string().optional().nullable(), // SINGLE | MARRIED | DE_FACTO | SEPARATED | DIVORCED | WIDOWED | OTHER
+  motherMaidenName: z.string().optional().nullable(),
+  nextOfKinName: z.string().optional().nullable(),
+  nextOfKinRelationship: z.string().optional().nullable(),
+  nextOfKinPhone: z.string().optional().nullable(),
+  nextOfKinAddress: z.string().optional().nullable(),
 });
 
+// Plain text fields: an empty string means "clear it", same as null.
+const BLANKABLE = [
+  "phone",
+  "email",
+  "currentAddress",
+  "previousAddress",
+  "maritalStatus",
+  "motherMaidenName",
+  "nextOfKinName",
+  "nextOfKinRelationship",
+  "nextOfKinPhone",
+  "nextOfKinAddress",
+] as const;
+
 function personData<T extends Partial<z.infer<typeof personInput>>>(parsed: T) {
-  return {
+  const data: Record<string, unknown> = {
     ...parsed,
     dateOfBirth: parsed.dateOfBirth !== undefined ? (parsed.dateOfBirth ? new Date(parsed.dateOfBirth) : null) : undefined,
   };
+  for (const field of BLANKABLE) {
+    if (data[field] === "") data[field] = null;
+  }
+  return data;
 }
 
 peopleRouter.post(
@@ -79,12 +122,12 @@ peopleRouter.post(
     // The person and their personal entity are created together, so nobody
     // has to set themselves up twice.
     const person = await prisma.$transaction(async (tx) => {
-      const created = await tx.person.create({ data: { ...personData(parsed), tfn: tfn.value } });
+      const created = await tx.person.create({ data: { ...personData(parsed), tfn: tfn.value } as Parameters<typeof tx.person.create>[0]["data"] });
       await createPersonalEntity(tx, created.id, created.name);
       return created;
     });
     await logAudit("PERSON_CREATED", { targetType: "Person", targetId: person.id, data: { name: person.name } });
-    res.status(201).json({ ...person, ...(await tfnSummary("person", person.id)) });
+    res.status(201).json({ ...person, ...(await tfnSummary("person", person.id)), ...(await motherMaidenNameSummary(person.id)) });
   })
 );
 
@@ -105,7 +148,7 @@ peopleRouter.put(
     const person = await prisma.$transaction(async (tx) => {
       const updated = await tx.person.update({
         where: { id: req.params.id },
-        data: { ...personData(parsed), tfn: tfn.value },
+        data: { ...personData(parsed), tfn: tfn.value } as Parameters<typeof tx.person.update>[0]["data"],
       });
       // A rename follows through to their personal entity — unless that
       // entity was given its own name (e.g. "Ben (Personal)"), which is kept.
@@ -115,7 +158,7 @@ peopleRouter.put(
       return updated;
     });
     await logAudit("PERSON_CHANGED", { targetType: "Person", targetId: person.id, data: parsed });
-    res.json({ ...person, ...(await tfnSummary("person", person.id)) });
+    res.json({ ...person, ...(await tfnSummary("person", person.id)), ...(await motherMaidenNameSummary(person.id)) });
   })
 );
 
@@ -129,6 +172,16 @@ peopleRouter.get(
     const tfn = await revealTfn("person", req.params.id);
     if (tfn) await logAudit("TFN_REVEALED", { targetType: "Person", targetId: req.params.id });
     res.json({ tfn });
+  })
+);
+
+peopleRouter.get(
+  "/:id/mother-maiden-name",
+  asyncHandler(async (req, res) => {
+    const row = await prisma.person.findUnique({ where: { id: req.params.id }, select: { motherMaidenName: true } });
+    const value = row?.motherMaidenName ? decryptField(row.motherMaidenName) : null;
+    if (value) await logAudit("MOTHER_MAIDEN_NAME_REVEALED", { targetType: "Person", targetId: req.params.id });
+    res.json({ motherMaidenName: value });
   })
 );
 
