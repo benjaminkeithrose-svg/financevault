@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, AssetTreeData, TreeNode } from "../api/client.js";
 import { HelpLink } from "../components/HelpLink.js";
+import { StructureTabs } from "../components/StructureTabs.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { entityTypeLabel, formatCurrency, humanize } from "../utils.js";
 
@@ -110,6 +111,7 @@ export function AssetTree() {
 
   return (
     <div>
+      <StructureTabs current="/tree" />
       <div className="page-header">
         <div>
           <h2>

@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { lastStructureView, STRUCTURE_ROUTES } from "./StructureTabs.js";
 
 interface NavItem {
   to: string;
@@ -14,8 +15,8 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
     label: "",
     items: [
       { to: "/", label: "Dashboard" },
-      { to: "/tree", label: "Asset tree" },
-      { to: "/visualization", label: "Visualization" },
+      // One entry for both views; tabs on the page switch between them.
+      { to: "/tree", label: "Asset tree & diagram" },
     ],
   },
   {
@@ -73,6 +74,7 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
 // overlay (PREFERENCES.md: options that aren't needed constantly go behind
 // a menu, not as a permanent on-screen control).
 export function NavMenuList({ onNavigate }: { onNavigate: () => void }) {
+  const { pathname } = useLocation();
   return (
     <nav>
       {NAV_GROUPS.map((group, i) => (
@@ -81,9 +83,11 @@ export function NavMenuList({ onNavigate }: { onNavigate: () => void }) {
           {group.items.map((s) => (
             <NavLink
               key={s.to}
-              to={s.to}
+              to={s.to === "/tree" ? lastStructureView() : s.to}
               end={s.to === "/"}
-              className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
+              className={({ isActive }) =>
+                `nav-link${isActive || (s.to === "/tree" && STRUCTURE_ROUTES.includes(pathname)) ? " active" : ""}`
+              }
               onClick={onNavigate}
             >
               {s.label}

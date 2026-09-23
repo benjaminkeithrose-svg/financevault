@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { StructureTabs } from "../components/StructureTabs.js";
 import { useNavigate } from "react-router-dom";
 import { api, Graph, GraphNode } from "../api/client.js";
 import { formatCurrency, humanize, liabilityTypeLabel } from "../utils.js";
@@ -118,9 +119,10 @@ export function Visualization() {
   if (graph.nodes.length === 0) {
     return (
       <div>
+        <StructureTabs current="/visualization" />
         <div className="page-header">
           <div>
-            <h2>Visualization</h2>
+            <h2>Diagram</h2>
             <p>Your ownership structure as a diagram — people, entities, what they own, and what they owe.</p>
           </div>
         </div>
@@ -157,9 +159,10 @@ export function Visualization() {
 
   return (
     <div className="viz-page">
+      <StructureTabs current="/visualization" />
       <div className="page-header">
         <div>
-          <h2>Visualization</h2>
+          <h2>Diagram</h2>
           <p>Your ownership structure as a diagram. Click any box to open it.</p>
         </div>
         <div className="toolbar zoom-controls">

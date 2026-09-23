@@ -148,7 +148,7 @@ const SECTIONS: Section[] = [
           its servicing all hang off that asset.
         </p>
         <p>
-          <Link to="/tree">Asset tree</Link> (in the menu, under Dashboard) shows it as an outline. Tap the arrow beside
+          <Link to="/tree">Asset tree &amp; diagram</Link> (in the menu, under Dashboard) shows it two ways: the <strong>Asset tree</strong> tab as an outline, and the <strong>Diagram</strong> tab as a chart. The menu opens whichever tab you used last. Tap the arrow beside
           anything to open it; tap its name to go to its page. <strong>Open everything</strong> unfolds the whole tree and{" "}
           <strong>Fold up</strong> closes it; what you leave open is remembered on this computer.
         </p>
@@ -216,7 +216,7 @@ const SECTIONS: Section[] = [
         </p>
         <p>
           Totals, tax and capital gains are worked out per entity, the way the ATO sees them.{" "}
-          <Link to="/visualization">Visualization</Link> draws it all as a diagram.
+          The <Link to="/visualization">Diagram</Link> tab of Asset tree &amp; diagram draws it all as a chart.
         </p>
       </>
     ),
@@ -302,7 +302,7 @@ const SECTIONS: Section[] = [
           <strong>unit trust</strong> is split into units: add it under People & entities as a <em>Unit trust</em>, then on
           its page add each <strong>unitholder</strong> — a person, or another entity such as a family trust — with the
           share of units they hold. Four people who aren't related can each hold 25%. Each holder's share of the trust's net
-          assets counts in their own figures; the family total still counts the trust's assets once. The Visualization
+          assets counts in their own figures; the family total still counts the trust's assets once. The Diagram
           shows each holder's line to the trust with their share.
         </p>
       </>
@@ -858,7 +858,7 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <p>
-          The bottom of the <Link to="/visualization">Visualization</Link> page lists everything that expires or falls due,
+          The bottom of the <Link to="/visualization">Diagram</Link> tab lists everything that expires or falls due,
           month by month: ID and health cover, insurance and other document renewals, vehicle rego, warranties, services
           due, lease expiries and rent reviews, and fixed-rate loan periods. Tap one to open it.
         </p>

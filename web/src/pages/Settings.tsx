@@ -153,7 +153,7 @@ export function Settings() {
         {settings && (
           <select value={settings.defaultLandingPage} onChange={(e) => setLandingPage(e.target.value)} style={{ maxWidth: 280 }}>
             <option value="DASHBOARD">Dashboard</option>
-            <option value="VISUALIZATION">Visualization</option>
+            <option value="VISUALIZATION">Diagram (asset tree &amp; diagram)</option>
           </select>
         )}
       </div>

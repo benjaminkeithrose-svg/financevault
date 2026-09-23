@@ -11,7 +11,7 @@ import { ThemePicker } from "./ThemePicker.js";
 
 const TITLES: Record<string, string> = {
   "/": "Dashboard",
-  "/visualization": "Visualization",
+  "/visualization": "Asset Tree",
   "/tree": "Asset Tree",
   "/inbox": "To Review",
   "/documents": "Documents",
