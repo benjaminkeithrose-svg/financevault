@@ -131,3 +131,57 @@ has access to is the likely route. Decide before building.
 
 After the ATO documents are in: a fresh gap analysis across the whole
 program, using them as the reference — what to add, fix or remove.
+
+---
+
+## 7. Borrowing capacity and equity release estimate (residential and commercial)
+
+**Why:** know roughly what most lenders would lend — for a new loan and for
+an equity release — before talking to the broker.
+
+**What's public about how lenders work it out** (verify when building):
+- APRA's prudential guidance for residential lending (APG 223) sets the
+  serviceability buffer: lenders assess repayments at the actual rate plus
+  a buffer, currently 3 percentage points.
+- Living expenses: lenders use the higher of your declared expenses and a
+  benchmark (the Household Expenditure Measure, HEM — licensed, not free,
+  so the app would use declared expenses and let a benchmark be typed in).
+- Income is "shaded": rent typically counted at about 70–80%, bonuses and
+  overtime reduced or excluded. Each lender sets its own percentages.
+- Credit cards are counted at a set percentage of the limit each month
+  (about 3–3.8%), whatever the balance.
+- Existing loans are assessed as principal-and-interest over the remaining
+  term at the buffered rate, even if interest-only.
+- APRA has also limited high debt-to-income lending (6× income and above) —
+  confirm the current setting when building.
+- LVR: usually 80% before lenders' mortgage insurance, higher with it.
+
+**Residential mode:** income (shaded) − living expenses − all existing
+commitments (at buffered rates) = surplus → how big a new loan that surplus
+can service at the buffered rate. Show a range, not one figure.
+
+**Commercial mode:** lenders mostly look at the property itself — interest
+cover (net rent ÷ interest at a buffered rate, commonly needing about
+1.5–2×) and a lower LVR (commonly 60–70%). The app already works out DSCR
+and interest cover on commercial properties; this reuses it.
+
+**Lease doc:** commercial loans assessed on the lease alone — no personal
+income — so this is the commercial mode with personal servicing switched off.
+
+**SMSF:** the fund's own rent and contributions service the loan; lower LVRs.
+
+**Equity release:** the lower of (value × lender's max LVR − current debt)
+and what servicing allows. Links to idea 2 (debt allocation) so the draw's
+purpose is recorded, and to idea 5 (market data) for an indicative value.
+
+**Every assumption visible and editable:** buffer (3%), rent shading,
+card percentage, expense benchmark, max LVR, interest cover. Clearly marked
+as an estimate — the broker's lender calculators have the final say.
+
+**Builds on:** Income & Spending report, Debt Summary (limits and
+repayments), property values, commercial DSCR/ICR, Fact Find.
+
+**To gather:** APRA APG 223 (apra.gov.au); ASIC RG 209 (responsible
+lending); from the broker if they'll share — the assumptions their usual
+lenders use (rent shading %, card %, expense benchmark, max LVR, commercial
+ICR/LVR, lease-doc criteria).
