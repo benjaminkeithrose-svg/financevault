@@ -506,8 +506,10 @@ new download.
   4. installs and updates the database layout;
   5. keeps the previous version so it can be put back with one click;
   6. deletes the ZIP and shows "Updated to version X — here's what's new".
-- **Or from inside the app:** Settings → "Install an update" → choose the
-  ZIP → same steps, then it restarts itself.
+- **Chosen: from inside the app.** Settings → "Install an update" →
+  choose the ZIP → same steps, then it restarts itself. (The Updates folder
+  above can stay as a fallback for when the app won't start, but the in-app
+  button is the main way.)
 - If anything fails, it puts the previous version back and says so —
   records are never at risk.
 - Works offline — no update server, nothing downloaded automatically.
