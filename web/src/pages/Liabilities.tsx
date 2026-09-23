@@ -3,12 +3,11 @@ import { useSearchParams } from "react-router-dom";
 import { api, Asset, CommercialProperty, Entity, Liability, Property } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { HelpLink } from "../components/HelpLink.js";
-import { describeVehicle, formatCurrency, liabilityTypeLabel, REPAYMENT_FREQUENCIES } from "../utils.js";
+import { DEBT_LISTS, DebtList, describeVehicle, formatCurrency, liabilityTypeLabel, REPAYMENT_FREQUENCIES } from "../utils.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
 import { useDraft } from "../hooks/useDraft.js";
 
-const ALL_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN", "VEHICLE_LOAN", "CREDIT_CARD", "PERSONAL_LOAN", "OTHER"];
-const LOAN_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN"];
+const LOAN_TYPES = DEBT_LISTS.property.types as readonly string[];
 // Loans that can be tied to the vehicle or boat they paid for.
 const VEHICLE_LINKABLE = ["VEHICLE_LOAN", "PERSONAL_LOAN"];
 
@@ -29,7 +28,9 @@ const emptyForm = (liabilityType: string) => ({
   interestOnly: false,
 });
 
-export function Liabilities({ scope }: { scope: "loans" | "all" }) {
+/** One list per kind of debt (see DEBT_LISTS) — property loans, vehicle loans, cards, the rest. */
+export function Liabilities({ scope }: { scope: DebtList }) {
+  const list = DEBT_LISTS[scope];
   const [params, setParams] = useSearchParams();
   const [liabilities, setLiabilities] = useState<Liability[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
@@ -37,10 +38,10 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
   const [commercialProperties, setCommercialProperties] = useState<CommercialProperty[]>([]);
   const [vehicles, setVehicles] = useState<Asset[]>([]);
   const [securityKind, setSecurityKind] = useState<"none" | "residential" | "commercial">("none");
-  const [form, setForm, draft] = useDraft(`liabilities:${scope}:new`, emptyForm(scope === "loans" ? "HOME_LOAN" : "CREDIT_CARD"));
+  const [form, setForm, draft] = useDraft(`liabilities:${scope}:new`, emptyForm(list.types[0]));
   const [showForm, setShowForm] = useState(draft.restored);
 
-  const allowedTypes = scope === "loans" ? LOAN_TYPES : ALL_TYPES;
+  const allowedTypes = list.types as readonly string[];
   const isCard = form.liabilityType === "CREDIT_CARD";
 
   function load() {
@@ -114,13 +115,9 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
       <div className="page-header">
         <div>
           <h2>
-            {scope === "loans" ? "Loans" : "Liabilities"} <HelpLink topic="loans-assets" />
+            {list.title} <HelpLink topic={scope === "vehicle" ? "vehicles" : "loans-assets"} />
           </h2>
-          <p>
-            {scope === "loans"
-              ? "Home and investment property loans."
-              : "Every debt — property loans, vehicle and boat loans, credit cards, personal loans."}
-          </p>
+          <p>{list.blurb}</p>
         </div>
         <button className="btn" onClick={() => setShowForm((v) => !v)}>
           {showForm ? "Cancel" : "New"}
@@ -136,14 +133,18 @@ export function Liabilities({ scope }: { scope: "loans" | "all" }) {
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             placeholder={isCard ? "Amex Platinum" : "CBA Home Loan"}
           />
-          <label>Type</label>
-          <select value={form.liabilityType} onChange={(e) => setForm({ ...form, liabilityType: e.target.value })}>
-            {allowedTypes.map((t) => (
-              <option key={t} value={t}>
-                {liabilityTypeLabel(t)}
-              </option>
-            ))}
-          </select>
+          {allowedTypes.length > 1 && (
+            <>
+              <label>Type</label>
+              <select value={form.liabilityType} onChange={(e) => setForm({ ...form, liabilityType: e.target.value })}>
+                {allowedTypes.map((t) => (
+                  <option key={t} value={t}>
+                    {liabilityTypeLabel(t)}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
           <label>Owed by</label>
           <select value={form.entityId} onChange={(e) => setForm({ ...form, entityId: e.target.value })}>
             <option value="">— Select —</option>

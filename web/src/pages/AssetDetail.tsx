@@ -3,11 +3,12 @@ import { Link, useParams } from "react-router-dom";
 import { api, Asset, Entity } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
-import { describeVehicle, formatCurrency, humanize, itemCategoryLabel, ITEM_CATEGORIES, monthlyEquivalent, vehicleTypeLabel } from "../utils.js";
+import { assetListRoute, assetTypeLabel, describeVehicle, formatCurrency, humanize, itemCategoryLabel, ITEM_CATEGORIES, monthlyEquivalent, vehicleTypeLabel } from "../utils.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
 import { MaintenancePanel } from "../components/MaintenancePanel.js";
 import { EMPTY_VEHICLE_FIELDS, VehicleFields, vehicleFieldsPayload } from "../components/VehicleFields.js";
 import { DeleteSection } from "../components/DeleteSection.js";
+import { useBackTo } from "../hooks/useBackTo.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 
 function toDateInput(value?: string | null): string {
@@ -15,7 +16,7 @@ function toDateInput(value?: string | null): string {
   return value.slice(0, 10);
 }
 
-const STANDALONE_TYPES = ["VEHICLE", "SHARES", "MANAGED_FUND", "EQUIPMENT", "SUPERANNUATION", "CASH", "OTHER"];
+const STANDALONE_TYPES = ["VEHICLE", "SUPERANNUATION", "EQUIPMENT", "COLLECTIBLE", "CASH", "OTHER", "SHARES", "MANAGED_FUND"];
 
 export function AssetDetail() {
   const { id } = useParams<{ id: string }>();
@@ -50,12 +51,24 @@ export function AssetDetail() {
   }
 
   useEffect(load, [id]);
+  // Back goes to the list this asset lives on — or, for an item, to what it sits under.
+  useBackTo(
+    asset
+      ? asset.parent
+        ? asset.parent.property
+          ? `/properties/${asset.parent.property.id}`
+          : asset.parent.commercialProperty
+            ? `/commercial-properties/${asset.parent.commercialProperty.id}`
+            : `/assets/${asset.parent.id}`
+        : assetListRoute(asset.assetType)
+      : null
+  );
   useEffect(() => {
     api.entities.list().then(setEntities);
   }, []);
 
   if (!asset) {
-    if (loadError) return <LoadFailed message={loadError} backTo="/assets" backLabel="Back to assets" />;
+    if (loadError) return <LoadFailed message={loadError} backTo="/assets" backLabel="Back to other assets" />;
     return <div className="empty-state">Loading…</div>;
   }
 
@@ -100,7 +113,7 @@ export function AssetDetail() {
   }
 
   const isVehicle = asset.assetType === "VEHICLE";
-  const backTo = parentRoute ?? (isVehicle ? "/vehicles" : "/assets");
+  const backTo = parentRoute ?? assetListRoute(asset.assetType);
   const loans = asset.securedLoans ?? [];
 
   return (
@@ -165,7 +178,7 @@ export function AssetDetail() {
             <select value={form.assetType} onChange={(e) => setForm({ ...form, assetType: e.target.value })}>
               {STANDALONE_TYPES.map((t) => (
                 <option key={t} value={t}>
-                  {t === "VEHICLE" ? "Vehicle or boat" : humanize(t)}
+                  {assetTypeLabel(t)}
                 </option>
               ))}
             </select>
@@ -213,7 +226,7 @@ export function AssetDetail() {
         <div className="card">
           <div className="toolbar" style={{ justifyContent: "space-between" }}>
             <h3 style={{ margin: 0 }}>Loans for this {asset.vehicleType === "BOAT" || asset.vehicleType === "JET_SKI" ? "boat" : "vehicle"}</h3>
-            <Link className="btn secondary" to={`/liabilities?newLoanFor=${asset.id}`}>
+            <Link className="btn secondary" to={`/vehicle-loans?newLoanFor=${asset.id}`}>
               Add a loan
             </Link>
           </div>

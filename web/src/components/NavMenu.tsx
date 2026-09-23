@@ -15,32 +15,52 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
     items: [
       { to: "/", label: "Dashboard" },
       { to: "/visualization", label: "Visualization" },
-      { to: "/inbox", label: "Inbox" },
+    ],
+  },
+  {
+    label: "Documents",
+    items: [
+      { to: "/inbox", label: "To review" },
       { to: "/documents", label: "Documents" },
-      { to: "/bulk-import", label: "Bulk import" },
-      { to: "/email-import", label: "Email import" },
+      { to: "/bulk-import", label: "Import a folder" },
+      { to: "/email-import", label: "Import from Gmail" },
     ],
   },
   { label: "Who owns it", items: [{ to: "/people", label: "People & entities" }] },
+  // Each kind of asset or debt has one home — no catch-all list repeating them.
   {
     label: "Assets",
     items: [
       { to: "/properties", label: "Properties" },
-      { to: "/investments", label: "Investments" },
-      { to: "/banking", label: "Banking" },
       { to: "/vehicles", label: "Vehicles & boats" },
-      { to: "/assets", label: "Assets" },
-      { to: "/portfolio-plans", label: "Portfolio Plan" },
+      { to: "/investments", label: "Investments" },
+      { to: "/banking", label: "Bank accounts" },
+      { to: "/super", label: "Super" },
+      { to: "/assets", label: "Other assets" },
     ],
   },
-  { label: "Liabilities", items: [{ to: "/loans", label: "Loans" }, { to: "/liabilities", label: "Liabilities" }] },
   {
-    label: "",
+    label: "Liabilities",
+    items: [
+      { to: "/loans", label: "Property loans" },
+      { to: "/vehicle-loans", label: "Vehicle & boat loans" },
+      { to: "/credit-cards", label: "Credit cards" },
+      { to: "/liabilities", label: "Personal & other" },
+    ],
+  },
+  {
+    label: "Plan & report",
     items: [
       { to: "/net-worth", label: "Net Worth" },
       { to: "/tax", label: "Tax" },
       { to: "/reports", label: "Reports" },
+      { to: "/portfolio-plans", label: "Portfolio Plan" },
       { to: "/packs", label: "Document Packs" },
+    ],
+  },
+  {
+    label: "",
+    items: [
       { to: "/settings", label: "Settings" },
       { to: "/help", label: "Help" },
     ],

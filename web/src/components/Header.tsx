@@ -4,24 +4,30 @@ import { NavMenuList } from "./NavMenu.js";
 import { SearchResults } from "./SearchResults.js";
 import { IconChevronLeft, IconClose, IconHome, IconLock, IconMenu, IconPin, IconSearch } from "./icons.js";
 import { usePinnedMenu } from "../hooks/usePinnedMenu.js";
+import { useBackOverride } from "../hooks/useBackTo.js";
 import { lockApp } from "./LockGate.js";
 
 const TITLES: Record<string, string> = {
   "/": "Dashboard",
   "/visualization": "Visualization",
-  "/inbox": "Inbox",
+  "/inbox": "To Review",
   "/documents": "Documents",
+  "/bulk-import": "Import a Folder",
+  "/email-import": "Import from Gmail",
   "/people": "People & Entities",
   "/entities": "People & Entities",
   "/search": "Search",
   "/properties": "Properties",
   "/commercial-properties/acquisition-model": "Acquisition Model",
-  "/investments": "Investments",
-  "/banking": "Banking",
-  "/loans": "Loans",
-  "/liabilities": "Liabilities",
-  "/assets": "Assets",
   "/vehicles": "Vehicles & Boats",
+  "/investments": "Investments",
+  "/banking": "Bank Accounts",
+  "/super": "Super",
+  "/assets": "Other Assets",
+  "/loans": "Property Loans",
+  "/vehicle-loans": "Vehicle & Boat Loans",
+  "/credit-cards": "Credit Cards",
+  "/liabilities": "Personal & Other Debts",
   "/portfolio-plans": "Portfolio Plan",
   "/net-worth": "Net Worth",
   "/tax": "Tax",
@@ -29,8 +35,6 @@ const TITLES: Record<string, string> = {
   "/packs": "Document Packs",
   "/settings": "Settings",
   "/help": "Help",
-  "/bulk-import": "Bulk Import",
-  "/email-import": "Email Import",
 };
 
 // Singular label for a detail route (e.g. /people/:id) whose exact title
@@ -44,7 +48,7 @@ const DETAIL_TITLES: Record<string, string> = {
   "commercial-properties": "Commercial Property",
   investments: "Investment Account",
   banking: "Bank Account",
-  liabilities: "Liability",
+  liabilities: "Debt",
   assets: "Asset",
   "bulk-import": "Bulk Import",
   "portfolio-plans": "Portfolio Plan",
@@ -81,13 +85,16 @@ export function Header() {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  const parent = getParent(location.pathname);
-  const title = getTitle(location.pathname);
+  // "/assets/" and "/assets" are the same page.
+  const pathname = location.pathname.length > 1 ? location.pathname.replace(/\/+$/, "") : location.pathname;
+  const backOverride = useBackOverride();
+  const parent = backOverride ?? getParent(pathname);
+  const title = getTitle(pathname);
 
   return (
     <>
       <header className="app-header">
-        {location.pathname !== "/" && (
+        {pathname !== "/" && (
           <button className="icon-btn" aria-label="Home" onClick={() => navigate("/")}>
             <IconHome />
           </button>

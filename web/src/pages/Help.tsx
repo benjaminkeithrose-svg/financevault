@@ -134,15 +134,15 @@ const SECTIONS: Section[] = [
           person and give them their role in it. See <a href="#family-trust">Family and the family trust</a>.
         </li>
         <li>
-          Add your bank accounts under <Link to="/banking">Banking</Link> and import each one's transactions from a CSV
+          Add your bank accounts under <Link to="/banking">Bank accounts</Link> and import each one's transactions from a CSV
           (see <a href="#banking">Bank accounts and transactions</a>).
         </li>
         <li>
           Add properties, loans and investment accounts.
         </li>
         <li>
-          Load your paperwork in one go with <Link to="/bulk-import">Bulk import</Link>, then go through the{" "}
-          <Link to="/inbox">Inbox</Link> to confirm what it worked out.
+          Load your paperwork in one go with <Link to="/bulk-import">Import a folder</Link>, then go through{" "}
+          <Link to="/inbox">To review</Link> to confirm what it worked out.
         </li>
         <li>
           Take a backup (<Link to="/settings">Settings</Link> → <strong>Download full backup</strong>).
@@ -194,17 +194,17 @@ const SECTIONS: Section[] = [
   },
   {
     id: "documents",
-    title: "Documents and the Inbox",
+    title: "Documents and To review",
     keywords: "upload file pdf scan confirm classify classification link archive ocr",
     body: (
       <>
         <p>
-          Drop files onto the <Link to="/inbox">Inbox</Link> (PDFs, JPGs and PNGs). Financial Vault reads each one —
+          Drop files onto <Link to="/inbox">To review</Link> (PDFs, JPGs and PNGs). Financial Vault reads each one —
           including scanned documents — and proposes what it is, who it belongs to, the financial year, dates and
           amounts.
         </p>
         <p>
-          Nothing is filed automatically. Each new document waits in the Inbox until you <strong>Confirm</strong> it.
+          Nothing is filed automatically. Each new document waits in To review until you <strong>Confirm</strong> it.
           Open a document to correct anything first, then <strong>Confirm classification</strong>.
         </p>
         <p>
@@ -232,12 +232,12 @@ const SECTIONS: Section[] = [
   },
   {
     id: "bulk-import",
-    title: "Bulk import: loading a whole folder",
+    title: "Import a folder: loading years of paperwork",
     keywords: "folder many files first load statements tax returns",
     body: (
       <>
         <p>
-          <Link to="/bulk-import">Bulk import</Link> is for loading years of paperwork at once. Choose a folder (or a set
+          <Link to="/bulk-import">Import a folder</Link> is for loading years of paperwork at once. Choose a folder (or a set
           of files) and it uploads them a few at a time, showing progress. A file that can't be read fails on its own
           without stopping the rest.
         </p>
@@ -265,7 +265,7 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <p>
-          <Link to="/email-import">Email import</Link> collects attachments — bills, statements, contract notes — straight
+          <Link to="/email-import">Import from Gmail</Link> collects attachments — bills, statements, contract notes — straight
           from Gmail. Mail is only ever read: nothing is sent, deleted, moved or marked as read.
         </p>
         <h4>Connecting</h4>
@@ -278,7 +278,7 @@ const SECTIONS: Section[] = [
             copy the 16-letter code.
           </li>
           <li>
-            On Email import, enter your Gmail address and that code, then <strong>Connect mailbox</strong>.
+            On Import from Gmail, enter your Gmail address and that code, then <strong>Connect mailbox</strong>.
           </li>
         </ol>
         <p>
@@ -293,7 +293,7 @@ const SECTIONS: Section[] = [
         </p>
         <p>
           Press <strong>Import now</strong> whenever you want to collect new mail; it never runs by itself. Anything
-          already imported is skipped, so running it often is fine. New documents arrive in the Inbox for you to
+          already imported is skipped, so running it often is fine. New documents arrive in To review for you to
           confirm.
         </p>
       </>
@@ -306,7 +306,7 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <p>
-          Add each account under <Link to="/banking">Banking</Link> → <strong>New account</strong>, choosing which entity
+          Add each account under <Link to="/banking">Bank accounts</Link> → <strong>New account</strong>, choosing which entity
           owns it.
         </p>
         <h4>Importing transactions from a CSV</h4>
@@ -453,9 +453,10 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <p>
-          <Link to="/loans">Loans</Link> holds mortgages and investment and commercial property loans; choose the property
-          that secures a loan so its LVR can be shown. <Link to="/liabilities">Liabilities</Link> holds every debt,
-          including vehicle and boat loans, credit cards and personal loans.
+          Each kind of debt has its own list under Liabilities in the menu: <Link to="/loans">Property loans</Link> (choose
+          the property that secures each one so its LVR can be shown), <Link to="/vehicle-loans">Vehicle &amp; boat loans</Link>,{" "}
+          <Link to="/credit-cards">Credit cards</Link>, and <Link to="/liabilities">Personal &amp; other</Link> for everything
+          else.
         </p>
         <p>
           For every loan, enter the <strong>repayment amount</strong> and how often it's <strong>paid</strong> (weekly,
@@ -468,9 +469,10 @@ const SECTIONS: Section[] = [
           when you apply for a loan.
         </p>
         <p>
-          <Link to="/assets">Assets</Link> is for everything else you own: super, equipment, cash held elsewhere, and
-          vehicles (see <a href="#vehicles">Vehicles and boats</a>). An asset owned in shares by more than one entity can
-          have its ownership split recorded on its page.
+          Assets work the same way, one list per kind: Properties, <Link to="/vehicles">Vehicles &amp; boats</Link>,
+          Investments, Bank accounts, <Link to="/super">Super</Link> (retail and industry funds), and{" "}
+          <Link to="/assets">Other assets</Link> for equipment, collectibles and cash held elsewhere. An asset owned in shares
+          by more than one entity can have its ownership split recorded on its page.
         </p>
       </>
     ),

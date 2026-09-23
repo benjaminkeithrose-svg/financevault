@@ -51,7 +51,7 @@ export function Banking() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Banking</h2>
+          <h2>Bank accounts</h2>
           <p>Bank accounts and their transactions, imported from your bank's CSV export.</p>
         </div>
         <button className="btn" onClick={() => setShowForm((v) => !v)}>

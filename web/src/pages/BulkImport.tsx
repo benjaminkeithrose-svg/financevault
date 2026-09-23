@@ -145,7 +145,7 @@ export function BulkImport() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Bulk import <HelpLink topic="bulk-import" /></h2>
+          <h2>Import a folder <HelpLink topic="bulk-import" /></h2>
           <p>
             For loading a whole folder at once. Files that look alike are grouped afterwards so you can classify a
             run of statements in one go rather than one at a time.
@@ -368,7 +368,7 @@ export function BulkImport() {
 
           <div className="card">
             <p style={{ margin: 0 }}>
-              Anything you didn't confirm is waiting in the <Link to="/inbox">Inbox</Link>.
+              Anything you didn't confirm is waiting in <Link to="/inbox">To review</Link>.
             </p>
           </div>
         </>

@@ -48,7 +48,7 @@ export function Inbox() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Inbox <HelpLink topic="documents" /></h2>
+          <h2>To review <HelpLink topic="documents" /></h2>
           <p>Upload documents, review the proposed classification, and confirm.</p>
         </div>
       </div>

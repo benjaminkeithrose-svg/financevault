@@ -63,6 +63,14 @@ before, stable ids so re-importing updates rather than duplicates).
 
 ### Working in the app
 
+The menu is grouped by what things are, each with exactly one home:
+**Documents** (To review — the old Inbox —, Documents, Import a folder,
+Import from Gmail), **Who owns it**, **Assets** (Properties, Vehicles &
+boats, Investments, Bank accounts, Super, Other assets), **Liabilities**
+(Property loans, Vehicle & boat loans, Credit cards, Personal & other) and
+**Plan & report**. There is no catch-all asset or liability list repeating
+the others; a record's back button returns to the list it belongs on.
+
 The menu can be pinned down the left on wide screens (remembered in the
 browser). Create forms keep a draft in the browser when left half-filled
 and offer **Clear** beside their main button; secret numbers are never

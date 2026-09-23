@@ -87,7 +87,9 @@ app.use(errorHandler);
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const webDist = path.join(currentDir, "../../web/dist");
 if (fs.existsSync(webDist)) {
-  app.use(express.static(webDist));
+  // redirect: false — the built files live in dist/assets, and without it a
+  // visit to the /assets page is redirected to /assets/ as if it were that folder.
+  app.use(express.static(webDist, { redirect: false }));
   app.get(/^(?!\/api\/).*/, (_req, res) => {
     res.sendFile(path.join(webDist, "index.html"));
   });

@@ -82,11 +82,14 @@ export default function App() {
           <Route path="/investments/:id" element={<InvestmentAccountDetail />} />
           <Route path="/banking" element={<Banking />} />
           <Route path="/banking/:id" element={<AccountDetail />} />
-          <Route path="/loans" element={<Liabilities scope="loans" />} />
-          <Route path="/liabilities" element={<Liabilities scope="all" />} />
+          <Route path="/loans" element={<Liabilities key="property" scope="property" />} />
+          <Route path="/vehicle-loans" element={<Liabilities key="vehicle" scope="vehicle" />} />
+          <Route path="/credit-cards" element={<Liabilities key="cards" scope="cards" />} />
+          <Route path="/liabilities" element={<Liabilities key="other" scope="other" />} />
           <Route path="/liabilities/:id" element={<LiabilityDetail />} />
-          <Route path="/assets" element={<Assets />} />
-          <Route path="/vehicles" element={<Assets only="VEHICLE" />} />
+          <Route path="/assets" element={<Assets key="other" list="OTHER" />} />
+          <Route path="/super" element={<Assets key="super" list="SUPER" />} />
+          <Route path="/vehicles" element={<Assets key="vehicles" list="VEHICLE" />} />
           <Route path="/assets/:id" element={<AssetDetail />} />
           <Route path="/portfolio-plans" element={<PortfolioPlans />} />
           <Route path="/portfolio-plans/:id" element={<PortfolioPlanDetail />} />

@@ -205,7 +205,7 @@ export function Dashboard() {
       <div className="card" style={{ marginTop: 16 }}>
         <h3 style={{ marginTop: 0 }}>Recently imported</h3>
         {documents.recentDocuments.length === 0 ? (
-          <p className="empty-state">No documents yet. Head to the Inbox to upload your first one.</p>
+          <p className="empty-state">No documents yet. Upload your first one from To review.</p>
         ) : (
           <table>
             <thead>

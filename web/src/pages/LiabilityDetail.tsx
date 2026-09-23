@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, Asset, Liability } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
-import { describeVehicle, formatCurrency, liabilityTypeLabel, monthlyEquivalent, REPAYMENT_FREQUENCIES } from "../utils.js";
+import { DEBT_LISTS, debtListFor, describeVehicle, formatCurrency, liabilityTypeLabel, monthlyEquivalent, REPAYMENT_FREQUENCIES } from "../utils.js";
+import { useBackTo } from "../hooks/useBackTo.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 
-const LOAN_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN"];
 const VEHICLE_LINKABLE = ["VEHICLE_LOAN", "PERSONAL_LOAN"];
 
 function toDateInput(value?: string | null): string {
@@ -45,12 +45,13 @@ export function LiabilityDetail() {
   }
 
   useEffect(load, [id]);
+  useBackTo(liability ? DEBT_LISTS[debtListFor(liability.liabilityType)].route : null);
   useEffect(() => {
     api.assets.list().then((all) => setVehicles(all.filter((a) => a.assetType === "VEHICLE")));
   }, []);
 
   if (!liability) {
-    if (loadError) return <LoadFailed message={loadError} backTo="/liabilities" backLabel="Back to loans" />;
+    if (loadError) return <LoadFailed message={loadError} backTo="/loans" backLabel="Back to property loans" />;
     return <div className="empty-state">Loading…</div>;
   }
 
@@ -238,7 +239,7 @@ export function LiabilityDetail() {
         note="Removes the loan from your records and totals. Linked documents are kept."
         question={`Delete ${liability.name}? This can't be undone.`}
         action={() => api.liabilities.remove(liability.id)}
-        redirectTo={LOAN_TYPES.includes(liability.liabilityType) ? "/loans" : "/liabilities"}
+        redirectTo={DEBT_LISTS[debtListFor(liability.liabilityType)].route}
       />
     </div>
   );

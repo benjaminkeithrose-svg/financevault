@@ -150,3 +150,67 @@ export function dueState(date?: string | null): "expired" | "soon" | null {
   if (days <= 60) return "soon";
   return null;
 }
+
+/** Each kind of debt has one list. Used by the lists and by a debt's page to find its way back. */
+export const DEBT_LISTS = {
+  property: {
+    route: "/loans",
+    title: "Property loans",
+    blurb: "Home, investment and commercial property loans.",
+    types: ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN"],
+  },
+  vehicle: {
+    route: "/vehicle-loans",
+    title: "Vehicle & boat loans",
+    blurb: "Loans for cars, motorcycles, boats, jet skis, caravans and the like.",
+    types: ["VEHICLE_LOAN"],
+  },
+  cards: {
+    route: "/credit-cards",
+    title: "Credit cards",
+    blurb: "Each card with its limit — lenders count the limit, not what's owing.",
+    types: ["CREDIT_CARD"],
+  },
+  other: {
+    route: "/liabilities",
+    title: "Personal & other debts",
+    blurb: "Personal loans and anything else owed.",
+    types: ["PERSONAL_LOAN", "OTHER"],
+  },
+} as const;
+
+export type DebtList = keyof typeof DEBT_LISTS;
+
+export function debtListFor(liabilityType: string): DebtList {
+  const found = (Object.keys(DEBT_LISTS) as DebtList[]).find((k) =>
+    (DEBT_LISTS[k].types as readonly string[]).includes(liabilityType)
+  );
+  return found ?? "other";
+}
+
+/** Kinds offered on the Other assets page. */
+export const OTHER_ASSET_TYPES: Array<{ value: string; label: string }> = [
+  { value: "EQUIPMENT", label: "Equipment & tools" },
+  { value: "COLLECTIBLE", label: "Collectibles, art & jewellery" },
+  { value: "CASH", label: "Cash held elsewhere" },
+  { value: "OTHER", label: "Other" },
+];
+
+const ASSET_TYPE_LABELS: Record<string, string> = {
+  VEHICLE: "Vehicle or boat",
+  SUPERANNUATION: "Super",
+  SHARES: "Shares (entered by value)",
+  MANAGED_FUND: "Managed fund (entered by value)",
+  ...Object.fromEntries(OTHER_ASSET_TYPES.map((t) => [t.value, t.label])),
+};
+
+export function assetTypeLabel(type: string): string {
+  return ASSET_TYPE_LABELS[type] ?? humanize(type);
+}
+
+/** The list page a (top-level) asset belongs on. */
+export function assetListRoute(type: string): string {
+  if (type === "VEHICLE") return "/vehicles";
+  if (type === "SUPERANNUATION") return "/super";
+  return "/assets";
+}
