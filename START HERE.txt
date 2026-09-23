@@ -1,0 +1,69 @@
+FINANCIAL VAULT — START HERE
+============================
+
+Everything stays on this computer. Nothing is uploaded anywhere.
+
+
+FIRST TIME ON THIS COMPUTER
+---------------------------
+1. Install Node.js if you haven't already: go to https://nodejs.org,
+   download the LTS version and install it. (One time only.)
+2. Unzip the Financial Vault download.
+3. Move the "financevault" folder somewhere you'll keep it, such as your
+   Documents folder.
+4. Open the folder and double-click:
+     Mac:     Start Financial Vault.command
+     Windows: Start Financial Vault.bat
+   The first start takes a few minutes. After that it's a few seconds.
+5. Your browser opens Financial Vault. Choose a passcode and write down
+   the recovery key it shows you. Keep the key somewhere safe.
+
+To stop Financial Vault, close the window it's running in.
+
+
+UPDATING TO A NEW VERSION (keeps all your records and documents)
+----------------------------------------------------------------
+Your records and documents live inside your current "financevault"
+folder. A new download starts empty, so they're copied across. Nothing
+in your old folder is changed or deleted.
+
+ 1. Open Financial Vault and go to Settings.
+ 2. Click "Download full backup". Keep that file somewhere safe — it's
+    your safety net.
+ 3. Close Financial Vault (close the window it's running in).
+ 4. Rename your current folder from "financevault" to "financevault-old".
+ 5. Unzip the new download.
+ 6. Move the new "financevault" folder to where the old one was.
+ 7. Open the NEW folder and double-click:
+      Mac:     Copy My Data From Old Version.command
+      Windows: Copy My Data From Old Version.bat
+ 8. When it asks, drag the "financevault-old" folder into that window,
+    then press Enter.
+ 9. Wait for "Done", then press Enter to close that window.
+10. In the NEW folder, double-click "Start Financial Vault" as usual.
+    The first start after an update takes a few minutes. It updates your
+    records to the new version's layout — it never removes them.
+11. Unlock with your usual passcode and check your people, properties
+    and documents are all there.
+12. Once you're happy (give it a week or two), you can delete the
+    "financevault-old" folder.
+
+If something doesn't look right, don't delete anything. Close Financial
+Vault and start the OLD folder's "Start Financial Vault" instead —
+it still has everything exactly as it was.
+
+On a Mac, the first time you open a new ".command" file it may say it's
+from an unidentified developer. Right-click (or Control-click) the file,
+choose Open, then click Open again.
+
+
+IF YOU CHOSE A SYNCED DOCUMENT FOLDER
+-------------------------------------
+If Settings > "Document storage location" points at a Google Drive,
+OneDrive or Dropbox folder, those documents stay where they are and
+the new version keeps using them. Nothing extra to do.
+
+
+MORE HELP
+---------
+Everything else is in the app: open the menu and choose Help.

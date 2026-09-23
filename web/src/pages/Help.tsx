@@ -53,6 +53,51 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "updating",
+    title: "Updating to a new version without losing anything",
+    keywords: "update upgrade new version install download keep data database move copy old folder",
+    body: (
+      <>
+        <p>
+          Your records and documents live inside your current <strong>financevault</strong> folder. A new download starts
+          empty, so your data is copied across into it. Nothing in the old folder is changed or deleted.
+        </p>
+        <ol>
+          <li>
+            Open <Link to="/settings">Settings</Link> and click <strong>Download full backup</strong>. Keep the file — it's
+            your safety net.
+          </li>
+          <li>Close Financial Vault (close the window it's running in).</li>
+          <li>
+            Rename your current folder from <strong>financevault</strong> to <strong>financevault-old</strong>.
+          </li>
+          <li>Unzip the new download.</li>
+          <li>Move the new financevault folder to where the old one was.</li>
+          <li>
+            Open the <strong>new</strong> folder and double-click <strong>Copy My Data From Old Version</strong> (.command on
+            a Mac, .bat on Windows).
+          </li>
+          <li>When it asks, drag the financevault-old folder into that window, then press Enter.</li>
+          <li>Wait for "Done", then press Enter to close that window.</li>
+          <li>
+            In the new folder, double-click <strong>Start Financial Vault</strong>. The first start after an update takes a
+            few minutes while it updates your records to the new layout — it never removes them.
+          </li>
+          <li>Unlock with your usual passcode and check your people, properties and documents are all there.</li>
+          <li>After a week or two of everything looking right, delete the financevault-old folder.</li>
+        </ol>
+        <p>
+          If something doesn't look right, don't delete anything: close Financial Vault and start the old folder's{" "}
+          <strong>Start Financial Vault</strong> instead. It still has everything exactly as it was.
+        </p>
+        <p>
+          The same steps are in the <strong>START HERE</strong> file in the financevault folder. Documents kept in a synced
+          folder (Settings → Document storage location) stay where they are and need nothing extra.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "passcode",
     title: "Passcode, recovery key and locking",
     keywords: "password lock unlock forgot recovery key reset change",

@@ -644,6 +644,9 @@ line with them.
 
 ### Running it as a regular app (no terminal needed after setup)
 
+The same steps, and how to update without losing anything, are in
+**`START HERE.txt`** in this folder.
+
 1. If you don't already have Node.js, go to https://nodejs.org and install
    the LTS version — this is a one-time step.
 2. Double-click **`Start Financial Vault.command`** (Mac) or
@@ -656,6 +659,33 @@ Everything runs on your own machine; nothing is uploaded anywhere. To stop
 the app, close the window it's running in (on Windows, that's the separate
 window titled "Financial Vault" that opens — closing the first small window
 is fine and doesn't stop it).
+
+### Updating to a new version (keeps your data)
+
+Plain-English steps are in **`START HERE.txt`** and in the app under
+Help → *Updating to a new version*. In short: take a backup in Settings,
+rename the old folder to `financevault-old`, unzip the new version in its
+place, run **`Copy My Data From Old Version`** (`.command` / `.bat`) from
+the new folder and drag the old folder in, then start as usual.
+
+What that copies, and why it's safe:
+
+- `server/prisma/dev.db*` (the database), `server/storage/` (uploaded
+  documents) and `server/.env`. The old folder is only read. If the new
+  folder had already been started, its empty database is renamed to
+  `dev.db.before-copy-<time>`, never deleted.
+- The launcher runs `prisma migrate deploy`, which only adds to the
+  database's structure; it doesn't reset or drop data.
+- Documents record where their file was stored. On start-up,
+  `relinkMovedDocuments()` (`server/src/services/paths.ts`) points any
+  document whose file is missing at the copy of the same file in this
+  folder's storage, so nothing depends on the old folder afterwards.
+- A document storage location set in Settings (e.g. a synced folder) is
+  outside the program folder and is used as-is.
+
+Never unzip a new version over the top of the old folder on a Mac: Finder
+replaces whole folders, which would take `server/prisma/dev.db` and
+`server/storage/` with them.
 
 ### For development (two dev servers, hot reload)
 
