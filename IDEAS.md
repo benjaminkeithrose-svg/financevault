@@ -355,3 +355,31 @@ features keep the menu and pages simple.
 it disappears from the menu, dashboard and pages, but its data is kept and
 it comes back exactly as it was when switched on. Some features could also
 be switched per person (e.g. car allowance only for the person who has one).
+
+---
+
+## 12. "Why is this claimed?" reference icon
+
+**Why:** if the ATO or the accountant asks about a deduction, the reason and
+the rule behind it need to be to hand — without cluttering everyday screens.
+
+**Idea:** a small reference icon next to each claim (deductions, apportioned
+loan interest, depreciation, car claims, ownership choices, structure
+decisions). Nothing extra shows day to day; clicking the icon opens a panel
+with:
+- **Why it's claimed** — a short plain-English reason, written when the
+  claim is made (the app suggests one from the checklist item; editable).
+- **The rule** — the ATO reference (ruling code and paragraph, or guide and
+  section), linked to the stored Tax reference document (idea 1) and opened
+  at that page, with the date the reference was last checked as current.
+- **The evidence** — the receipts, statements or logbook linked to the claim.
+- **Who agreed** — an optional note from the accountant, with the date.
+- **History** — when the claim or its reason changed.
+
+**Also:** an "explain this claim" export — one PDF or ZIP with the reason,
+the ATO extract and the evidence, ready to send to the accountant or the ATO
+if a question is raised. And a warning if a claim's reference has since been
+withdrawn or replaced.
+
+**Depends on:** ideas 1 (Tax reference type), 3 (library), 8 and 10
+(checklists), 2 (debt allocation).
