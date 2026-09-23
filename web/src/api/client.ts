@@ -48,8 +48,18 @@ export interface Entity {
     totalAssets: number;
     totalLiabilities: number;
     netAssets: number;
-    formula: string;
+    formula?: string;
+    unitHoldings?: Array<{ trustId: string; trustName: string; percent: number; value: number }>;
+    sharedItems?: number;
   };
+  sharedAssets?: Array<Asset & { sharePercent: number; property?: { id: string } | null; commercialProperty?: { id: string } | null }>;
+  sharedLiabilities?: Array<Liability & { sharePercent: number }>;
+  unitholders?: Array<{
+    id: string;
+    fromEntityId: string;
+    ownershipPercent: number | null;
+    fromEntity: { id: string; name: string; personalFor: { id: string; name: string } | null };
+  }>;
   heldForLoans?: Array<{ id: string; name: string; entity: { id: string; name: string } }>;
 }
 
@@ -683,6 +693,7 @@ export interface Liability {
   creditLimit?: number | null;
   holdingTrustEntityId?: string | null;
   holdingTrust?: Entity | null;
+  ownerships?: Array<{ id: string; ownerEntityId: string; ownerEntity?: Entity; ownershipPercent: number; notes?: string | null }>;
   interestOnly?: boolean | null;
   loanTermYears?: number | null;
   repaymentFrequency?: string | null;
@@ -1501,6 +1512,9 @@ export const api = {
     update: (id: string, data: Record<string, unknown>) =>
       request<Liability>(`/liabilities/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     remove: (id: string) => request<void>(`/liabilities/${id}`, { method: "DELETE" }),
+    addOwnership: (liabilityId: string, data: Record<string, unknown>) =>
+      request<unknown>(`/liabilities/${liabilityId}/ownerships`, { method: "POST", body: JSON.stringify(data) }),
+    removeOwnership: (ownershipId: string) => request<void>(`/liabilities/ownerships/${ownershipId}`, { method: "DELETE" }),
   },
 
   investments: {

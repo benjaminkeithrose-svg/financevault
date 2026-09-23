@@ -5,6 +5,7 @@ import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency, humanize } from "../utils.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
 import { useDraft } from "../hooks/useDraft.js";
+import { OwnersPicker, useOwners, withOwners } from "../components/OwnersPicker.js";
 
 function pct(v: number | null | undefined): string {
   if (v === null || v === undefined) return "—";
@@ -43,6 +44,8 @@ export function CommercialProperties() {
   const [entities, setEntities] = useState<Entity[]>([]);
   const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
   const [form, setForm, draft] = useDraft("commercial-properties:new", emptyForm);
+  const owners = useOwners("commercial-properties:new");
+  const formDraft = withOwners(draft, owners);
   const [showForm, setShowForm] = useState(draft.restored);
   const [portfolio, setPortfolio] = useState<CommercialPortfolio | null>(null);
 
@@ -61,10 +64,11 @@ export function CommercialProperties() {
   }
 
   async function create() {
-    if (!form.name.trim() || !form.entityId || !form.address.trim() || propertyTypes.length === 0) return;
+    if (!form.name.trim() || !form.entityId || !form.address.trim() || propertyTypes.length === 0 || owners.problem(form.entityId)) return;
     await api.commercialProperties.create({
       name: form.name,
       entityId: form.entityId,
+      owners: owners.payload(form.entityId),
       address: form.address,
       state: form.state || null,
       postcode: form.postcode || null,
@@ -75,6 +79,7 @@ export function CommercialProperties() {
       nla: form.nla ? Number(form.nla) : null,
     });
     draft.clear();
+    owners.draft.clear();
     setPropertyTypes([]);
     setShowForm(false);
     load();
@@ -154,18 +159,15 @@ export function CommercialProperties() {
 
       {showForm && (
         <div className="card">
-          <DraftNotice draft={draft} />
+          <DraftNotice draft={formDraft} />
           <label>Property name</label>
           <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Industrial Unit 4" />
-          <label>Owning entity</label>
-          <select value={form.entityId} onChange={(e) => setForm({ ...form, entityId: e.target.value })}>
-            <option value="">— Select —</option>
-            {entities.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.name}
-              </option>
-            ))}
-          </select>
+          <OwnersPicker
+            entities={entities}
+            primaryId={form.entityId}
+            onPrimary={(entityId) => setForm({ ...form, entityId })}
+            owners={owners}
+          />
           <label>Property type(s) — select all that apply</label>
           <div className="chip-row">
             {PROPERTY_TYPES.map((t) => (
@@ -211,7 +213,7 @@ export function CommercialProperties() {
               <input type="number" value={form.currentValue} onChange={(e) => setForm({ ...form, currentValue: e.target.value })} />
             </div>
           </div>
-          <FormActions onSubmit={create} draft={draft} label="Create" />
+          <FormActions onSubmit={create} draft={formDraft} label="Create" />
         </div>
       )}
 

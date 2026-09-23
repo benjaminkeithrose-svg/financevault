@@ -157,7 +157,7 @@ model PersonEntityRelationship {
 model Entity {
   id                String    @id @default(cuid())
   name              String
-  entityType        String // INDIVIDUAL | JOINT | TRUST | HOLDING_TRUST | COMPANY | PARTNERSHIP | SUPER_FUND | SMSF | OTHER
+  entityType        String // INDIVIDUAL | JOINT | TRUST (family/discretionary) | UNIT_TRUST | HOLDING_TRUST | COMPANY | PARTNERSHIP | SUPER_FUND | SMSF | OTHER
   abn               String?
   tfn               String?
   acn               String?
@@ -186,6 +186,7 @@ model Entity {
   investmentAccounts   InvestmentAccount[]
   taxRecords           TaxRecord[]
   assetOwnerships      AssetOwnership[]
+  liabilityOwnerships  LiabilityOwnership[]
   netWorthSnapshots    NetWorthSnapshot[]
   portfolioPlans       PortfolioPlan[]
   emailImportRules     EmailImportRule[]
@@ -240,6 +241,24 @@ model AssetOwnership {
   ownerEntity Entity @relation(fields: [ownerEntityId], references: [id])
 
   @@index([assetId])
+  @@index([ownerEntityId])
+}
+
+// A loan owed jointly — e.g. a mortgage 50/50 between two people. Works the
+// same way as AssetOwnership: Liability.entityId stays the primary borrower
+// on record, and with no rows here it owes 100%.
+model LiabilityOwnership {
+  id               String   @id @default(cuid())
+  liabilityId      String
+  ownerEntityId    String
+  ownershipPercent Float
+  notes            String?
+  createdAt        DateTime @default(now())
+
+  liability   Liability @relation(fields: [liabilityId], references: [id], onDelete: Cascade)
+  ownerEntity Entity    @relation(fields: [ownerEntityId], references: [id])
+
+  @@index([liabilityId])
   @@index([ownerEntityId])
 }
 
@@ -456,10 +475,11 @@ model Liability {
   createdAt                    DateTime  @default(now())
   updatedAt                    DateTime  @updatedAt
 
-  securityProperty           Property?           @relation(fields: [securityPropertyId], references: [id])
-  securityCommercialProperty CommercialProperty? @relation(fields: [securityCommercialPropertyId], references: [id])
-  securityAsset              Asset?              @relation(fields: [securityAssetId], references: [id])
-  holdingTrust               Entity?             @relation("HoldingTrust", fields: [holdingTrustEntityId], references: [id])
+  securityProperty           Property?            @relation(fields: [securityPropertyId], references: [id])
+  securityCommercialProperty CommercialProperty?  @relation(fields: [securityCommercialPropertyId], references: [id])
+  securityAsset              Asset?               @relation(fields: [securityAssetId], references: [id])
+  ownerships                 LiabilityOwnership[]
+  holdingTrust               Entity?              @relation("HoldingTrust", fields: [holdingTrustEntityId], references: [id])
 
   @@index([entityId])
   @@index([securityAssetId])

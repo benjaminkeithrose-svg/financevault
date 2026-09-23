@@ -6,6 +6,7 @@ import { DEBT_LISTS, debtListFor, describeVehicle, formatCurrency, liabilityType
 import { useBackTo } from "../hooks/useBackTo.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
+import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 
 const VEHICLE_LINKABLE = ["VEHICLE_LOAN", "PERSONAL_LOAN"];
 
@@ -22,6 +23,7 @@ export function LiabilityDetail() {
   const [saving, setSaving] = useState(false);
   const [vehicles, setVehicles] = useState<Asset[]>([]);
   const [trusts, setTrusts] = useState<Entity[]>([]);
+  const [entities, setEntities] = useState<Entity[]>([]);
 
   function load() {
     if (!id) return;
@@ -50,7 +52,10 @@ export function LiabilityDetail() {
   useBackTo(liability ? DEBT_LISTS[debtListFor(liability.liabilityType)].route : null);
   useEffect(() => {
     api.assets.list().then((all) => setVehicles(all.filter((a) => a.assetType === "VEHICLE")));
-    api.entities.list().then((all) => setTrusts(all.filter((e) => e.entityType === "HOLDING_TRUST" || e.entityType === "TRUST")));
+    api.entities.list().then((all) => {
+      setEntities(all);
+      setTrusts(all.filter((e) => e.entityType === "HOLDING_TRUST" || e.entityType === "TRUST"));
+    });
   }, []);
 
   if (!liability) {
@@ -247,6 +252,8 @@ export function LiabilityDetail() {
           </button>
         </div>
       </div>
+
+      <AssetOwnershipPanel kind="loan" asset={liability} entities={entities} onChange={load} />
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>

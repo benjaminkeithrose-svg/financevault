@@ -5,8 +5,8 @@ import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { deleteWithLinks, entityDependents, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 import { parseTfnInput, revealTfn, tfnSummary } from "../services/tfnAccess.js";
-import { computeFinancialPosition } from "../services/financialPosition.js";
-import { valueHoldings } from "../services/netWorth.js";
+import { computeLiveBreakdown } from "../services/netWorth.js";
+import { shareOf } from "../services/ownership.js";
 
 export const entitiesRouter = Router();
 
@@ -15,7 +15,7 @@ export const entitiesRouter = Router();
 // entity is who owns things, never the thing itself.
 const entityInput = z.object({
   name: z.string().min(1),
-  entityType: z.enum(["INDIVIDUAL", "JOINT", "TRUST", "HOLDING_TRUST", "COMPANY", "PARTNERSHIP", "SUPER_FUND", "SMSF", "OTHER"]),
+  entityType: z.enum(["INDIVIDUAL", "JOINT", "TRUST", "UNIT_TRUST", "HOLDING_TRUST", "COMPANY", "PARTNERSHIP", "SUPER_FUND", "SMSF", "OTHER"]),
   abn: z.string().optional().nullable(),
   tfn: z.string().optional().nullable(),
   acn: z.string().optional().nullable(),
@@ -60,8 +60,8 @@ entitiesRouter.get(
         personRelationships: { include: { person: true } },
         documents: { orderBy: { uploadDate: "desc" }, take: 25 },
         personalFor: { select: { id: true, name: true } },
-        assets: { where: { parentAssetId: null } },
-        liabilities: true,
+        assets: { where: { parentAssetId: null }, include: { ownerships: true } },
+        liabilities: { include: { ownerships: true } },
         accounts: true,
         properties: { include: { asset: true } },
         commercialProperties: { include: { asset: true } },
@@ -74,9 +74,42 @@ entitiesRouter.get(
       res.status(404).json({ error: "Entity not found" });
       return;
     }
-    const holdings = await valueHoldings(entity.investmentAccounts);
-    const financialPosition = computeFinancialPosition(entity.assets, entity.accounts, entity.liabilities, holdings.value);
-    res.json({ ...entity, ...(await tfnSummary("entity", entity.id)), financialPosition });
+    // Its own balance sheet: its share of anything shared, plus its share of
+    // unit trusts it holds units in.
+    const b = await computeLiveBreakdown(entity.id);
+    const financialPosition = {
+      byAssetType: b.byAssetType,
+      cash: b.cash - (b.byAssetType.CASH ?? 0),
+      totalAssets: b.totalAssets,
+      totalLiabilities: b.totalLiabilities,
+      netAssets: b.netPosition,
+      unitHoldings: b.unitHoldings,
+      sharedItems: b.sharedItems,
+    };
+    // Things it owns part of, where someone else is the owner on record.
+    const [sharedAssets, sharedLiabilities, unitholders] = await Promise.all([
+      prisma.asset.findMany({
+        where: { parentAssetId: null, entityId: { not: entity.id }, ownerships: { some: { ownerEntityId: entity.id } } },
+        include: { ownerships: true, property: { select: { id: true } }, commercialProperty: { select: { id: true } } },
+      }),
+      prisma.liability.findMany({
+        where: { entityId: { not: entity.id }, ownerships: { some: { ownerEntityId: entity.id } } },
+        include: { ownerships: true },
+      }),
+      prisma.entityRelationship.findMany({
+        where: { toEntityId: entity.id, relationshipType: "UNITHOLDER" },
+        include: { fromEntity: { select: { id: true, name: true, personalFor: { select: { id: true, name: true } } } } },
+        orderBy: { createdAt: "asc" },
+      }),
+    ]);
+    res.json({
+      ...entity,
+      ...(await tfnSummary("entity", entity.id)),
+      financialPosition,
+      sharedAssets: sharedAssets.map((a) => ({ ...a, sharePercent: shareOf(a, entity.id) * 100 })),
+      sharedLiabilities: sharedLiabilities.map((l) => ({ ...l, sharePercent: shareOf(l, entity.id) * 100 })),
+      unitholders,
+    });
   })
 );
 
@@ -172,6 +205,25 @@ entitiesRouter.post(
   })
 );
 
+/**
+ * A unit trust's unitholders each hold a set share. The shares can't pass
+ * 100%, and each holder is listed once — change a holding by removing it
+ * and adding the new one.
+ */
+async function checkUnitholding(trustId: string, holderId: string, percent: number | null | undefined) {
+  const trust = await prisma.entity.findUnique({ where: { id: trustId } });
+  if (!trust || trust.entityType !== "UNIT_TRUST") throw new HttpError(400, "Units can only be held in a unit trust.");
+  if (!percent || percent <= 0 || percent > 100) throw new HttpError(400, "Enter the share of the units held, between 0 and 100%.");
+  const existing = await prisma.entityRelationship.findMany({ where: { toEntityId: trustId, relationshipType: "UNITHOLDER" } });
+  if (existing.some((r) => r.fromEntityId === holderId)) {
+    throw new HttpError(409, "They already hold units in this trust — remove that holding first to change it.");
+  }
+  const taken = existing.reduce((s, r) => s + (r.ownershipPercent ?? 0), 0);
+  if (taken + percent > 100.01) {
+    throw new HttpError(400, `That would make the units add up to ${Math.round((taken + percent) * 100) / 100}% — ${Math.round((100 - taken) * 100) / 100}% is left.`);
+  }
+}
+
 const relationshipInput = z.object({
   fromEntityId: z.string(),
   toEntityId: z.string(),
@@ -184,6 +236,8 @@ entitiesRouter.post(
   "/relationships",
   asyncHandler(async (req, res) => {
     const parsed = relationshipInput.parse(req.body);
+    if (parsed.fromEntityId === parsed.toEntityId) throw new HttpError(400, "An entity can't be related to itself.");
+    if (parsed.relationshipType === "UNITHOLDER") await checkUnitholding(parsed.toEntityId, parsed.fromEntityId, parsed.ownershipPercent);
     const relationship = await prisma.entityRelationship.create({ data: parsed });
     await logAudit("ENTITY_RELATIONSHIP_CREATED", { targetType: "EntityRelationship", targetId: relationship.id });
     res.status(201).json(relationship);

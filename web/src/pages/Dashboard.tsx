@@ -33,7 +33,7 @@ export function Dashboard() {
           <p>Your financial world at a glance. Nothing here replaces advice from a registered professional.</p>
         </div>
         <select value={entityId} onChange={(e) => setEntityId(e.target.value)} style={{ width: 220 }}>
-          <option value="">All entities</option>
+          <option value="">Whole family</option>
           {entities.map((e) => (
             <option key={e.id} value={e.id}>
               {e.name}
@@ -173,7 +173,8 @@ export function Dashboard() {
         <div className="card" style={{ marginTop: 16 }}>
           <h3 style={{ marginTop: 0 }}>Consolidated position by entity</h3>
           <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
-            {consolidated.note} Each asset belongs to exactly one entity below — nothing here is double-counted.
+            {consolidated.note} Something shared is split between its owners by their shares, and a unit trust's
+            assets sit on the trust's own row — so the rows add up to the family total.
           </p>
           <table>
             <thead>

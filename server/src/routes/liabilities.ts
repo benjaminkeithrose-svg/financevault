@@ -4,6 +4,7 @@ import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
+import { checkOwners, checkRoomFor, ownersInput } from "../services/ownership.js";
 
 export const liabilitiesRouter = Router();
 
@@ -16,7 +17,7 @@ liabilitiesRouter.get(
     if (liabilityType) where.liabilityType = liabilityType;
     const liabilities = await prisma.liability.findMany({
       where,
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } },
       orderBy: { createdAt: "desc" },
     });
     res.json(liabilities);
@@ -28,7 +29,7 @@ liabilitiesRouter.get(
   asyncHandler(async (req, res) => {
     const liability = await prisma.liability.findUnique({
       where: { id: req.params.id },
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } },
     });
     if (!liability) {
       res.status(404).json({ error: "Liability not found" });
@@ -60,6 +61,7 @@ const liabilityInput = z.object({
   securityAssetId: z.string().optional().nullable(),
   creditLimit: z.number().nonnegative().optional().nullable(),
   holdingTrustEntityId: z.string().optional().nullable(),
+  owners: ownersInput,
   interestOnly: z.boolean().optional().nullable(),
   loanTermYears: z.number().optional().nullable(),
   repaymentFrequency: z.enum(["WEEKLY", "FORTNIGHTLY", "MONTHLY", "QUARTERLY"]).optional().nullable(),
@@ -69,7 +71,7 @@ const liabilityInput = z.object({
   notes: z.string().optional().nullable(),
 });
 
-function toData(parsed: z.infer<typeof liabilityInput>) {
+function toData({ owners: _owners, ...parsed }: z.infer<typeof liabilityInput>) {
   return {
     ...parsed,
     fixedPeriodEnds: parsed.fixedPeriodEnds ? new Date(parsed.fixedPeriodEnds) : parsed.fixedPeriodEnds,
@@ -81,9 +83,15 @@ liabilitiesRouter.post(
   "/",
   asyncHandler(async (req, res) => {
     const parsed = liabilityInput.parse(req.body);
+    // Owed jointly: the first borrower is the one on record, the split is kept alongside.
+    const owners = checkOwners(parsed.owners);
+    if (owners) parsed.entityId = owners[0].entityId;
     const liability = await prisma.liability.create({
-      data: toData(parsed),
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true },
+      data: {
+        ...toData(parsed),
+        ...(owners ? { ownerships: { create: owners.map((o) => ({ ownerEntityId: o.entityId, ownershipPercent: o.percent })) } } : {}),
+      },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } },
     });
     await logAudit("LIABILITY_CREATED", { targetType: "Liability", targetId: liability.id });
     res.status(201).json(liability);
@@ -97,10 +105,36 @@ liabilitiesRouter.put(
     const liability = await prisma.liability.update({
       where: { id: req.params.id },
       data: toData(parsed as z.infer<typeof liabilityInput>),
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } } },
     });
     await logAudit("LIABILITY_CHANGED", { targetType: "Liability", targetId: liability.id, data: parsed });
     res.json(liability);
+  })
+);
+
+// Owed jointly: each borrower's share. Same rules as an asset's ownership split.
+liabilitiesRouter.post(
+  "/:id/ownerships",
+  asyncHandler(async (req, res) => {
+    const parsed = z
+      .object({ ownerEntityId: z.string(), ownershipPercent: z.number().gt(0).max(100), notes: z.string().optional().nullable() })
+      .parse(req.body);
+    checkRoomFor(await prisma.liabilityOwnership.findMany({ where: { liabilityId: req.params.id } }), parsed.ownershipPercent);
+    const row = await prisma.liabilityOwnership.create({
+      data: { liabilityId: req.params.id, ...parsed, notes: parsed.notes ?? null },
+      include: { ownerEntity: true },
+    });
+    await logAudit("LIABILITY_OWNERSHIP_ADDED", { targetType: "Liability", targetId: req.params.id });
+    res.status(201).json(row);
+  })
+);
+
+liabilitiesRouter.delete(
+  "/ownerships/:ownershipId",
+  asyncHandler(async (req, res) => {
+    const row = await prisma.liabilityOwnership.delete({ where: { id: req.params.ownershipId } });
+    await logAudit("LIABILITY_OWNERSHIP_REMOVED", { targetType: "Liability", targetId: row.liabilityId });
+    res.status(204).send();
   })
 );
 

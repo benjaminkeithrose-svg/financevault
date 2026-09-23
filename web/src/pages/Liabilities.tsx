@@ -6,6 +6,7 @@ import { HelpLink } from "../components/HelpLink.js";
 import { DEBT_LISTS, DebtList, describeVehicle, formatCurrency, liabilityTypeLabel, REPAYMENT_FREQUENCIES } from "../utils.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
 import { useDraft } from "../hooks/useDraft.js";
+import { OwnersPicker, useOwners, withOwners } from "../components/OwnersPicker.js";
 
 const LOAN_TYPES = DEBT_LISTS.property.types as readonly string[];
 // Loans that can be tied to the vehicle or boat they paid for.
@@ -41,6 +42,8 @@ export function Liabilities({ scope }: { scope: DebtList }) {
   const trusts = entities.filter((e) => e.entityType === "HOLDING_TRUST" || e.entityType === "TRUST");
   const [securityKind, setSecurityKind] = useState<"none" | "residential" | "commercial">("none");
   const [form, setForm, draft] = useDraft(`liabilities:${scope}:new`, emptyForm(list.types[0]));
+  const owners = useOwners(`liabilities:${scope}:new`);
+  const formDraft = withOwners(draft, owners);
   const [showForm, setShowForm] = useState(draft.restored);
 
   const allowedTypes = list.types as readonly string[];
@@ -86,12 +89,13 @@ export function Liabilities({ scope }: { scope: DebtList }) {
   }, [params, setParams]);
 
   async function create() {
-    if (!form.name.trim() || !form.entityId) return;
+    if (!form.name.trim() || !form.entityId || owners.problem(form.entityId)) return;
     const isCommercial = form.liabilityType === "COMMERCIAL_LOAN";
     await api.liabilities.create({
       name: form.name,
       liabilityType: form.liabilityType,
       entityId: form.entityId,
+      owners: owners.payload(form.entityId),
       lender: form.lender || null,
       currentBalance: form.currentBalance ? Number(form.currentBalance) : null,
       interestRate: form.interestRate ? Number(form.interestRate) : null,
@@ -106,6 +110,7 @@ export function Liabilities({ scope }: { scope: DebtList }) {
       interestOnly: isCommercial ? form.interestOnly : null,
     });
     draft.clear();
+    owners.draft.clear();
     setSecurityKind("none");
     setShowForm(false);
     load();
@@ -139,7 +144,7 @@ export function Liabilities({ scope }: { scope: DebtList }) {
 
       {showForm && (
         <div className="card">
-          <DraftNotice draft={draft} />
+          <DraftNotice draft={formDraft} />
           <label>Name</label>
           <input
             value={form.name}
@@ -158,15 +163,13 @@ export function Liabilities({ scope }: { scope: DebtList }) {
               </select>
             </>
           )}
-          <label>Owed by</label>
-          <select value={form.entityId} onChange={(e) => setForm({ ...form, entityId: e.target.value })}>
-            <option value="">— Select —</option>
-            {entities.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.name}
-              </option>
-            ))}
-          </select>
+          <OwnersPicker
+            label="Owed by"
+            entities={entities}
+            primaryId={form.entityId}
+            onPrimary={(entityId) => setForm({ ...form, entityId })}
+            owners={owners}
+          />
           <label>{isCard ? "Card provider" : "Lender"}</label>
           <input value={form.lender} onChange={(e) => setForm({ ...form, lender: e.target.value })} />
           <div className={isCard ? "grid grid-3" : "grid grid-2"}>
@@ -324,7 +327,7 @@ export function Liabilities({ scope }: { scope: DebtList }) {
               </select>
             </>
           )}
-          <FormActions onSubmit={create} draft={draft} label="Create" />
+          <FormActions onSubmit={create} draft={formDraft} label="Create" />
         </div>
       )}
 

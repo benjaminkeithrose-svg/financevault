@@ -5,6 +5,7 @@ import { EMPTY_VEHICLE_FIELDS, VehicleFields, vehicleFieldsPayload } from "../co
 import { HelpLink } from "../components/HelpLink.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
 import { useDraft } from "../hooks/useDraft.js";
+import { OwnersPicker, useOwners, withOwners } from "../components/OwnersPicker.js";
 import { assetTypeLabel, describeVehicle, formatCurrency, formatDate, OTHER_ASSET_TYPES, vehicleTypeLabel } from "../utils.js";
 
 export type AssetList = "VEHICLE" | "SUPER" | "OTHER";
@@ -60,6 +61,8 @@ export function Assets({ list }: { list: AssetList }) {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [form, setForm, draft] = useDraft<Record<string, string>>(config.key, emptyForm(list));
+  const owners = useOwners(config.key);
+  const formDraft = withOwners(draft, owners);
   const [showForm, setShowForm] = useState(draft.restored);
   const isVehicle = list === "VEHICLE";
   const isSuper = list === "SUPER";
@@ -74,17 +77,19 @@ export function Assets({ list }: { list: AssetList }) {
   }, []);
 
   async function create() {
-    if (!form.name.trim() || !form.entityId) return;
+    if (!form.name.trim() || !form.entityId || (!isSuper && owners.problem(form.entityId))) return;
     await api.assets.create({
       name: form.name,
       assetType: form.assetType,
       entityId: form.entityId,
+      owners: isSuper ? undefined : owners.payload(form.entityId),
       acquisitionDate: form.acquisitionDate ? new Date(form.acquisitionDate).toISOString() : null,
       acquisitionCost: form.acquisitionCost ? Number(form.acquisitionCost) : null,
       currentValue: form.currentValue ? Number(form.currentValue) : null,
       ...(isVehicle ? vehicleFieldsPayload(form) : {}),
     });
     draft.clear();
+    owners.draft.clear();
     setShowForm(false);
     load();
   }
@@ -118,7 +123,7 @@ export function Assets({ list }: { list: AssetList }) {
 
       {showForm && (
         <div className="card">
-          <DraftNotice draft={draft} />
+          <DraftNotice draft={formDraft} />
           <label>{isSuper ? "Fund" : "Name"}</label>
           <input
             value={form.name}
@@ -138,15 +143,26 @@ export function Assets({ list }: { list: AssetList }) {
             </>
           )}
           {isVehicle && <VehicleFields form={form} onChange={setForm} />}
-          <label>{isSuper ? "Member" : "Owned by"}</label>
-          <select value={form.entityId} onChange={(e) => setForm({ ...form, entityId: e.target.value })}>
-            <option value="">— Select —</option>
-            {entities.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.name}
-              </option>
-            ))}
-          </select>
+          {isSuper ? (
+            <>
+              <label>Member</label>
+              <select value={form.entityId} onChange={(e) => setForm({ ...form, entityId: e.target.value })}>
+                <option value="">— Select —</option>
+                {entities.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.name}
+                  </option>
+                ))}
+              </select>
+            </>
+          ) : (
+            <OwnersPicker
+              entities={entities}
+              primaryId={form.entityId}
+              onPrimary={(entityId) => setForm({ ...form, entityId })}
+              owners={owners}
+            />
+          )}
           {!isSuper && (
             <div className="grid grid-2">
               <div>
@@ -169,7 +185,7 @@ export function Assets({ list }: { list: AssetList }) {
           )}
           <label>{isSuper ? "Current balance" : "Current estimated value"}</label>
           <input type="number" value={form.currentValue} onChange={(e) => setForm({ ...form, currentValue: e.target.value })} />
-          <FormActions onSubmit={create} draft={draft} />
+          <FormActions onSubmit={create} draft={formDraft} />
         </div>
       )}
 

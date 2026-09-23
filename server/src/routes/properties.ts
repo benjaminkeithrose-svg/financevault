@@ -4,6 +4,7 @@ import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
+import { checkOwners, ownersInput } from "../services/ownership.js";
 
 export const propertiesRouter = Router();
 
@@ -73,12 +74,16 @@ const createInput = z.object({
   tenantInfo: z.string().optional().nullable(),
   propertyManager: z.string().optional().nullable(),
   weeklyRent: z.number().nonnegative().optional().nullable(),
+  owners: ownersInput,
 });
 
 propertiesRouter.post(
   "/",
   asyncHandler(async (req, res) => {
-    const parsed = createInput.parse(req.body);
+    const { owners: ownersRaw, ...parsed } = createInput.parse(req.body);
+    // Several owners: the first is the owner on record, the split is kept alongside.
+    const owners = checkOwners(ownersRaw);
+    if (owners) parsed.entityId = owners[0].entityId;
     const property = await prisma.$transaction(async (tx) => {
       const asset = await tx.asset.create({
         data: {
@@ -90,6 +95,11 @@ propertiesRouter.post(
           currentValue: parsed.currentValue ?? undefined,
         },
       });
+      if (owners) {
+        await tx.assetOwnership.createMany({
+          data: owners.map((o) => ({ assetId: asset.id, ownerEntityId: o.entityId, ownershipPercent: o.percent, ownershipType: "LEGAL" })),
+        });
+      }
       return tx.property.create({
         data: {
           assetId: asset.id,
@@ -112,7 +122,8 @@ propertiesRouter.post(
   })
 );
 
-const updateInput = createInput.partial();
+// Owners are chosen when it's created; later changes go through the ownership split.
+const updateInput = createInput.omit({ owners: true }).partial();
 
 propertiesRouter.put(
   "/:id",

@@ -4,11 +4,11 @@ import { ItemCard } from "../components/ItemCard.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
 import { useDraft } from "../hooks/useDraft.js";
-import { entityTypeLabel, familySummary, humanize } from "../utils.js";
+import { entityTypeLabel, familySummary, humanize, partnerIds } from "../utils.js";
 
 // A person's own individual entity is made with them, so new entities here
 // are the structures around people: trusts, companies, super funds.
-const ENTITY_TYPES = ["TRUST", "COMPANY", "SMSF", "HOLDING_TRUST", "SUPER_FUND", "PARTNERSHIP", "JOINT", "OTHER"];
+const ENTITY_TYPES = ["TRUST", "UNIT_TRUST", "COMPANY", "SMSF", "HOLDING_TRUST", "SUPER_FUND", "PARTNERSHIP", "JOINT", "OTHER"];
 
 const EMPTY_FORM = {
   kind: "PERSON" as "PERSON" | "ENTITY",
@@ -17,6 +17,8 @@ const EMPTY_FORM = {
   abn: "",
   relation: "",
   relatedPersonId: "",
+  // A child's other parent, when "is a child of" is chosen.
+  secondParentId: "",
 };
 
 /**
@@ -52,6 +54,9 @@ export function PeopleAndEntities() {
             relatedPersonId: form.relatedPersonId,
             relation: form.relation as "PARTNER" | "CHILD" | "PARENT",
           });
+          if (form.relation === "PARENT" && form.secondParentId && form.secondParentId !== form.relatedPersonId) {
+            await api.people.addFamily({ personId: person.id, relatedPersonId: form.secondParentId, relation: "PARENT" });
+          }
         }
       } else {
         await api.entities.create({ name: form.name.trim(), entityType: form.entityType, abn: form.abn || null });
@@ -102,7 +107,14 @@ export function PeopleAndEntities() {
               <div className="grid grid-2">
                 <div>
                   <label>Family (optional)</label>
-                  <select value={form.relation} onChange={(e) => setForm({ ...form, relation: e.target.value })}>
+                  <select
+                    value={form.relation}
+                    onChange={(e) => {
+                      const relation = e.target.value;
+                      const partner = partnerIds(people.find((p) => p.id === form.relatedPersonId))[0] ?? "";
+                      setForm({ ...form, relation, secondParentId: relation === "PARENT" ? partner : "" });
+                    }}
+                  >
                     <option value="">— No family link —</option>
                     <option value="PARTNER">is the partner of</option>
                     <option value="PARENT">is a child of</option>
@@ -113,7 +125,12 @@ export function PeopleAndEntities() {
                   <label>&nbsp;</label>
                   <select
                     value={form.relatedPersonId}
-                    onChange={(e) => setForm({ ...form, relatedPersonId: e.target.value })}
+                    onChange={(e) => {
+                      const relatedPersonId = e.target.value;
+                      // The first parent's partner is usually the other parent.
+                      const partner = partnerIds(people.find((p) => p.id === relatedPersonId))[0] ?? "";
+                      setForm({ ...form, relatedPersonId, secondParentId: form.relation === "PARENT" ? partner : "" });
+                    }}
                     disabled={!form.relation}
                   >
                     <option value="">— Choose a person —</option>
@@ -124,6 +141,21 @@ export function PeopleAndEntities() {
                     ))}
                   </select>
                 </div>
+                {form.relation === "PARENT" && form.relatedPersonId && (
+                  <div>
+                    <label>and (other parent)</label>
+                    <select value={form.secondParentId} onChange={(e) => setForm({ ...form, secondParentId: e.target.value })}>
+                      <option value="">— Only one parent recorded —</option>
+                      {people
+                        .filter((p) => p.id !== form.relatedPersonId)
+                        .map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                )}
               </div>
             )
           ) : (

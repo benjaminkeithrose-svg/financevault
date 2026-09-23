@@ -84,6 +84,25 @@ The choice is kept per browser in `localStorage` (`fv-theme`), applied as
 colours the Keyhole browser-tab icon. Red stays reserved for destructive
 actions and errors in every colourway.
 
+### Shared ownership and unit trusts
+
+Assets and loans can have several owners with percentages
+(`AssetOwnership`, `LiabilityOwnership`). Create forms send `owners:
+[{entityId, percent}]` (two or more, adding to 100%); the first becomes the
+owner on record (`entityId`). `services/ownership.ts` `shareOf()` gives an
+entity's share: listed shares as written, and the owner on record keeps
+whatever isn't listed. `computeLiveBreakdown()` counts full values for the
+whole family (no entity), and each record at the entity's share when one is
+chosen, plus — with `lookThrough` — its share of any unit trust's net
+assets (`EntityRelationship` type `UNITHOLDER` with `ownershipPercent`,
+into an entity of type `UNIT_TRUST`; capped at 100%, one row per holder,
+followed through nested trusts without loops). The dashboard's by-entity
+table turns look-through off so its rows still add up to the family total.
+`TRUST` is a family (discretionary) trust: beneficiaries, no set shares.
+
+A new person can be linked to both parents at once; the first parent's
+partner is suggested as the second.
+
 ### Self-managed super funds
 
 An entity of type **SMSF** gets its own section at the top of its page

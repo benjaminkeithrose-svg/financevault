@@ -1,125 +1,131 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { api, Asset, Entity } from "../api/client.js";
-import { humanize, confirmThenDelete } from "../utils.js";
+import { api, Entity } from "../api/client.js";
+import { confirmThenDelete } from "../utils.js";
+import { IconBin } from "./icons.js";
 
-const OWNERSHIP_TYPES = ["LEGAL", "BENEFICIAL"];
+interface ShareRow {
+  id: string;
+  ownerEntityId: string;
+  ownerEntity?: Entity | null;
+  ownershipPercent: number;
+  ownershipType?: string | null;
+  endDate?: string | null;
+  notes?: string | null;
+}
 
-// Supplements Asset.entityId (the primary/current owner, used everywhere
-// else for simple queries) with explicit fractional or time-boxed splits —
-// e.g. 50/50 between two entities — without ever changing the primary
-// owner. Recording nothing here just means the primary entity owns 100%.
+/**
+ * Who owns (or owes) what share of this. The owner on record keeps whatever
+ * the listed shares leave over, so adding "Sam, 50%" to Alex's house makes
+ * it 50/50. Each owner's share is what counts in their own figures; the
+ * family total always counts the whole thing once.
+ */
 export function AssetOwnershipPanel({
   asset,
   entities,
   onChange,
+  kind = "asset",
 }: {
-  asset: Asset;
+  asset: { id: string; entityId: string; entity?: Entity | null; ownerships?: ShareRow[] };
   entities: Entity[];
   onChange: () => void;
+  kind?: "asset" | "loan";
 }) {
   const [showForm, setShowForm] = useState(false);
   const [ownerEntityId, setOwnerEntityId] = useState("");
   const [percent, setPercent] = useState("");
-  const [ownershipType, setOwnershipType] = useState("LEGAL");
-  const [notes, setNotes] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  const ownerships = asset.ownerships || [];
-  const splitTotal = ownerships.reduce((s, o) => s + o.ownershipPercent, 0);
+  const today = new Date().toISOString().slice(0, 10);
+  const rows = (asset.ownerships ?? []).filter((o) => !o.endDate || o.endDate.slice(0, 10) >= today);
+  const listedTotal = rows.reduce((s, o) => s + o.ownershipPercent, 0);
+  const recordListed = rows.some((o) => o.ownerEntityId === asset.entityId);
+  const leftToRecord = rows.length > 0 && !recordListed ? Math.max(0, 100 - listedTotal) : 0;
+  const verb = kind === "loan" ? "owes" : "owns";
 
   async function add() {
-    if (!ownerEntityId || !percent) return;
-    await api.assets.addOwnership(asset.id, {
-      ownerEntityId,
-      ownershipPercent: Number(percent),
-      ownershipType,
-      notes: notes || null,
-    });
-    setOwnerEntityId("");
-    setPercent("");
-    setNotes("");
-    setShowForm(false);
-    onChange();
+    setError(null);
+    if (!ownerEntityId || !percent) {
+      setError("Choose who, and their share.");
+      return;
+    }
+    try {
+      const data = { ownerEntityId, ownershipPercent: Number(percent) };
+      if (kind === "loan") await api.liabilities.addOwnership(asset.id, data);
+      else await api.assets.addOwnership(asset.id, { ...data, ownershipType: "LEGAL" });
+      setOwnerEntityId("");
+      setPercent("");
+      setShowForm(false);
+      onChange();
+    } catch (e) {
+      setError((e as Error).message);
+    }
   }
 
-  async function remove(id: string) {
-    if (!(await confirmThenDelete("Remove this ownership share?", () => api.assets.removeOwnership(id)))) return;
-    onChange();
+  async function remove(row: ShareRow) {
+    const action = () => (kind === "loan" ? api.liabilities.removeOwnership(row.id) : api.assets.removeOwnership(row.id));
+    if (await confirmThenDelete(`Remove ${row.ownerEntity?.name ?? "this owner"}'s ${row.ownershipPercent}% share?`, action)) onChange();
   }
 
   return (
     <div className="card">
-      <h3>Ownership split</h3>
-      <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
-        <Link to={`/entities/${asset.entityId}`}>{asset.entity?.name}</Link> is the primary owner on record. Add a
-        split here for fractional or joint ownership (e.g. 50/50 between two entities) — this never changes the
-        primary owner above.
-      </p>
-
-      {ownerships.length === 0 ? (
-        <p className="empty-state">No split recorded — {asset.entity?.name} owns 100%.</p>
+      <h3 style={{ marginTop: 0 }}>{kind === "loan" ? "Who owes it" : "Who owns it"}</h3>
+      {rows.length === 0 ? (
+        <p className="empty-state">
+          <Link to={`/entities/${asset.entityId}`}>{asset.entity?.name ?? "The owner on record"}</Link> {verb} 100%.
+        </p>
       ) : (
-        <>
-          <ul className="item-card-list">
-            {ownerships.map((o) => (
-              <li key={o.id} className="item-card" style={{ cursor: "default" }}>
-                <div className="item-card-body">
-                  <div className="item-card-title">
-                    <Link to={`/entities/${o.ownerEntityId}`}>{o.ownerEntity?.name}</Link>
-                  </div>
-                  <div className="item-card-subtitle">
-                    {o.ownershipType ? `${humanize(o.ownershipType)} · ` : ""}
-                    {o.ownershipPercent}%{o.notes ? ` · ${o.notes}` : ""}
-                  </div>
-                </div>
-                <div className="item-card-meta">
-                  <button className="btn secondary" onClick={() => remove(o.id)}>
-                    Remove
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-          {splitTotal !== 100 && (
-            <div className="message-box warning">
-              These splits total {splitTotal}%, not 100% — recorded as entered, just flagging it doesn't add up.
-            </div>
+        <ul className="plain-list">
+          {rows.map((o) => (
+            <li key={o.id}>
+              <span>
+                <Link to={`/entities/${o.ownerEntityId}`}>{o.ownerEntity?.name ?? "Owner"}</Link> — {o.ownershipPercent}%
+                {o.notes ? <span style={{ color: "var(--text-muted)", fontSize: 13 }}> · {o.notes}</span> : null}
+              </span>
+              <button className="icon-btn danger" aria-label={`Remove ${o.ownerEntity?.name ?? "owner"}'s share`} onClick={() => remove(o)}>
+                <IconBin />
+              </button>
+            </li>
+          ))}
+          {leftToRecord > 0 && (
+            <li>
+              <span>
+                <Link to={`/entities/${asset.entityId}`}>{asset.entity?.name}</Link> — {Math.round(leftToRecord * 100) / 100}%{" "}
+                <span style={{ color: "var(--text-muted)", fontSize: 13 }}>(the rest, as owner on record)</span>
+              </span>
+            </li>
           )}
-        </>
+        </ul>
+      )}
+      {rows.length > 0 && recordListed && Math.abs(listedTotal - 100) > 0.01 && (
+        <p className="cap-note over">The shares add up to {Math.round(listedTotal * 100) / 100}%, not 100%.</p>
       )}
 
       {showForm ? (
-        <div style={{ marginTop: 12 }}>
-          <label>Entity</label>
-          <select value={ownerEntityId} onChange={(e) => setOwnerEntityId(e.target.value)}>
-            <option value="">— Select —</option>
-            {entities.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.name}
-              </option>
-            ))}
-          </select>
+        <div className="sub-form">
           <div className="grid grid-2">
             <div>
-              <label>Ownership %</label>
-              <input type="number" min="0" max="100" value={percent} onChange={(e) => setPercent(e.target.value)} />
-            </div>
-            <div>
-              <label>Type</label>
-              <select value={ownershipType} onChange={(e) => setOwnershipType(e.target.value)}>
-                {OWNERSHIP_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {humanize(t)}
-                  </option>
-                ))}
+              <label>Who</label>
+              <select value={ownerEntityId} onChange={(e) => setOwnerEntityId(e.target.value)}>
+                <option value="">— Select —</option>
+                {entities
+                  .filter((e) => !rows.some((o) => o.ownerEntityId === e.id))
+                  .map((e) => (
+                    <option key={e.id} value={e.id}>
+                      {e.name}
+                    </option>
+                  ))}
               </select>
             </div>
+            <div>
+              <label>Their share (%)</label>
+              <input type="number" min="0" max="100" value={percent} onChange={(e) => setPercent(e.target.value)} />
+            </div>
           </div>
-          <label>Notes (optional)</label>
-          <input value={notes} onChange={(e) => setNotes(e.target.value)} />
+          {error && <div className="message-box warning">{error}</div>}
           <div className="toolbar" style={{ marginTop: 12 }}>
             <button className="btn" onClick={add}>
-              Add split
+              Add
             </button>
             <button className="btn secondary" onClick={() => setShowForm(false)}>
               Cancel
@@ -129,7 +135,7 @@ export function AssetOwnershipPanel({
       ) : (
         <div className="toolbar" style={{ marginTop: 12 }}>
           <button className="btn secondary" onClick={() => setShowForm(true)}>
-            Add ownership split
+            {kind === "loan" ? "Add a borrower's share" : "Add an owner's share"}
           </button>
         </div>
       )}

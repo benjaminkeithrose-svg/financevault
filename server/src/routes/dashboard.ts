@@ -2,8 +2,7 @@ import { Router } from "express";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { financialYearLabelForDate } from "../services/financialYear.js";
-import { computeFinancialPosition } from "../services/financialPosition.js";
-import { computeLiveBreakdown, valueHoldings } from "../services/netWorth.js";
+import { computeLiveBreakdown } from "../services/netWorth.js";
 
 export const dashboardRouter = Router();
 
@@ -127,20 +126,19 @@ dashboardRouter.get(
       netAssets: number;
     }> = [];
     if (!entityId) {
-      const allEntities = await prisma.entity.findMany({
-        include: { assets: { where: { parentAssetId: null } }, accounts: true, liabilities: true, investmentAccounts: true },
-      });
+      const allEntities = await prisma.entity.findMany();
       byEntity = [];
       for (const e of allEntities) {
-        const holdings = await valueHoldings(e.investmentAccounts);
-        const position = computeFinancialPosition(e.assets, e.accounts, e.liabilities, holdings.value);
+        // Shares of shared things, but not unit trust look-through: the trust
+        // has its own row, so the rows still add up to the family total.
+        const position = await computeLiveBreakdown(e.id, { lookThrough: false });
         byEntity.push({
           entityId: e.id,
           entityName: e.name,
           entityType: e.entityType,
           totalAssets: position.totalAssets,
           totalLiabilities: position.totalLiabilities,
-          netAssets: position.netAssets,
+          netAssets: position.netPosition,
         });
       }
     }

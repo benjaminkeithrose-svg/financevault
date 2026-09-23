@@ -217,7 +217,8 @@ export function assetListRoute(type: string): string {
 }
 
 const ENTITY_TYPE_LABELS: Record<string, string> = {
-  TRUST: "Trust",
+  TRUST: "Family (discretionary) trust",
+  UNIT_TRUST: "Unit trust — each holder owns a set share",
   COMPANY: "Company",
   SMSF: "Self-managed super fund (SMSF)",
   HOLDING_TRUST: "Holding (bare) trust for an SMSF property",
@@ -230,4 +231,16 @@ const ENTITY_TYPE_LABELS: Record<string, string> = {
 export function entityTypeLabel(type: string): string {
   if (type === "INDIVIDUAL") return "Personal";
   return ENTITY_TYPE_LABELS[type] ?? humanize(type);
+}
+
+/** Everyone recorded as this person's partner (stored once, read both ways). */
+export function partnerIds(p?: {
+  familyFrom?: Array<{ relationshipType: string; toPersonId: string }>;
+  familyTo?: Array<{ relationshipType: string; fromPersonId: string }>;
+}): string[] {
+  if (!p) return [];
+  return [
+    ...(p.familyFrom ?? []).filter((f) => f.relationshipType === "PARTNER").map((f) => f.toPersonId),
+    ...(p.familyTo ?? []).filter((f) => f.relationshipType === "PARTNER").map((f) => f.fromPersonId),
+  ];
 }

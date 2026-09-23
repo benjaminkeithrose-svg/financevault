@@ -4,6 +4,7 @@ import { prisma } from "../db.js";
 import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
+import { checkOwners, checkRoomFor, ownersInput } from "../services/ownership.js";
 
 export const assetsRouter = Router();
 
@@ -81,9 +82,10 @@ const assetInput = z.object({
   parentAssetId: z.string().optional().nullable(),
   itemCategory: z.string().optional().nullable(),
   warrantyExpiry: z.string().datetime().optional().nullable(),
+  owners: ownersInput,
 });
 
-function assetData(parsed: z.infer<typeof assetInput>) {
+function assetData({ owners: _owners, ...parsed }: z.infer<typeof assetInput>) {
   if (parsed.assetType === "PROPERTY") {
     throw new HttpError(400, "Properties are added from the Properties page, not as a general asset.");
   }
@@ -107,8 +109,20 @@ assetsRouter.post(
       if (!parent) throw new HttpError(400, "The asset this item belongs under doesn't exist.");
       entityId = parent.entityId;
     }
+    // Several owners: the first is the owner on record, the split is kept alongside.
+    const owners = parsed.parentAssetId ? null : checkOwners(parsed.owners);
+    if (owners) entityId = owners[0].entityId;
     if (!entityId) throw new HttpError(400, "Owned by is required");
-    const asset = await prisma.asset.create({ data: { ...assetData(parsed), entityId }, include: { entity: true } });
+    const asset = await prisma.asset.create({
+      data: {
+        ...assetData(parsed),
+        entityId,
+        ...(owners
+          ? { ownerships: { create: owners.map((o) => ({ ownerEntityId: o.entityId, ownershipPercent: o.percent, ownershipType: "LEGAL" })) } }
+          : {}),
+      },
+      include: { entity: true },
+    });
     await logAudit("ASSET_CREATED", { targetType: "Asset", targetId: asset.id });
     res.status(201).json(asset);
   })
@@ -182,6 +196,8 @@ assetsRouter.post(
   "/:id/ownerships",
   asyncHandler(async (req, res) => {
     const parsed = ownershipInput.parse(req.body);
+    const isCurrent = !parsed.endDate || new Date(parsed.endDate) >= new Date();
+    if (isCurrent) checkRoomFor(await prisma.assetOwnership.findMany({ where: { assetId: req.params.id } }), parsed.ownershipPercent);
     const ownership = await prisma.assetOwnership.create({
       data: {
         assetId: req.params.id,

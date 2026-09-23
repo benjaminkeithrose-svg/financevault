@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { api, Person } from "../api/client.js";
-import { confirmThenDelete } from "../utils.js";
+import { confirmThenDelete, partnerIds } from "../utils.js";
 import { IconBin } from "./icons.js";
 
 type Link_ = { id: string; otherId: string; otherName: string; label: string };
@@ -10,6 +10,9 @@ type Link_ = { id: string; otherId: string; otherName: string; label: string };
 export function FamilyPanel({ person, people, onChange }: { person: Person; people: Person[]; onChange: () => void }) {
   const [relation, setRelation] = useState<"" | "PARTNER" | "CHILD" | "PARENT">("");
   const [otherId, setOtherId] = useState("");
+  // Adding a parent: the other parent too. Adding a child: also the child of this person's partner.
+  const [secondParentId, setSecondParentId] = useState("");
+  const [alsoPartnersChild, setAlsoPartnersChild] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const links: Link_[] = [
@@ -32,8 +35,18 @@ export function FamilyPanel({ person, people, onChange }: { person: Person; peop
     setError(null);
     try {
       await api.people.addFamily({ personId: person.id, relatedPersonId: otherId, relation });
+      if (relation === "PARENT" && secondParentId && secondParentId !== otherId) {
+        await api.people.addFamily({ personId: person.id, relatedPersonId: secondParentId, relation: "PARENT" });
+      }
+      if (relation === "CHILD" && partner && alsoPartnersChild && partner.id !== otherId) {
+        await api.people.addFamily({ personId: partner.id, relatedPersonId: otherId, relation: "CHILD" }).catch(() => {
+          // Already recorded as their child — nothing more to do.
+        });
+      }
       setRelation("");
       setOtherId("");
+      setSecondParentId("");
+      setAlsoPartnersChild(true);
       onChange();
     } catch (err) {
       setError((err as Error).message);
@@ -47,6 +60,12 @@ export function FamilyPanel({ person, people, onChange }: { person: Person; peop
   }
 
   const others = people.filter((p) => p.id !== person.id);
+  const partner = people.find((p) => p.id === partnerIds(person)[0]);
+  const pickOther = (id: string) => {
+    setOtherId(id);
+    // The chosen parent's partner is usually the other parent.
+    if (relation === "PARENT") setSecondParentId(partnerIds(people.find((p) => p.id === id))[0] ?? "");
+  };
 
   return (
     <div className="card">
@@ -72,7 +91,13 @@ export function FamilyPanel({ person, people, onChange }: { person: Person; peop
           <div className="grid grid-2">
             <div>
               <label>Add family</label>
-              <select value={relation} onChange={(e) => setRelation(e.target.value as typeof relation)}>
+              <select
+                value={relation}
+                onChange={(e) => {
+                  setRelation(e.target.value as typeof relation);
+                  setSecondParentId("");
+                }}
+              >
                 <option value="">— Choose —</option>
                 <option value="PARTNER">Partner</option>
                 <option value="CHILD">Child</option>
@@ -81,7 +106,7 @@ export function FamilyPanel({ person, people, onChange }: { person: Person; peop
             </div>
             <div>
               <label>&nbsp;</label>
-              <select value={otherId} onChange={(e) => setOtherId(e.target.value)} disabled={!relation}>
+              <select value={otherId} onChange={(e) => pickOther(e.target.value)} disabled={!relation}>
                 <option value="">— Choose a person —</option>
                 {others.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -91,6 +116,27 @@ export function FamilyPanel({ person, people, onChange }: { person: Person; peop
               </select>
             </div>
           </div>
+          {relation === "PARENT" && otherId && (
+            <>
+              <label>and (other parent)</label>
+              <select value={secondParentId} onChange={(e) => setSecondParentId(e.target.value)}>
+                <option value="">— Only one parent —</option>
+                {others
+                  .filter((p) => p.id !== otherId)
+                  .map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+              </select>
+            </>
+          )}
+          {relation === "CHILD" && otherId && partner && partner.id !== otherId && (
+            <label className="tick-row">
+              <input type="checkbox" checked={alsoPartnersChild} onChange={(e) => setAlsoPartnersChild(e.target.checked)} />
+              Also {partner.name}'s child
+            </label>
+          )}
           {error && <div className="message-box warning">{error}</div>}
           <div className="toolbar" style={{ marginTop: 12 }}>
             <button className="btn secondary" onClick={add} disabled={!relation || !otherId}>

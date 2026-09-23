@@ -161,10 +161,46 @@ const SECTIONS: Section[] = [
           it while adding someone new.
         </p>
         <p>
+          A child has two parents, so both can be picked at once: choose <strong>is a child of</strong> (or{" "}
+          <strong>Parent</strong> on the Family panel) and the first parent, then the other parent in <strong>and</strong>.
+          If the first parent has a partner recorded, they're filled in for you — change it if that's not right. Adding a{" "}
+          <strong>Child</strong> from a parent's page offers to make them their partner's child too.
+        </p>
+        <p>
           When a parent is made <strong>trustee</strong>, <strong>appointor</strong> or <strong>settlor</strong> of a
           trust, Financial Vault shows their partner and children in a list, all ticked. Untick anyone who shouldn't be
           in it, then confirm, and the rest are added as <strong>beneficiaries</strong>. Nobody is added without that
           confirmation, and anyone already a beneficiary isn't offered again.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "shared-ownership",
+    title: "Shared ownership and unit trusts",
+    keywords: "joint shared co-owner split percent 50/50 tenants in common unit trust unitholder units share discretionary family trust",
+    body: (
+      <>
+        <p>
+          <strong>Owned by more than one person.</strong> When adding a property, vehicle, other asset or loan, choose the
+          first owner under <strong>Owned by</strong> (or <strong>Owed by</strong>), then <strong>+ Add another owner</strong>.
+          The shares start out even — 50/50, or 25% each for four — and can be changed; they must add up to 100%. Owners can
+          be people or entities in any mix. Something already recorded can be split later in <strong>Who owns it</strong>{" "}
+          (or <strong>Who owes it</strong>) on its page.
+        </p>
+        <p>
+          <strong>Which figures show what.</strong> The dashboard and Net Worth open on the <strong>whole family</strong>,
+          where each thing counts once, at full value. Choose one person or entity in the list at the top to see just
+          their share: a 50/50 house counts half its value and half its loan for each owner. Their page shows the same.
+        </p>
+        <p>
+          <strong>Two kinds of trust.</strong> A <strong>family (discretionary) trust</strong> has beneficiaries, and the
+          trustee decides each year who receives what — nobody owns a set part, so its value stays with the trust. A{" "}
+          <strong>unit trust</strong> is split into units: add it under People & entities as a <em>Unit trust</em>, then on
+          its page add each <strong>unitholder</strong> — a person, or another entity such as a family trust — with the
+          share of units they hold. Four people who aren't related can each hold 25%. Each holder's share of the trust's net
+          assets counts in their own figures; the family total still counts the trust's assets once. The Visualization
+          shows each holder's line to the trust with their share.
         </p>
       </>
     ),

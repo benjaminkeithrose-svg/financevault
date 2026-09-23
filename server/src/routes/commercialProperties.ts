@@ -4,6 +4,7 @@ import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
+import { checkOwners, ownersInput } from "../services/ownership.js";
 import { extractLeaseTerms } from "../services/leaseExtraction.js";
 import {
   computeCoverageRatios,
@@ -208,6 +209,7 @@ const createInput = z.object({
   nla: z.number().optional().nullable(),
   gla: z.number().optional().nullable(),
   siteArea: z.number().optional().nullable(),
+  owners: ownersInput,
 });
 
 function dateOrUndefined(v: string | null | undefined) {
@@ -218,7 +220,10 @@ function dateOrUndefined(v: string | null | undefined) {
 commercialPropertiesRouter.post(
   "/",
   asyncHandler(async (req, res) => {
-    const parsed = createInput.parse(req.body);
+    const { owners: ownersRaw, ...parsed } = createInput.parse(req.body);
+    // Several owners: the first is the owner on record, the split is kept alongside.
+    const owners = checkOwners(ownersRaw);
+    if (owners) parsed.entityId = owners[0].entityId;
     const property = await prisma.$transaction(async (tx) => {
       const asset = await tx.asset.create({
         data: {
@@ -231,6 +236,11 @@ commercialPropertiesRouter.post(
           valuationDate: dateOrUndefined(parsed.valuationDate) ?? undefined,
         },
       });
+      if (owners) {
+        await tx.assetOwnership.createMany({
+          data: owners.map((o) => ({ assetId: asset.id, ownerEntityId: o.entityId, ownershipPercent: o.percent, ownershipType: "LEGAL" })),
+        });
+      }
       return tx.commercialProperty.create({
         data: {
           assetId: asset.id,
@@ -268,7 +278,8 @@ commercialPropertiesRouter.post(
   })
 );
 
-const updateInput = createInput.partial();
+// Owners are chosen when it's created; later changes go through the ownership split.
+const updateInput = createInput.omit({ owners: true }).partial();
 
 commercialPropertiesRouter.put(
   "/:id",

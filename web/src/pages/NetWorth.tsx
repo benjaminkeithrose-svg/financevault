@@ -65,10 +65,15 @@ export function NetWorth() {
       <div className="page-header">
         <div>
           <h2>Net Worth <HelpLink topic="net-worth" /></h2>
-          <p>{entityId ? "This entity's" : "Consolidated"} balance sheet, and how it's changed over time.</p>
+          <p>
+            {entityId
+              ? "Just this person or entity: their share of anything shared, plus their share of any unit trust."
+              : "The whole family's net wealth — shared things counted once."}{" "}
+            And how it's changed over time.
+          </p>
         </div>
         <select value={entityId} onChange={(e) => setEntityId(e.target.value)} style={{ width: 220 }}>
-          <option value="">All entities (consolidated)</option>
+          <option value="">Whole family</option>
           {entities.map((e) => (
             <option key={e.id} value={e.id}>
               {e.name}

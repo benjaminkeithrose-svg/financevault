@@ -1349,3 +1349,27 @@ label {
     white-space: normal;
   }
 }
+
+/* Owned by, with more than one owner */
+.owner-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.owner-row select {
+  flex: 1;
+  min-width: 0;
+}
+
+.percent-input {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.percent-input input {
+  width: 84px;
+}

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { ShareRow, shareOf } from "../services/ownership.js";
 
 export const graphRouter = Router();
 
@@ -29,10 +30,10 @@ graphRouter.get(
     const [people, entities, assets, accounts, investmentAccounts, liabilities, family] = await Promise.all([
       prisma.person.findMany({ include: { entityRelationships: true } }),
       prisma.entity.findMany({ include: { relationshipsFrom: true } }),
-      prisma.asset.findMany({ where: { parentAssetId: null }, include: { property: true, commercialProperty: true } }),
+      prisma.asset.findMany({ where: { parentAssetId: null }, include: { property: true, commercialProperty: true, ownerships: true } }),
       prisma.account.findMany(),
       prisma.investmentAccount.findMany(),
-      prisma.liability.findMany(),
+      prisma.liability.findMany({ include: { ownerships: true } }),
       prisma.personRelationship.findMany(),
     ]);
 
@@ -70,9 +71,19 @@ graphRouter.get(
     }
     for (const e of entities) {
       for (const r of e.relationshipsFrom) {
-        edges.push({ from: ent(e.id), to: ent(r.toEntityId), label: r.relationshipType });
+        const pct = r.ownershipPercent ? ` ${r.ownershipPercent}%` : "";
+        edges.push({ from: ent(e.id), to: ent(r.toEntityId), label: `${r.relationshipType}${pct}` });
       }
     }
+
+    // Something shared gets a line from each owner, labelled with their share.
+    const ownerEdges = (record: { entityId: string; ownerships: ShareRow[] }, to: string, verb: string) => {
+      const owners = [...new Set([record.entityId, ...record.ownerships.map((o) => o.ownerEntityId)])];
+      const shares = owners.map((id) => ({ id, share: shareOf(record, id) })).filter((o) => o.share > 0);
+      for (const o of shares) {
+        edges.push({ from: ent(o.id), to, label: shares.length > 1 ? `${verb} ${Math.round(o.share * 1000) / 10}%` : verb });
+      }
+    };
 
     for (const a of assets) {
       let route = `/assets/${a.id}`;
@@ -86,7 +97,7 @@ graphRouter.get(
         value: a.currentValue,
         route,
       });
-      edges.push({ from: ent(a.entityId), to: `asset:${a.id}`, label: "Owns" });
+      ownerEdges(a, `asset:${a.id}`, "Owns");
     }
 
     for (const a of accounts) {
@@ -121,7 +132,7 @@ graphRouter.get(
         value: l.currentBalance,
         route: `/liabilities/${l.id}`,
       });
-      edges.push({ from: ent(l.entityId), to: `liability:${l.id}`, label: "Owes" });
+      ownerEdges(l, `liability:${l.id}`, "Owes");
       if (l.securityPropertyId) {
         const secured = assets.find((a) => a.property?.id === l.securityPropertyId);
         if (secured) edges.push({ from: `liability:${l.id}`, to: `asset:${secured.id}`, label: "Secured by" });
