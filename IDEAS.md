@@ -438,3 +438,20 @@ itself off when a document of that type is linked.
 **Printable checklist:** one list of everything expected but missing —
 insurance and documents — grouped by person and asset, to print, save as
 PDF, or take to the broker or accountant. Items tick off as they're added.
+
+---
+
+## 14. Shorter side menu — without adding clicks
+
+**Done already:** Asset tree and Visualization merged into one entry
+("Asset tree & diagram") with tabs; the menu opens the last-used tab.
+
+**Options still to decide (menu has 26 items):**
+| Option | Items saved | Extra clicks |
+|---|---|---|
+| A. Loans on one page — property loans, vehicle loans, credit cards and personal debts as sections of a single "Loans & cards" page | 3 | None (scroll instead) |
+| B. Professional advisers as a section at the bottom of People & entities | 1 | None |
+| C. Hide switched-off features (idea 11) — e.g. Gmail import, Portfolio Plan, Super | Varies | None |
+| D. "Import a folder" and "Import from Gmail" as buttons at the top of Documents | 2 | One, only when importing |
+
+Suggested: A, B and C; D optional.
