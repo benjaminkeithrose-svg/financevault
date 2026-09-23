@@ -455,3 +455,30 @@ PDF, or take to the broker or accountant. Items tick off as they're added.
 | D. "Import a folder" and "Import from Gmail" as buttons at the top of Documents | 2 | One, only when importing |
 
 Suggested: A, B and C; D optional.
+
+---
+
+## 15. Rebranding pass
+
+**Why:** make the app look finished and its own — a stronger logo, more
+colour choice.
+
+**Today:** four colour themes (Midnight violet, Deep teal, Navy & pink,
+Cobalt & lilac) × two styles (Bold, Soft), picked from the theme menu; the
+keyhole logo sits small in the header and on the lock screen.
+
+**Ideas:**
+- **Logo:** redesign and make it more prominent — larger in the header,
+  a proper lock/setup screen with the logo as the centrepiece, the browser
+  tab icon, the Mac/Windows launcher icons, and on generated reports and
+  Document Packs (cover page / letterhead). Offer two or three logo
+  directions to choose from before building.
+- **More colours:** add more themes (e.g. forest green, charcoal & gold,
+  ocean blue, warm terracotta, plain greyscale), plus a dark mode for each.
+  Possibly a "pick your own accent colour" option, with a contrast check so
+  text always stays readable.
+- **Name and wording:** check "Financial Vault" still fits now the app is
+  mainly an asset management system — decide whether to keep it or rename.
+- **Consistency sweep:** one accent colour, red only for delete and errors,
+  touch targets ≥ 40px (PREFERENCES.md) — re-checked across every page in
+  every theme, on desktop and phone.
