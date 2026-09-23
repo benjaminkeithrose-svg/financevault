@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, Entity } from "../api/client.js";
 import { TfnField } from "../components/TfnField.js";
-import { formatCurrency, formatDate, humanize } from "../utils.js";
+import { entityTypeLabel, formatCurrency, formatDate, humanize } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
+import { SmsfPanel } from "../components/SmsfPanel.js";
 
 const ASSET_TYPE_ICONS: Record<string, string> = {
   PROPERTY: "🏠",
@@ -54,7 +55,7 @@ export function EntityDetail() {
       <div className="page-header">
         <div>
           <h2>{entity.name}</h2>
-          <p>{humanize(entity.entityType)}</p>
+          <p>{entityTypeLabel(entity.entityType)}</p>
         </div>
       </div>
 
@@ -62,6 +63,21 @@ export function EntityDetail() {
         <div className="message-box info">
           This is <Link to={`/people/${entity.personalFor.id}`}>{entity.personalFor.name}</Link>'s personal entity —
           everything they hold in their own name. Their tax file number, family and ID are on their page.
+        </div>
+      )}
+
+      {entity.entityType === "SMSF" && <SmsfPanel fundId={entity.id} />}
+
+      {(entity.heldForLoans ?? []).length > 0 && (
+        <div className="message-box info">
+          Holds the title to the property for{" "}
+          {entity.heldForLoans!.map((l, i) => (
+            <span key={l.id}>
+              {i > 0 ? ", " : ""}
+              <Link to={`/liabilities/${l.id}`}>{l.name}</Link> (owed by <Link to={`/entities/${l.entity.id}`}>{l.entity.name}</Link>)
+            </span>
+          ))}
+          . The property belongs to the fund; this trust only holds it until the loan is repaid.
         </div>
       )}
 

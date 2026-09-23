@@ -94,6 +94,7 @@ const LIABILITY_TYPE_LABELS: Record<string, string> = {
   HOME_LOAN: "Home loan",
   INVESTMENT_LOAN: "Investment property loan",
   COMMERCIAL_LOAN: "Commercial property loan",
+  LRBA_LOAN: "SMSF property loan (LRBA)",
   VEHICLE_LOAN: "Vehicle / boat loan",
   CREDIT_CARD: "Credit card",
   PERSONAL_LOAN: "Personal loan",
@@ -156,8 +157,8 @@ export const DEBT_LISTS = {
   property: {
     route: "/loans",
     title: "Property loans",
-    blurb: "Home, investment and commercial property loans.",
-    types: ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN"],
+    blurb: "Home, investment and commercial property loans, including an SMSF's limited recourse (LRBA) loans.",
+    types: ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN", "LRBA_LOAN"],
   },
   vehicle: {
     route: "/vehicle-loans",
@@ -213,4 +214,20 @@ export function assetListRoute(type: string): string {
   if (type === "VEHICLE") return "/vehicles";
   if (type === "SUPERANNUATION") return "/super";
   return "/assets";
+}
+
+const ENTITY_TYPE_LABELS: Record<string, string> = {
+  TRUST: "Trust",
+  COMPANY: "Company",
+  SMSF: "Self-managed super fund (SMSF)",
+  HOLDING_TRUST: "Holding (bare) trust for an SMSF property",
+  SUPER_FUND: "Super fund (retail / industry)",
+  PARTNERSHIP: "Partnership",
+  JOINT: "Joint ownership",
+  OTHER: "Other",
+};
+
+export function entityTypeLabel(type: string): string {
+  if (type === "INDIVIDUAL") return "Personal";
+  return ENTITY_TYPE_LABELS[type] ?? humanize(type);
 }

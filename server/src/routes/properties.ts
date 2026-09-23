@@ -72,6 +72,7 @@ const createInput = z.object({
   ownershipPercent: z.number().optional().nullable(),
   tenantInfo: z.string().optional().nullable(),
   propertyManager: z.string().optional().nullable(),
+  weeklyRent: z.number().nonnegative().optional().nullable(),
 });
 
 propertiesRouter.post(
@@ -101,6 +102,7 @@ propertiesRouter.post(
           ownershipPercent: parsed.ownershipPercent,
           tenantInfo: parsed.tenantInfo,
           propertyManager: parsed.propertyManager,
+          weeklyRent: parsed.weeklyRent,
         },
         include: { asset: true, entity: true },
       });
@@ -144,6 +146,7 @@ propertiesRouter.put(
           ownershipPercent: parsed.ownershipPercent,
           tenantInfo: parsed.tenantInfo,
           propertyManager: parsed.propertyManager,
+          weeklyRent: parsed.weeklyRent,
         },
         include: { asset: true, entity: true },
       });

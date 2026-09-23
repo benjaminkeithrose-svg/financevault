@@ -66,6 +66,10 @@ export async function entityDependents(entityId: string): Promise<Dependent[]> {
           netWorthSnapshots: true,
           portfolioPlans: true,
           emailImportRules: true,
+          superContributions: true,
+          smsfMemberYears: true,
+          smsfPensions: true,
+          heldForLoans: true,
         },
       },
     },
@@ -84,5 +88,23 @@ export async function entityDependents(entityId: string): Promise<Dependent[]> {
     { count: c.netWorthSnapshots, one: "net worth snapshot", many: "net worth snapshots" },
     { count: c.portfolioPlans, one: "portfolio plan", many: "portfolio plans" },
     { count: c.emailImportRules, one: "email import rule", many: "email import rules" },
+    { count: c.superContributions, one: "super contribution", many: "super contributions" },
+    { count: c.smsfMemberYears, one: "member balance", many: "member balances" },
+    { count: c.smsfPensions, one: "pension", many: "pensions" },
+    { count: c.heldForLoans, one: "SMSF loan it holds property for", many: "SMSF loans it holds property for" },
+  ];
+}
+
+/** A person's own super history — kept, not deleted with them. */
+export async function personSuperDependents(personId: string): Promise<Dependent[]> {
+  const [contributions, balances, pensions] = await Promise.all([
+    prisma.superContribution.count({ where: { personId } }),
+    prisma.smsfMemberYear.count({ where: { personId } }),
+    prisma.smsfPension.count({ where: { personId } }),
+  ]);
+  return [
+    { count: contributions, one: "super contribution", many: "super contributions" },
+    { count: balances, one: "SMSF member balance", many: "SMSF member balances" },
+    { count: pensions, one: "SMSF pension", many: "SMSF pensions" },
   ];
 }

@@ -1258,3 +1258,94 @@ label {
   min-height: 40px;
   padding: 7px 18px;
 }
+
+/* SMSF page */
+.sub-form {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.member-block {
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+
+.member-block:first-of-type {
+  margin-top: 12px;
+}
+
+.cap-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.cap-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.cap-bar-fill {
+  height: 100%;
+  background: var(--accent-fill);
+}
+
+.cap-bar-fill.over {
+  background: var(--danger);
+}
+
+.cap-note {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.cap-note.over,
+.cap-explain.over {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.cap-explain {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 6px 0 0;
+}
+
+.tick-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.tick-row input[type="checkbox"] {
+  width: 20px;
+  min-height: 20px;
+  height: 20px;
+}
+
+.date-list li {
+  padding: 8px 0;
+  gap: 2px;
+}
+
+/* Two-column label/value tables wrap on a phone instead of scrolling sideways. */
+@media (max-width: 720px) {
+  table.kv-table {
+    display: table;
+    width: 100%;
+    white-space: normal;
+  }
+}

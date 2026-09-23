@@ -15,7 +15,7 @@ export const entitiesRouter = Router();
 // entity is who owns things, never the thing itself.
 const entityInput = z.object({
   name: z.string().min(1),
-  entityType: z.enum(["INDIVIDUAL", "JOINT", "TRUST", "COMPANY", "PARTNERSHIP", "SUPER_FUND", "SMSF", "OTHER"]),
+  entityType: z.enum(["INDIVIDUAL", "JOINT", "TRUST", "HOLDING_TRUST", "COMPANY", "PARTNERSHIP", "SUPER_FUND", "SMSF", "OTHER"]),
   abn: z.string().optional().nullable(),
   tfn: z.string().optional().nullable(),
   acn: z.string().optional().nullable(),
@@ -63,10 +63,11 @@ entitiesRouter.get(
         assets: { where: { parentAssetId: null } },
         liabilities: true,
         accounts: true,
-        properties: true,
-        commercialProperties: true,
+        properties: { include: { asset: true } },
+        commercialProperties: { include: { asset: true } },
         investmentAccounts: true,
         taxRecords: true,
+        heldForLoans: { select: { id: true, name: true, entity: { select: { id: true, name: true } } } },
       },
     });
     if (!entity) {

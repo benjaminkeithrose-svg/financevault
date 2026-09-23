@@ -53,14 +53,17 @@ model Person {
   // Every person has their own personal (INDIVIDUAL) entity, created with
   // them, so things they own personally can be recorded without setting the
   // person up twice.
-  entityId       String?   @unique
-  personalEntity Entity?   @relation("PersonalEntity", fields: [entityId], references: [id], onDelete: SetNull)
+  entityId       String? @unique
+  personalEntity Entity? @relation("PersonalEntity", fields: [entityId], references: [id], onDelete: SetNull)
 
   entityRelationships PersonEntityRelationship[]
   payPeriodEntries    PayPeriodEntry[]
   familyFrom          PersonRelationship[]       @relation("FamilyFrom")
   familyTo            PersonRelationship[]       @relation("FamilyTo")
   identityRecords     IdentityRecord[]
+  superContributions  SuperContribution[]
+  smsfMemberYears     SmsfMemberYear[]
+  smsfPensions        SmsfPension[]
   // Documents reference this Person via the polymorphic DocumentLink
   // (targetType = PERSON, targetId = this.id) — no direct relation field,
   // consistent with how every other linkable record works.
@@ -154,7 +157,7 @@ model PersonEntityRelationship {
 model Entity {
   id                String    @id @default(cuid())
   name              String
-  entityType        String // INDIVIDUAL | JOINT | TRUST | COMPANY | PARTNERSHIP | SUPER_FUND | SMSF | OTHER
+  entityType        String // INDIVIDUAL | JOINT | TRUST | HOLDING_TRUST | COMPANY | PARTNERSHIP | SUPER_FUND | SMSF | OTHER
   abn               String?
   tfn               String?
   acn               String?
@@ -186,6 +189,15 @@ model Entity {
   netWorthSnapshots    NetWorthSnapshot[]
   portfolioPlans       PortfolioPlan[]
   emailImportRules     EmailImportRule[]
+
+  // SMSF only (see the SMSF section below).
+  smsfDetails        SmsfDetails?        @relation("SmsfFund")
+  trusteeOfSmsfs     SmsfDetails[]       @relation("SmsfCorporateTrustee")
+  superContributions SuperContribution[]
+  smsfMemberYears    SmsfMemberYear[]
+  smsfPensions       SmsfPension[]
+  // Holding (bare) trusts: the LRBA loans whose property this trust holds.
+  heldForLoans       Liability[]         @relation("HoldingTrust")
 
   @@index([entityType])
 }
@@ -373,14 +385,14 @@ model Asset {
   // in a rental, the washing machine at home, an outboard on a boat. Its
   // value is part of the parent's, so it's never added to totals itself.
   parentAssetId  String?
-  parent         Asset?    @relation("SubAssets", fields: [parentAssetId], references: [id])
-  children       Asset[]   @relation("SubAssets")
+  parent         Asset?              @relation("SubAssets", fields: [parentAssetId], references: [id])
+  children       Asset[]             @relation("SubAssets")
   itemCategory   String? // APPLIANCE | HEATING_COOLING | HOT_WATER | SOLAR | POOL_SPA | SECURITY | FURNITURE | ELECTRONICS | FIXTURE | EQUIPMENT | OTHER
   warrantyExpiry DateTime?
   maintenance    MaintenanceRecord[]
 
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   property           Property?
   commercialProperty CommercialProperty?
@@ -429,6 +441,9 @@ model Liability {
   securityAssetId              String?
   // Credit cards: lenders assess a card on its limit, not its balance.
   creditLimit                  Float?
+  // SMSF limited recourse borrowing (LRBA_LOAN): the holding (bare) trust
+  // that holds legal title to the property until the loan is repaid.
+  holdingTrustEntityId         String?
   // Commercial-specific loan detail (spec section 17) — nullable, only
   // meaningful when this liability secures a CommercialProperty.
   interestOnly                 Boolean?
@@ -444,6 +459,7 @@ model Liability {
   securityProperty           Property?           @relation(fields: [securityPropertyId], references: [id])
   securityCommercialProperty CommercialProperty? @relation(fields: [securityCommercialPropertyId], references: [id])
   securityAsset              Asset?              @relation(fields: [securityAssetId], references: [id])
+  holdingTrust               Entity?             @relation("HoldingTrust", fields: [holdingTrustEntityId], references: [id])
 
   @@index([entityId])
   @@index([securityAssetId])
@@ -469,6 +485,7 @@ model Property {
   ownershipPercent Float?
   tenantInfo       String?
   propertyManager  String?
+  weeklyRent       Float? // current rent, used for rent cover on an SMSF's LRBA loan
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
@@ -949,7 +966,7 @@ model NetWorthSnapshot {
   mortgages        Float
   creditCards      Float
   personalLoans    Float
-  vehicleLoans     Float    @default(0)
+  vehicleLoans     Float @default(0)
   otherLiabilities Float
   totalLiabilities Float
 
@@ -1032,7 +1049,7 @@ model EmailImportRule {
   emailAccountId String
   emailAccount   EmailAccount @relation(fields: [emailAccountId], references: [id], onDelete: Cascade)
 
-  name String
+  name       String
   // Raw Gmail search syntax, passed through IMAP's X-GM-RAW extension, so
   // anything that works in Gmail's own search box works here —
   // e.g. `from:commbank.com.au has:attachment filename:pdf`.
@@ -1113,9 +1130,9 @@ model ImportBatchFile {
   // Folder path the file came from, relative to the folder that was picked.
   // A user's own folder structure ("Tax Returns/2023") is a strong and
   // completely free classification signal, so it's kept rather than dropped.
-  relativePath String?
+  relativePath     String?
 
-  status       String  // IMPORTED | DUPLICATE | FAILED
+  status       String // IMPORTED | DUPLICATE | FAILED
   errorMessage String?
 
   documentId String?
@@ -1127,7 +1144,7 @@ model ImportBatchFile {
   confidenceScore      Float?
   // Filename with digit runs collapsed ("Statement_2024_05" -> "Statement_#_#"),
   // so a run of same-shaped filenames is recognisable as one set.
-  filenameTemplate String?
+  filenameTemplate     String?
 
   createdAt DateTime @default(now())
 
@@ -1158,12 +1175,12 @@ model Security {
   // How a price is obtained. MANUAL is a first-class option, not a failure
   // case — managed funds and super rarely have a usable free feed, so their
   // prices are entered by hand and dated like any other.
-  priceSource String @default("MANUAL") // MANUAL | YAHOO | COINGECKO
+  priceSource    String  @default("MANUAL") // MANUAL | YAHOO | COINGECKO
   // The provider's own identifier when it differs from `code`
   // (Yahoo wants "CBA.AX" for ASX; CoinGecko wants "bitcoin", not "BTC").
   providerSymbol String?
 
-  currency String @default("AUD")
+  currency String  @default("AUD")
   notes    String?
 
   createdAt DateTime @default(now())
@@ -1188,7 +1205,7 @@ model InvestmentParcel {
   acquisitionDate DateTime
   quantity        Float
   unitPrice       Float
-  brokerage       Float @default(0)
+  brokerage       Float    @default(0)
 
   // Where the parcel came from. A dividend reinvestment creates a real parcel
   // at the reinvestment price — a common way for cost base records to rot if
@@ -1218,10 +1235,10 @@ model InvestmentDisposal {
   disposalDate DateTime
   quantity     Float
   unitPrice    Float
-  brokerage    Float  @default(0)
+  brokerage    Float    @default(0)
   // How parcels were picked. Recorded because it's a decision with tax
   // consequences, and the ATO expects consistency.
-  method       String @default("FIFO") // FIFO | SPECIFIC
+  method       String   @default("FIFO") // FIFO | SPECIFIC
 
   financialYearId String?
   financialYear   FinancialYear? @relation(fields: [financialYearId], references: [id])
@@ -1261,15 +1278,15 @@ model InvestmentDividend {
   securityId          String
   security            Security          @relation(fields: [securityId], references: [id])
 
-  paymentDate DateTime
-  frankedAmount   Float @default(0)
-  unfrankedAmount Float @default(0)
-  frankingCredit  Float @default(0)
+  paymentDate        DateTime
+  frankedAmount      Float    @default(0)
+  unfrankedAmount    Float    @default(0)
+  frankingCredit     Float    @default(0)
   // Managed funds and ETFs distribute these separately on an annual tax
   // statement; they aren't ordinary income and affect the cost base.
-  capitalGainsAmount Float @default(0)
-  foreignIncome      Float @default(0)
-  foreignTaxCredit   Float @default(0)
+  capitalGainsAmount Float    @default(0)
+  foreignIncome      Float    @default(0)
+  foreignTaxCredit   Float    @default(0)
 
   // Set when the dividend was reinvested, pointing at the parcel it created,
   // so the cost base trail from dividend to new units stays explicit.
@@ -1327,7 +1344,7 @@ model Vault {
   kdfR Int
   kdfP Int
 
-  passcodeSalt       String
+  passcodeSalt         String
   keyWrappedByPasscode String
 
   recoverySalt         String
@@ -1335,4 +1352,113 @@ model Vault {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Self-managed super funds. The fund is an Entity (entityType SMSF); its
+// members are People with a MEMBER role on it. These tables add what only a
+// super fund has: member balances, contributions checked against the caps,
+// trustee and compliance details, and pensions with their minimum
+// drawdowns. Financial years are stored by label ("2026-27") because the
+// caps and pension rules are looked up by year label (services/superRules.ts).
+// ---------------------------------------------------------------------------
+
+model SmsfDetails {
+  id                 String    @id @default(cuid())
+  entityId           String    @unique
+  fund               Entity    @relation("SmsfFund", fields: [entityId], references: [id], onDelete: Cascade)
+  trusteeType        String? // INDIVIDUAL | CORPORATE
+  corporateTrusteeId String?
+  corporateTrustee   Entity?   @relation("SmsfCorporateTrustee", fields: [corporateTrusteeId], references: [id], onDelete: SetNull)
+  auditorName        String?
+  auditorNumber      String? // SMSF auditor number (SAN)
+  lodgedBy           String? // TAX_AGENT | SELF
+  lastReturnLodged   String? // label of the latest year whose annual return is done, e.g. "2024-25"
+  returnDueDate      DateTime? // set only to override the usual due date
+  strategyReviewedOn DateTime? // investment strategy last reviewed
+  notes              String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+// A member's position at 30 June of a year.
+model SmsfMemberYear {
+  id                String   @id @default(cuid())
+  fundId            String
+  fund              Entity   @relation(fields: [fundId], references: [id])
+  personId          String
+  person            Person   @relation(fields: [personId], references: [id])
+  fyLabel           String // the year ending on that 30 June
+  closingBalance    Float // member balance in this fund
+  taxFreeComponent  Float?
+  totalSuperBalance Float? // across all their super funds, when they have others
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([fundId, personId, fyLabel])
+  @@index([personId])
+}
+
+// Money into super for a member. The source decides which cap it counts
+// against (superRules.ts contributionKind). Contributions paid into a
+// member's other funds can be recorded too, since the caps are per person.
+model SuperContribution {
+  id                String   @id @default(cuid())
+  fundId            String
+  fund              Entity   @relation(fields: [fundId], references: [id])
+  personId          String
+  person            Person   @relation(fields: [personId], references: [id])
+  date              DateTime
+  amount            Float
+  source            String // EMPLOYER | SALARY_SACRIFICE | PERSONAL_DEDUCTED | PERSONAL | SPOUSE | DOWNSIZER | OTHER_EXCLUDED
+  paidIntoOtherFund String? // name of the other fund, when it wasn't paid into this one
+  notes             String?
+  createdAt         DateTime @default(now())
+
+  @@index([fundId])
+  @@index([personId, date])
+}
+
+model SmsfPension {
+  id           String    @id @default(cuid())
+  fundId       String
+  fund         Entity    @relation(fields: [fundId], references: [id])
+  personId     String
+  person       Person    @relation(fields: [personId], references: [id])
+  kind         String // ACCOUNT_BASED | TRANSITION_TO_RETIREMENT
+  startDate    DateTime
+  startBalance Float
+  endDate      DateTime? // commuted or fully paid out
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  balances SmsfPensionBalance[]
+  payments SmsfPensionPayment[]
+
+  @@index([fundId])
+  @@index([personId])
+}
+
+// The pension account balance on 1 July — what that year's minimum is worked out from.
+model SmsfPensionBalance {
+  id             String      @id @default(cuid())
+  pensionId      String
+  pension        SmsfPension @relation(fields: [pensionId], references: [id], onDelete: Cascade)
+  fyLabel        String
+  openingBalance Float
+
+  @@unique([pensionId, fyLabel])
+}
+
+model SmsfPensionPayment {
+  id        String      @id @default(cuid())
+  pensionId String
+  pension   SmsfPension @relation(fields: [pensionId], references: [id], onDelete: Cascade)
+  date      DateTime
+  amount    Float
+  notes     String?
+  createdAt DateTime    @default(now())
+
+  @@index([pensionId, date])
 }

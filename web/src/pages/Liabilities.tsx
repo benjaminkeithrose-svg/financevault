@@ -25,6 +25,7 @@ const emptyForm = (liabilityType: string) => ({
   securityPropertyId: "",
   securityCommercialPropertyId: "",
   securityAssetId: "",
+  holdingTrustEntityId: "",
   interestOnly: false,
 });
 
@@ -37,6 +38,7 @@ export function Liabilities({ scope }: { scope: DebtList }) {
   const [properties, setProperties] = useState<Property[]>([]);
   const [commercialProperties, setCommercialProperties] = useState<CommercialProperty[]>([]);
   const [vehicles, setVehicles] = useState<Asset[]>([]);
+  const trusts = entities.filter((e) => e.entityType === "HOLDING_TRUST" || e.entityType === "TRUST");
   const [securityKind, setSecurityKind] = useState<"none" | "residential" | "commercial">("none");
   const [form, setForm, draft] = useDraft(`liabilities:${scope}:new`, emptyForm(list.types[0]));
   const [showForm, setShowForm] = useState(draft.restored);
@@ -73,6 +75,16 @@ export function Liabilities({ scope }: { scope: DebtList }) {
     setParams({}, { replace: true });
   }, [params, vehicles, setParams]);
 
+  // Arriving from an SMSF's "Add an LRBA loan": a limited recourse loan owed by the fund.
+  useEffect(() => {
+    const fundId = params.get("newLrbaFor");
+    if (!fundId) return;
+    setForm({ ...emptyForm("LRBA_LOAN"), name: "SMSF property loan", entityId: fundId });
+    setSecurityKind("residential");
+    setShowForm(true);
+    setParams({}, { replace: true });
+  }, [params, setParams]);
+
   async function create() {
     if (!form.name.trim() || !form.entityId) return;
     const isCommercial = form.liabilityType === "COMMERCIAL_LOAN";
@@ -90,6 +102,7 @@ export function Liabilities({ scope }: { scope: DebtList }) {
       securityPropertyId: securityKind === "residential" ? form.securityPropertyId || null : null,
       securityCommercialPropertyId: securityKind === "commercial" ? form.securityCommercialPropertyId || null : null,
       securityAssetId: VEHICLE_LINKABLE.includes(form.liabilityType) ? form.securityAssetId || null : null,
+      holdingTrustEntityId: form.liabilityType === "LRBA_LOAN" ? form.holdingTrustEntityId || null : null,
       interestOnly: isCommercial ? form.interestOnly : null,
     });
     draft.clear();
@@ -277,6 +290,26 @@ export function Liabilities({ scope }: { scope: DebtList }) {
                   ))}
                 </select>
               )}
+            </>
+          )}
+          {form.liabilityType === "LRBA_LOAN" && (
+            <>
+              <label>Holding (bare) trust that holds the property</label>
+              <select
+                value={form.holdingTrustEntityId}
+                onChange={(e) => setForm({ ...form, holdingTrustEntityId: e.target.value })}
+              >
+                <option value="">— Not recorded yet —</option>
+                {trusts.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+              <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                "Owed by" is the fund. The property itself is recorded as owned by the fund too; the holding trust only holds
+                the title until the loan is paid off. Add it under People & entities as a holding (bare) trust.
+              </p>
             </>
           )}
           {form.liabilityType === "COMMERCIAL_LOAN" && (

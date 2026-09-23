@@ -4,20 +4,11 @@ import { ItemCard } from "../components/ItemCard.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
 import { useDraft } from "../hooks/useDraft.js";
-import { familySummary, humanize } from "../utils.js";
+import { entityTypeLabel, familySummary, humanize } from "../utils.js";
 
 // A person's own individual entity is made with them, so new entities here
 // are the structures around people: trusts, companies, super funds.
-const ENTITY_TYPES = ["TRUST", "COMPANY", "SMSF", "SUPER_FUND", "PARTNERSHIP", "JOINT", "OTHER"];
-const ENTITY_TYPE_LABELS: Record<string, string> = {
-  TRUST: "Trust",
-  COMPANY: "Company",
-  SMSF: "Self-managed super fund (SMSF)",
-  SUPER_FUND: "Super fund (retail / industry)",
-  PARTNERSHIP: "Partnership",
-  JOINT: "Joint ownership",
-  OTHER: "Other",
-};
+const ENTITY_TYPES = ["TRUST", "COMPANY", "SMSF", "HOLDING_TRUST", "SUPER_FUND", "PARTNERSHIP", "JOINT", "OTHER"];
 
 const EMPTY_FORM = {
   kind: "PERSON" as "PERSON" | "ENTITY",
@@ -142,7 +133,7 @@ export function PeopleAndEntities() {
                 <select value={form.entityType} onChange={(e) => setForm({ ...form, entityType: e.target.value })}>
                   {ENTITY_TYPES.map((t) => (
                     <option key={t} value={t}>
-                      {ENTITY_TYPE_LABELS[t]}
+                      {entityTypeLabel(t)}
                     </option>
                   ))}
                 </select>
@@ -193,7 +184,7 @@ export function PeopleAndEntities() {
                 key={e.id}
                 to={`/entities/${e.id}`}
                 title={e.name}
-                subtitle={[ENTITY_TYPE_LABELS[e.entityType] ?? humanize(e.entityType), e.abn ? `ABN ${e.abn}` : "", who.join(", ")]
+                subtitle={[entityTypeLabel(e.entityType), e.abn ? `ABN ${e.abn}` : "", who.join(", ")]
                   .filter(Boolean)
                   .join(" · ")}
               />

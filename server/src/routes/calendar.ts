@@ -1,17 +1,19 @@
 import { Router } from "express";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { smsfCalendarDates } from "../services/smsf.js";
 
 /**
  * Everything with an expiry or renewal date, in one list: ID documents and
  * cover, insurance and other document renewals, vehicle rego, warranties,
- * services due, lease expiries and rent reviews, and fixed-rate loan periods.
+ * services due, lease expiries and rent reviews, fixed-rate loan periods, and
+ * SMSF compliance dates (annual return, auditor, strategy review, pensions).
  * Also served as an .ics calendar file so the dates can go into Google,
  * Apple or Outlook calendars.
  */
 export const calendarRouter = Router();
 
-export type CalendarCategory = "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN";
+export type CalendarCategory = "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF";
 
 export interface CalendarEvent {
   id: string;
@@ -153,6 +155,10 @@ export async function collectEvents(from: Date, to: Date): Promise<CalendarEvent
         route: `/liabilities/${l.id}`,
       });
     }
+  }
+
+  for (const d of await smsfCalendarDates(from, to)) {
+    events.push({ id: `smsf-${d.fundId}-${d.key}`, date: day(d.date), category: "SMSF", title: d.title, detail: d.detail, route: `/entities/${d.fundId}` });
   }
 
   return events.sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title));

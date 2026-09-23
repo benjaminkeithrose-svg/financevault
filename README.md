@@ -84,6 +84,39 @@ The choice is kept per browser in `localStorage` (`fv-theme`), applied as
 colours the Keyhole browser-tab icon. Red stays reserved for destructive
 actions and errors in every colourway.
 
+### Self-managed super funds
+
+An entity of type **SMSF** gets its own section at the top of its page
+(`web/src/components/SmsfPanel.tsx`, `server/src/routes/smsf.ts`):
+
+- **Members and contributions** — members are People with a MEMBER role
+  (up to six). Contributions are recorded by source, which decides the cap
+  (`services/superRules.ts` `CONTRIBUTION_SOURCES`; downsizer and small
+  business CGT amounts count to neither). Caps are per person across all
+  their funds, so contributions into other funds can be recorded too.
+  Concessional carry-forward (5 years, from 2018-19, total super balance
+  under $500,000 at the previous 30 June) and non-concessional bring-forward
+  (thresholds from the transfer balance cap) are worked out from what's
+  recorded. Caps by year are in the `RULES` table — add a row each July; a
+  year past the table uses the last row and says so.
+- **Pensions** — account-based and transition to retirement, with the
+  minimum by age (halved 2019-20 to 2022-23), first-year pro-rating (none
+  when started in June), rounding to $10, the 10% TTR maximum, payments,
+  the transfer balance cap check and an estimate of the tax-free (ECPI) share.
+- **Property with an LRBA** — liability type `LRBA_LOAN` owed by the fund,
+  secured on the fund's property, with `holdingTrustEntityId` pointing at a
+  `HOLDING_TRUST` entity. Counted with property loans in Net Worth. Rent
+  cover uses `Property.weeklyRent` or a commercial property's active leases.
+- **Trustee and compliance** — `SmsfDetails` (trustee type/company,
+  auditor, who lodges, latest return lodged, strategy review). Annual
+  return (15 May via agent, 31 Oct self-lodged, 28 Feb first year, or an
+  entered date), auditor appointment 45 days before, strategy review, ASIC
+  company review and pension dates (minimum by 30 June, TBAR) feed the
+  expiry calendar (`services/smsf.ts`).
+
+Super history blocks deleting a person or fund rather than being deleted
+with them.
+
 ### Vehicles, boats and borrowing
 
 **Vehicles & boats** (menu → Assets) records cars, motorcycles, boats, jet

@@ -31,7 +31,8 @@ export async function valueHoldings(investmentAccounts: Array<{ id: string }>) {
   return { value, valuedAtCost };
 }
 
-const MORTGAGE_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN"];
+// An SMSF's limited recourse loan is a property loan like any other.
+const MORTGAGE_TYPES = ["HOME_LOAN", "INVESTMENT_LOAN", "COMMERCIAL_LOAN", "LRBA_LOAN"];
 
 export async function computeLiveBreakdown(entityId?: string) {
   const where = entityId ? { entityId } : {};

@@ -40,6 +40,7 @@ export function PropertyDetail() {
         ownershipPercent: p.ownershipPercent?.toString() || "",
         tenantInfo: p.tenantInfo || "",
         propertyManager: p.propertyManager || "",
+        weeklyRent: p.weeklyRent?.toString() || "",
       });
     }).catch((e: Error) => setLoadError(e.message));
   }
@@ -66,6 +67,7 @@ export function PropertyDetail() {
         ownershipPercent: form.ownershipPercent ? Number(form.ownershipPercent) : null,
         tenantInfo: form.tenantInfo || null,
         propertyManager: form.propertyManager || null,
+        weeklyRent: form.weeklyRent ? Number(form.weeklyRent) : null,
       });
       load();
     } finally {
@@ -142,6 +144,8 @@ export function PropertyDetail() {
           <input value={form.tenantInfo} onChange={(e) => setForm({ ...form, tenantInfo: e.target.value })} />
           <label>Property manager</label>
           <input value={form.propertyManager} onChange={(e) => setForm({ ...form, propertyManager: e.target.value })} />
+          <label>Rent per week</label>
+          <input type="number" value={form.weeklyRent} onChange={(e) => setForm({ ...form, weeklyRent: e.target.value })} />
           <div className="toolbar" style={{ marginTop: 16 }}>
             <button className="btn" onClick={save} disabled={saving}>
               {saving ? "Saving…" : "Save"}

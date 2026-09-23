@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, Graph, GraphNode } from "../api/client.js";
-import { formatCurrency, humanize } from "../utils.js";
+import { formatCurrency, humanize, liabilityTypeLabel } from "../utils.js";
 import { ExpiryCalendar } from "../components/ExpiryCalendar.js";
 import { IconFit, IconMinus, IconPlus } from "../components/icons.js";
 
@@ -257,7 +257,7 @@ export function Visualization() {
               title={n.route ? "Click to open" : undefined}
             >
               <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
-                {TYPE_ICON[n.type]} {n.sublabel ? humanize(n.sublabel) : humanize(n.type)}
+                {TYPE_ICON[n.type]} {nodeSublabel(n)}
               </div>
               <div style={{ fontSize: 13, fontWeight: 600, marginTop: 2, lineHeight: 1.3 }}>{n.label}</div>
               {n.value !== null && n.value !== undefined && (
@@ -272,4 +272,14 @@ export function Visualization() {
       <ExpiryCalendar />
     </div>
   );
+}
+
+/** The small type line on a node, in the same words the rest of the app uses. */
+function nodeSublabel(n: GraphNode): string {
+  if (!n.sublabel) return humanize(n.type);
+  if (n.type === "LIABILITY") return liabilityTypeLabel(n.sublabel);
+  // Kept short: the boxes are narrow.
+  if (n.type === "ENTITY" && n.sublabel === "SMSF") return "SMSF";
+  if (n.type === "ENTITY" && n.sublabel === "HOLDING_TRUST") return "Holding trust";
+  return humanize(n.sublabel);
 }

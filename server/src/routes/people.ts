@@ -2,7 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
-import { deleteWithLinks, entityDependents, refuseIfInUse } from "../services/deletion.js";
+import { deleteWithLinks, entityDependents, personSuperDependents, refuseIfInUse } from "../services/deletion.js";
 import { createPersonalEntity } from "../services/personalEntity.js";
 import { FOUNDING_TRUST_ROLES, trustFamilySuggestions } from "../services/family.js";
 import { logAudit } from "../services/audit.js";
@@ -145,6 +145,7 @@ peopleRouter.delete(
     }
     // Their personal entity goes with them, so it has to be empty first.
     if (person.entityId) refuseIfInUse("person's personal entity", await entityDependents(person.entityId));
+    refuseIfInUse("person", await personSuperDependents(person.id));
     const targets = [{ type: "PERSON", id: person.id }];
     if (person.entityId) targets.push({ type: "ENTITY", id: person.entityId });
     for (const r of person.identityRecords) targets.push({ type: "IDENTITY_RECORD", id: r.id });

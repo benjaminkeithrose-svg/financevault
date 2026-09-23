@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api, Asset, Liability } from "../api/client.js";
+import { api, Asset, Entity, Liability } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { DEBT_LISTS, debtListFor, describeVehicle, formatCurrency, liabilityTypeLabel, monthlyEquivalent, REPAYMENT_FREQUENCIES } from "../utils.js";
 import { useBackTo } from "../hooks/useBackTo.js";
@@ -21,6 +21,7 @@ export function LiabilityDetail() {
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [vehicles, setVehicles] = useState<Asset[]>([]);
+  const [trusts, setTrusts] = useState<Entity[]>([]);
 
   function load() {
     if (!id) return;
@@ -37,6 +38,7 @@ export function LiabilityDetail() {
         repaymentFrequency: l.repaymentFrequency || "MONTHLY",
         creditLimit: l.creditLimit?.toString() || "",
         securityAssetId: l.securityAssetId || "",
+        holdingTrustEntityId: l.holdingTrustEntityId || "",
         fixedPeriodEnds: toDateInput(l.fixedPeriodEnds),
         maturityDate: toDateInput(l.maturityDate),
         notes: l.notes || "",
@@ -48,6 +50,7 @@ export function LiabilityDetail() {
   useBackTo(liability ? DEBT_LISTS[debtListFor(liability.liabilityType)].route : null);
   useEffect(() => {
     api.assets.list().then((all) => setVehicles(all.filter((a) => a.assetType === "VEHICLE")));
+    api.entities.list().then((all) => setTrusts(all.filter((e) => e.entityType === "HOLDING_TRUST" || e.entityType === "TRUST")));
   }, []);
 
   if (!liability) {
@@ -57,6 +60,7 @@ export function LiabilityDetail() {
 
   const isCard = liability.liabilityType === "CREDIT_CARD";
   const vehicleLinkable = VEHICLE_LINKABLE.includes(liability.liabilityType);
+  const isLrba = liability.liabilityType === "LRBA_LOAN";
   const monthly = monthlyEquivalent(Number(form.repaymentAmount) || null, form.repaymentFrequency);
 
   async function save() {
@@ -74,6 +78,7 @@ export function LiabilityDetail() {
         repaymentFrequency: isCard ? null : form.repaymentFrequency || null,
         creditLimit: isCard && form.creditLimit ? Number(form.creditLimit) : null,
         ...(vehicleLinkable ? { securityAssetId: form.securityAssetId || null } : {}),
+        ...(isLrba ? { holdingTrustEntityId: form.holdingTrustEntityId || null } : {}),
         fixedPeriodEnds: form.fixedPeriodEnds ? new Date(form.fixedPeriodEnds).toISOString() : null,
         maturityDate: form.maturityDate ? new Date(form.maturityDate).toISOString() : null,
         notes: form.notes || null,
@@ -216,6 +221,19 @@ export function LiabilityDetail() {
               {vehicles.map((v) => (
                 <option key={v.id} value={v.id}>
                   {v.name} ({describeVehicle(v)})
+                </option>
+              ))}
+            </select>
+          </>
+        )}
+        {isLrba && (
+          <>
+            <label>Holding (bare) trust that holds the property</label>
+            <select value={form.holdingTrustEntityId} onChange={(e) => setForm({ ...form, holdingTrustEntityId: e.target.value })}>
+              <option value="">— Not recorded —</option>
+              {trusts.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
                 </option>
               ))}
             </select>

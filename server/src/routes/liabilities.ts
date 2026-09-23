@@ -16,7 +16,7 @@ liabilitiesRouter.get(
     if (liabilityType) where.liabilityType = liabilityType;
     const liabilities = await prisma.liability.findMany({
       where,
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true },
       orderBy: { createdAt: "desc" },
     });
     res.json(liabilities);
@@ -28,7 +28,7 @@ liabilitiesRouter.get(
   asyncHandler(async (req, res) => {
     const liability = await prisma.liability.findUnique({
       where: { id: req.params.id },
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true },
     });
     if (!liability) {
       res.status(404).json({ error: "Liability not found" });
@@ -45,7 +45,7 @@ liabilitiesRouter.get(
 
 const liabilityInput = z.object({
   name: z.string().min(1),
-  liabilityType: z.string().min(1), // HOME_LOAN | INVESTMENT_LOAN | COMMERCIAL_LOAN | VEHICLE_LOAN | CREDIT_CARD | PERSONAL_LOAN | OTHER
+  liabilityType: z.string().min(1), // HOME_LOAN | INVESTMENT_LOAN | COMMERCIAL_LOAN | LRBA_LOAN | VEHICLE_LOAN | CREDIT_CARD | PERSONAL_LOAN | OTHER
   entityId: z.string(),
   lender: z.string().optional().nullable(),
   originalAmount: z.number().optional().nullable(),
@@ -59,6 +59,7 @@ const liabilityInput = z.object({
   securityCommercialPropertyId: z.string().optional().nullable(),
   securityAssetId: z.string().optional().nullable(),
   creditLimit: z.number().nonnegative().optional().nullable(),
+  holdingTrustEntityId: z.string().optional().nullable(),
   interestOnly: z.boolean().optional().nullable(),
   loanTermYears: z.number().optional().nullable(),
   repaymentFrequency: z.enum(["WEEKLY", "FORTNIGHTLY", "MONTHLY", "QUARTERLY"]).optional().nullable(),
@@ -82,7 +83,7 @@ liabilitiesRouter.post(
     const parsed = liabilityInput.parse(req.body);
     const liability = await prisma.liability.create({
       data: toData(parsed),
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true },
     });
     await logAudit("LIABILITY_CREATED", { targetType: "Liability", targetId: liability.id });
     res.status(201).json(liability);
@@ -96,7 +97,7 @@ liabilitiesRouter.put(
     const liability = await prisma.liability.update({
       where: { id: req.params.id },
       data: toData(parsed as z.infer<typeof liabilityInput>),
-      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true },
+      include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true },
     });
     await logAudit("LIABILITY_CHANGED", { targetType: "Liability", targetId: liability.id, data: parsed });
     res.json(liability);

@@ -744,6 +744,58 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "smsf",
+    title: "Self-managed super funds (SMSFs)",
+    keywords: "smsf super fund member contribution concessional non-concessional cap carry forward bring forward pension minimum drawdown lrba bare holding trust auditor annual return trustee transfer balance",
+    body: (
+      <>
+        <p>
+          Add the fund under <Link to="/people">People & entities</Link> → <strong>New</strong> →{" "}
+          <strong>Trust, company or fund</strong>, with the type <strong>Self-managed super fund (SMSF)</strong>, then open
+          it. The fund's page has five parts:
+        </p>
+        <ol>
+          <li>
+            <strong>Summary.</strong> Pick the year at the top. <strong>To look at</strong> lists what an auditor would pick up:
+            a member who isn't a trustee, contributions over a cap, no auditor recorded, a strategy review that's overdue.
+          </li>
+          <li>
+            <strong>Members and contributions.</strong> Add each member (up to six). Record each contribution with its type — the
+            type decides which cap it counts against. Contributions into a member's other funds can be recorded too, because
+            the caps count every fund together. Record each member's balance at 30 June from the annual statement; the
+            total across all their super decides carry-forward and bring-forward.
+          </li>
+          <li>
+            <strong>Pensions.</strong> Start a pension when a member retires. Each year, enter the pension balance on 1 July
+            and each payment. The page shows that year's minimum (by age) and what's left to pay by 30 June, and the maximum
+            for a transition to retirement pension. It also estimates the share of fund income that's tax-free.
+          </li>
+          <li>
+            <strong>Property and borrowing (LRBA).</strong> When the fund borrowed to buy a property: add the property as
+            owned by the fund (with its weekly rent), add the holding trust as a <em>Holding (bare) trust</em>, then{" "}
+            <strong>Add an LRBA loan</strong>. The page shows the loan-to-value ratio and whether the rent covers the
+            repayments.
+          </li>
+          <li>
+            <strong>Trustee, auditor and deadlines.</strong> Record individual trustees or the trustee company, the auditor,
+            who lodges the return and the latest year lodged. The annual return, auditor appointment, strategy review,
+            ASIC company review and pension dates go into the expiry calendar.
+          </li>
+        </ol>
+        <p>
+          <strong>The caps used</strong> for 2026-27: concessional $32,500, non-concessional $130,000 (up to $390,000 by
+          bringing forward), transfer balance cap $2.1 million. Earlier years use their own caps. Unused concessional cap is
+          carried forward up to five years while the total super balance was under $500,000 at the previous 30 June — worked
+          out from the contributions recorded here, so it's only as complete as those records.
+        </p>
+        <p>
+          These figures help you keep track; they're not advice. Your accountant or SMSF administrator confirms the numbers
+          that go to the ATO.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "look-and-feel",
     title: "Look and feel: colours and style",
     keywords: "theme colour color violet teal pink lilac bold soft appearance logo",

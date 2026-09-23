@@ -50,6 +50,7 @@ export interface Entity {
     netAssets: number;
     formula: string;
   };
+  heldForLoans?: Array<{ id: string; name: string; entity: { id: string; name: string } }>;
 }
 
 export interface Person {
@@ -95,7 +96,7 @@ export interface IdentityRecord {
 export interface CalendarEvent {
   id: string;
   date: string;
-  category: "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN";
+  category: "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF";
   title: string;
   detail: string | null;
   route: string;
@@ -519,6 +520,124 @@ export interface AssetOwnership {
   createdAt: string;
 }
 
+// --- Self-managed super funds ------------------------------------------------
+
+export interface CapStatusNotes {
+  notes: string[];
+}
+
+export interface SmsfContribution {
+  id: string;
+  fundId: string;
+  personId: string;
+  date: string;
+  amount: number;
+  source: string;
+  kind: "CONCESSIONAL" | "NON_CONCESSIONAL" | "EXCLUDED";
+  otherFund: string | null;
+  notes?: string | null;
+}
+
+export interface SmsfMemberYear {
+  id: string;
+  personId: string;
+  fyLabel: string;
+  closingBalance: number;
+  taxFreeComponent: number | null;
+  totalSuperBalance: number | null;
+}
+
+export interface SmsfMember {
+  personId: string;
+  name: string;
+  dateOfBirth: string | null;
+  age: number | null;
+  isMember: boolean;
+  isTrustee: boolean;
+  isDirector: boolean;
+  years: SmsfMemberYear[];
+  latestBalance: SmsfMemberYear | null;
+  contributions: SmsfContribution[];
+  concessional: CapStatusNotes & { cap: number; carryForward: number; available: number; used: number; remaining: number };
+  nonConcessional: CapStatusNotes & {
+    annualCap: number;
+    maxThisYear: number;
+    bringForward: { startYear: string; years: number; total: number; usedBefore: number } | null;
+    used: number;
+    remaining: number;
+  };
+  transferBalance: { used: number; cap: number; capYear: string } | null;
+}
+
+export interface SmsfPensionView {
+  id: string;
+  personId: string;
+  personName: string;
+  kind: "ACCOUNT_BASED" | "TRANSITION_TO_RETIREMENT";
+  startDate: string;
+  startBalance: number;
+  endDate: string | null;
+  notes: string | null;
+  openingBalance: number | null;
+  paidThisYear: number;
+  stillToPay: number | null;
+  overMaximum: boolean;
+  year: {
+    active: boolean;
+    basis: number | null;
+    rate: number | null;
+    minimum: number | null;
+    maximum: number | null;
+    retirementPhase: boolean;
+    notes: string[];
+  };
+  paymentsThisYear: Array<{ id: string; date: string; amount: number; notes: string | null }>;
+}
+
+export interface SmsfLrba {
+  id: string;
+  name: string;
+  lender: string | null;
+  balance: number | null;
+  interestRate: number | null;
+  holdingTrust: { id: string; name: string } | null;
+  property: { name: string; value: number | null; route: string; rentSource: string } | null;
+  lvr: number | null;
+  annualRent: number | null;
+  annualRepayments: number | null;
+  rentCover: number | null;
+}
+
+export interface SmsfDetails {
+  trusteeType: "INDIVIDUAL" | "CORPORATE" | null;
+  corporateTrusteeId: string | null;
+  corporateTrustee?: Entity | null;
+  auditorName: string | null;
+  auditorNumber: string | null;
+  lodgedBy: "TAX_AGENT" | "SELF" | null;
+  lastReturnLodged: string | null;
+  returnDueDate: string | null;
+  strategyReviewedOn: string | null;
+  notes: string | null;
+}
+
+export interface SmsfOverview {
+  fund: { id: string; name: string; abn: string | null; establishmentDate: string | null };
+  year: string;
+  years: string[];
+  rules: { concessional: number; nonConcessional: number; transferBalanceCap: number; known: boolean };
+  details: SmsfDetails | null;
+  nextReturnYear: string;
+  dates: Array<{ key: string; date: string; title: string; detail: string | null }>;
+  checks: string[];
+  members: SmsfMember[];
+  pensions: SmsfPensionView[];
+  pensionShare: { pensionBalances: number; fundBalance: number | null; share: number | null };
+  lrba: SmsfLrba[];
+  cash: number;
+  contributionSources: string[];
+}
+
 export interface Property {
   id: string;
   assetId: string;
@@ -533,6 +652,7 @@ export interface Property {
   ownershipPercent?: number | null;
   tenantInfo?: string | null;
   propertyManager?: string | null;
+  weeklyRent?: number | null;
   liabilities?: Liability[];
   documents?: Document[];
   summary?: Record<string, { total: number; byCategory: Record<string, number> }>;
@@ -561,6 +681,8 @@ export interface Liability {
   securityAssetId?: string | null;
   securityAsset?: Asset | null;
   creditLimit?: number | null;
+  holdingTrustEntityId?: string | null;
+  holdingTrust?: Entity | null;
   interestOnly?: boolean | null;
   loanTermYears?: number | null;
   repaymentFrequency?: string | null;
@@ -1446,6 +1568,30 @@ export const api = {
       request<IdentityRecord>(`/identity/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     reveal: (id: string) => request<{ number: string | null; referenceNumber: string | null }>(`/identity/${id}/reveal`),
     remove: (id: string) => request<void>(`/identity/${id}`, { method: "DELETE" }),
+  },
+  smsf: {
+    get: (fundId: string, fy?: string) => request<SmsfOverview>(`/smsf/${fundId}${fy ? `?fy=${fy}` : ""}`),
+    saveDetails: (fundId: string, data: Record<string, unknown>) =>
+      request<SmsfDetails>(`/smsf/${fundId}/details`, { method: "PUT", body: JSON.stringify(data) }),
+    addMember: (fundId: string, personId: string, trustee: boolean) =>
+      request<void>(`/smsf/${fundId}/members`, { method: "POST", body: JSON.stringify({ personId, trustee }) }),
+    removeMember: (fundId: string, personId: string) => request<void>(`/smsf/${fundId}/members/${personId}`, { method: "DELETE" }),
+    saveMemberYear: (fundId: string, data: Record<string, unknown>) =>
+      request<SmsfMemberYear>(`/smsf/${fundId}/member-years`, { method: "PUT", body: JSON.stringify(data) }),
+    removeMemberYear: (id: string) => request<void>(`/smsf/member-years/${id}`, { method: "DELETE" }),
+    addContribution: (fundId: string, data: Record<string, unknown>) =>
+      request<SmsfContribution>(`/smsf/${fundId}/contributions`, { method: "POST", body: JSON.stringify(data) }),
+    removeContribution: (id: string) => request<void>(`/smsf/contributions/${id}`, { method: "DELETE" }),
+    addPension: (fundId: string, data: Record<string, unknown>) =>
+      request<unknown>(`/smsf/${fundId}/pensions`, { method: "POST", body: JSON.stringify(data) }),
+    updatePension: (id: string, data: Record<string, unknown>) =>
+      request<unknown>(`/smsf/pensions/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    removePension: (id: string) => request<void>(`/smsf/pensions/${id}`, { method: "DELETE" }),
+    savePensionBalance: (id: string, fyLabel: string, openingBalance: number) =>
+      request<unknown>(`/smsf/pensions/${id}/balances`, { method: "PUT", body: JSON.stringify({ fyLabel, openingBalance }) }),
+    addPensionPayment: (id: string, data: Record<string, unknown>) =>
+      request<unknown>(`/smsf/pensions/${id}/payments`, { method: "POST", body: JSON.stringify(data) }),
+    removePensionPayment: (id: string) => request<void>(`/smsf/pension-payments/${id}`, { method: "DELETE" }),
   },
   calendar: {
     list: () => request<CalendarEvent[]>("/calendar"),
