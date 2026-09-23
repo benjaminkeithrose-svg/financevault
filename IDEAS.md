@@ -397,3 +397,44 @@ withdrawn or replaced.
 - The app already has a "PAYG Summary / Income Statement" document type;
   this reads the figures out of it (checked by the person, since the text
   read from a scan can be wrong).
+
+---
+
+## 13. Expected insurance and documents — what's missing, as a checklist
+
+**Why:** the app has places for insurance and documents but doesn't say what
+*should* be there. It should predict what's normal for each person and asset,
+flag what's missing, and give a list to go and find.
+
+**Expected insurance, by what's recorded:**
+| Asset / person | Expected | Flag |
+|---|---|---|
+| Rental property (house) | Landlord insurance; building insurance | Red |
+| Rental property (strata unit) | Landlord contents; strata certificate of currency on file | Red / amber |
+| Home you live in | Building and contents (building required by lender if mortgaged) | Red |
+| Commercial property | Building; public liability | Red |
+| SMSF property | Building, in the fund's (trustee's) name | Red |
+| Car, motorbike | CTP (green slip — compulsory in NSW); comprehensive | Red / amber |
+| Boat, jet ski, caravan, trailer | Boat or caravan insurance | Amber |
+| Each adult | Private health (Medicare levy surcharge above the income threshold); life, TPD, income protection — often inside super | Amber (suggest, not required) |
+
+- **Red** = required or effectively required (law or lender). **Amber** =
+  normal for people in your position — worth checking.
+- A flag shows on the asset or person, in the asset tree, and on the
+  dashboard's "Worth doing" card.
+- Each expectation can be dismissed with a reason ("covered by the strata
+  policy", "held in super", "not needed") — kept on record, and it stops
+  flagging.
+- Needs a "CTP / green slip" kind added to insurance (currently only a
+  general motor kind).
+
+**Expected documents, by financial year:** the same idea for paperwork —
+e.g. for each rental: rental statements, council and water rates, land tax
+notice, insurance schedule, loan interest statement, depreciation schedule;
+for each person: income statement, private health tax statement, super
+statements; for each trust: deed, distribution minutes by 30 June. It ticks
+itself off when a document of that type is linked.
+
+**Printable checklist:** one list of everything expected but missing —
+insurance and documents — grouped by person and asset, to print, save as
+PDF, or take to the broker or accountant. Items tick off as they're added.
