@@ -513,3 +513,34 @@ new download.
 - If anything fails, it puts the previous version back and says so —
   records are never at risk.
 - Works offline — no update server, nothing downloaded automatically.
+
+---
+
+## 17. Desktop icon, and its own window
+
+**Why:** start Financial Vault from a desktop icon like any other program,
+and have it open in its own window — not as another tab in a browser that's
+already full of other things. Today it's a double-click on a script in the
+program folder, a black terminal window that has to stay open, and a new
+browser tab.
+
+**Step 1 — quick win (no new libraries):**
+- Create a **desktop icon** (Windows shortcut / Mac app icon) with the
+  Financial Vault logo (ties to idea 15), made by the launcher the first
+  time it runs.
+- Open in an **app window**: Chrome and Edge can open a site in its own
+  window with no tabs or address bar ("app mode"). Edge is on every Windows
+  PC. On a Mac, use Chrome or Edge if installed, otherwise Safari's "Add to
+  Dock". The window has the logo and title "Financial Vault" and shows up
+  on its own in the taskbar / Dock.
+- Hide or minimise the terminal window that runs the server.
+- Closing the Financial Vault window stops it (or asks), instead of having
+  to close the terminal.
+
+**Step 2 — a proper desktop program (optional, later):**
+- Package it as a real Mac/Windows app (e.g. with Electron — would need a
+  new library, flagged per PREFERENCES.md). Own window, icon, installer,
+  and Node.js built in — so a new computer doesn't need Node.js installed
+  first, and there's no terminal window at all.
+- Fits naturally with in-app updates (idea 16).
+- Trade-off: a bigger download (~100–150MB).
