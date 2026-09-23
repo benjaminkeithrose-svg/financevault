@@ -9,7 +9,7 @@ import { prisma } from "../db.js";
 // wherever `node dist/index.js` happened to be launched from.
 export const SERVER_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
-function resolveDefaultStorageDir(): string {
+export function resolveDefaultStorageDir(): string {
   const raw = process.env.STORAGE_DIR || "./storage/documents";
   return path.isAbsolute(raw) ? raw : path.join(SERVER_ROOT, raw);
 }

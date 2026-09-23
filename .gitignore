@@ -21,3 +21,6 @@ server/prisma/dev.db-journal
 .DS_Store
 .vscode/
 .idea/
+
+# Databases set aside by restore or the copy-data helper
+*.db.before-*

@@ -59,6 +59,8 @@ export function LockGate({ children }: { children: ReactNode }) {
   const [issuedRecoveryKey, setIssuedRecoveryKey] = useState<string | null>(null);
   const [savedIt, setSavedIt] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [restoreFile, setRestoreFile] = useState<File | null>(null);
+  const [restored, setRestored] = useState<string | null>(null);
 
   const lastInput = useRef(Date.now());
 
@@ -115,6 +117,29 @@ export function LockGate({ children }: { children: ReactNode }) {
   }, [screen, status]);
 
   const minLength = status?.minPasscodeLength ?? 8;
+
+  // A fresh copy can start from a full backup instead of a new passcode.
+  async function restoreBackup() {
+    if (!restoreFile) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const body = new FormData();
+      body.append("backup", restoreFile);
+      const res = await originalFetch("/api/vault/restore", { method: "POST", body });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Restoring didn't work (${res.status}).`);
+      setRestored(
+        `Restored ${data.people} ${data.people === 1 ? "person" : "people"} and ${data.documents} document${data.documents === 1 ? "" : "s"}. Unlock with the passcode you used when the backup was taken.`
+      );
+      setRestoreFile(null);
+      await refresh();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function submitSetup() {
     if (passcode.length < minLength) return setError(`Use at least ${minLength} characters.`);
@@ -199,8 +224,16 @@ export function LockGate({ children }: { children: ReactNode }) {
             <input type="password" autoComplete="new-password" value={confirmPasscode} onChange={(e) => setConfirmPasscode(e.target.value)} />
             {error && <div className="message-box warning">{error}</div>}
             <button className="btn full" type="submit" disabled={busy} style={{ marginTop: 12 }}>
-              {busy ? "Setting up…" : "Set passcode"}
+              {busy && !restoreFile ? "Setting up…" : "Set passcode"}
             </button>
+            <div className="restore-box">
+              <strong>Moving from another computer, or starting over from a backup?</strong>
+              <p>Load a full backup instead (the file from Settings → Download full backup). Your passcode comes with it.</p>
+              <input type="file" accept=".zip,application/zip" onChange={(e) => setRestoreFile(e.target.files?.[0] ?? null)} />
+              <button type="button" className="btn secondary full" disabled={!restoreFile || busy} onClick={() => void restoreBackup()} style={{ marginTop: 8 }}>
+                {busy && restoreFile ? "Restoring — this can take a few minutes…" : "Restore from this backup"}
+              </button>
+            </div>
           </form>
         )}
 
@@ -259,6 +292,7 @@ export function LockGate({ children }: { children: ReactNode }) {
               void submitUnlock();
             }}
           >
+            {restored && <div className="message-box info">{restored}</div>}
             <p>Locked. Enter your passcode to continue.</p>
             <label>Passcode</label>
             <input type="password" autoFocus autoComplete="current-password" value={passcode} onChange={(e) => setPasscode(e.target.value)} />

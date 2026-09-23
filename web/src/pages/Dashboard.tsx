@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, DashboardSummary, Entity } from "../api/client.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
+import { WorthDoing } from "../components/WorthDoing.js";
 
 export function Dashboard() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -13,12 +14,13 @@ export function Dashboard() {
     api.entities.list().then(setEntities).catch(() => {});
   }, []);
 
-  useEffect(() => {
+  function load() {
     api
       .dashboard(entityId || undefined)
       .then(setSummary)
       .catch((e) => setError(e.message));
-  }, [entityId]);
+  }
+  useEffect(load, [entityId]);
 
   if (error) return <div className="empty-state">{error}</div>;
   if (!summary) return <div className="empty-state">Loading…</div>;
@@ -41,6 +43,8 @@ export function Dashboard() {
           ))}
         </select>
       </div>
+
+      {!entityId && <WorthDoing summary={summary} onChange={load} />}
 
       <div className="grid grid-4">
         <div className="stat-tile">

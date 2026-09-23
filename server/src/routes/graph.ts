@@ -30,7 +30,11 @@ graphRouter.get(
     const [people, entities, assets, accounts, investmentAccounts, liabilities, family] = await Promise.all([
       prisma.person.findMany({ include: { entityRelationships: true } }),
       prisma.entity.findMany({ include: { relationshipsFrom: true } }),
-      prisma.asset.findMany({ where: { parentAssetId: null }, include: { property: true, commercialProperty: true, ownerships: true } }),
+      // Sold assets stay on record but aren't part of the structure any more.
+      prisma.asset.findMany({
+        where: { parentAssetId: null, OR: [{ disposalDate: null }, { disposalDate: { gt: new Date() } }] },
+        include: { property: true, commercialProperty: true, ownerships: true },
+      }),
       prisma.account.findMany(),
       prisma.investmentAccount.findMany(),
       prisma.liability.findMany({ include: { ownerships: true } }),

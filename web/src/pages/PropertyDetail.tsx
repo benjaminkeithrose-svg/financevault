@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, Entity, Liability, Property } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
+import { SoldPanel } from "../components/SoldPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
@@ -37,7 +38,6 @@ export function PropertyDetail() {
         settlementDate: toDateInput(p.settlementDate),
         purchasePrice: p.purchasePrice?.toString() || "",
         currentValue: p.asset?.currentValue?.toString() || "",
-        ownershipPercent: p.ownershipPercent?.toString() || "",
         tenantInfo: p.tenantInfo || "",
         propertyManager: p.propertyManager || "",
         weeklyRent: p.weeklyRent?.toString() || "",
@@ -64,7 +64,6 @@ export function PropertyDetail() {
         settlementDate: form.settlementDate ? new Date(form.settlementDate).toISOString() : null,
         purchasePrice: form.purchasePrice ? Number(form.purchasePrice) : null,
         currentValue: form.currentValue ? Number(form.currentValue) : null,
-        ownershipPercent: form.ownershipPercent ? Number(form.ownershipPercent) : null,
         tenantInfo: form.tenantInfo || null,
         propertyManager: form.propertyManager || null,
         weeklyRent: form.weeklyRent ? Number(form.weeklyRent) : null,
@@ -94,20 +93,8 @@ export function PropertyDetail() {
           <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <label>Address</label>
           <input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
-          <div className="grid grid-2">
-            <div>
-              <label>State</label>
-              <input value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} />
-            </div>
-            <div>
-              <label>Ownership %</label>
-              <input
-                type="number"
-                value={form.ownershipPercent}
-                onChange={(e) => setForm({ ...form, ownershipPercent: e.target.value })}
-              />
-            </div>
-          </div>
+          <label>State</label>
+          <input value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} />
           <div className="grid grid-2">
             <div>
               <label>Purchase date</label>
@@ -222,6 +209,8 @@ export function PropertyDetail() {
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="PROPERTY" targetId={property.id} />
       </div>
+      {property.asset && <SoldPanel asset={property.asset} onChange={load} />}
+
       <DeleteSection
         title="Delete this property"
         note="Not possible while a loan is secured against it — change or remove the loan first. Linked documents are kept."

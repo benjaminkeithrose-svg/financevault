@@ -27,6 +27,7 @@ settingsRouter.get(
 
 const updateInput = z.object({
   allowExternalAiProcessing: z.boolean().optional(),
+  checklistDismissed: z.boolean().optional(),
   allowPriceLookups: z.boolean().optional(),
   defaultLandingPage: z.enum(["DASHBOARD", "VISUALIZATION"]).optional(),
   customStorageDir: z.string().optional().nullable(),

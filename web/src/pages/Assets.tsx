@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, Asset, Entity } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
+import { SoldList } from "../components/SoldList.js";
 import { EMPTY_VEHICLE_FIELDS, VehicleFields, vehicleFieldsPayload } from "../components/VehicleFields.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
@@ -189,21 +190,28 @@ export function Assets({ list }: { list: AssetList }) {
         </div>
       )}
 
-      {assets.length === 0 ? (
+      {assets.filter((a) => !a.disposalDate).length === 0 ? (
         <p className="empty-state">{config.empty}</p>
       ) : (
         <ul className="item-card-list">
-          {assets.map((a) => (
-            <ItemCard
-              key={a.id}
-              to={`/assets/${a.id}`}
-              title={a.name}
-              subtitle={subtitle(a)}
-              right={<strong>{formatCurrency(a.currentValue)}</strong>}
-            />
-          ))}
+          {assets
+            .filter((a) => !a.disposalDate)
+            .map((a) => (
+              <ItemCard
+                key={a.id}
+                to={`/assets/${a.id}`}
+                title={a.name}
+                subtitle={subtitle(a)}
+                right={<strong>{formatCurrency(a.currentValue)}</strong>}
+              />
+            ))}
         </ul>
       )}
+      <SoldList
+        items={assets
+          .filter((a) => a.disposalDate)
+          .map((a) => ({ id: a.id, to: `/assets/${a.id}`, title: a.name, date: a.disposalDate!, price: a.disposalValue }))}
+      />
     </div>
   );
 }

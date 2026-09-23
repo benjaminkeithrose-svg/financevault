@@ -18,12 +18,6 @@ export function Settings() {
 
   useEffect(load, []);
 
-  async function toggleAi() {
-    if (!settings) return;
-    const updated = await api.settings.update({ allowExternalAiProcessing: !settings.allowExternalAiProcessing });
-    setSettings(updated);
-  }
-
   const [pcCurrent, setPcCurrent] = useState("");
   const [pcNew, setPcNew] = useState("");
   const [pcConfirm, setPcConfirm] = useState("");
@@ -98,26 +92,6 @@ export function Settings() {
           Pick a colour and a style. It's remembered on this computer only, so each person can choose their own.
         </p>
         <ThemePicker />
-      </div>
-
-      <div className="card">
-        <h3 style={{ marginTop: 0 }}>AI processing</h3>
-        <p style={{ color: "var(--text-muted)" }}>
-          Document classification currently runs entirely on-device using local heuristics — nothing is sent to a
-          third party. When external AI processing is enabled in a future release, document text may be sent to an
-          external provider to improve classification accuracy.
-        </p>
-        {settings && (
-          <label style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8 }}>
-            <input
-              type="checkbox"
-              style={{ width: "auto" }}
-              checked={settings.allowExternalAiProcessing}
-              onChange={toggleAi}
-            />
-            Allow external AI processing
-          </label>
-        )}
       </div>
 
       <div className="card">

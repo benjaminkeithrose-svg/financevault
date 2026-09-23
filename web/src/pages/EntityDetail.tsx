@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, Entity } from "../api/client.js";
 import { TfnField } from "../components/TfnField.js";
-import { entityTypeLabel, formatCurrency, formatDate, humanize } from "../utils.js";
+import { confirmThenDelete, entityTypeLabel, formatCurrency, formatDate, humanize } from "../utils.js";
+import { IconBin } from "../components/icons.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { SmsfPanel } from "../components/SmsfPanel.js";
@@ -21,6 +22,24 @@ const ASSET_TYPE_ICONS: Record<string, string> = {
   INVESTMENT_HOLDINGS: "📈",
   UNIT_TRUST_UNITS: "🧩",
 };
+
+// How one structure relates to another, read as "<this entity> … <that entity>".
+// A unit trust's unitholders are added on the trust's own page.
+const ENTITY_LINKS: Record<string, string> = {
+  CORPORATE_TRUSTEE_OF: "is the trustee company of",
+  HOLDS_SHARES_IN: "holds shares in",
+  BENEFICIARY_OF: "is a beneficiary of",
+  SUBSIDIARY_OF: "is a subsidiary of",
+  PARTNER_IN: "is a partner in",
+  OTHER: "is linked to",
+};
+
+function relationPhrase(type: string): string {
+  if (type === "UNITHOLDER") return "holds units in";
+  if (type === "TRUSTEE_OF") return "is the trustee of";
+  if (type === "OWNS") return "owns";
+  return ENTITY_LINKS[type] ?? humanize(type).toLowerCase();
+}
 
 const POSITION_LABELS: Record<string, string> = {
   INVESTMENT_HOLDINGS: "Shares, ETFs & crypto (tracked)",
@@ -46,7 +65,8 @@ export function EntityDetail() {
   const [entity, setEntity] = useState<Entity | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [allEntities, setAllEntities] = useState<Entity[]>([]);
-  const [relType, setRelType] = useState("OWNS");
+  const [relType, setRelType] = useState("CORPORATE_TRUSTEE_OF");
+  const [relPercent, setRelPercent] = useState("");
   const [relTarget, setRelTarget] = useState("");
 
   function load() {
@@ -66,8 +86,19 @@ export function EntityDetail() {
 
   async function addRelationship() {
     if (!id || !relTarget) return;
-    await api.entities.addRelationship({ fromEntityId: id, toEntityId: relTarget, relationshipType: relType });
+    await api.entities.addRelationship({
+      fromEntityId: id,
+      toEntityId: relTarget,
+      relationshipType: relType,
+      ownershipPercent: relType === "HOLDS_SHARES_IN" && relPercent ? Number(relPercent) : null,
+    });
+    setRelTarget("");
+    setRelPercent("");
     load();
+  }
+
+  async function removeRelationship(relId: string) {
+    if (await confirmThenDelete("Remove this link between the two entities? Neither entity is deleted.", () => api.entities.removeRelationship(relId))) load();
   }
 
   const fp = entity.financialPosition;
@@ -300,18 +331,30 @@ export function EntityDetail() {
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Relationships to other entities</h3>
         {(entity.relationshipsFrom || []).map((r) => (
-          <div className="entity-graph-item" key={r.id}>
-            <strong>{entity.name}</strong> {humanize(r.relationshipType).toLowerCase()}{" "}
-            <Link to={`/entities/${r.toEntityId}`}>{r.toEntity?.name}</Link>
+          <div className="entity-graph-item entity-link-row" key={r.id}>
+            <span>
+              <strong>{entity.name}</strong> {relationPhrase(r.relationshipType)}{" "}
+              <Link to={`/entities/${r.toEntityId}`}>{r.toEntity?.name}</Link>
+              {r.ownershipPercent ? ` (${r.ownershipPercent}%)` : ""}
+            </span>
+            <button className="icon-btn danger" aria-label="Remove this link" onClick={() => removeRelationship(r.id)}>
+              <IconBin />
+            </button>
           </div>
         ))}
         {(entity.relationshipsTo || [])
           // A unit trust's holders are listed in Unitholders above.
           .filter((r) => !(entity.entityType === "UNIT_TRUST" && r.relationshipType === "UNITHOLDER"))
           .map((r) => (
-          <div className="entity-graph-item" key={r.id}>
-            <Link to={`/entities/${r.fromEntityId}`}>{r.fromEntity?.name}</Link>{" "}
-            {humanize(r.relationshipType).toLowerCase()} <strong>{entity.name}</strong>
+          <div className="entity-graph-item entity-link-row" key={r.id}>
+            <span>
+              <Link to={`/entities/${r.fromEntityId}`}>{r.fromEntity?.name}</Link> {relationPhrase(r.relationshipType)}{" "}
+              <strong>{entity.name}</strong>
+              {r.ownershipPercent ? ` (${r.ownershipPercent}%)` : ""}
+            </span>
+            <button className="icon-btn danger" aria-label="Remove this link" onClick={() => removeRelationship(r.id)}>
+              <IconBin />
+            </button>
           </div>
         ))}
         {(entity.relationshipsFrom || []).length === 0 &&
@@ -320,9 +363,21 @@ export function EntityDetail() {
           <p className="empty-state">No entity-to-entity relationships yet.</p>
         )}
 
-        <label>Relationship type</label>
-        <input value={relType} onChange={(e) => setRelType(e.target.value)} placeholder="OWNS, TRUSTEE_OF, SUBSIDIARY_OF…" />
-        <label>Target entity</label>
+        <label>{entity.name}…</label>
+        <select value={relType} onChange={(e) => setRelType(e.target.value)}>
+          {Object.entries(ENTITY_LINKS).map(([value, phrase]) => (
+            <option key={value} value={value}>
+              {phrase}
+            </option>
+          ))}
+        </select>
+        {relType === "HOLDS_SHARES_IN" && (
+          <>
+            <label>Share of the company (%, optional)</label>
+            <input type="number" min="0" max="100" value={relPercent} onChange={(e) => setRelPercent(e.target.value)} />
+          </>
+        )}
+        <label>…this entity</label>
         <select value={relTarget} onChange={(e) => setRelTarget(e.target.value)}>
           <option value="">— Select —</option>
           {allEntities
@@ -334,8 +389,8 @@ export function EntityDetail() {
             ))}
         </select>
         <div className="toolbar" style={{ marginTop: 12 }}>
-          <button className="btn secondary" onClick={addRelationship}>
-            Add relationship
+          <button className="btn secondary" onClick={addRelationship} disabled={!relTarget}>
+            Add link
           </button>
         </div>
       </div>

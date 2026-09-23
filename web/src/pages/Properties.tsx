@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, Entity, Property } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
+import { SoldList } from "../components/SoldList.js";
 import { formatCurrency } from "../utils.js";
 import { CommercialProperties } from "./CommercialProperties.js";
 import { HelpLink } from "../components/HelpLink.js";
@@ -83,11 +84,11 @@ function ResidentialProperties() {
         </div>
       )}
 
-      {properties.length === 0 ? (
+      {properties.filter((p) => !p.asset?.disposalDate).length === 0 ? (
         <p className="empty-state">No properties yet.</p>
       ) : (
         <ul className="item-card-list">
-          {properties.map((p) => (
+          {properties.filter((p) => !p.asset?.disposalDate).map((p) => (
             <ItemCard
               key={p.id}
               to={`/properties/${p.id}`}
@@ -98,6 +99,11 @@ function ResidentialProperties() {
           ))}
         </ul>
       )}
+      <SoldList
+        items={properties
+          .filter((p) => p.asset?.disposalDate)
+          .map((p) => ({ id: p.id, to: `/properties/${p.id}`, title: p.asset?.name ?? p.address, date: p.asset!.disposalDate!, price: p.asset?.disposalValue }))}
+      />
     </div>
   );
 }

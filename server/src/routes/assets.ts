@@ -5,6 +5,7 @@ import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
 import { checkOwners, checkRoomFor, ownersInput } from "../services/ownership.js";
+import { CGT_ASSET_TYPES, saleGains } from "../services/assetSaleCgt.js";
 
 export const assetsRouter = Router();
 
@@ -71,6 +72,11 @@ const assetInput = z.object({
   valuationDate: z.string().datetime().optional().nullable(),
   disposalDate: z.string().datetime().optional().nullable(),
   disposalValue: z.number().optional().nullable(),
+  buyingCosts: z.number().min(0).optional().nullable(),
+  improvementsCost: z.number().min(0).optional().nullable(),
+  sellingCosts: z.number().min(0).optional().nullable(),
+  mainResidence: z.enum(["NONE", "FULL", "PARTIAL"]).optional().nullable(),
+  mainResidencePercent: z.number().min(0).max(100).optional().nullable(),
   notes: z.string().optional().nullable(),
   vehicleType: z.string().optional().nullable(),
   make: z.string().optional().nullable(),
@@ -139,6 +145,49 @@ assetsRouter.put(
     });
     await logAudit("ASSET_CHANGED", { targetType: "Asset", targetId: asset.id, data: parsed });
     res.json(asset);
+  })
+);
+
+// "Still right": the value was looked at and hasn't changed.
+assetsRouter.post(
+  "/:id/value-checked",
+  asyncHandler(async (req, res) => {
+    const asset = await prisma.asset.update({ where: { id: req.params.id }, data: { valuationDate: new Date() } });
+    res.json({ valuationDate: asset.valuationDate });
+  })
+);
+
+// The capital gain a sale made, owner by owner — shown on the asset's page.
+assetsRouter.get(
+  "/:id/sale",
+  asyncHandler(async (req, res) => {
+    const asset = await prisma.asset.findUnique({
+      where: { id: req.params.id },
+      include: {
+        ownerships: true,
+        property: { select: { id: true, purchasePrice: true, purchaseDate: true } },
+        commercialProperty: { select: { id: true, purchasePrice: true, purchaseDate: true } },
+      },
+    });
+    if (!asset) {
+      res.status(404).json({ error: "Asset not found" });
+      return;
+    }
+    const entities = await prisma.entity.findMany({ select: { id: true, name: true, entityType: true } });
+    const rows = saleGains(asset, new Map(entities.map((e) => [e.id, e])));
+    // Loans still recorded against it, which a sale would normally pay out.
+    const openLoans = await prisma.liability.findMany({
+      where: {
+        currentBalance: { gt: 0 },
+        OR: [
+          { securityAssetId: asset.id },
+          ...(asset.property ? [{ securityPropertyId: asset.property.id }] : []),
+          ...(asset.commercialProperty ? [{ securityCommercialPropertyId: asset.commercialProperty.id }] : []),
+        ],
+      },
+      select: { id: true, name: true, currentBalance: true },
+    });
+    res.json({ cgtApplies: CGT_ASSET_TYPES.includes(asset.assetType), rows, openLoans });
   })
 );
 

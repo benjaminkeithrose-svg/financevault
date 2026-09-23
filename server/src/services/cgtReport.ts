@@ -1,5 +1,6 @@
 import { prisma } from "../db.js";
 import { computeDisposal, discountRateFor, netCapitalGain } from "./cgt.js";
+import { saleGainsBetween } from "./assetSaleCgt.js";
 
 /**
  * Every share/ETF/crypto sale in a financial year, with the net capital gain
@@ -49,8 +50,11 @@ export async function capitalGainsForYear(financialYearId: string) {
       // Whether the 12-month discount applies to this sale's gain. The
       // dollar discount is worked out per entity, after losses — see byEntity.
       discount: gainSlices.length === 0 ? "NONE" : eligibleSlices === gainSlices.length ? "YES" : eligibleSlices === 0 ? "NO" : "PART",
+      kind: "SHARES" as "SHARES" | "ASSET",
+      exemptPortion: 0,
+      notes: [] as string[],
       parcels: result.allocations.map((a) => ({
-        acquisitionDate: a.acquisitionDate,
+        acquisitionDate: a.acquisitionDate as Date | null,
         quantity: a.quantity,
         costBase: a.costBase,
         grossGain: a.grossGain,
@@ -58,6 +62,31 @@ export async function capitalGainsForYear(financialYearId: string) {
       })),
     };
   });
+
+  // Property and other assets marked as sold in the year, owner by owner.
+  const fy = await prisma.financialYear.findUnique({ where: { id: financialYearId } });
+  const assetSales = fy ? await saleGainsBetween(fy.startDate, fy.endDate) : [];
+  for (const s of assetSales) {
+    rows.push({
+      id: `sale-${s.assetId}-${s.entityId}`,
+      disposalDate: s.disposalDate,
+      code: s.assetName,
+      entityId: s.entityId,
+      entityName: s.entityName,
+      entityType: s.entityType,
+      quantity: Math.round(s.share * 10000) / 100,
+      proceeds: s.proceeds,
+      costBase: s.costBase,
+      grossGain: s.grossGain,
+      discount: s.grossGain <= 0 ? "NONE" : s.discountEligible ? "YES" : "NO",
+      parcels: [
+        { acquisitionDate: null, quantity: 1, costBase: s.costBase, grossGain: s.grossGain, discountEligible: s.discountEligible },
+      ],
+      kind: "ASSET",
+      exemptPortion: s.exemptPortion,
+      notes: s.notes,
+    });
+  }
 
   const entityIds = [...new Set(rows.map((r) => r.entityId))];
   const byEntity = entityIds.map((entityId) => {

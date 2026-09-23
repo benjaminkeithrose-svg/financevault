@@ -244,6 +244,13 @@ export interface DocumentLink {
 }
 
 export interface DashboardSummary {
+  backup: { lastBackupAt: string | null; remindAfterDays: number };
+  staleValues: Array<{ id: string; name: string; value: number | null; since: string; route: string }>;
+  gettingStarted: {
+    steps: Array<{ key: string; label: string; route: string; done: boolean; optional?: boolean }>;
+    dismissed: boolean;
+    complete: boolean;
+  };
   documents: {
     pendingClassification: number;
     needsConfirmation: number;
@@ -298,6 +305,8 @@ export interface Settings {
   customStorageDir?: string | null;
   effectiveStorageDir: string;
   allowPriceLookups: boolean;
+  lastBackupAt?: string | null;
+  checklistDismissed?: boolean;
 }
 
 export interface PropertyPerformanceRow {
@@ -343,7 +352,10 @@ export interface CapitalGainsReport {
     costBase: number;
     grossGain: number;
     discount: "YES" | "NO" | "PART" | "NONE";
-    parcels: Array<{ acquisitionDate: string; quantity: number; costBase: number; grossGain: number; discountEligible: boolean }>;
+    kind?: "SHARES" | "ASSET";
+    exemptPortion?: number;
+    notes?: string[];
+    parcels: Array<{ acquisitionDate: string | null; quantity: number; costBase: number; grossGain: number; discountEligible: boolean }>;
   }>;
   byEntity: Array<{
     entityId: string;
@@ -493,6 +505,11 @@ export interface Asset {
   valuationDate?: string | null;
   disposalDate?: string | null;
   disposalValue?: number | null;
+  buyingCosts?: number | null;
+  improvementsCost?: number | null;
+  sellingCosts?: number | null;
+  mainResidence?: "NONE" | "FULL" | "PARTIAL" | null;
+  mainResidencePercent?: number | null;
   notes?: string | null;
   vehicleType?: string | null;
   make?: string | null;
@@ -528,6 +545,22 @@ export interface AssetOwnership {
   endDate?: string | null;
   notes?: string | null;
   createdAt: string;
+}
+
+export interface AssetSale {
+  cgtApplies: boolean;
+  rows: Array<{
+    entityId: string;
+    entityName: string;
+    share: number;
+    proceeds: number;
+    costBase: number;
+    exemptPortion: number;
+    grossGain: number;
+    discountEligible: boolean;
+    notes: string[];
+  }>;
+  openLoans: Array<{ id: string; name: string; currentBalance: number | null }>;
 }
 
 // --- Asset tree ---------------------------------------------------------------
@@ -1647,6 +1680,8 @@ export const api = {
   assets: {
     list: (params?: Record<string, string>) => request<Asset[]>(`/assets${params ? `?${new URLSearchParams(params)}` : ""}`),
     get: (id: string) => request<Asset>(`/assets/${id}`),
+    valueChecked: (id: string) => request<unknown>(`/assets/${id}/value-checked`, { method: "POST" }),
+    sale: (id: string) => request<AssetSale>(`/assets/${id}/sale`),
     create: (data: Record<string, unknown>) => request<Asset>("/assets", { method: "POST", body: JSON.stringify(data) }),
     update: (id: string, data: Record<string, unknown>) =>
       request<Asset>(`/assets/${id}`, { method: "PUT", body: JSON.stringify(data) }),

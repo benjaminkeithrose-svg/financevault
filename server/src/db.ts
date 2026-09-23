@@ -43,6 +43,19 @@ export const prisma = base.$extends({
   query: {
     $allModels: {
       async $allOperations({ model, operation, args, query }) {
+        // A changed value is a new valuation: its date is kept, so the
+        // dashboard can say which values haven't been looked at in a while.
+        if (model === "Asset" && (operation === "create" || operation === "update")) {
+          const a = args as { data?: Record<string, unknown>; where?: { id?: string } };
+          const value = a.data?.currentValue;
+          if (typeof value === "number" && a.data && a.data.valuationDate === undefined) {
+            const before =
+              operation === "update" && a.where?.id
+                ? await base.asset.findUnique({ where: { id: a.where.id }, select: { currentValue: true } })
+                : null;
+            if (operation === "create" || before?.currentValue !== value) a.data.valuationDate = new Date();
+          }
+        }
         const fields = model ? ENCRYPTED_FIELDS[model] : undefined;
         if (fields) {
           const a = args as Record<string, unknown>;

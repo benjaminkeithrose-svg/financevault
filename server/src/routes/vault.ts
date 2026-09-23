@@ -1,4 +1,9 @@
+import os from "node:os";
+import fs from "node:fs";
 import { Router, type NextFunction, type Request, type Response } from "express";
+import multer from "multer";
+import { restoreFromBackup } from "../services/restore.js";
+import { logAudit } from "../services/audit.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import {
   IDLE_LOCK_MS,
@@ -106,6 +111,26 @@ vaultRouter.post(
       res.json({ unlocked: true });
     } catch (err) {
       sendVaultError(res, err);
+    }
+  })
+);
+
+// Loading a backup into a fresh copy — only possible before a passcode is set.
+const backupUpload = multer({ dest: os.tmpdir(), limits: { fileSize: 50 * 1024 * 1024 * 1024 } });
+vaultRouter.post(
+  "/restore",
+  backupUpload.single("backup"),
+  asyncHandler(async (req, res) => {
+    if (!req.file) {
+      res.status(400).json({ error: "Choose the backup file first." });
+      return;
+    }
+    try {
+      const result = await restoreFromBackup(req.file.path);
+      await logAudit("BACKUP_RESTORED", { targetType: "Vault", data: result });
+      res.json(result);
+    } finally {
+      fs.rmSync(req.file.path, { force: true });
     }
   })
 );

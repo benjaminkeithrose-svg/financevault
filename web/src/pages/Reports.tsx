@@ -421,9 +421,9 @@ function CapitalGains() {
               <thead>
                 <tr>
                   <th>Date</th>
-                  <th>Code</th>
+                  <th>What</th>
                   <th>Entity</th>
-                  <th>Units</th>
+                  <th>Units / share</th>
                   <th>Proceeds</th>
                   <th>Cost base</th>
                   <th>Gain / loss</th>
@@ -434,9 +434,21 @@ function CapitalGains() {
                 {data.rows.map((r) => (
                   <tr key={r.id}>
                     <td>{formatDate(r.disposalDate)}</td>
-                    <td>{r.code}</td>
+                    <td>
+                      {r.code}
+                      {r.kind === "ASSET" && (r.exemptPortion ?? 0) > 0 && (
+                        <div className="cap-explain">
+                          {r.exemptPortion === 1 ? "Main residence — exempt" : `${Math.round((r.exemptPortion ?? 0) * 100)}% main residence exemption`}
+                        </div>
+                      )}
+                      {(r.notes ?? []).map((n) => (
+                        <div key={n} className="cap-explain">
+                          {n}
+                        </div>
+                      ))}
+                    </td>
                     <td>{r.entityName}</td>
-                    <td>{r.quantity}</td>
+                    <td>{r.kind === "ASSET" ? `${r.quantity}%` : r.quantity}</td>
                     <td>{formatCurrency(r.proceeds)}</td>
                     <td>{formatCurrency(r.costBase)}</td>
                     <td>{formatCurrency(r.grossGain)}</td>

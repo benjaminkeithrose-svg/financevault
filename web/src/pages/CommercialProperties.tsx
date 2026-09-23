@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, CommercialPortfolio, CommercialProperty, Entity } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
+import { SoldList } from "../components/SoldList.js";
 import { formatCurrency, humanize } from "../utils.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
 import { useDraft } from "../hooks/useDraft.js";
@@ -217,11 +218,11 @@ export function CommercialProperties() {
         </div>
       )}
 
-      {properties.length === 0 ? (
+      {properties.filter((p) => !p.asset?.disposalDate).length === 0 ? (
         <p className="empty-state">No commercial properties yet.</p>
       ) : (
         <ul className="item-card-list">
-          {properties.map((p) => (
+          {properties.filter((p) => !p.asset?.disposalDate).map((p) => (
             <ItemCard
               key={p.id}
               to={`/commercial-properties/${p.id}`}
@@ -232,6 +233,11 @@ export function CommercialProperties() {
           ))}
         </ul>
       )}
+      <SoldList
+        items={properties
+          .filter((p) => p.asset?.disposalDate)
+          .map((p) => ({ id: p.id, to: `/commercial-properties/${p.id}`, title: p.name, date: p.asset!.disposalDate!, price: p.asset?.disposalValue }))}
+      />
     </div>
   );
 }

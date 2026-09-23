@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, Asset, Entity } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
+import { SoldPanel } from "../components/SoldPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { assetListRoute, assetTypeLabel, describeVehicle, formatCurrency, humanize, itemCategoryLabel, ITEM_CATEGORIES, monthlyEquivalent, vehicleTypeLabel } from "../utils.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
@@ -272,6 +273,8 @@ export function AssetDetail() {
         <h3>Documents</h3>
         <DocumentLinker targetType="ASSET" targetId={asset.id} />
       </div>
+
+      {!isItem && <SoldPanel asset={asset} onChange={load} />}
 
       <DeleteSection
         title={isItem ? "Delete this item" : isVehicle ? "Delete this vehicle" : "Delete this asset"}

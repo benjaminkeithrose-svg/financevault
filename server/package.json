@@ -29,6 +29,7 @@
     "mupdf": "^1.28.1",
     "pdf-parse": "^1.1.1",
     "tesseract.js": "^5.1.1",
+    "yauzl": "^3.4.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -39,6 +40,7 @@
     "@types/node": "^22.7.4",
     "@types/pdf-parse": "^1.1.5",
     "@types/supertest": "^7.2.1",
+    "@types/yauzl": "^3.4.0",
     "prisma": "^5.20.0",
     "supertest": "^7.3.0",
     "tsx": "^4.19.1",

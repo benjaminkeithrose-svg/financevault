@@ -3,6 +3,7 @@ import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { financialYearLabelForDate } from "../services/financialYear.js";
 import { computeLiveBreakdown } from "../services/netWorth.js";
+import { BACKUP_AFTER_DAYS, gettingStarted, staleValues } from "../services/upkeep.js";
 
 export const dashboardRouter = Router();
 
@@ -143,7 +144,11 @@ dashboardRouter.get(
       }
     }
 
+    const settings = await prisma.settings.findUnique({ where: { id: 1 } });
     res.json({
+      backup: { lastBackupAt: settings?.lastBackupAt ?? null, remindAfterDays: BACKUP_AFTER_DAYS },
+      staleValues: entityId ? [] : await staleValues(now),
+      gettingStarted: await gettingStarted(),
       documents: {
         pendingClassification,
         needsConfirmation,

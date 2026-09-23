@@ -42,5 +42,7 @@ backupRouter.get(
 
     await archive.finalize();
     fs.unlink(tmpDbPath, () => {});
+    // For the dashboard's "last backup" reminder.
+    await prisma.settings.upsert({ where: { id: 1 }, create: { id: 1, lastBackupAt: new Date() }, update: { lastBackupAt: new Date() } });
   })
 );

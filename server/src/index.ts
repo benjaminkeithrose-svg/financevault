@@ -3,6 +3,7 @@ import { app } from "./app.js";
 import { runPrivacyCleanup } from "./services/privacyCleanup.js";
 import { ensurePersonalEntities } from "./services/personalEntity.js";
 import { relinkMovedDocuments } from "./services/paths.js";
+import { ensureMonthlySnapshot } from "./services/monthlySnapshot.js";
 
 const PORT = Number(process.env.PORT) || 4000;
 
@@ -31,6 +32,11 @@ relinkMovedDocuments()
     if (n) console.log(`Found ${n} document${n === 1 ? "" : "s"} in this copy's storage folder and linked ${n === 1 ? "it" : "them"} up.`);
   })
   .catch((err) => console.error("Checking document locations failed:", err));
+
+// The family's net worth, saved once a month for the history.
+const monthly = () => ensureMonthlySnapshot().catch((err) => console.error("Monthly net worth snapshot failed:", err));
+void monthly();
+setInterval(monthly, 6 * 60 * 60 * 1000).unref();
 
 // Loopback only. Listening on every interface (the old default) made the
 // whole database readable by anyone on the same Wi-Fi. Both IPv4 and IPv6

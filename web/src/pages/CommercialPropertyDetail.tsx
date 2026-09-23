@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, CommercialProperty, Entity, FinancialYear, LeaseExtractionResponse } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
+import { SoldPanel } from "../components/SoldPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
 import { ScenarioComparison } from "../components/ScenarioComparison.js";
@@ -1132,6 +1133,8 @@ export function CommercialPropertyDetail() {
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="COMMERCIAL_PROPERTY" targetId={property.id} />
       </div>
+      {property.asset && <SoldPanel asset={property.asset} onChange={load} />}
+
       <DeleteSection
         title="Delete this property"
         note="Only possible once it has no tenancies, outgoings, capital works, snapshots or secured loans — that history is kept on purpose. Linked documents are kept."

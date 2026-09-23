@@ -15,4 +15,7 @@ export function setup() {
 
 export function teardown() {
   for (const f of [dbFile, `${dbFile}-journal`]) fs.rmSync(f, { force: true });
+  // Left by the restore tests, which set the fresh copy's database aside.
+  const dir = path.dirname(dbFile);
+  for (const f of fs.readdirSync(dir)) if (f.startsWith("test.db.before-")) fs.rmSync(path.join(dir, f), { force: true });
 }
