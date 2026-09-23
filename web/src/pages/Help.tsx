@@ -133,6 +133,34 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "asset-tree",
+    title: "The asset tree: how everything fits together",
+    keywords: "tree outline hierarchy structure people entities assets items sub-assets what we own navigate",
+    body: (
+      <>
+        <p>
+          Financial Vault is built around one tree. <strong>People</strong> are at the top. Under each person are the{" "}
+          <strong>structures</strong> they own things through — their own name, a family trust, a company, an SMSF. Under
+          each structure are its <strong>assets</strong>, and under an asset are its <strong>items</strong> (the air
+          conditioner in a house, the outboard on a boat). The loans secured on an asset, its insurance, its documents and
+          its servicing all hang off that asset.
+        </p>
+        <p>
+          <Link to="/tree">Asset tree</Link> (in the menu, under Dashboard) shows it as an outline. Tap the arrow beside
+          anything to open it; tap its name to go to its page. <strong>Open everything</strong> unfolds the whole tree and{" "}
+          <strong>Fold up</strong> closes it; what you leave open is remembered on this computer.
+        </p>
+        <ul>
+          <li>A person's figure is what's theirs: their own things, plus their share of anything shared or of a unit trust.</li>
+          <li>A structure's figure is its own balance sheet.</li>
+          <li>A trust with two trustees appears under both of them — it's the same trust, not a copy.</li>
+          <li>An item's figure is what it cost; its value is already part of the asset it sits under.</li>
+          <li>Loans not secured on a particular asset are under <strong>Other debts</strong>; sold assets under <strong>Sold</strong>.</li>
+        </ul>
+      </>
+    ),
+  },
+  {
     id: "how-it-fits",
     title: "How it's organised: people, entities and what they own",
     keywords: "trust company smsf super fund joint owner structure personal entity family partner child",

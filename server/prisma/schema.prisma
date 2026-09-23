@@ -64,6 +64,8 @@ model Person {
   superContributions  SuperContribution[]
   smsfMemberYears     SmsfMemberYear[]
   smsfPensions        SmsfPension[]
+  insurancePolicies   InsurancePolicy[]
+  estateDocuments     EstateDocument[]
   // Documents reference this Person via the polymorphic DocumentLink
   // (targetType = PERSON, targetId = this.id) — no direct relation field,
   // consistent with how every other linkable record works.
@@ -187,6 +189,10 @@ model Entity {
   taxRecords           TaxRecord[]
   assetOwnerships      AssetOwnership[]
   liabilityOwnerships  LiabilityOwnership[]
+  accountOwnerships    AccountOwnership[]
+  investmentOwnerships InvestmentAccountOwnership[]
+  insurancePolicies    InsurancePolicy[]
+  estateNominations    EstateDocument[]             @relation("NominationFund")
   netWorthSnapshots    NetWorthSnapshot[]
   portfolioPlans       PortfolioPlan[]
   emailImportRules     EmailImportRule[]
@@ -375,19 +381,26 @@ model DocumentLink {
 // ---------------------------------------------------------------------------
 
 model Asset {
-  id               String    @id @default(cuid())
-  name             String
-  assetType        String // PROPERTY | COMMERCIAL_PROPERTY | VEHICLE | SHARES | MANAGED_FUND | EQUIPMENT | SUPERANNUATION | CASH | OTHER
-  entityId         String
-  entity           Entity    @relation(fields: [entityId], references: [id])
-  acquisitionDate  DateTime?
-  acquisitionCost  Float?
-  currentValue     Float?
-  valuationDate    DateTime?
-  disposalDate     DateTime?
-  disposalValue    Float?
-  depreciationInfo String? // JSON: method, rate, effective life
-  notes            String?
+  id                   String    @id @default(cuid())
+  name                 String
+  assetType            String // PROPERTY | COMMERCIAL_PROPERTY | VEHICLE | SHARES | MANAGED_FUND | EQUIPMENT | SUPERANNUATION | CASH | OTHER
+  entityId             String
+  entity               Entity    @relation(fields: [entityId], references: [id])
+  acquisitionDate      DateTime?
+  acquisitionCost      Float?
+  currentValue         Float?
+  valuationDate        DateTime?
+  // Sold: the asset stays on record (in the tree, under Sold) but drops out
+  // of every total from this date. Also used to work out the capital gain.
+  disposalDate         DateTime?
+  disposalValue        Float?
+  buyingCosts          Float? // stamp duty, legal and other costs of buying — part of the cost base
+  improvementsCost     Float? // capital improvements over the years — part of the cost base
+  sellingCosts         Float? // agent, advertising, legal costs of selling
+  mainResidence        String? // NONE | FULL | PARTIAL — the main residence exemption on sale
+  mainResidencePercent Float? // PARTIAL: share of the ownership period it was the home
+  depreciationInfo     String? // JSON: method, rate, effective life
+  notes                String?
 
   // Vehicle details — only meaningful when assetType is VEHICLE, which
   // covers anything registrable or financeable the same way: cars,
@@ -417,6 +430,7 @@ model Asset {
   commercialProperty CommercialProperty?
   ownerships         AssetOwnership[]
   securedLoans       Liability[]
+  insurancePolicies  InsurancePolicy[]
 
   @@index([entityId])
   @@index([assetType])
@@ -479,6 +493,7 @@ model Liability {
   securityCommercialProperty CommercialProperty?  @relation(fields: [securityCommercialPropertyId], references: [id])
   securityAsset              Asset?               @relation(fields: [securityAssetId], references: [id])
   ownerships                 LiabilityOwnership[]
+  offsetAccounts             Account[]            @relation("OffsetAccounts")
   holdingTrust               Entity?              @relation("HoldingTrust", fields: [holdingTrustEntityId], references: [id])
 
   @@index([entityId])
@@ -860,9 +875,10 @@ model InvestmentAccount {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  parcels   InvestmentParcel[]
-  disposals InvestmentDisposal[]
-  dividends InvestmentDividend[]
+  parcels    InvestmentParcel[]
+  disposals  InvestmentDisposal[]
+  dividends  InvestmentDividend[]
+  ownerships InvestmentAccountOwnership[]
 
   @@index([entityId])
 }
@@ -872,21 +888,25 @@ model InvestmentAccount {
 // ---------------------------------------------------------------------------
 
 model Account {
-  id             String   @id @default(cuid())
-  institution    String
-  accountName    String
-  accountNumber  String?
-  bsb            String?
-  entityId       String
-  entity         Entity   @relation(fields: [entityId], references: [id])
-  accountType    String // TRANSACTION | SAVINGS | OFFSET | CREDIT_CARD | OTHER
-  currency       String   @default("AUD")
-  openingBalance Float?
-  currentBalance Float?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                   String     @id @default(cuid())
+  institution          String
+  accountName          String
+  accountNumber        String?
+  bsb                  String?
+  entityId             String
+  entity               Entity     @relation(fields: [entityId], references: [id])
+  accountType          String // TRANSACTION | SAVINGS | OFFSET | CREDIT_CARD | OTHER
+  currency             String     @default("AUD")
+  openingBalance       Float?
+  currentBalance       Float?
+  // An offset account: its balance reduces the interest charged on this loan.
+  offsetForLiabilityId String?
+  offsetFor            Liability? @relation("OffsetAccounts", fields: [offsetForLiabilityId], references: [id], onDelete: SetNull)
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
 
   transactions Transaction[]
+  ownerships   AccountOwnership[]
 
   @@index([entityId])
 }
@@ -1004,9 +1024,9 @@ model NetWorthSnapshot {
 // ---------------------------------------------------------------------------
 
 model Settings {
-  id                        Int     @id @default(1)
-  allowExternalAiProcessing Boolean @default(false)
-  defaultLandingPage        String  @default("DASHBOARD") // DASHBOARD | VISUALIZATION
+  id                        Int       @id @default(1)
+  allowExternalAiProcessing Boolean   @default(false)
+  defaultLandingPage        String    @default("DASHBOARD") // DASHBOARD | VISUALIZATION
   // Where NEW document uploads are written — e.g. a folder inside a Google
   // Drive/OneDrive/Dropbox sync folder, for continuous backup. Null means
   // the default (STORAGE_DIR env var, or server/storage/documents).
@@ -1019,11 +1039,15 @@ model Settings {
   // securities you hold. A lookup discloses which codes you hold to the
   // price provider — never quantities, values, accounts or anything
   // identifying. Everything still works with prices entered by hand.
-  allowPriceLookups         Boolean @default(false)
+  allowPriceLookups         Boolean   @default(false)
   // Bumped once the one-off pass that masks TFNs in stored document text and
   // scrubs secrets from older audit entries has run. Defaults to 0 in a
   // restored older backup, so that data gets cleaned too.
-  privacyCleanupVersion     Int     @default(0)
+  privacyCleanupVersion     Int       @default(0)
+  // When the last full backup was downloaded — for the dashboard reminder.
+  lastBackupAt              DateTime?
+  // The getting-started checklist on the dashboard, once put away.
+  checklistDismissed        Boolean   @default(false)
 }
 
 // ---------------------------------------------------------------------------
@@ -1481,4 +1505,85 @@ model SmsfPensionPayment {
   createdAt DateTime    @default(now())
 
   @@index([pensionId, date])
+}
+
+// Joint bank and investment accounts — same rules as AssetOwnership: the
+// account's entityId is the owner on record, who keeps whatever share
+// isn't listed.
+model AccountOwnership {
+  id               String   @id @default(cuid())
+  accountId        String
+  ownerEntityId    String
+  ownershipPercent Float
+  createdAt        DateTime @default(now())
+
+  account     Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  ownerEntity Entity  @relation(fields: [ownerEntityId], references: [id])
+
+  @@index([accountId])
+  @@index([ownerEntityId])
+}
+
+model InvestmentAccountOwnership {
+  id                  String   @id @default(cuid())
+  investmentAccountId String
+  ownerEntityId       String
+  ownershipPercent    Float
+  createdAt           DateTime @default(now())
+
+  investmentAccount InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+  ownerEntity       Entity            @relation(fields: [ownerEntityId], references: [id])
+
+  @@index([investmentAccountId])
+  @@index([ownerEntityId])
+}
+
+// An insurance policy, hung off what it covers: an asset (building,
+// landlord, car) or a person (life, income protection). The owner is the
+// entity that holds the policy. Renewals go into the expiry calendar.
+// The policy number is encrypted like a TFN (see db.ts).
+model InsurancePolicy {
+  id               String    @id @default(cuid())
+  kind             String // BUILDING | CONTENTS | BUILDING_AND_CONTENTS | LANDLORD | STRATA | MOTOR | BOAT | PUBLIC_LIABILITY | LIFE | TPD | TRAUMA | INCOME_PROTECTION | BUSINESS | OTHER
+  insurer          String?
+  policyNumber     String? // encrypted
+  coverAmount      Float?
+  premium          Float?
+  premiumFrequency String? // MONTHLY | QUARTERLY | ANNUALLY
+  renewalDate      DateTime?
+  assetId          String?
+  asset            Asset?    @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  personId         String?
+  person           Person?   @relation(fields: [personId], references: [id], onDelete: SetNull)
+  entityId         String?
+  entity           Entity?   @relation(fields: [entityId], references: [id], onDelete: SetNull)
+  heldInSuper      Boolean   @default(false) // life/TPD/income cover held through a super fund
+  notes            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([assetId])
+  @@index([personId])
+  @@index([entityId])
+}
+
+// Wills and estate papers, per person: where the original is, when it was
+// signed, and when it needs reviewing. Binding death benefit nominations
+// can lapse (usually three years), so their expiry goes to the calendar.
+model EstateDocument {
+  id           String    @id @default(cuid())
+  personId     String
+  person       Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  kind         String // WILL | ENDURING_POA | GENERAL_POA | GUARDIANSHIP | ADVANCE_CARE | BDBN_LAPSING | BDBN_NON_LAPSING | REVERSIONARY | OTHER
+  signedDate   DateTime?
+  expiryDate   DateTime? // lapsing nominations
+  reviewDate   DateTime? // when to look at it again
+  heldBy       String? // where the original is kept — solicitor, safe, fund
+  fundEntityId String? // nominations: which super fund
+  fund         Entity?   @relation("NominationFund", fields: [fundEntityId], references: [id], onDelete: SetNull)
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([personId])
 }

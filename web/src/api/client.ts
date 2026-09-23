@@ -530,6 +530,36 @@ export interface AssetOwnership {
   createdAt: string;
 }
 
+// --- Asset tree ---------------------------------------------------------------
+
+export interface TreeNode {
+  id: string;
+  kind: "ASSET" | "ITEM" | "LOAN" | "ACCOUNT" | "INVESTMENT" | "POLICY" | "GROUP" | "ENTITY_REF";
+  label: string;
+  sublabel?: string | null;
+  value?: number | null;
+  sign?: 1 | -1;
+  route?: string;
+  badges?: string[];
+  entityId?: string;
+  children: TreeNode[];
+}
+
+export interface AssetTreeData {
+  people: Array<{
+    id: string;
+    name: string;
+    route: string;
+    value: number;
+    ownEntityId: string | null;
+    ownPolicies: TreeNode[];
+    structures: Array<{ entityId: string; roles: string[] }>;
+  }>;
+  entities: Record<string, { id: string; name: string; type: string; value: number; route: string; children: TreeNode[] }>;
+  unlinked: string[];
+  familyNet: number;
+}
+
 // --- Self-managed super funds ------------------------------------------------
 
 export interface CapStatusNotes {
@@ -1582,6 +1612,9 @@ export const api = {
       request<IdentityRecord>(`/identity/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     reveal: (id: string) => request<{ number: string | null; referenceNumber: string | null }>(`/identity/${id}/reveal`),
     remove: (id: string) => request<void>(`/identity/${id}`, { method: "DELETE" }),
+  },
+  tree: {
+    get: () => request<AssetTreeData>("/tree"),
   },
   smsf: {
     get: (fundId: string, fy?: string) => request<SmsfOverview>(`/smsf/${fundId}${fy ? `?fy=${fy}` : ""}`),

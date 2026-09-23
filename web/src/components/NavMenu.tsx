@@ -14,6 +14,7 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
     label: "",
     items: [
       { to: "/", label: "Dashboard" },
+      { to: "/tree", label: "Asset tree" },
       { to: "/visualization", label: "Visualization" },
     ],
   },

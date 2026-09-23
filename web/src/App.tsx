@@ -38,6 +38,7 @@ import { ThemePicker } from "./components/ThemePicker.js";
 import { IconPin } from "./components/icons.js";
 import { usePinnedMenu } from "./hooks/usePinnedMenu.js";
 import { Help } from "./pages/Help.js";
+import { AssetTree } from "./pages/AssetTree.js";
 
 function Home() {
   const [landingPage, setLandingPage] = useState<string | null>(null);
@@ -71,6 +72,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/visualization" element={<Visualization />} />
+          <Route path="/tree" element={<AssetTree />} />
           <Route path="/inbox" element={<Inbox />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/documents/:id" element={<DocumentDetail />} />

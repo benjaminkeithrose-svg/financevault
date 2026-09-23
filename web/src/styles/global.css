@@ -1373,3 +1373,135 @@ label {
 .percent-input input {
   width: 84px;
 }
+
+/* Asset tree */
+.tree-card {
+  padding: 12px 8px;
+}
+
+.tree-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 4px 10px 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.tree {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree .tree {
+  margin-left: 20px;
+  border-left: 1px dashed var(--border);
+}
+
+.tree-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 4px 6px 4px 0;
+  min-height: 44px;
+}
+
+.tree-row:hover {
+  background: var(--surface-2);
+}
+
+.tree-toggle {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+
+.tree-toggle.placeholder {
+  cursor: default;
+}
+
+.chevron {
+  display: inline-block;
+  font-size: 22px;
+  line-height: 1;
+  transition: transform 0.15s;
+}
+
+.chevron.open {
+  transform: rotate(90deg);
+}
+
+.tree-icon {
+  font-size: 18px;
+  line-height: 40px;
+  flex-shrink: 0;
+}
+
+.tree-main {
+  flex: 1;
+  min-width: 0;
+  padding-top: 9px;
+}
+
+.tree-label {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.level-0 > .tree-row .tree-label {
+  font-size: 16px;
+}
+
+.tree-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  align-items: center;
+}
+
+.tree-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-dim);
+  color: var(--text);
+  font-size: 11px;
+}
+
+.tree-badge.warn {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.tree-value {
+  flex-shrink: 0;
+  padding-top: 9px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tree-value.owed {
+  color: var(--text-muted);
+}
+
+@media (max-width: 600px) {
+  .tree .tree {
+    margin-left: 10px;
+  }
+  .tree-icon {
+    display: none;
+  }
+}

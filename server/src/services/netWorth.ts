@@ -57,12 +57,17 @@ export async function computeLiveBreakdown(entityId?: string, options: Breakdown
   const ownedBy = entityId
     ? { OR: [{ entityId }, { ownerships: { some: { ownerEntityId: entityId } } }] }
     : {};
+  const today = new Date();
   const [assets, accounts, liabilities, investmentAccounts, unitRelations] = await Promise.all([
-    // Sub-assets are part of their parent's value, so only top-level assets count.
-    prisma.asset.findMany({ where: { ...ownedBy, parentAssetId: null }, include: { ownerships: true } }),
-    prisma.account.findMany({ where: entityId ? { entityId } : {} }),
+    // Sub-assets are part of their parent's value, so only top-level assets
+    // count; sold ones stay on record but drop out of the totals.
+    prisma.asset.findMany({
+      where: { AND: [ownedBy, { parentAssetId: null }, { OR: [{ disposalDate: null }, { disposalDate: { gt: today } }] }] },
+      include: { ownerships: true },
+    }),
+    prisma.account.findMany({ where: ownedBy, include: { ownerships: true } }),
     prisma.liability.findMany({ where: ownedBy, include: { ownerships: true } }),
-    prisma.investmentAccount.findMany({ where: entityId ? { entityId } : {} }),
+    prisma.investmentAccount.findMany({ where: ownedBy, include: { ownerships: true } }),
     entityId && lookThrough
       ? prisma.entityRelationship.findMany({
           where: { fromEntityId: entityId, relationshipType: "UNITHOLDER" },
@@ -74,9 +79,16 @@ export async function computeLiveBreakdown(entityId?: string, options: Breakdown
   const share = (r: { entityId: string; ownerships: ShareRow[] }) => (entityId ? shareOf(r, entityId) : 1);
   const assetValue = (a: (typeof assets)[number]) => (a.currentValue ?? 0) * share(a);
   const debtValue = (l: (typeof liabilities)[number]) => (l.currentBalance ?? 0) * share(l);
-  const sharedItems = entityId ? [...assets, ...liabilities].filter((r) => share(r) < 1).length : 0;
+  const sharedItems = entityId ? [...assets, ...liabilities, ...accounts, ...investmentAccounts].filter((r) => share(r) < 1).length : 0;
 
-  const { value: holdingsValue, valuedAtCost: holdingsAtCost } = await valueHoldings(investmentAccounts);
+  // Holdings are valued per account so a joint account counts at each owner's share.
+  let holdingsValue = 0;
+  let holdingsAtCost = 0;
+  for (const account of investmentAccounts) {
+    const v = await valueHoldings([account]);
+    holdingsValue += v.value * share(account);
+    holdingsAtCost += v.valuedAtCost;
+  }
 
   // A unit trust's units are worth the holder's share of its net assets
   // (never less than nothing). Nested trusts are followed, loops aren't.
@@ -100,7 +112,7 @@ export async function computeLiveBreakdown(entityId?: string, options: Breakdown
   if (holdingsValue > 0) byAssetType.INVESTMENT_HOLDINGS = holdingsValue;
   if (unitTrustValue > 0) byAssetType.UNIT_TRUST_UNITS = unitTrustValue;
 
-  const cash = accounts.reduce((s, a) => s + (a.currentBalance ?? 0), 0) + sumType(["CASH"]);
+  const cash = accounts.reduce((s, a) => s + (a.currentBalance ?? 0) * share(a), 0) + sumType(["CASH"]);
   const propertyValue = sumType(["PROPERTY", "COMMERCIAL_PROPERTY"]);
   // Manually-entered investment assets sit alongside tracked holdings. Both
   // are counted, because there is no link between the two and silently
