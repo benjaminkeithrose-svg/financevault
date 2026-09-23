@@ -76,6 +76,14 @@ browser). Create forms keep a draft in the browser when left half-filled
 and offer **Clear** beside their main button; secret numbers are never
 drafted.
 
+**Look and feel** (bottom of the menu, or Settings) offers four colourways
+— Midnight violet, Deep teal, Navy & pink, Cobalt & lilac — in a **Bold**
+(square, heavy-bordered, solid header) or **Soft** (rounded, light) style.
+The choice is kept per browser in `localStorage` (`fv-theme`), applied as
+`data-theme` / `data-style` on `<html>` (see `web/src/theme.ts`), and also
+colours the Keyhole browser-tab icon. Red stays reserved for destructive
+actions and errors in every colourway.
+
 ### Vehicles, boats and borrowing
 
 **Vehicles & boats** (menu → Assets) records cars, motorcycles, boats, jet

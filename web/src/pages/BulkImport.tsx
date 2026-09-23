@@ -224,7 +224,7 @@ export function BulkImport() {
               style={{
                 height: "100%",
                 width: `${progress.total ? (progress.done / progress.total) * 100 : 0}%`,
-                background: "var(--accent)",
+                background: "var(--accent-fill)",
                 transition: "width 0.2s",
               }}
             />

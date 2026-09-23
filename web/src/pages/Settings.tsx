@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, Settings as SettingsType } from "../api/client.js";
 import { HelpLink } from "../components/HelpLink.js";
+import { ThemePicker } from "../components/ThemePicker.js";
 
 export function Settings() {
   const [settings, setSettings] = useState<SettingsType | null>(null);
@@ -87,6 +88,16 @@ export function Settings() {
           <h2>Settings</h2>
           <p>Security and privacy controls for Financial Vault.</p>
         </div>
+      </div>
+
+      <div className="card">
+        <h3 style={{ marginTop: 0 }}>
+          Look and feel <HelpLink topic="look-and-feel" />
+        </h3>
+        <p style={{ color: "var(--text-muted)" }}>
+          Pick a colour and a style. It's remembered on this computer only, so each person can choose their own.
+        </p>
+        <ThemePicker />
       </div>
 
       <div className="card">

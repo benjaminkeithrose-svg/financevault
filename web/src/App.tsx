@@ -34,6 +34,7 @@ import { PortfolioPlans } from "./pages/PortfolioPlans.js";
 import { PortfolioPlanDetail } from "./pages/PortfolioPlanDetail.js";
 import { LoadFailed } from "./components/LoadFailed.js";
 import { NavMenuList } from "./components/NavMenu.js";
+import { ThemePicker } from "./components/ThemePicker.js";
 import { IconPin } from "./components/icons.js";
 import { usePinnedMenu } from "./hooks/usePinnedMenu.js";
 import { Help } from "./pages/Help.js";
@@ -60,6 +61,10 @@ export default function App() {
             <IconPin /> Unpin
           </button>
           <NavMenuList onNavigate={() => {}} />
+          <div className="menu-look">
+            <div className="nav-group-label">Look and feel</div>
+            <ThemePicker compact />
+          </div>
         </aside>
       )}
       <main className="main-content">

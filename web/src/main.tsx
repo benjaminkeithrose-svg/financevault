@@ -4,6 +4,10 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.js";
 import { LockGate } from "./components/LockGate.js";
 import "./styles/global.css";
+import { applyTheme } from "./theme.js";
+
+// Before the first paint, so the lock screen is already in the chosen colours.
+applyTheme();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

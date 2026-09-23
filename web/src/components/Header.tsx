@@ -6,6 +6,8 @@ import { IconChevronLeft, IconClose, IconHome, IconLock, IconMenu, IconPin, Icon
 import { usePinnedMenu } from "../hooks/usePinnedMenu.js";
 import { useBackOverride } from "../hooks/useBackTo.js";
 import { lockApp } from "./LockGate.js";
+import { KeyholeMark } from "./KeyholeMark.js";
+import { ThemePicker } from "./ThemePicker.js";
 
 const TITLES: Record<string, string> = {
   "/": "Dashboard",
@@ -141,7 +143,10 @@ export function Header() {
             <button className="icon-btn" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
               <IconClose />
             </button>
-            <div className="app-header-title">Financial Vault</div>
+            <div className="app-header-title brand">
+              <KeyholeMark size={28} />
+              Financial Vault
+            </div>
             {/* Docking needs room beside the page, so it's offered on wider screens only. */}
             <button
               className="btn secondary pin-toggle"
@@ -155,6 +160,10 @@ export function Header() {
           </div>
           <div className="overlay-body">
             <NavMenuList onNavigate={() => setMenuOpen(false)} />
+            <div className="menu-look">
+              <div className="nav-group-label">Look and feel</div>
+              <ThemePicker compact />
+            </div>
           </div>
         </div>
       )}

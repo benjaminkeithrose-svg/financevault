@@ -1,4 +1,5 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { KeyholeMark } from "./KeyholeMark.js";
 
 type Status = { configured: boolean; unlocked: boolean; minPasscodeLength: number; idleLockMinutes: number };
 type Screen = "loading" | "setup" | "recoveryKey" | "unlock" | "recover" | "unlocked";
@@ -172,7 +173,10 @@ export function LockGate({ children }: { children: ReactNode }) {
   return (
     <div className="lock-screen">
       <div className="card lock-card">
-        <h2 style={{ marginTop: 0 }}>Financial Vault</h2>
+        <div className="lock-brand">
+          <KeyholeMark size={40} />
+          <strong>Financial Vault</strong>
+        </div>
 
         {screen === "loading" && <p className="empty-state">{error ?? "Loading…"}</p>}
 

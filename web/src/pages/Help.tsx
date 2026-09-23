@@ -744,6 +744,36 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "look-and-feel",
+    title: "Look and feel: colours and style",
+    keywords: "theme colour color violet teal pink lilac bold soft appearance logo",
+    body: (
+      <>
+        <p>There are four colours and two styles to choose from:</p>
+        <ul>
+          <li>
+            <strong>Colours:</strong> Midnight violet, Deep teal, Navy & pink, and Cobalt & lilac.
+          </li>
+          <li>
+            <strong>Bold</strong> has square corners, heavy borders and a solid top bar. <strong>Soft</strong> is lighter
+            with rounded corners.
+          </li>
+        </ul>
+        <p>To change them:</p>
+        <ol>
+          <li>Open the ☰ menu.</li>
+          <li>Scroll to the bottom, to <strong>Look and feel</strong>.</li>
+          <li>Tap a colour, then Bold or Soft. The change happens straight away.</li>
+        </ol>
+        <p>
+          The same choice is in <Link to="/settings">Settings</Link> → <strong>Look and feel</strong>, with the colour
+          names shown. Your choice is kept on this computer only, so each person who uses Financial Vault can pick their
+          own. Red is always kept for delete buttons and warnings, whichever colour you choose.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "backup",
     title: "Backups",
     keywords: "backup restore sync google drive dropbox onedrive copy",
