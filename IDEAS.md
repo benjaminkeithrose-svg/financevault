@@ -185,3 +185,48 @@ repayments), property values, commercial DSCR/ICR, Fact Find.
 lending); from the broker if they'll share — the assumptions their usual
 lenders use (rent shading %, card %, expense benchmark, max LVR, commercial
 ICR/LVR, lease-doc criteria).
+
+---
+
+## 8. "Worth asking your accountant" — missed deductions and unused concessions
+
+**Why:** find tax the family is legitimately entitled to save but may be
+missing, using the records already in the app.
+
+**What it is:** a checklist of legitimate deductions, offsets and
+concessions the records suggest might apply but aren't being used. Each
+item says what the rule is, why the app thinks it applies, the ATO source,
+and "raise this with your accountant". It's a prompt, not advice.
+
+**What it is not:** it doesn't hunt for loopholes or schemes. Arrangements
+whose main purpose is a tax benefit can be struck down under the general
+anti-avoidance rule (Part IVA) with penalties — so where the records look
+like one of those (e.g. a Hart-style split loan, idea 2), it flags a *risk*
+for the accountant instead.
+
+**Examples the app could check from data it already has or will have:**
+- Unused concessional super cap that can be carried forward (the SMSF
+  module already works this out) → a personal deductible contribution.
+- Spouse super contribution offset; government co-contribution for a
+  lower-income spouse.
+- An investment property built after 1987 with no depreciation schedule
+  attached → capital works deductions possibly unclaimed.
+- Investment loan interest, borrowing costs (claimed over 5 years), and
+  mixed-purpose loans not apportioned (idea 2).
+- Shares or property held just under 12 months → selling a few weeks later
+  may halve the taxable gain; capital losses available to offset gains.
+- Sale timing: CGT falls in the year the contract is signed, not settlement.
+- Prepaying up to 12 months of deductible expenses (e.g. investment loan
+  interest) before 30 June.
+- Private health cover vs the Medicare levy surcharge, by income.
+- Rental or work expenses in bank transactions with no tax category, or
+  claimed deductions with no receipt attached.
+- At purchase time (Portfolio Plan): who should own a new investment —
+  ownership can't be moved later without CGT and stamp duty.
+- Trusts: distributions due by 30 June, with a caution about the ATO's
+  rules on who really benefits (s100A — TR 2022/4).
+- State: land tax thresholds and whether properties are held in a way that
+  multiplies or shares them (Revenue NSW).
+
+**Needs:** the ATO reference library (idea 3), each person's expected income,
+debt allocation (idea 2), depreciation schedules.
