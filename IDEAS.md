@@ -59,6 +59,10 @@ the accountant's preferred method and format.
 Official source: the ATO Legal Database (ato.gov.au/law). Check each
 document's status is current before saving.
 
+**Link pack:** every source below (and the ones for ideas 7, 9 and 10) is
+in `reference/link-pack.json`, with a readable copy in
+`reference/LINK-PACK.md` — see idea 18.
+
 | Area | Documents | Changes |
 |---|---|---|
 | Loans / debt allocation | TR 2000/2, TR 95/25, TD 2012/1, "Interest expenses" page | Rarely |
@@ -544,3 +548,35 @@ browser tab.
   first, and there's no terminal window at all.
 - Fits naturally with in-app updates (idea 16).
 - Trade-off: a bigger download (~100–150MB).
+
+---
+
+## 18. Reference library that updates itself from links
+
+**Why:** re-gathering every ATO document each financial year is slow. Keep
+links instead, so the current copy can be fetched when it changes.
+
+**Link pack (done):** `reference/link-pack.json` — 46 official sources (ATO,
+Revenue NSW, APRA, ASIC) with what each is used for, how often it changes,
+and for yearly guides a pattern for next year's address (ATO addresses
+change each year, e.g. rental-properties-2025 → rental-properties-2026, and
+occasionally the pattern itself changes). Readable copy:
+`reference/LINK-PACK.md`. Built into the Tax reference library (idea 1) as
+its starting list.
+
+**In the app:**
+- Each reference opens from its link; the app also keeps a saved copy (so
+  claims still have their source if a page moves or is withdrawn).
+- **"Check for new versions"** — a button, and a reminder each July. It's
+  the only time the app goes online for this, only when you press it, and
+  it sends nothing about you (same as price lookups today). For each link:
+  - rates pages: fetch and save the current copy;
+  - yearly guides: try next year's address; if it's there, save it and
+    mark last year's as superseded;
+  - rulings: flag if the page now says withdrawn or replaced — and warn on
+    any claim that relies on it (idea 12);
+  - broken links: list them with a search link to find the new address.
+- Each saved copy is dated, so every claim shows which version it relied on.
+- Figures the app uses (tax rates, super caps, cents per km, WFH rate, land
+  tax thresholds) show their source and "last checked" date, and are flagged
+  for review when a newer source copy arrives.
