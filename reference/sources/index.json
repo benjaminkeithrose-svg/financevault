@@ -203,6 +203,13 @@
       "covers": [
         "lcr-2021-2"
       ]
+    },
+    {
+      "file": "apra-dti-limit.txt",
+      "covers": [
+        "apra-dti-limit"
+      ],
+      "note": "Fetched directly from apra.gov.au (web page saved as text)."
     }
   ],
   "notes": {

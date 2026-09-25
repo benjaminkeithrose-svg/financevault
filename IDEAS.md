@@ -136,6 +136,8 @@ has access to is the likely route. Decide before building.
 After the ATO documents are in: a fresh gap analysis across the whole
 program, using them as the reference — what to add, fix or remove.
 
+**Done (first pass): see `GAP-ANALYSIS.md`.**
+
 **Found while loading the documents (to act on in the gap analysis):**
 - **SMSF borrowing (LRBA) changed from 10 August 2026:** new LRBAs can
   only buy business real property, not residential. The SMSF property

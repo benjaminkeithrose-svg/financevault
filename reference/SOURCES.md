@@ -1,6 +1,6 @@
 # Source documents: received and still needed
 
-Generated from link-pack.json and sources/index.json. 36 of 45 documents saved (index pages don't need saving).
+Generated from link-pack.json and sources/index.json. 37 of 46 documents saved (index pages don't need saving).
 
 ## Still needed
 
@@ -60,3 +60,4 @@ Open each link on your own computer, save it as a PDF (for web pages use the pag
 - `medicare-levy-surcharge.pdf` - covers: medicare-levy-surcharge - Whole "Medicare levy surcharge" section.
 - `super-rates-thresholds.pdf` - covers: super-rates-thresholds, super-contribution-caps, super-minimum-pension - Whole "Key super rates and thresholds" section (74 pages).
 - `lcr-2021-2.pdf` - covers: lcr-2021-2
+- `apra-dti-limit.txt` - covers: apra-dti-limit - Fetched directly from apra.gov.au (web page saved as text).

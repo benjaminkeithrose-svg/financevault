@@ -617,8 +617,21 @@
       "publisher": "APRA",
       "kind": "page",
       "url": "https://www.apra.gov.au/news-and-publications/apra-announces-update-on-macroprudential-settings",
-      "note": "A news item — check APRA for the latest announcement.",
+      "note": "The saved copy is the July 2025 update (3% buffer unchanged). Check for a newer semi-annual update.",
       "changes": "as needed",
+      "usedBy": [
+        7
+      ],
+      "verified": true
+    },
+    {
+      "id": "apra-dti-limit",
+      "title": "APRA debt-to-income limit (from 1 February 2026)",
+      "publisher": "APRA",
+      "kind": "page",
+      "url": "https://www.apra.gov.au/news-and-publications/apra-to-limit-high-debt-to-income-home-loans-to-constrain-riskier-lending",
+      "note": "Banks may make at most 20% of new home lending at 6x income or more (owner-occupier and investor counted separately; new builds exempt).",
+      "changes": "when APRA changes settings",
       "usedBy": [
         7
       ],
