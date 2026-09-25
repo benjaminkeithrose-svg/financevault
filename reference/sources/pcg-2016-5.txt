@@ -1,0 +1,552 @@
+PCG 2016/5 - Income tax - arm's length terms for
+Limited Recourse Borrowing Arrangements
+established by self-managed superannuation funds
+
+   This cover sheet is provided for information only. It does not form part of PCG 2016/5 - Income
+tax - arm's length terms for Limited Recourse Borrowing Arrangements established by
+self-managed superannuation funds
+
+
+   Legislative changes to limited recourse borrowing arrangements commence on 10 August. We
+are currently reviewing and updating this Guideline. For more information on these changes, see
+Limited Recourse Borrowing Arrangement (LRBA) Provisions
+
+  This document has changed over time. This version was published on 21 March 2022
+
+
+
+
+Generated on: 26 September 2026, 09:15:28 AM
+                                              Practical Compliance Guideline
+                                                               PCG 2016/5
+
+   Income tax – arm’s length terms for Limited
+Recourse Borrowing Arrangements established by
+       self-managed superannuation funds
+
+
+                                   Relying on this Guideline
+      This Practical Compliance Guideline sets out a practical administration approach
+       to assist taxpayers in complying with relevant tax laws. Provided you follow this
+       guideline in good faith, the Commissioner will administer the law in accordance
+                                      with this approach.
+
+
+
+Table of Contents                                                                Paragraph
+What this Guideline is about                                                                1
+Date of effect                                                                              5
+Safe Harbour 1: The asset acquired is real property                                         6
+Safe Harbour 2: The asset acquired is a collection of stock exchange-listed
+shares or units                                                                             8
+More information                                                                           10
+Background and additional information                                                      11
+ATO’s compliance approach for LRBAs established before 30 June 2016                        14
+Example 1 – real property                                                                  19
+        Option 1 – Alter the terms of the loan to meet guidelines                          25
+        Option 2 – Refinance through a commercial lender                                   27
+        Option 3 – Pay out the LRBA                                                        30
+Example 2 – collection of listed shares                                                    33
+        Option 1 – Alter the terms of the loan to meet guidelines                          39
+        Option 2 – Refinance through a commercial lender                                   41
+        Option 3 – Pay out the LRBA                                                        44
+
+
+
+
+Practical Compliance Guideline PCG 2016/5                                         Page 1 of 11
+What this Guideline is about
+1.      When a self-managed superannuation fund (SMSF) acquires an asset under a
+Limited Recourse Borrowing Arrangement (LRBA), the non-arm’s length income (NALI)
+provisions in section 295-550 of the Income Tax Assessment Act 1997 (ITAA 1997) may
+apply to ordinary or statutory income generated from the asset if the terms of the LRBA are
+not consistent with an arm’s length dealing.
+2.      This Guideline sets out the ‘Safe Harbour’ terms on which SMSF trustees may
+structure their LRBAs consistent with an arm’s length dealing. That is, for income tax
+compliance purposes, the Commissioner accepts that an LRBA structured in accordance
+with this Guideline is consistent with an arm’s length dealing and that the NALI provisions
+do not apply purely because of the terms of the borrowing arrangement.
+3.     As noted at paragraph 5 of this Guideline, this Guideline applies where the
+requirements of section 67A (or former subsection 67(4A) if applicable) of the
+Superannuation Industry (Supervision) Act 1993 (SISA) are met at all times and is not
+intended to override or replace those or any other SISA requirements that apply.
+4.      If SMSF trustees have entered into an arrangement which does not meet all of the
+‘Safe Harbour’ terms set out in this Guideline, while the trustees are unable to be assured
+that the Commissioner will accept the arrangement to be consistent with an arm’s length
+dealing, it does not mean that the arrangement is deemed not to be on arm’s length terms.
+It merely means that there is no certainty provided under this Guideline. The trustees will
+need to be able to otherwise demonstrate that the arrangement was entered into and
+maintained on terms consistent with an arm’s length dealing. One example of how a
+trustee may demonstrate this is by maintaining evidence that shows their particular
+arrangement is established and maintained on terms that replicate the terms of a
+commercial loan that is available in the same circumstances.
+
+
+Date of effect
+5.      This Guideline applies to SMSF trustees who have established LRBAs that meet
+the requirements of section 67A (or former subsection 67(4A) if applicable) of the SISA,
+regardless of whether the arrangement commenced before or after the date of publication
+of this Guideline.
+
+
+Safe Harbour 1: The asset acquired is real property
+6.     Safe Harbour 1 applies when an SMSF uses an LRBA to acquire real property or to
+refinance a borrowing used to acquire real property, whether that property is residential or
+commercial premises (including property used for primary production activities).
+7.       The ATO accepts that an LRBA used to acquire real property, or to refinance a
+borrowing used to acquire real property, is consistent with an arm’s length dealing if the
+terms of the borrowing are established and maintained throughout the LRBA as set out in
+the following table.
+
+
+
+
+Practical Compliance Guideline PCG 2016/5                                         Page 2 of 11
+Interest Rate                  Reserve Bank of Australia Indicator Lending Rates for banks
+                               providing standard variable housing loans for investors. Applicable
+                               rates:
+                                      –    For the 2015–16 year, the rate is 5.75%1
+                                      –    For the 2016–17 and later years, the rate published for
+                                            May (the rate for the month of May immediately prior to
+                                            the start of the relevant financial year)
+Fixed / variable               Interest rate may be variable or fixed
+                                      –     Variable – uses the applicable rate (as set out above) for
+                                            each year of the LRBA
+                                      –     Fixed – trustees may choose to fix the rate at the
+                                            commencement of the arrangement for a specified
+                                            period, up to a maximum of five years.
+                                            The fixed rate is the rate published for May (the rate for
+                                            the May before the relevant financial year).
+                               The 2015–16 rate of 5.75% may be used for LRBAs in existence on
+                               publication of these guidelines, if the total period for which the
+                               interest rate is fixed does not exceed five years (see ‘Term of the
+                               loan’ below)
+Term of the loan               Variable interest rate loan (original) – 15-year maximum loan term
+                               (for both residential and commercial).
+                               Variable interest rate loan (re-financing) – maximum loan term
+                               is 15 years less the duration(s) of any previous loan(s) relating to the
+                               asset (for both residential and commercial).
+                               Fixed interest rate loan – a new LRBA commencing after publication
+                               of these guidelines may involve a loan with a fixed interest rate set at
+                               the beginning of the arrangement. The rate may be fixed for a
+                               maximum period of five years and must convert to a variable interest
+                               rate loan at the end of the nominated period. The total loan term
+                               cannot exceed 15 years.
+                               For an LRBA in existence on publication of these guidelines, the
+                               trustees may adopt the rate of 5.75% as their fixed rate, provided
+                               that the total fixed-rate period does not exceed five years. The
+                               interest rate must convert to a variable interest rate loan at the end
+                               of the nominated period. The total loan cannot exceed 15 years.
+Loan to Market Value           Maximum 70% LVR for both commercial and residential property.
+Ratio (LVR)                    If more than one loan is taken out to acquire (or refinance) the asset,
+                               the total amount of all those loans must not exceed 70% LVR.
+                               The market value of the asset is to be established when the loan
+                               (original or re-financing) is entered into.
+                               For an LRBA in existence on publication of these guidelines, the
+                               trustees may use the market value of the asset at 1 July 2015.
+Security                       A registered mortgage over the property is required.
+Personal guarantee             Not required.
+Nature & frequency of          Each repayment is of both principal and interest.
+repayments                     Repayments are monthly.
+Loan agreement                 A written and executed loan agreement is required.
+
+
+
+1
+    Interest is to be calculated monthly on a compounding basis.
+
+
+
+Practical Compliance Guideline PCG 2016/5                                                Page 3 of 11
+Safe Harbour 2: The asset acquired is a collection of stock exchange-listed shares
+or units
+8.      Safe Harbour 2 applies when an SMSF uses an LRBA to acquire a collection of shares
+in a stock exchange-listed company or to acquire units in a stock exchange-listed unit trust.
+Safe Harbour 2 also applies when an SMSF uses an LRBA to refinance a borrowing used to
+acquire such a collection.
+9.     The ATO accepts that an LRBA used to acquire or to refinance a borrowing used to
+acquire stock exchange listed shares or stock exchange-listed units in a unit trust is consistent
+with an arm’s length dealing if the terms of the borrowing are established and maintained
+throughout the LRBA, as set out in the following table.
+Interest Rate                  Reserve Bank of Australia Indicator Lending Rates for banks
+                               providing standard variable housing loans for investors plus 2%.
+                               Applicable rates:
+                                     –     For the 2015–16 year, the interest rate is 5.75% + 2% =
+                                            7.75%2
+                                     –     For the 2016–17 and later years, the rate published for
+                                            May plus 2% (the rate for the month of May immediately
+                                            before the start of the relevant financial year)
+Fixed / variable               Interest rate may be variable or fixed
+                                      –     Variable – uses the applicable rate (as set out above) for
+                                            each year of the LRBA
+                                      –     Fixed – trustees may choose to fix the rate at the
+                                            commencement of the arrangement for a specified
+                                            period, up to a maximum of three years (see ‘Term of
+                                            the loan’ below). The fixed rate is the rate for May plus
+                                            2% (the rate for the May before the relevant financial
+                                            year)
+                               The 2015–16 rate of 7.75% may be used for LRBAs in existence on
+                               publication of these guidelines, if the total period for which the
+                               interest rate is fixed does not exceed three years (see ‘Term of the
+                               loan’ below)
+Term of loan                   Variable interest rate loan (original) – seven-year maximum loan
+                               term.
+                               Variable interest rate loan (re-financing) – maximum loan term is
+                               seven years less the duration(s) of any previous loan(s) relating to
+                               the collection of assets.
+                               Fixed interest rate loan – a new LRBA commencing after publication
+                               of these guidelines may involve a loan that has a fixed interest rate
+                               set at the beginning of the arrangement. The rate may be fixed up to
+                               for a maximum of three years and must convert to a variable interest
+                               rate loan at the end of the nominated period. The total loan term
+                               cannot exceed seven years.
+                                      –     For an LRBA in existence on publication of these
+                                            guidelines, the trustees may adopt the rate of 7.75% as
+                                            their fixed rate, provided that the total period of the fixed
+                                            rate does not exceed three years. The interest rate must
+                                            convert to a variable interest rate loan at the end of the
+                                            nominated period. The total loan cannot exceed seven
+                                            years.
+
+
+
+2
+    Interest is to be calculated monthly on a compounding basis.
+
+
+
+Practical Compliance Guideline PCG 2016/5                                                  Page 4 of 11
+LVR                           Maximum 50% LVR.
+                              If more than one loan is taken out to acquire (or refinance) the
+                              collection of assets, the total amount of all those loans must not
+                              exceed 50% LVR.
+                              The market value of the collection of assets is to be established
+                              when the loan (original or re-financing) is entered into.
+                              For an LRBA in existence on publication of these guidelines, the
+                              trustees may use the market value of the asset at 1 July 2015.
+Security                      A registered charge/mortgage or similar security (that provides
+                              security for loans for such assets).
+Personal guarantee            Not required.
+Nature & frequency of         Each repayment is of both principal and interest.
+repayments                    Repayments are monthly.
+Loan agreement                A written and executed loan agreement is required.
+
+
+More information
+10.     For more information see:
+        •       Taxation Determination TD 2016/16 Income tax: will the ordinary or
+                statutory income of a self-managed superannuation fund be non-arm’s
+                length income under subsection 295-550(1) of the Income Tax Assessment
+                Act 1997 (ITAA 1997) when the parties to a scheme have entered into a
+                limited recourse borrowing arrangement on terms which are not at arm’s
+                length?
+        •       Self Managed Superannuation Funds Ruling SMSFR 2012/1 Self Managed
+                Superannuation Funds: limited recourse borrowing arrangements –
+                application of key concepts
+        •       Limited Recourse borrowing arrangements
+        •       Self Managed Superannuation Funds (Limited Recourse Borrowing
+                Arrangements – In-house Asset Exclusion) Determination 2014
+        •       sections 67A and 67B of the SISA
+
+
+Background and additional information
+11.     ATO Interpretative Decisions ATO ID 2015/27 Income tax: non-arm’s length income –
+related party non-commercial limited recourse borrowing arrangement to acquire listed shares
+and ATO ID 2015/28 Income tax: non-arm’s length income – related party non commercial
+limited recourse borrowing arrangement to acquire real property have been withdrawn. The
+Commissioner issued TD 2016/16 on 28 September 2016.
+12.     Parties, including an SMSF, who enter into an LRBA on terms not consistent with an
+arm’s length dealing should consider the further matters addressed in TD 2016/16.
+13.     If we are asked to state formally (for example, in a private ruling or in litigation) whether
+a particular SMSF’s LRBA gives rise to NALI for any income year, our approach will be
+consistent with TD 2016/16.
+
+
+ATO’s compliance approach for LRBAs established before 30 June 2016
+14.    The ATO recognises the effects of the NALI provisions and the importance of
+preserving assets held by an SMSF. Given this, we will not select an SMSF for an income tax
+review for the 2014–15 year or earlier years purely because the SMSF has entered into an
+
+Practical Compliance Guideline PCG 2016/5                                              Page 5 of 11
+LRBA. However, this is conditional on the SMSF trustee ensuring that any LRBA that their fund
+has is on terms consistent with an arm’s length dealing by 31 January 2017 or, alternatively, is
+brought to an end by 31 January 2017.
+15.     In addition, payments of principal and interest must be made under LRBA terms
+consistent with an arm’s length dealing. SMSF trustees who are concerned about their ability to
+make the required payments on commercial terms before 31 January 2017 can contact the
+ATO to discuss their particular circumstances. In the first instance, taxpayers can write to us,
+outlining their particular circumstances, at the following address:
+        PO Box 3100
+        Penrith NSW 2740
+16.    In other words, SMSF trustees have an opportunity to review the terms of their funds’
+LRBAs before 31 January 2017. The terms of their LRBAs will not be subject to any further
+compliance action for the 2014–15 income years (or before) if, by 31 January 2017:
+        (i)     the LRBA is on terms that are consistent with an arm’s length dealing,
+        or
+        (ii)    the LRBA is brought to an end, and the payments of principal and interest
+                made are made under LRBA terms consistent with an arm’s length dealing.
+17.     Furthermore, SMSF trustees who satisfy these conditions, and apply this Guideline in
+good faith to revise the terms of their existing LRBAs before 31 January 2017, can be assured
+that the terms of their LRBA will not be subject to any further compliance action by the ATO for
+the 2014–15 years and prior.
+17A. An SMSF trustee who satisfies the condition set out in paragraph 16(i) of this Guideline
+with respect to an LRBA can also be assured that the Commissioner will not apply compliance
+resources to determine whether paragraphs 295-550(1)(b) or (c), or paragraphs 295-550(5)(b)
+or (c), of the ITAA 1997 apply to income derived by the SMSF for the 2018–19 and later
+income years from an asset that is subject to that LRBA.
+18.    The following examples illustrate how the Safe Harbours apply in conjunction with
+the opportunity for SMSF trustees to review and revise the terms of their LRBAs
+before 31 January 2017.
+
+
+Example 1 – real property
+19.    A complying SMSF borrowed money under an LRBA on terms consistent with
+section 67A of the SISA. It used the funds to acquire commercial property valued at $500,000
+on 1 July 2011.
+        •       The borrower is the SMSF trustee.
+        •       The lender is an SMSF member’s father (a related party).
+        •       A holding trust has been established, and the holding trust trustee is the
+                legal owner of the property until the borrowing is repaid.
+20.     The loan has the following features:
+        •       the total amount borrowed is $500,000
+        •       the SMSF met all the costs associated with purchasing the property from
+                existing fund assets
+        •       the loan is interest free
+        •       the principal is repayable at the end of the term of the loan, but may be
+                repaid earlier if the SMSF chooses to do so
+        •       the term of the loan is 25 years
+
+Practical Compliance Guideline PCG 2016/5                                          Page 6 of 11
+        •       the lender’s recourse against the SMSF is limited to the rights relating to the
+                property held in the holding trust, and
+        •       the loan agreement is in writing.
+21.     We do not consider that this LRBA has been established or maintained on arm’s length
+terms. The income earned from the property, which is rented to an unrelated party, may give
+rise to NALI.
+22.     As at 1 July 2015, the property was valued at $643,000.
+23.     The SMSF has not repaid any of the principal since the loan commenced.
+24.    If, after considering TD 2016/16, it is determined that the income earned from the
+property is in fact NALI, to avoid having to report NALI for the current year (and prior years) the
+Fund has a number of options.
+
+
+Option 1 – Alter the terms of the loan to meet guidelines
+25.   The SMSF and the lender could alter the terms of the loan arrangement to meet Safe
+Harbour 1 for real property (see paragraph 6 of this Guideline).
+26.   To bring the terms of the loan into line with Safe Harbour 1, the trustees of the SMSF
+must ensure that:
+        •       The 70% LVR is met (in this case, the value of the property at 1 July 2015
+                may be used). Based on a property valuation of $643,000 at 1 July 2015,
+                the maximum the SMSF can borrow is $450,100. The SMSF needs to
+                ensure that required payments of principal and interest are actually made
+                and brought up to date by 31 January 2017.
+        •       The loan term cannot exceed 11 years from 1 July 2015. The SMSF must
+                recognise that the loan commenced four years earlier. An additional 11
+                years would not exceed the maximum 15-year term.
+        •       The SMSF can use a variable interest rate. Alternatively, it can alter the terms
+                of the loan to use a fixed rate of interest for a period that ensures the total
+                period for which the rate of interest is fixed does not exceed five years. The
+                loan must convert to a variable interest rate loan at the end of the nominated
+                period.
+        •       The interest rate of 5.75% per annum applies from 1 July 2015 to
+                30 June 2016. Calculation of interest payable for the purposes of making
+                required payments of principal and interest must take into account the
+                opening balance of $500,000, the remaining term of 11 years and the timing
+                of the capital repayment.
+        •       The new LRBA must continue under terms complying with the ATO’s
+                guidelines relating to real property at all times. For example, the SMSF must
+                ensure that it updates the interest rate used for the loan on 1 July each year
+                (if variable) or as appropriate (if fixed) and make monthly principal and
+                interest repayments accordingly.
+
+
+Option 2 – Refinance through a commercial lender
+27.    The fund could refinance the LRBA with a commercial lender, extinguish the original
+arrangement and pay the associated costs.
+28.    For any period after 1 July 2015 that the original loan remains in place, the SMSF must
+ensure that the terms of the loan are consistent with an arm’s length dealing, and relevant
+amounts of principal and interest are paid to the original lender.
+
+
+
+Practical Compliance Guideline PCG 2016/5                                           Page 7 of 11
+29.   The SMSF may choose to apply the terms set out under Safe Harbour 1 to calculate the
+amounts of principal and interest to be paid to the original lender for the relevant period.
+
+Option 3 – Pay out the LRBA
+30.    The SMSF may decide to repay the loan to the related party and bring the LRBA to an
+end before 31 January 2017.
+31.    For any period after 1 July 2015 that the original loan remains in place, the SMSF must
+ensure that the terms of the loan are consistent with an arm’s length dealing, and the relevant
+amounts of principal and interest are paid to the original lender.
+32.   The SMSF may choose to apply the terms set out under Safe Harbour 1 to calculate the
+amounts of principal and interest to be paid to the original lender for the relevant period.
+
+
+Example 2 – collection of listed shares
+33.    A complying SMSF borrowed money under an LRBA on terms consistent with
+section 67A of the SISA. It used the funds to acquire a collection of stock exchange-listed
+shares valued at $100,000 on 1 July 2011.
+        •       The borrower is the SMSF trustee.
+        •       The lender is an SMSF member (a related party).
+        •       A holding trust has been established, and the holding trust trustee is the
+                legal owner of the collection of shares until the borrowing is repaid.
+34.     The loan has the following features:
+        •       the total amount borrowed is $80,000
+        •       the SMSF met all the costs associated with purchasing the shares, and
+                provided $20,000 from existing fund assets towards the purchase price
+        •       interest was payable, but only at a fixed rate of 2% per annum for the entire
+                term of the loan
+        •       the principal is repayable at the end of the term of the loan, but may be
+                repaid earlier if the SMSF chooses to do so
+        •       the term of the loan is for 10 years
+        •       the lender’s recourse against the SMSF is limited to the rights relating to the
+                collection of shares held in the Holding Trust, and
+        •       the loan agreement is in writing.
+35.    We do not consider that this LRBA has been established or maintained on arm’s length
+terms. The dividend income earned from these shares may give rise to NALI.
+36.     As at 1 July 2015, the parcel of shares was valued at $120,000.
+37.     The SMSF has not repaid any of the principal since the loan commenced.
+38.    If, after considering TD 2016/16, it is determined that the dividend income is in fact
+NALI, to avoid having to report NALI for the current year (and prior years) the SMSF has a
+number of options.
+
+
+Option 1 – Alter the terms of the loan to meet guidelines
+39.   The SMSF and the related party could alter the terms of the loan to comply with Safe
+Harbour 2 for a collection of stock exchange listed shares (see paragraph 8 of this Guideline).
+
+
+
+Practical Compliance Guideline PCG 2016/5                                           Page 8 of 11
+40.   To bring the terms of the loan into line with Safe Harbour 2, the trustees of the SMSF
+must ensure that:
+        •       The 50% LVR is met (in this case the value of the collection of shares at
+                1 July 2015 may be used). Based on a market valuation of $120,000 at
+                1 July 2015, the maximum the SMSF can borrow is $60,000. The SMSF must
+                ensure that required payments of principal and interest are actually made and
+                brought up to date by 31 January 2017.
+        •       The loan term cannot exceed three years from 1 July 2015. The SMSF must
+                recognise that the loan commenced four years earlier. An additional three
+                years would not exceed the maximum seven-year term.
+        •       The interest rate must be a variable interest rate, as the loan has already
+                been fixed for four years from when it commenced (that is, 1 July 2011).
+        •       The interest rate of 7.75% per annum applies from 1 July 2015 to
+                30 June 2016. Calculation of interest payable for the purposes of making
+                required payments of principal and interest must take into account the
+                opening balance of $80,000, the remaining term of three years, the timing of
+                the capital repayment and the interest already paid.
+        •       The new LRBA must continue under terms complying with the ATO’s
+                guidelines relating to listed shares at all times. For example, the SMSF must
+                ensure that it updates the interest rate used for the loan on 1 July each year
+                and make monthly principal and interest repayments accordingly.
+
+
+Option 2 – Refinance through a commercial lender
+41.    The SMSF could refinance the LRBA with a commercial lender, extinguish the original
+arrangement and pay the associated costs.
+42.    For any period after 1 July 2015 that the original loan remains in place, the SMSF must
+ensure that the terms of the loan are consistent with an arm’s length dealing, and that principal
+and interest amounts are paid to the original lender.
+43.   The SMSF may choose to apply the terms set out in Safe Harbour 2 to calculate the
+amounts of principal and interest to be paid to the original lender for the relevant period.
+
+
+Option 3 – Pay out the LRBA
+44.    The SMSF may decide to repay the loan to the related party and bring the LRBA to an
+end before 31 January 2017.
+45.    For any period after 1 July 2015 that the original loan remains in place, the SMSF must
+ensure that the terms of the loan are consistent with an arm’s length dealing, and the relevant
+amounts of principal and interest for that period are paid to the original lender.
+46.   The SMSF may choose to apply the terms set out in Safe Harbour 2 to calculate the
+amounts of principal and interest to be paid to the original lender for the relevant period.
+
+
+
+
+Commissioner of Taxation
+28 September 2016
+
+
+
+
+Practical Compliance Guideline PCG 2016/5                                          Page 9 of 11
+Amendment History
+
+Date                    Part                            Comment
+21 March 2022           Paragraph 17A                   Paragraph inserted to reflect an extension
+                                                        (to later income years) of the
+                                                        Commissioner’s compliance approach to
+                                                        the application of the NALI provisions to
+                                                        LRBAs entered into prior to the 2014–15
+                                                        income year and that were made
+                                                        consistent with an arm’s length dealing
+                                                        by 31 January 2017.
+                        Various                         Minor updates made throughout to align
+                                                        with current ATO style.
+28 September 2016       More information                Insertion of reference to TD 2016/6.
+                                                        Deletion of references to ATO ID 2015/27
+                                                        and ATO ID 2015/28.
+                        Background and additional       Changes made to reflect publication of
+                        information                     TD 2016/6 as replacement for withdrawn
+                                                        ATO IDs 2015/27 and 2015/28.
+                        ATO’s compliance approach       References to 30 June 2016 changed to
+                        for LRBAs established before    31 January 2017.
+                        30 June 2016
+                        Example 1 – real property       Changes made to reflect publication of
+                                                        TD 2016/6 as replacement for withdrawn
+                                                        ATO IDs 2015/27 and 2015/28.
+                        Option 1 – Alter the terms of   Changes made to reflect change of date for
+                        the loan to meet guidelines     review and revision of terms of LRBAs from
+                                                        30 June 2016 to 31 January 2017.
+                        Option 2 – Refinance through    Changes made to reflect change of date for
+                        a commercial lender             review and revision of terms of LRBAs from
+                                                        30 June 2016 to 31 January 2017.
+                        Option 3 – Pay out the LRBA     Changes made to reflect change of date for
+                                                        review and revision of terms of LRBAs from
+                                                        30 June 2016 to 31 January 2017.
+                        Example 2 – collection of       Changes made to reflect publication of
+                        listed shares                   TD 2016/6 as replacement for withdrawn
+                                                        ATO IDs 2015/27 and 2015/28.
+                        Option 1 – Alter the terms of   Changes made to reflect change of date for
+                        the loan to meet guidelines     review and revision of terms of LRBAs from
+                                                        30 June 2016 to 31 January 2017.
+                        Option 2 – Refinance through    Changes made to reflect change of date for
+                        a commercial lender             review and revision of terms of LRBAs from
+                                                        30 June 2016 to 31 January 2017.
+                        Option 3 – Pay out the LRBA     Changes made to reflect change of date for
+                                                        review and revision of terms of LRBAs from
+                                                        30 June 2016 to 31 January 2017.
+                        References                      Updated
+
+
+
+
+Practical Compliance Guideline PCG 2016/5                                              Page 10 of 11
+References
+ATOlaw topic(s)                     Superannuation ~~ Self-managed super funds ~~ Restrictions ~~
+                                    Borrowings
+Legislative references              ITAA 1997
+                                    ITAA 1997 295-550
+                                    ITAA 1997 295-550(1)
+                                    SISA 1993
+                                    SISA 1993 67A
+                                    SISA 1993 67(4A)
+                                    SISA 1993 67B
+Related Rulings/Determinations      SMSFR 2012/1
+                                    TD 2016/16
+Other references                    ATO ID 2015/27 (withdrawn)
+                                    ATO ID 2015/28 (withdrawn)
+                                    SPR 2014/1
+
+© AUSTRALIAN TAXATION OFFICE FOR THE COMMONWEALTH OF AUSTRALIA
+
+You are free to copy, adapt, modify, transmit and distribute this material as you wish (but not in any
+way that suggests the ATO or the Commonwealth endorses you or any of your services or
+products).
+
+
+
+
+Practical Compliance Guideline PCG 2016/5                                                 Page 11 of 11
+

@@ -1,0 +1,28 @@
+{
+  "about": "Copies of the link-pack documents, kept so the build can read them. Each file's 'covers' lists the link-pack ids it satisfies. 'partial' means it has a summary but the full page is still wanted.",
+  "files": [
+    { "file": "tr-2000-2.pdf", "covers": ["tr-2000-2"] },
+    { "file": "tr-95-25.pdf", "covers": ["tr-95-25"] },
+    { "file": "td-2012-1.pdf", "covers": ["td-2012-1"] },
+    { "file": "tr-97-23.pdf", "covers": ["tr-97-23"] },
+    { "file": "rental-expenses.pdf", "covers": ["rental-interest-expenses"], "note": "Whole 'Rental expenses' section (73 pages): interest, borrowing expenses, repairs, capital works, depreciating assets." },
+    { "file": "smsfr-2012-1.pdf", "covers": ["smsfr-2012-1"], "note": "ATO says it is reviewing this ruling because LRBA law changes commence 10 August." },
+    { "file": "pcg-2016-5.pdf", "covers": ["pcg-2016-5"] },
+    { "file": "tr-2022-4.pdf", "covers": ["tr-2022-4"], "note": "ATO says this ruling is under review after Commissioner of Taxation v Bendel [2026] HCA 18." },
+    { "file": "pcg-2022-2.pdf", "covers": ["pcg-2022-2"] },
+    { "file": "tax-rates-residents.pdf", "covers": ["tax-rates-residents"] },
+    { "file": "private-health-rebate.pdf", "covers": ["private-health-rebate"] },
+    { "file": "work-related-deductions.pdf", "covers": ["work-related-deductions", "wfh-expenses", "wfh-fixed-rate"], "partial": ["self-education"] },
+    { "file": "car-own-or-lease.pdf", "covers": ["car-own-or-lease", "car-cents-per-km"], "note": "Whole 'Motor vehicle and car expenses' section." },
+    { "file": "working-as-an-employee.pdf", "covers": ["salary-sacrifice", "income-statements"] },
+    { "file": "super-new-legislation.pdf", "covers": [], "note": "Extra: new super laws from 1 July 2026 (Division 296 tax on balances over $3m, payday super, LRBA changes)." },
+    { "file": "nsw-land-tax-rates.pdf", "covers": ["nsw-land-tax-rates"] },
+    { "file": "nsw-land-tax-trusts.pdf", "covers": ["nsw-land-tax-trusts"] },
+    { "file": "nsw-transfer-duty.pdf", "covers": ["nsw-transfer-duty"] },
+    { "file": "apra-apg-223.pdf", "covers": ["apra-apg-223"], "note": "Fetched directly from apra.gov.au." },
+    { "file": "apra-macroprudential.txt", "covers": ["apra-macroprudential"], "note": "Fetched directly from apra.gov.au (web page saved as text)." }
+  ],
+  "notes": {
+    "asic-rg-209": "Only the web landing page was received. The guide itself is the PDF behind its 'Download' button, hosted on download.asic.gov.au."
+  }
+}
