@@ -10,7 +10,7 @@ for (const f of idx.files) {
   for (const id of f.covers) have.set(id, f.file);
   for (const id of f.partial || []) partial.add(id);
 }
-const url = (l) => (l.urlPattern && l.latestYear ? l.urlPattern.replace("{YEAR}", l.latestYear) : l.url);
+const url = (l) => l.download || (l.urlPattern && l.latestYear ? l.urlPattern.replace("{YEAR}", l.latestYear) : l.url);
 const needed = pack.links.filter((l) => !have.has(l.id) && l.kind !== "index");
 const got = pack.links.filter((l) => have.has(l.id));
 const lines = [

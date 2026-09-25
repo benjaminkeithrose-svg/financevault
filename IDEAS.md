@@ -136,6 +136,27 @@ has access to is the likely route. Decide before building.
 After the ATO documents are in: a fresh gap analysis across the whole
 program, using them as the reference — what to add, fix or remove.
 
+**Found while loading the documents (to act on in the gap analysis):**
+- **SMSF borrowing (LRBA) changed from 10 August 2026:** new LRBAs can
+  only buy business real property, not residential. The SMSF property
+  pages (and idea 7's SMSF borrowing) need to say so. SMSFR 2012/1 is
+  under ATO review because of it.
+- **Division 296 tax from 1 July 2026:** an extra 15% on earnings for
+  super balances over $3m (another 10% over $10m). The SMSF pages
+  should flag members near $3m.
+- **Payday super from 1 July 2026:** employers pay super with each pay.
+  The payslip tracking could check super arrives each pay.
+- **PCG 2026/2 (20 May 2026):** ATO-accepted ways to split deductions
+  for a property that's partly rented and partly private. Added to the
+  link pack.
+- **TR 2022/4 (trust distributions, section 100A)** is under review
+  after the High Court's Bendel decision (June 2026). Structure advice
+  (idea 9) should say so until the ATO updates it.
+- **NSW land tax thresholds are frozen** at $1,075,000 (general) and
+  $6,571,000 (premium). Discretionary trusts get no threshold.
+- The app's 2026–27 super caps ($32,500, $130,000, $2.1m transfer
+  balance cap) match the ATO — no change needed.
+
 ---
 
 ## 7. Borrowing capacity and equity release estimate (residential and commercial)
