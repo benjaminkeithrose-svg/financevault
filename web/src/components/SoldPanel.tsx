@@ -17,6 +17,8 @@ const str = (v?: number | null) => (v === null || v === undefined ? "" : String(
 export function SoldPanel({ asset, onChange }: { asset: Asset; onChange: () => void }) {
   const sold = !!asset.disposalDate;
   const isProperty = asset.assetType === "PROPERTY";
+  // Buildings (homes and commercial) get the building write-off, which has to come off the cost on sale.
+  const hasBuilding = isProperty || asset.assetType === "COMMERCIAL_PROPERTY";
   const [editing, setEditing] = useState(false);
   const [sale, setSale] = useState<AssetSale | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -41,6 +43,7 @@ export function SoldPanel({ asset, onChange }: { asset: Asset; onChange: () => v
         sellingCosts: num(form.sellingCosts),
         buyingCosts: num(form.buyingCosts),
         improvementsCost: num(form.improvementsCost),
+        capitalWorksClaimed: hasBuilding ? num(form.capitalWorksClaimed) : null,
         mainResidence: isProperty ? form.mainResidence : null,
         mainResidencePercent: isProperty && form.mainResidence === "PARTIAL" ? num(form.mainResidencePercent) : null,
       });
@@ -102,6 +105,16 @@ export function SoldPanel({ asset, onChange }: { asset: Asset; onChange: () => v
               <label>Capital improvements over the years</label>
               <input type="number" value={form.improvementsCost} onChange={(e) => setForm({ ...form, improvementsCost: e.target.value })} />
             </div>
+            {hasBuilding && (
+              <div>
+                <label>Building write-off claimed over the years (capital works)</label>
+                <input
+                  type="number"
+                  value={form.capitalWorksClaimed}
+                  onChange={(e) => setForm({ ...form, capitalWorksClaimed: e.target.value })}
+                />
+              </div>
+            )}
             {isProperty && (
               <div>
                 <label>Was it your home?</label>
@@ -126,8 +139,15 @@ export function SoldPanel({ asset, onChange }: { asset: Asset; onChange: () => v
             )}
           </div>
           <p className="cap-explain">
-            Cost base = purchase price {formatCurrency(asset.acquisitionCost)} + buying costs + improvements + selling costs.
+            Cost base = purchase price {formatCurrency(asset.acquisitionCost)} + buying costs + improvements + selling costs
+            {hasBuilding ? " − building write-off claimed" : ""}.
           </p>
+          {hasBuilding && (
+            <p className="cap-explain">
+              The building write-off is the 2.5% (or 4%) a year claimed on the building in each tax return. It's on your
+              depreciation schedule or in your accountant's workpapers. The ATO requires it to come off the cost when you sell.
+            </p>
+          )}
           {error && <div className="message-box warning">{error}</div>}
           <div className="toolbar" style={{ marginTop: 12 }}>
             <button className="btn" onClick={save}>
@@ -213,6 +233,7 @@ function initial(a: Asset) {
     sellingCosts: str(a.sellingCosts),
     buyingCosts: str(a.buyingCosts),
     improvementsCost: str(a.improvementsCost),
+    capitalWorksClaimed: str(a.capitalWorksClaimed),
     mainResidence: (a.mainResidence ?? "NONE") as string,
     mainResidencePercent: str(a.mainResidencePercent),
   };

@@ -44,6 +44,7 @@ export function LiabilityDetail() {
         holdingTrustEntityId: l.holdingTrustEntityId || "",
         fixedPeriodEnds: toDateInput(l.fixedPeriodEnds),
         maturityDate: toDateInput(l.maturityDate),
+        startDate: toDateInput(l.startDate),
         notes: l.notes || "",
       });
     }).catch((e: Error) => setLoadError(e.message));
@@ -87,6 +88,7 @@ export function LiabilityDetail() {
         ...(isLrba ? { holdingTrustEntityId: form.holdingTrustEntityId || null } : {}),
         fixedPeriodEnds: form.fixedPeriodEnds ? new Date(form.fixedPeriodEnds).toISOString() : null,
         maturityDate: form.maturityDate ? new Date(form.maturityDate).toISOString() : null,
+        startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
         notes: form.notes || null,
       });
       load();
@@ -200,6 +202,10 @@ export function LiabilityDetail() {
               <p style={{ color: "var(--text-muted)", fontSize: 13 }}>About {formatCurrency(monthly)} a month.</p>
             )}
             <div className="grid grid-2">
+              <div>
+                <label>{isLrba ? "Date the fund entered into the loan" : "Start date (when the loan was taken out)"}</label>
+                <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
+              </div>
               <div>
                 <label>Fixed period ends</label>
                 <input

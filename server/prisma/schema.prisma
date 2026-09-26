@@ -141,6 +141,8 @@ model PayPeriodEntry {
   documentId  String?
   document    Document? @relation(fields: [documentId], references: [id])
   amount      Float?
+  // Payday super (from 1 July 2026): whether super arrived with this pay.
+  superPaid   Boolean?
   notes       String?
   createdAt   DateTime  @default(now())
 
@@ -414,6 +416,9 @@ model Asset {
   buyingCosts          Float? // stamp duty, legal and other costs of buying — part of the cost base
   improvementsCost     Float? // capital improvements over the years — part of the cost base
   sellingCosts         Float? // agent, advertising, legal costs of selling
+  // Building write-off (capital works) deductions claimed or claimable over
+  // the years. The ATO requires these to come off the cost base on sale.
+  capitalWorksClaimed  Float?
   mainResidence        String? // NONE | FULL | PARTIAL — the main residence exemption on sale
   mainResidencePercent Float? // PARTIAL: share of the ownership period it was the home
   depreciationInfo     String? // JSON: method, rate, effective life
@@ -485,6 +490,8 @@ model Liability {
   fixedPeriodEnds              DateTime?
   repaymentAmount              Float?
   maturityDate                 DateTime?
+  // When the loan was taken out (for an SMSF, when the LRBA was entered into).
+  startDate                    DateTime?
   securityPropertyId           String?
   securityCommercialPropertyId String?
   // The vehicle (car, boat, jet ski…) a vehicle or personal loan paid for.
@@ -823,6 +830,10 @@ model PlanProperty {
   purchasePrice         Float
   initialLvr            Float
   initialRent           Float? // null = derive from purchasePrice * plan.capRate
+  // Buying costs, so the cash needed isn't just the deposit.
+  transferDuty          Float? // null = estimate from the NSW general rates
+  otherBuyingCosts      Float? // legal, inspections, lender fees
+  gstPayable            Boolean @default(false) // false = GST-free going concern
 
   // Once actually purchased, link to the real record so the projection can
   // show actuals (from its saved AnnualPropertySnapshots) alongside the

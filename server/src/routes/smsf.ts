@@ -17,6 +17,8 @@ import {
   pensionYear,
   rulesFor,
   shiftFy,
+  largeBalanceFlag,
+  lrbaPropertyWarning,
 } from "../services/superRules.js";
 
 /**
@@ -121,6 +123,9 @@ smsfRouter.get(
       const ownYears = years.filter((y) => y.fundId === fund.id).sort((a, b) => a.fyLabel.localeCompare(b.fyLabel));
       const pensionStarts = fund.smsfPensions.filter((p) => p.personId === person.id && p.kind === "ACCOUNT_BASED");
       const firstStart = pensionStarts[0]?.startDate;
+      // The latest total super balance recorded up to the year shown.
+      const tsbYears = Object.keys(history.totalSuperBalance).filter((l) => l <= year).sort();
+      const latestTsb = tsbYears.length ? history.totalSuperBalance[tsbYears[tsbYears.length - 1]] : null;
       return {
         personId: person.id,
         name: person.name,
@@ -143,6 +148,7 @@ smsfRouter.get(
               capYear: fyLabelFor(firstStart),
             }
           : null,
+        largeBalance: largeBalanceFlag(latestTsb, year),
       };
     });
 
@@ -176,6 +182,7 @@ smsfRouter.get(
     const lrba = fund.liabilities.map((l) => {
       const asset = l.securityProperty?.asset ?? l.securityCommercialProperty?.asset ?? null;
       const rent = annualRent(l);
+      const propertyWarning = lrbaPropertyWarning(l.startDate, !!l.securityProperty);
       const monthly = monthlyRepayment(l);
       const repayments = monthly !== null ? monthly * 12 : null;
       return {
@@ -197,6 +204,8 @@ smsfRouter.get(
         annualRent: rent,
         annualRepayments: repayments,
         rentCover: rent !== null && repayments ? rent / repayments : null,
+        startDate: l.startDate,
+        propertyWarning,
       };
     });
 
@@ -223,6 +232,7 @@ smsfRouter.get(
       if (m.nonConcessional.remaining < 0) checks.push(`${m.name} is over the non-concessional cap for ${year}.`);
       if (m.transferBalance && m.transferBalance.used > m.transferBalance.cap) checks.push(`${m.name}'s pensions started with more than the transfer balance cap.`);
     }
+    for (const l of lrba.filter((l) => l.propertyWarning?.level === "WARNING")) checks.push(`${l.name}: ${l.propertyWarning!.note}`);
     for (const p of pensions.filter((p) => p.overMaximum)) checks.push(`${p.personName}'s transition to retirement pension has paid more than its 10% maximum this year.`);
 
     const earliest = [

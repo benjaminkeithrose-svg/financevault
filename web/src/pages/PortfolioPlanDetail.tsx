@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { api, CommercialProperty, PortfolioPlan, PortfolioPlanProjection } from "../api/client.js";
+import { api, CommercialProperty, PlanProperty, PlanPropertyProjection, PortfolioPlan, PortfolioPlanProjection } from "../api/client.js";
 import { formatCurrency, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 
@@ -15,7 +15,16 @@ function toPercentInput(v: number): string {
   return (Math.round(v * 100 * 10000) / 10000).toString();
 }
 
-const emptyPropertyForm = { name: "", acquisitionYearNumber: "1", purchasePrice: "", initialLvr: "70", initialRent: "" };
+const emptyPropertyForm = {
+  name: "",
+  acquisitionYearNumber: "1",
+  purchasePrice: "",
+  initialLvr: "70",
+  initialRent: "",
+  transferDuty: "",
+  otherBuyingCosts: "",
+  gstPayable: false,
+};
 const emptyRefinanceForm = { yearNumber: "", targetLvr: "" };
 const emptyDrawForm = { yearNumber: "", amount: "", interestRate: "", sourceCommercialPropertyId: "" };
 
@@ -111,6 +120,9 @@ export function PortfolioPlanDetail() {
       purchasePrice: Number(propertyForm.purchasePrice),
       initialLvr: Number(propertyForm.initialLvr) / 100,
       initialRent: propertyForm.initialRent ? Number(propertyForm.initialRent) : null,
+      transferDuty: propertyForm.transferDuty === "" ? null : Number(propertyForm.transferDuty),
+      otherBuyingCosts: propertyForm.otherBuyingCosts === "" ? null : Number(propertyForm.otherBuyingCosts),
+      gstPayable: propertyForm.gstPayable,
     });
     setPropertyForm(emptyPropertyForm);
     setShowPropertyForm(false);
@@ -287,6 +299,11 @@ export function PortfolioPlanDetail() {
                     {formatCurrency(pp.purchasePrice)} at {pct(pp.initialLvr)} LVR
                     {pp.initialRent ? ` · ${formatCurrency(pp.initialRent)} rent` : " · rent from cap rate"}
                   </div>
+                  <BuyingCosts
+                    property={pp}
+                    purchase={projection?.properties.find((p) => p.planPropertyId === pp.id)?.purchase ?? null}
+                    onChange={load}
+                  />
                   <div style={{ marginTop: 8 }}>
                     <label style={{ marginTop: 0 }}>Link to a real Commercial Property (once purchased)</label>
                     <select
@@ -505,6 +522,32 @@ export function PortfolioPlanDetail() {
                 />
               </div>
             </div>
+            <div className="grid grid-2">
+              <div>
+                <label>Stamp duty (blank = estimate at NSW rates)</label>
+                <input
+                  type="number"
+                  value={propertyForm.transferDuty}
+                  onChange={(e) => setPropertyForm({ ...propertyForm, transferDuty: e.target.value })}
+                />
+              </div>
+              <div>
+                <label>Other buying costs (legal, inspections, lender fees)</label>
+                <input
+                  type="number"
+                  value={propertyForm.otherBuyingCosts}
+                  onChange={(e) => setPropertyForm({ ...propertyForm, otherBuyingCosts: e.target.value })}
+                />
+              </div>
+            </div>
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={propertyForm.gstPayable}
+                onChange={(e) => setPropertyForm({ ...propertyForm, gstPayable: e.target.checked })}
+              />
+              GST payable (not sold as a going concern)
+            </label>
             <div className="toolbar" style={{ marginTop: 12 }}>
               <button className="btn" onClick={addProperty}>
                 Add property
@@ -593,6 +636,7 @@ export function PortfolioPlanDetail() {
           </div>
 
           <h3>Portfolio totals by year</h3>
+          <div className="table-scroll">
           <table>
             <thead>
               <tr>
@@ -606,6 +650,7 @@ export function PortfolioPlanDetail() {
                 <th>Net after funding</th>
                 <th>Contributions to date</th>
                 <th>Available for redeployment</th>
+                <th>Cash to buy</th>
               </tr>
             </thead>
             <tbody>
@@ -621,10 +666,12 @@ export function PortfolioPlanDetail() {
                   <td>{y.totalFundingCost ? formatCurrency(y.totalCashflowAfterFunding) : "—"}</td>
                   <td>{formatCurrency(y.cumulativeContributions)}</td>
                   <td>{formatCurrency(y.totalAvailableForRedeployment)}</td>
+                  <td>{y.cashToBuy ? formatCurrency(y.cashToBuy) : "—"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
@@ -639,6 +686,95 @@ export function PortfolioPlanDetail() {
                   {pp.name} → {pp.commercialProperty?.name}
                 </Link>
               ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The cash a planned purchase needs beyond the loan: deposit, stamp duty
+ * (estimated at NSW rates unless entered), GST if it isn't a going concern,
+ * and other buying costs. Editable in place for properties already added.
+ */
+function BuyingCosts({
+  property,
+  purchase,
+  onChange,
+}: {
+  property: PlanProperty;
+  purchase: PlanPropertyProjection["purchase"] | null;
+  onChange: () => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({ transferDuty: "", otherBuyingCosts: "", gstPayable: false });
+
+  function start() {
+    setForm({
+      transferDuty: property.transferDuty === null || property.transferDuty === undefined ? "" : String(property.transferDuty),
+      otherBuyingCosts: property.otherBuyingCosts ? String(property.otherBuyingCosts) : "",
+      gstPayable: !!property.gstPayable,
+    });
+    setEditing(true);
+  }
+
+  async function save() {
+    await api.portfolioPlans.updateProperty(property.id, {
+      transferDuty: form.transferDuty === "" ? null : Number(form.transferDuty),
+      otherBuyingCosts: form.otherBuyingCosts === "" ? null : Number(form.otherBuyingCosts),
+      gstPayable: form.gstPayable,
+    });
+    setEditing(false);
+    onChange();
+  }
+
+  if (!purchase) return null;
+  const parts = [
+    `deposit ${formatCurrency(purchase.deposit)}`,
+    `stamp duty ${formatCurrency(purchase.transferDuty)}${purchase.dutyEstimated ? ` (estimated, NSW ${purchase.dutyRatesYear} rates)` : ""}`,
+    purchase.gst ? `GST ${formatCurrency(purchase.gst)}` : null,
+    purchase.otherCosts ? `other costs ${formatCurrency(purchase.otherCosts)}` : null,
+  ].filter(Boolean);
+
+  return (
+    <div style={{ marginTop: 8 }}>
+      <div style={{ fontSize: 13 }}>
+        <strong>Cash needed to buy: {formatCurrency(purchase.cashNeeded)}</strong>
+        <div style={{ color: "var(--text-muted)" }}>{parts.join(" + ")}</div>
+      </div>
+      {!editing && (
+        <button className="link-button" onClick={start}>
+          Change buying costs
+        </button>
+      )}
+      {editing && (
+        <div className="sub-form">
+          <div className="grid grid-2">
+            <div>
+              <label>Stamp duty (blank = estimate at NSW rates)</label>
+              <input type="number" value={form.transferDuty} onChange={(e) => setForm({ ...form, transferDuty: e.target.value })} />
+            </div>
+            <div>
+              <label>Other buying costs (legal, inspections, lender fees)</label>
+              <input type="number" value={form.otherBuyingCosts} onChange={(e) => setForm({ ...form, otherBuyingCosts: e.target.value })} />
+            </div>
+          </div>
+          <label className="checkbox-row">
+            <input type="checkbox" checked={form.gstPayable} onChange={(e) => setForm({ ...form, gstPayable: e.target.checked })} />
+            GST payable (not sold as a going concern)
+          </label>
+          <p className="cap-explain">
+            A tenanted commercial property sold as a going concern is usually GST-free. If GST is charged, it's paid at
+            settlement even if you claim it back later.
+          </p>
+          <div className="toolbar" style={{ marginTop: 8 }}>
+            <button className="btn" onClick={save}>
+              Save
+            </button>
+            <button className="btn secondary" onClick={() => setEditing(false)}>
+              Cancel
+            </button>
           </div>
         </div>
       )}

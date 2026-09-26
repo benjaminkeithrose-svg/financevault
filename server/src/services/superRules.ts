@@ -313,3 +313,82 @@ export function pensionYear(p: PensionInput, year: string, openingBalance: numbe
   const maximum = p.kind === "TRANSITION_TO_RETIREMENT" && !retirementPhase && basis !== null ? roundTo10(basis * 0.1) : null;
   return { active: true, basis, rate, minimum, maximum, retirementPhase, notes };
 }
+
+// --- Rules that started in 2026 -------------------------------------------------
+
+/**
+ * Division 296 (better targeted super concessions), law from 1 July 2026: an
+ * extra 15% tax on the share of earnings from a total super balance above
+ * the large super balance threshold, and another 10% above the very large
+ * one. Both are indexed; these are the 2026-27 figures. The fund's
+ * administrator and the ATO work out the tax — this only flags who's near.
+ * Source: ATO new legislation, "Better targeted superannuation concessions".
+ */
+export const DIV296_FIRST_YEAR = "2026-27";
+export const LARGE_SUPER_BALANCE_THRESHOLD = 3_000_000;
+export const VERY_LARGE_SUPER_BALANCE_THRESHOLD = 10_000_000;
+/** Flag balances within this share of the threshold, so it's seen coming. */
+const NEAR_SHARE = 0.9;
+
+export interface LargeBalanceFlag {
+  balance: number;
+  threshold: number;
+  level: "NEAR" | "OVER" | "VERY_LARGE";
+  note: string;
+}
+
+export function largeBalanceFlag(totalSuperBalance: number | null | undefined, year: string): LargeBalanceFlag | null {
+  if (totalSuperBalance === null || totalSuperBalance === undefined || year < DIV296_FIRST_YEAR) return null;
+  const b = totalSuperBalance;
+  if (b > VERY_LARGE_SUPER_BALANCE_THRESHOLD) {
+    return {
+      balance: b,
+      threshold: VERY_LARGE_SUPER_BALANCE_THRESHOLD,
+      level: "VERY_LARGE",
+      note: `Total super balance ${money(b)} is over ${money(VERY_LARGE_SUPER_BALANCE_THRESHOLD)}: Division 296 adds 15% tax on the share of earnings above ${money(LARGE_SUPER_BALANCE_THRESHOLD)}, and another 10% above ${money(VERY_LARGE_SUPER_BALANCE_THRESHOLD)}. The ATO works it out and sends the assessment.`,
+    };
+  }
+  if (b > LARGE_SUPER_BALANCE_THRESHOLD) {
+    return {
+      balance: b,
+      threshold: LARGE_SUPER_BALANCE_THRESHOLD,
+      level: "OVER",
+      note: `Total super balance ${money(b)} is over ${money(LARGE_SUPER_BALANCE_THRESHOLD)}: from 1 July 2026, Division 296 adds 15% tax on the share of earnings above that. The ATO works it out and sends the assessment.`,
+    };
+  }
+  if (b >= LARGE_SUPER_BALANCE_THRESHOLD * NEAR_SHARE) {
+    return {
+      balance: b,
+      threshold: LARGE_SUPER_BALANCE_THRESHOLD,
+      level: "NEAR",
+      note: `Total super balance ${money(b)} is close to ${money(LARGE_SUPER_BALANCE_THRESHOLD)}. Above that, Division 296 (from 1 July 2026) adds 15% tax on the share of earnings over it — worth planning contributions and withdrawals with your adviser.`,
+    };
+  }
+  return null;
+}
+
+/**
+ * LRBA change, law from 25 June 2026: an SMSF limited recourse borrowing
+ * arrangement entered into on or after 10 August 2026 can only buy business
+ * real property — not residential. Earlier arrangements aren't affected.
+ * Source: ATO new legislation, "Limited Recourse Borrowing Arrangement
+ * (LRBA) Provisions".
+ */
+export const LRBA_BUSINESS_PROPERTY_ONLY_FROM = new Date(Date.UTC(2026, 7, 10));
+
+export function lrbaPropertyWarning(startDate: Date | null, residential: boolean): { level: "WARNING" | "CHECK"; note: string } | null {
+  if (!residential) return null;
+  if (!startDate) {
+    return {
+      level: "CHECK",
+      note: "Record when this loan was set up. SMSF borrowing arrangements entered into from 10 August 2026 can only buy business real property, not residential.",
+    };
+  }
+  if (startDate >= LRBA_BUSINESS_PROPERTY_ONLY_FROM) {
+    return {
+      level: "WARNING",
+      note: "This loan started on or after 10 August 2026, when SMSF borrowing to buy residential property stopped being allowed. Check this with your SMSF adviser now.",
+    };
+  }
+  return null;
+}

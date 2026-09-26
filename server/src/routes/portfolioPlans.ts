@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
+import { NSW_DUTY_RATES_YEAR, nswTransferDuty } from "../services/nswDuty.js";
 
 export const portfolioPlansRouter = Router();
 
@@ -101,6 +102,9 @@ const planPropertyInput = z.object({
   purchasePrice: z.number(),
   initialLvr: z.number().min(0).max(1.2),
   initialRent: z.number().optional().nullable(),
+  transferDuty: z.number().min(0).optional().nullable(),
+  otherBuyingCosts: z.number().min(0).optional().nullable(),
+  gstPayable: z.boolean().optional(),
   commercialPropertyId: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
 });
@@ -210,6 +214,36 @@ portfolioPlansRouter.delete(
 // per property and at the portfolio level purely as information to help the
 // user judge when they could act, same as the source material.
 // ---------------------------------------------------------------------------
+
+/**
+ * Cash needed to buy a planned property: the deposit plus the buying costs
+ * the loan doesn't cover. Duty is estimated from the NSW general rates unless
+ * a figure is entered. A tenanted commercial property sold as a going
+ * concern is GST-free (GSTR 2002/5); otherwise 10% GST is paid at settlement,
+ * even if a GST-registered buyer later claims it back.
+ */
+export function purchaseCosts(p: {
+  purchasePrice: number;
+  initialLvr: number;
+  transferDuty: number | null;
+  otherBuyingCosts: number | null;
+  gstPayable: boolean;
+}) {
+  const deposit = Math.max(0, p.purchasePrice * (1 - p.initialLvr));
+  const dutyEstimated = p.transferDuty === null || p.transferDuty === undefined;
+  const transferDuty = dutyEstimated ? nswTransferDuty(p.purchasePrice) : p.transferDuty!;
+  const gst = p.gstPayable ? p.purchasePrice * 0.1 : 0;
+  const otherCosts = p.otherBuyingCosts ?? 0;
+  return {
+    deposit,
+    transferDuty,
+    dutyEstimated,
+    dutyRatesYear: NSW_DUTY_RATES_YEAR,
+    gst,
+    otherCosts,
+    cashNeeded: deposit + transferDuty + gst + otherCosts,
+  };
+}
 
 function financialYearLabelForOffset(startLabel: string, yearNumber: number): string {
   const startYear = Number(startLabel.split("-")[0]);
@@ -326,6 +360,7 @@ portfolioPlansRouter.get(
         }
 
         const positivelyGearedFromYear = rows.find((r) => r.netCashflowAfterFunding >= 0)?.yearNumber ?? null;
+        const purchase = purchaseCosts(property);
 
         return {
           planPropertyId: property.id,
@@ -335,6 +370,7 @@ portfolioPlansRouter.get(
           commercialPropertyName: property.commercialProperty?.name ?? null,
           hasFunding: property.equityDraws.length > 0,
           positivelyGearedFromYear,
+          purchase,
           rows,
         };
       })
@@ -348,6 +384,9 @@ portfolioPlansRouter.get(
       const totalFundingCost = activeRows.reduce((s, r) => s + r.fundingCost, 0);
       const totalRedeploymentCapacity = activeRows.reduce((s, r) => s + r.redeploymentCapacity, 0);
       const cumulativeContributions = plan.annualContribution * yearNumber;
+      const cashToBuy = propertyRows
+        .filter((p) => p.acquisitionYearNumber === yearNumber)
+        .reduce((s, p) => s + p.purchase.cashNeeded, 0);
       return {
         yearNumber,
         numberOfProperties: activeRows.length,
@@ -359,6 +398,7 @@ portfolioPlansRouter.get(
         totalCashflowAfterFunding: totalCashflow - totalFundingCost,
         cumulativeContributions,
         totalAvailableForRedeployment: totalRedeploymentCapacity + cumulativeContributions,
+        cashToBuy,
       };
     });
 

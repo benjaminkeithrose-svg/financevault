@@ -39,6 +39,9 @@ const STATUS_LABEL: Record<PayPeriod["status"], string> = {
   PENDING: "Not yet due",
 };
 
+/** Pays from this date should come with their super (payday super). */
+const PAYDAY_SUPER_FROM = "2026-07-01";
+
 function PayPeriodRow({ period, onChange }: { period: PayPeriod; onChange: () => void }) {
   const { id } = useParams<{ id: string }>();
   const [amount, setAmount] = useState(period.entry?.amount?.toString() ?? "");
@@ -88,6 +91,23 @@ function PayPeriodRow({ period, onChange }: { period: PayPeriod; onChange: () =>
     onChange();
   }
 
+  // Shown ticked straight away; the list reloads once it's saved.
+  const [superPaid, setSuperPaid] = useState(!!period.entry?.superPaid);
+  useEffect(() => setSuperPaid(!!period.entry?.superPaid), [period.entry?.superPaid]);
+
+  async function toggleSuper(checked: boolean) {
+    if (!period.entry) return;
+    setSuperPaid(checked);
+    try {
+      await api.people.setPayPeriodSuper(period.entry.id, checked);
+    } catch {
+      setSuperPaid(!checked);
+    }
+    onChange();
+  }
+
+  const superApplies = period.status === "LOGGED" && period.periodEnd.slice(0, 10) >= PAYDAY_SUPER_FROM;
+
   async function openPicker() {
     setPickerOpen(true);
     setDocuments(await api.documents.list());
@@ -123,6 +143,16 @@ function PayPeriodRow({ period, onChange }: { period: PayPeriod; onChange: () =>
           )}
         </td>
         <td>
+          {superApplies ? (
+            <label className="checkbox-row" style={{ margin: 0 }}>
+              <input type="checkbox" checked={superPaid} onChange={(e) => toggleSuper(e.target.checked)} />
+              Paid
+            </label>
+          ) : (
+            "—"
+          )}
+        </td>
+        <td>
           {period.entry ? (
             <button className="btn secondary" onClick={undo}>
               Undo
@@ -145,7 +175,7 @@ function PayPeriodRow({ period, onChange }: { period: PayPeriod; onChange: () =>
       </tr>
       {pickerOpen && (
         <tr>
-          <td colSpan={5}>
+          <td colSpan={6}>
             <div className="card" style={{ margin: 0 }}>
               <div className="toolbar" style={{ justifyContent: "space-between" }}>
                 <strong>Choose a document to link as this period's payslip</strong>
@@ -436,6 +466,7 @@ export function PersonDetail() {
                       <th>Status</th>
                       <th>Document</th>
                       <th>Amount</th>
+                      <th>Super</th>
                       <th></th>
                     </tr>
                   </thead>

@@ -208,6 +208,8 @@ export interface PayPeriodEntry {
   documentId?: string | null;
   document?: Document | null;
   amount?: number | null;
+  /** Payday super: whether the super for this pay arrived in the fund. */
+  superPaid?: boolean | null;
   notes?: string | null;
   createdAt: string;
 }
@@ -585,6 +587,7 @@ export interface Asset {
   disposalValue?: number | null;
   buyingCosts?: number | null;
   improvementsCost?: number | null;
+  capitalWorksClaimed?: number | null;
   sellingCosts?: number | null;
   mainResidence?: "NONE" | "FULL" | "PARTIAL" | null;
   mainResidencePercent?: number | null;
@@ -718,6 +721,8 @@ export interface SmsfMember {
     remaining: number;
   };
   transferBalance: { used: number; cap: number; capYear: string } | null;
+  /** Division 296: over or near the $3m large super balance threshold. */
+  largeBalance: { balance: number; threshold: number; level: "NEAR" | "OVER" | "VERY_LARGE"; note: string } | null;
 }
 
 export interface SmsfPensionView {
@@ -757,6 +762,9 @@ export interface SmsfLrba {
   annualRent: number | null;
   annualRepayments: number | null;
   rentCover: number | null;
+  startDate: string | null;
+  /** New LRBAs from 10 August 2026 can't buy residential property. */
+  propertyWarning: { level: "WARNING" | "CHECK"; note: string } | null;
 }
 
 export interface SmsfDetails {
@@ -825,6 +833,7 @@ export interface Liability {
   fixedPeriodEnds?: string | null;
   repaymentAmount?: number | null;
   maturityDate?: string | null;
+  startDate?: string | null;
   securityPropertyId?: string | null;
   securityProperty?: Property | null;
   securityCommercialPropertyId?: string | null;
@@ -1451,6 +1460,9 @@ export interface PlanProperty {
   purchasePrice: number;
   initialLvr: number;
   initialRent?: number | null;
+  transferDuty?: number | null;
+  otherBuyingCosts?: number | null;
+  gstPayable?: boolean;
   commercialPropertyId?: string | null;
   commercialProperty?: CommercialProperty | null;
   notes?: string | null;
@@ -1514,6 +1526,16 @@ export interface PlanPropertyProjection {
   commercialPropertyName: string | null;
   hasFunding: boolean;
   positivelyGearedFromYear: number | null;
+  /** Cash needed to buy: deposit plus the costs the loan doesn't cover. */
+  purchase: {
+    deposit: number;
+    transferDuty: number;
+    dutyEstimated: boolean;
+    dutyRatesYear: string;
+    gst: number;
+    otherCosts: number;
+    cashNeeded: number;
+  };
   rows: PlanProjectionYearRow[];
 }
 
@@ -1528,6 +1550,8 @@ export interface PortfolioYearTotals {
   totalCashflowAfterFunding: number;
   cumulativeContributions: number;
   totalAvailableForRedeployment: number;
+  /** Cash needed for the properties bought this year (deposits and buying costs). */
+  cashToBuy: number;
 }
 
 export interface PortfolioPlanProjection {
@@ -1590,6 +1614,8 @@ export const api = {
     logPayPeriod: (personId: string, data: Record<string, unknown>) =>
       request<PayPeriodEntry>(`/people/${personId}/pay-periods`, { method: "PUT", body: JSON.stringify(data) }),
     removePayPeriodEntry: (entryId: string) => request<void>(`/people/pay-periods/${entryId}`, { method: "DELETE" }),
+    setPayPeriodSuper: (entryId: string, superPaid: boolean | null) =>
+      request<PayPeriodEntry>(`/people/pay-periods/${entryId}/super`, { method: "PATCH", body: JSON.stringify({ superPaid }) }),
   },
 
   advisers: {

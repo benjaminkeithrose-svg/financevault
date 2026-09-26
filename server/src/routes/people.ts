@@ -422,6 +422,18 @@ peopleRouter.put(
   })
 );
 
+// Payday super (from 1 July 2026): employers pay super with each pay, so each
+// logged pay can be ticked off once the super shows up in the fund.
+peopleRouter.patch(
+  "/pay-periods/:entryId/super",
+  asyncHandler(async (req, res) => {
+    const { superPaid } = z.object({ superPaid: z.boolean().nullable() }).parse(req.body);
+    const entry = await prisma.payPeriodEntry.update({ where: { id: req.params.entryId }, data: { superPaid }, include: { document: true } });
+    await logAudit("PAY_PERIOD_SUPER_TICKED", { targetType: "PayPeriodEntry", targetId: entry.id, data: { superPaid } });
+    res.json(entry);
+  })
+);
+
 peopleRouter.delete(
   "/pay-periods/:entryId",
   asyncHandler(async (req, res) => {

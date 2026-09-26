@@ -432,6 +432,11 @@ function MemberBlock({ m, view, onChange }: { m: SmsfMember; view: SmsfOverview;
           {m.transferBalance.capYear}) was {formatCurrency(m.transferBalance.cap)}. Their personal cap is in myGov.
         </p>
       )}
+      {m.largeBalance && (
+        <p className={m.largeBalance.level === "NEAR" ? "cap-explain" : "cap-explain over"}>
+          {m.largeBalance.note} <HelpLink topic="smsf" />
+        </p>
+      )}
 
       {m.contributions.length > 0 && (
         <ul className="plain-list">
@@ -742,6 +747,10 @@ function PropertyCard({ view }: { view: SmsfOverview }) {
                   <td>{l.property ? <Link to={l.property.route}>{l.property.name}</Link> : <span className="cap-note over">Not linked — set the security on the loan</span>}</td>
                 </tr>
                 <tr>
+                  <td>Loan started</td>
+                  <td>{l.startDate ? formatDate(l.startDate) : <span className="cap-note">Not recorded</span>}</td>
+                </tr>
+                <tr>
                   <td>Held by</td>
                   <td>
                     {l.holdingTrust ? (
@@ -773,6 +782,11 @@ function PropertyCard({ view }: { view: SmsfOverview }) {
                 </tr>
               </tbody>
             </table>
+            {l.propertyWarning && (
+              <div className={l.propertyWarning.level === "WARNING" ? "message-box warning" : "cap-explain"} style={{ marginTop: 8 }}>
+                {l.propertyWarning.note}
+              </div>
+            )}
           </div>
         ))
       )}

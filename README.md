@@ -126,6 +126,14 @@ An entity of type **SMSF** gets its own section at the top of its page
   secured on the fund's property, with `holdingTrustEntityId` pointing at a
   `HOLDING_TRUST` entity. Counted with property loans in Net Worth. Rent
   cover uses `Property.weeklyRent` or a commercial property's active leases.
+  `Liability.startDate` records when the LRBA was entered into: a
+  residential property with an LRBA from 10 August 2026 on is warned about
+  (new LRBAs can only buy business real property —
+  `superRules.ts` `lrbaPropertyWarning`).
+- **Division 296** — members whose latest recorded total super balance is
+  within 10% of, or over, $3m (2026-27 threshold; $10m very large) are
+  flagged (`superRules.ts` `largeBalanceFlag`). The tax itself isn't
+  calculated.
 - **Trustee and compliance** — `SmsfDetails` (trustee type/company,
   auditor, who lodges, latest return lodged, strategy review). Annual
   return (15 May via agent, 31 Oct self-lodged, 28 Feb first year, or an
@@ -229,7 +237,9 @@ isn't safe to sync live, only the documents folder is.
 - **Selling**: marking an asset sold keeps it on record, drops it from
   totals from the sale date, and works out the capital gain per owner for
   property and similar assets (cost base = purchase + buying costs +
-  improvements + selling costs; main residence exemption for people only).
+  improvements + selling costs − building write-off (capital works)
+  claimed, the last only for property bought after 13 May 1997; main
+  residence exemption for people only).
 - **Worth doing** on the dashboard: a getting-started checklist, the backup
   reminder, and values not updated for a year. A net worth snapshot is
   saved automatically once a month.
@@ -406,6 +416,11 @@ from inception through to trending it against what actually happened.
   now would release). Nothing about when to refinance or buy next is
   auto-decided — the plan surfaces the numbers, you make the call, exactly
   like the source illustration.
+- **Cash needed to buy**: each planned property shows deposit + stamp duty
+  + GST (if not a going concern) + other buying costs. Duty is estimated
+  from the NSW 2026-27 general rates (`services/nswDuty.ts`, checked against
+  Revenue NSW's worked examples) unless a figure is entered. The totals
+  table has a Cash to buy column per year.
 - **Actual vs predicted**: once a planned property is actually purchased,
   link it to its real Commercial Property record. From that year on, the
   projection table shows the real numbers from that property's saved
@@ -474,7 +489,8 @@ schema, API or business-logic changes.
   flagged as missing), Missing (expected, past, nothing recorded — a
   genuine gap to chase up) or Not yet due (in the future, never flagged
   early). A period can be logged by uploading a new file or linking an
-  already-uploaded one.
+  already-uploaded one. Pays from 1 July 2026 have a "Super paid" tick
+  (payday super), set with `PATCH /api/people/pay-periods/:id/super`.
 - **Document Packs** (`/packs`): builds a ZIP for a chosen entity (and
   optionally a financial year) from chips you tick yourself — nothing is
   bundled automatically, so a pack only ever contains what you chose.

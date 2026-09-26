@@ -315,6 +315,12 @@ trust with nobody able to use the losses).
 trusts; each person's expected income; idea 4 (profitability) for the
 rent/cost/loan figures.
 
+**Must say, until the ATO updates it:** TR 2022/4 (section 100A, trust
+distributions) is under review after the High Court's Bendel decision
+(June 2026). Any trust distribution modelling carries that note, with a
+link to the ruling. (Gap analysis fix A6 — the app has no trust
+distribution feature yet, so the note lands here.)
+
 ---
 
 ## 10. PAYG employees — deductions by occupation, salary packaging and car benefits

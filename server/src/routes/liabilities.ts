@@ -56,6 +56,7 @@ const liabilityInput = z.object({
   fixedPeriodEnds: z.string().datetime().optional().nullable(),
   repaymentAmount: z.number().optional().nullable(),
   maturityDate: z.string().datetime().optional().nullable(),
+  startDate: z.string().datetime().optional().nullable(),
   securityPropertyId: z.string().optional().nullable(),
   securityCommercialPropertyId: z.string().optional().nullable(),
   securityAssetId: z.string().optional().nullable(),
@@ -76,6 +77,7 @@ function toData({ owners: _owners, ...parsed }: z.infer<typeof liabilityInput>) 
     ...parsed,
     fixedPeriodEnds: parsed.fixedPeriodEnds ? new Date(parsed.fixedPeriodEnds) : parsed.fixedPeriodEnds,
     maturityDate: parsed.maturityDate ? new Date(parsed.maturityDate) : parsed.maturityDate,
+    startDate: parsed.startDate ? new Date(parsed.startDate) : parsed.startDate,
   };
 }
 

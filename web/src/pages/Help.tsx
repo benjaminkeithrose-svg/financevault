@@ -634,7 +634,7 @@ const SECTIONS: Section[] = [
   {
     id: "selling",
     title: "Selling something",
-    keywords: "sold sell sale disposal capital gain main residence exemption cost base selling costs improvements stamp duty",
+    keywords: "sold sell sale disposal capital gain main residence exemption cost base selling costs improvements stamp duty capital works building write-off depreciation",
     body: (
       <>
         <p>
@@ -651,9 +651,15 @@ const SECTIONS: Section[] = [
           <strong>The capital gain</strong> for property, shares held outside an investment account, collectibles and
           similar is worked out for each owner by their share, and shown in <Link to="/reports">Reports</Link> →{" "}
           <strong>Capital gains</strong> for the year of the sale. Gain = sale price − (purchase price + buying costs +
-          improvements + selling costs). The main residence exemption applies to people only, not trusts or companies,
-          and can be full or a percentage. Cars and personal items don't have a capital gain worked out. Check the
+          improvements + selling costs − building write-off claimed). The main residence exemption applies to people only,
+          not trusts or companies, and can be full or a percentage. Cars and personal items don't have a capital gain worked out. Check the
           figures with your accountant.
+        </p>
+        <p>
+          <strong>Building write-off claimed.</strong> For a rental or commercial property, enter the total capital works
+          deductions (the 2.5% or 4% a year on the building) claimed over the years — it's on the depreciation schedule or
+          in your accountant's workpapers. The ATO requires this to come off the cost for property bought after 13 May
+          1997, which makes the gain bigger. Leaving it out would under-state the gain.
         </p>
         <p>
           <strong>It wasn't sold — undo</strong> on the same card puts it back if it was marked sold by mistake.
@@ -954,7 +960,7 @@ const SECTIONS: Section[] = [
   {
     id: "pay-tracking",
     title: "Payslips and pay tracking",
-    keywords: "payslip salary wages fortnightly weekly monthly missing",
+    keywords: "payslip salary wages fortnightly weekly monthly missing payday super guarantee",
     body: (
       <>
         <p>
@@ -979,13 +985,18 @@ const SECTIONS: Section[] = [
         <p>
           Use <strong>Upload payslip</strong> on a period, or link one you've already uploaded.
         </p>
+        <p>
+          <strong>Payday super.</strong> From 1 July 2026, employers have to pay super at the same time as each pay. For
+          pays from then on, tick <strong>Paid</strong> in the Super column once the contribution shows in the super
+          account, so a missed payment stands out.
+        </p>
       </>
     ),
   },
   {
     id: "portfolio-plan",
     title: "Portfolio Plan",
-    keywords: "projection future purchases refinance equity growth",
+    keywords: "projection future purchases refinance equity growth stamp duty transfer duty buying costs gst going concern deposit cash",
     body: (
       <>
         <p>
@@ -993,6 +1004,13 @@ const SECTIONS: Section[] = [
           purchases: growth, rent, loans, refinances and equity drawn from properties you already own (including what
           that borrowing costs). Once a planned property is actually bought, link it to the real commercial property and
           the plan shows actual figures next to the prediction.
+        </p>
+        <p>
+          <strong>Cash needed to buy.</strong> Each planned property shows the cash it needs: the deposit, stamp duty,
+          GST if it applies, and other buying costs (legal, inspections, lender fees). Stamp duty is estimated from the NSW
+          general rates for 2026-27 unless you enter the figure. First home buyer concessions and the foreign buyer
+          surcharge aren't included. A tenanted commercial property sold as a going concern is usually GST-free; tick
+          <em> GST payable</em> if it isn't. The totals table has a <strong>Cash to buy</strong> column for each year.
         </p>
         <p>It's a planning tool built from your own assumptions, not a forecast or advice.</p>
       </>
@@ -1045,7 +1063,7 @@ const SECTIONS: Section[] = [
   {
     id: "smsf",
     title: "Self-managed super funds (SMSFs)",
-    keywords: "smsf super fund member contribution concessional non-concessional cap carry forward bring forward pension minimum drawdown lrba bare holding trust auditor annual return trustee transfer balance",
+    keywords: "smsf super fund member contribution concessional non-concessional cap carry forward bring forward pension minimum drawdown lrba bare holding trust auditor annual return trustee transfer balance division 296 large balance business real property",
     body: (
       <>
         <p>
@@ -1073,12 +1091,21 @@ const SECTIONS: Section[] = [
             <strong>Property and borrowing (LRBA).</strong> When the fund borrowed to buy a property: add the property as
             owned by the fund (with its weekly rent), add the holding trust as a <em>Holding (bare) trust</em>, then{" "}
             <strong>Add an LRBA loan</strong>. The page shows the loan-to-value ratio and whether the rent covers the
-            repayments.
+            repayments. Enter the date the fund entered into the loan: from 10 August 2026, a new SMSF borrowing
+            arrangement can only buy <em>business real property</em> (property used wholly in a business), not
+            residential. Loans set up before then aren't affected. The page warns if a residential property has a loan
+            that started on or after that date.
           </li>
           <li>
             <strong>Trustee, auditor and deadlines.</strong> Record individual trustees or the trustee company, the auditor,
             who lodges the return and the latest year lodged. The annual return, auditor appointment, strategy review,
             ASIC company review and pension dates go into the expiry calendar.
+          </li>
+          <li>
+            <strong>Balances over $3 million.</strong> From 1 July 2026, Division 296 adds 15% tax on the share of a
+            member's earnings that comes from a total super balance over $3 million (and another 10% over $10 million).
+            The member's card flags anyone within 10% of $3 million or over it, from the total super balance you record
+            each year. The ATO works out the tax and sends the assessment; this is only the early warning.
           </li>
         </ol>
         <p>
