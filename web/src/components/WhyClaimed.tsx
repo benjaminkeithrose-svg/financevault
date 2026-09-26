@@ -188,6 +188,17 @@ function WhyClaimedDialog({
                 <Link to={`/documents/${form.referenceDocumentId}`}>Open the reference</Link>
               </p>
             )}
+            {view.referenceWithdrawn && (
+              <div className="message-box warning">
+                The ATO page for this reference now says: "{view.referenceWithdrawn}" Check with your accountant before relying on it.
+              </div>
+            )}
+            {!view.referenceWithdrawn && view.newerReferenceId && (
+              <div className="message-box info">
+                A newer copy of this reference has been saved. <Link to={`/documents/${view.newerReferenceId}`}>Open the newer copy</Link> and
+                check the rule is the same, then choose it here.
+              </div>
+            )}
             {view.referenceOverdue && (
               <div className="message-box warning">
                 This reference is past its check-by date. Check it hasn't been replaced or withdrawn before relying on it.

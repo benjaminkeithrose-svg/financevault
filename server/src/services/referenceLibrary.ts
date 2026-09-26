@@ -49,6 +49,7 @@ async function readLibrary(root: string) {
     const main = covered[0] ?? null;
     return {
       file: f.file,
+      linkId: f.covers[0] ?? null,
       title: main ? main.title : f.file,
       // "TR 2000/2 — interest on redraws…" → "TR 2000/2"
       referenceCode: main ? detectReferenceCode(main.title) : null,
@@ -109,7 +110,7 @@ export async function loadLibrary(root = REFERENCE_ROOT): Promise<{ added: numbe
     // and a copy uploaded earlier under another type is re-filed.
     const doc = result.document;
     if (!doc) continue;
-    if (doc.documentType !== TAX_REFERENCE_TYPE || !doc.referenceCode || !doc.notes || doc.reviewStatus !== "CONFIRMED") {
+    if (doc.documentType !== TAX_REFERENCE_TYPE || !doc.referenceCode || !doc.notes || doc.reviewStatus !== "CONFIRMED" || !doc.referenceLinkId) {
       await prisma.document.update({
         where: { id: doc.id },
         data: {
@@ -118,6 +119,7 @@ export async function loadLibrary(root = REFERENCE_ROOT): Promise<{ added: numbe
           taxRelevance: "NOT_RELEVANT",
           referenceCode: doc.referenceCode ?? e.referenceCode,
           referenceCheckBy: doc.referenceCheckBy ?? nextReferenceCheck(),
+          referenceLinkId: doc.referenceLinkId ?? e.linkId,
           notes: doc.notes ?? e.note,
           // Nothing to check: the library says exactly what it is.
           reviewStatus: "CONFIRMED",

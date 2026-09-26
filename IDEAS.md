@@ -547,6 +547,8 @@ keyhole logo sits small in the header and on the lock screen.
 
 ## 16. Easier updates — drop the new version in, no moving folders
 
+**Status:** built in batch 6 — data folder (Documents → Financial Vault Data, moved automatically), Settings → Program and updates → Install an update, backup first, previous version kept and put back automatically on failure, "what's new" note, and the Updates folder fallback. Updates that add libraries need the internet for that step.
+
 **Why:** today an update means renaming folders, unzipping and running the
 copy script (START HERE.txt). It should be as simple as dropping in the
 new download.
@@ -578,6 +580,8 @@ new download.
 
 ## 17. Desktop icon, and its own window
 
+**Status:** step 1 built in batch 6 — desktop icon (Windows shortcut + Start menu, Mac app), own window via Edge/Chrome app mode, no terminal window when started from the icon, closing the window stops it. Step 2 (a packaged Electron app) not done.
+
 **Why:** start Financial Vault from a desktop icon like any other program,
 and have it open in its own window — not as another tab in a browser that's
 already full of other things. Today it's a double-click on a script in the
@@ -608,6 +612,8 @@ browser tab.
 ---
 
 ## 18. Reference library that updates itself from links
+
+**Status:** built in batch 6 (Documents → Tax references → Check for new versions, and Figures the app uses). Not tested against the real ATO site from here (it blocks cloud computers); tested against a pretend site.
 
 **Why:** re-gathering every ATO document each financial year is slow. Keep
 links instead, so the current copy can be fetched when it changes.

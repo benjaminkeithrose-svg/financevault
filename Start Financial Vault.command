@@ -1,10 +1,9 @@
 #!/bin/bash
-# Double-click this file to start Financial Vault.
-# The first run installs everything and can take a few minutes; after that
-# it starts in a few seconds. Close this window (or press Ctrl+C) to stop
-# the app — nothing keeps running in the background once it's closed.
+# Double-click this file to start Financial Vault. The first time, it
+# installs what it needs (a few minutes) and puts a Financial Vault icon on
+# the desktop — use that icon from then on. It opens in its own window;
+# closing that window stops Financial Vault.
 
-set -e
 cd "$(dirname "$0")"
 
 if ! command -v node >/dev/null 2>&1; then
@@ -18,19 +17,8 @@ fi
 
 if [ ! -d "node_modules" ]; then
   echo "First run — installing everything (this can take a few minutes)..."
-  npm install
+  npm install --no-audit --no-fund || { read -r -p "Installing failed — see above. Press Enter to close..."; exit 1; }
 fi
 
-if [ ! -f "server/.env" ]; then
-  cp server/.env.example server/.env
-fi
-
-echo "Setting up the database..."
-(cd server && npx prisma generate && npx prisma migrate deploy && npm run prisma:seed)
-
-echo "Building the app..."
-npm run build
-
-echo "Starting Financial Vault — opening it in your browser..."
-(sleep 2 && open "http://localhost:4000") &
-node server/dist/index.js
+# "exec" so an update can safely replace this file while Financial Vault runs.
+exec node launcher/launch.mjs

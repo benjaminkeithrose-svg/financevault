@@ -369,6 +369,21 @@ isn't safe to sync live, only the documents folder is.
   dark or match-the-computer, and three logo designs (keyhole, vault door,
   monogram) used in the header, lock screen and browser tab.
 
+### Reference library: checking for new versions
+
+- **Check for new versions** (`services/referenceUpdates.ts`, Documents →
+  Tax references): for each link-pack source (not the index pages), fetch the
+  page or its download; save a changed copy as a new, dated Tax reference
+  (`Document.referenceLinkId`, `sourceUrl`, `retrievedAt`) and mark older
+  copies `supersededAt`; for yearly guides try next year's address from
+  `urlPattern`; flag withdrawn rulings (`withdrawnNote`), warning on any claim
+  citing them; list broken links with a search. Results per source in
+  `ReferenceCheck`. Only runs when the button is pressed.
+- **Figures the app uses** (`services/figures.ts`): the rates and thresholds
+  the calculations use, each with its source and last check, flagged for
+  review when a newer copy of the source is saved. The dashboard reminds
+  once each financial year until the library is checked.
+
 ### Investments, shares, ETFs and crypto
 
 Record-keeping and valuation for shares, ETFs, managed funds, crypto and
@@ -829,50 +844,75 @@ line with them.
 
 ## Getting started
 
-### Running it as a regular app (no terminal needed after setup)
+### Running it as a regular app
 
-The same steps, and how to update without losing anything, are in
-**`START HERE.txt`** in this folder.
+The same steps, in plain English, are in **`START HERE.txt`**.
 
 1. If you don't already have Node.js, go to https://nodejs.org and install
-   the LTS version — this is a one-time step.
+   the LTS version — a one-time step.
 2. Double-click **`Start Financial Vault.command`** (Mac) or
    **`Start Financial Vault.bat`** (Windows) in this folder.
 
-The first time, it installs everything and sets up the database — this can
-take a few minutes. Every time after that, it starts in a few seconds and
-opens the app in your browser at `http://localhost:4000` automatically.
-Everything runs on your own machine; nothing is uploaded anywhere. To stop
-the app, close the window it's running in (on Windows, that's the separate
-window titled "Financial Vault" that opens — closing the first small window
-is fine and doesn't stop it).
+Both run the launcher, **`launcher/launch.mjs`** (plain Node.js, no extra
+libraries). Each start it:
+
+1. uses the **data folder** — `Documents/Financial Vault Data` (or
+   `FV_DATA_DIR`): `financevault.db`, `Documents/`, `Backups/`, `Updates/`,
+   `Previous version/`, `Logs/`. Records from before the data folder
+   (`server/prisma/dev.db`, `server/storage/documents`) are copied in once
+   and the originals renamed `…moved-to-data-folder-<time>`; an older copy
+   beside this one (e.g. `financevault-old`) is offered, and only copied;
+2. installs a waiting update (below), or puts the previous version back;
+3. gets the program ready, skipping each step when nothing changed:
+   `npm install` (only when `package-lock.json` changed — the one step that
+   needs the internet), `prisma generate`, `prisma migrate deploy`, the seed,
+   and `npm run build` (when the source changed);
+4. runs the server with `DATABASE_URL`/`STORAGE_DIR` pointing at the data
+   folder, and opens it in **its own window** — Edge or Chrome in app mode
+   with a separate profile in the data folder (`FV_BROWSER` overrides), or
+   the normal browser;
+5. makes a **desktop icon** the first time (Windows: a shortcut on the
+   desktop and in the Start menu, running a hidden-window script; Mac: a
+   small `Financial Vault.app` on the desktop), so later starts have no
+   terminal window;
+6. stays in charge: the app's window keeps a connection open
+   (`/api/app-window/presence`); when none has been open for 45 seconds the
+   server stops, and so does the launcher. Exit code 75 from the server
+   means "install what's waiting and start again".
+
+Problems when started from the icon are written to `Logs/launcher.log`
+and shown on a page in the browser.
 
 ### Updating to a new version (keeps your data)
 
-Plain-English steps are in **`START HERE.txt`** and in the app under
-Help → *Updating to a new version*. In short: take a backup in Settings,
-rename the old folder to `financevault-old`, unzip the new version in its
-place, run **`Copy My Data From Old Version`** (`.command` / `.bat`) from
-the new folder and drag the old folder in, then start as usual.
+Settings → **Program and updates** → **Install an update**, then choose
+the new version's ZIP. The server checks it (`inspectUpdate` in
+`launcher/lib/update.mjs`: a Financial Vault download, newer, no unsafe
+paths), backs up the records with `VACUUM INTO` into `Backups/`, puts the
+ZIP in `Updates/` and exits with code 75. The launcher then:
 
-What that copies, and why it's safe:
+1. keeps the current program as `Previous version/` (everything except
+   `node_modules`, `.git`, `server/.env` and old records);
+2. replaces the program files with the new ones — never the data folder;
+3. hands over to the new version's own launcher, which prepares and starts it
+   and records "Updated to X" with the first section of `RELEASE-NOTES.md`,
+   shown once in the app;
+4. if preparing fails (a migration, a build, an install), puts the previous
+   program and the backed-up records back, starts that, and says why.
 
-- `server/prisma/dev.db*` (the database), `server/storage/` (uploaded
-  documents) and `server/.env`. The old folder is only read. If the new
-  folder had already been started, its empty database is renamed to
-  `dev.db.before-copy-<time>`, never deleted.
-- The launcher runs `prisma migrate deploy`, which only adds to the
-  database's structure; it doesn't reset or drop data.
-- Documents record where their file was stored. On start-up,
-  `relinkMovedDocuments()` (`server/src/services/paths.ts`) points any
-  document whose file is missing at the copy of the same file in this
-  folder's storage, so nothing depends on the old folder afterwards.
-- A document storage location set in Settings (e.g. a synced folder) is
-  outside the program folder and is used as-is.
+**Put back version …** in the same place restores `Previous version/`,
+keeping the records as they are. A ZIP dropped into `Updates/` is installed
+at the next start — the fallback when the app won't start. Nothing is
+downloaded by the app.
 
-Never unzip a new version over the top of the old folder on a Mac: Finder
-replaces whole folders, which would take `server/prisma/dev.db` and
-`server/storage/` with them.
+To make an update: bump `version` in `package.json`, add a `## <version>`
+section at the top of `RELEASE-NOTES.md`, commit, then `npm run release` —
+it writes `financevault-<version>.zip` from the committed files.
+
+Moving from a version before 1.0 (which kept records in the program
+folder): rename the old folder `financevault-old`, unzip the new one beside
+it and start it — the launcher finds the old records and offers to copy
+them. `START HERE.txt` has the steps.
 
 ### For development (two dev servers, hot reload)
 

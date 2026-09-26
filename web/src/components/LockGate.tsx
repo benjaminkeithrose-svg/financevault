@@ -1,5 +1,6 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { KeyholeMark } from "./KeyholeMark.js";
+import { justRestarted } from "../appWindow.js";
 
 type Status = { configured: boolean; unlocked: boolean; minPasscodeLength: number; idleLockMinutes: number };
 type Screen = "loading" | "setup" | "recoveryKey" | "unlock" | "recover" | "unlocked";
@@ -48,6 +49,8 @@ export async function lockApp() {
  * behind an overlay.
  */
 export function LockGate({ children }: { children: ReactNode }) {
+  // Read once: the page straight after an update restart says why it is locked.
+  const [restarted] = useState(justRestarted);
   const [status, setStatus] = useState<Status | null>(null);
   const [screen, setScreen] = useState<Screen>("loading");
   const [error, setError] = useState<string | null>(null);
@@ -293,7 +296,7 @@ export function LockGate({ children }: { children: ReactNode }) {
             }}
           >
             {restored && <div className="message-box info">{restored}</div>}
-            <p>Locked. Enter your passcode to continue.</p>
+            <p>{restarted ? "Financial Vault restarted to finish the update. Enter your passcode to continue." : "Locked. Enter your passcode to continue."}</p>
             <label>Passcode</label>
             <input type="password" autoFocus autoComplete="current-password" value={passcode} onChange={(e) => setPasscode(e.target.value)} />
             {error && <div className="message-box warning">{error}</div>}

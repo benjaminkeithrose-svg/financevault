@@ -1,7 +1,7 @@
 {
   "name": "financevault",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Private Australian personal financial management & document system",
   "workspaces": [
     "server",
@@ -14,6 +14,8 @@
     "prisma:generate": "npm run prisma:generate --workspace server",
     "prisma:migrate": "npm run prisma:migrate --workspace server",
     "prisma:seed": "npm run prisma:seed --workspace server",
-    "test": "npm test --workspace server"
+    "test": "npm test --workspace server",
+    "release": "node scripts/make-release.mjs",
+    "start": "node launcher/launch.mjs"
   }
 }

@@ -3,6 +3,7 @@ import { api, Settings as SettingsType } from "../api/client.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { ThemePicker } from "../components/ThemePicker.js";
 import { FEATURES, setFeaturesOff } from "../features.js";
+import { ProgramUpdates } from "../components/ProgramUpdates.js";
 
 export function Settings() {
   const [settings, setSettings] = useState<SettingsType | null>(null);
@@ -21,8 +22,9 @@ export function Settings() {
 
   // Arriving from a switched-off page's "Go to Features" link.
   useEffect(() => {
-    if (!settings || window.location.hash !== "#features") return;
-    document.getElementById("features")?.scrollIntoView({ block: "start" });
+    const hash = window.location.hash;
+    if (!settings || !["#features", "#updates"].includes(hash)) return;
+    document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
   }, [settings]);
 
   async function toggleFeature(id: string, on: boolean) {
@@ -110,6 +112,8 @@ export function Settings() {
         </p>
         <ThemePicker />
       </div>
+
+      <ProgramUpdates />
 
       <div className="card" id="features">
         <h3 style={{ marginTop: 0 }}>

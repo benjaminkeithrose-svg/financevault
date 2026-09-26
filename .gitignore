@@ -24,3 +24,6 @@ server/prisma/dev.db-journal
 
 # Databases set aside by restore or the copy-data helper
 *.db.before-*
+
+# Release downloads made by npm run release
+financevault-*.zip

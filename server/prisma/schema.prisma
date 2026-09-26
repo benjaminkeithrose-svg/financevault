@@ -381,6 +381,14 @@ model Document {
   // (e.g. "TR 2000/2") and when to check it's still current.
   referenceCode    String?
   referenceCheckBy DateTime?
+  // Reference copies: which link-pack entry it's a copy of, where it came
+  // from and when; superseded when a newer copy (or next year's guide) is
+  // saved; withdrawnNote when the source says it's withdrawn or replaced.
+  referenceLinkId  String?
+  sourceUrl        String?
+  retrievedAt      DateTime?
+  supersededAt     DateTime?
+  withdrawnNote    String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1796,4 +1804,19 @@ model ExpectationDismissal {
   key       String   @unique
   reason    String
   createdAt DateTime @default(now())
+}
+
+// "Check for new versions" of the reference library (IDEAS.md idea 18): the
+// last result for each link-pack entry. Only ever filled when the button is
+// pressed — the one time the library goes online.
+model ReferenceCheck {
+  id          String   @id @default(cuid())
+  linkId      String   @unique
+  checkedAt   DateTime
+  status      String // CURRENT | UPDATED | NEW_YEAR | WITHDRAWN | BROKEN | FAILED | NOT_YET
+  message     String?
+  contentHash String?
+  latestYear  Int? // yearly guides: the newest year found
+  documentId  String? // the newest saved copy
+  url         String? // the address that was checked (next year's, for guides)
 }

@@ -13,7 +13,8 @@ const DAY = 86_400_000;
  */
 export function WorthDoing({ summary, onChange }: { summary: DashboardSummary; onChange: () => void }) {
   const [showAllValues, setShowAllValues] = useState(false);
-  const { backup, staleValues, gettingStarted, missing } = summary;
+  const { backup, staleValues, gettingStarted, missing, referenceCheck } = summary;
+  const referenceDue = !!referenceCheck?.due;
   const missingCount = missing ? missing.red + missing.amber : 0;
   const backupDays = backup.lastBackupAt ? Math.floor((Date.now() - new Date(backup.lastBackupAt).getTime()) / DAY) : null;
   const backupDue = backupDays === null || backupDays >= backup.remindAfterDays;
@@ -22,7 +23,7 @@ export function WorthDoing({ summary, onChange }: { summary: DashboardSummary; o
   const showBackup = backupDue && !(showChecklist && backupDays === null);
   const values = showAllValues ? staleValues : staleValues.slice(0, 3);
 
-  if (!showChecklist && !showBackup && staleValues.length === 0 && missingCount === 0) return null;
+  if (!showChecklist && !showBackup && staleValues.length === 0 && missingCount === 0 && !referenceDue) return null;
 
   async function stillRight(id: string) {
     await api.assets.valueChecked(id);
@@ -90,6 +91,20 @@ export function WorthDoing({ summary, onChange }: { summary: DashboardSummary; o
           </span>
           <Link className="btn secondary" to="/missing">
             See what's missing
+          </Link>
+        </div>
+      )}
+
+      {referenceDue && (
+        <div className="worth-block worth-row">
+          <span>
+            New financial year: check the reference library for this year's ATO guides and rates.{" "}
+            <span className="cap-explain" style={{ display: "inline" }}>
+              {referenceCheck?.lastCheckedAt ? `Last checked ${formatDate(referenceCheck.lastCheckedAt)}.` : "Not checked yet."}
+            </span>
+          </span>
+          <Link className="btn secondary" to="/documents?reference=only">
+            Check the library
           </Link>
         </div>
       )}

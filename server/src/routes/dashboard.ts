@@ -6,6 +6,8 @@ import { computeLiveBreakdown } from "../services/netWorth.js";
 import { BACKUP_AFTER_DAYS, gettingStarted, staleValues } from "../services/upkeep.js";
 import { expectedChecklist } from "../services/expected.js";
 import { parseFeaturesOff } from "./settings.js";
+import { financialYearBounds } from "../services/financialYear.js";
+import { TAX_REFERENCE_TYPE } from "../services/taxReference.js";
 
 export const dashboardRouter = Router();
 
@@ -150,6 +152,8 @@ dashboardRouter.get(
     res.json({
       backup: { lastBackupAt: settings?.lastBackupAt ?? null, remindAfterDays: BACKUP_AFTER_DAYS },
       staleValues: entityId ? [] : await staleValues(now),
+      // Each new financial year: check the reference library for newer versions.
+      referenceCheck: entityId ? null : await referenceCheckDue(now),
       // "What's missing", for the Worth doing card — unless switched off.
       missing:
         entityId || parseFeaturesOff(settings?.featuresOff).includes("expected")
@@ -181,3 +185,12 @@ dashboardRouter.get(
     });
   })
 );
+
+/** Due once a financial year, when there's a reference library and it hasn't been checked since 1 July. */
+async function referenceCheckDue(now: Date) {
+  const references = await prisma.document.count({ where: { documentType: TAX_REFERENCE_TYPE } });
+  if (!references) return null;
+  const last = await prisma.referenceCheck.findFirst({ orderBy: { checkedAt: "desc" }, select: { checkedAt: true } });
+  const { start } = financialYearBounds(financialYearLabelForDate(now));
+  return { due: !last || last.checkedAt < start, lastCheckedAt: last?.checkedAt ?? null };
+}

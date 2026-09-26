@@ -41,6 +41,8 @@ import { claimNotesRouter } from "./routes/claimNotes.js";
 import { borrowingRouter } from "./routes/borrowing.js";
 import { paygRouter } from "./routes/payg.js";
 import { expectedRouter } from "./routes/expected.js";
+import { appUpdateRouter } from "./routes/appUpdate.js";
+import { appWindowRouter } from "./routes/appWindow.js";
 import { adviceRouter } from "./routes/advice.js";
 import { apiNotFound, errorHandler } from "./middleware/errorHandler.js";
 import { rejectCrossOriginWrites, requireLoopbackHost, securityHeaders } from "./middleware/localOnly.js";
@@ -60,7 +62,9 @@ app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 
 // The only API routes reachable while locked are the ones that unlock it.
 app.use("/api/vault", vaultRouter);
+app.use("/api/app-window", appWindowRouter);
 app.use("/api", requireSession);
+app.use("/api/app", appUpdateRouter);
 
 app.use("/api/entities", entitiesRouter);
 app.use("/api/people", peopleRouter);

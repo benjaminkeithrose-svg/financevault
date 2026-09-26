@@ -352,6 +352,8 @@ export interface ClaimView {
   evidence: Array<{ id: string; originalFilename: string; documentType: string | null }>;
   history: Array<{ id: string; action: string; timestamp: string }>;
   referenceOverdue: boolean;
+  referenceWithdrawn: string | null;
+  newerReferenceId: string | null;
 }
 
 export interface PropertyProfitRow {
@@ -516,6 +518,23 @@ export interface ExpectedResult {
   counts: { red: number; amber: number; met: number; setAside: number };
 }
 
+export interface AppInfo {
+  version: string;
+  dataFolder: string | null;
+  canUpdate: boolean;
+  supervised: boolean;
+  previousVersion: string | null;
+  lastUpdate: {
+    kind: "UPDATED" | "FAILED" | "ROLLED_BACK";
+    from: string;
+    to: string;
+    notes?: string | null;
+    error?: string;
+    at: string;
+    seen: boolean;
+  } | null;
+}
+
 export interface ChecklistItem {
   id: string;
   title: string;
@@ -543,6 +562,39 @@ export interface StructureOption {
   good: string[];
   watch: string[];
   sources: string[];
+}
+
+export type ReferenceCheckStatus = "CURRENT" | "UPDATED" | "NEW_YEAR" | "WITHDRAWN" | "BROKEN" | "FAILED" | "NOT_YET";
+
+export interface ReferenceChecks {
+  lastCheckedAt: string | null;
+  items: Array<{
+    linkId: string;
+    title: string;
+    publisher: string;
+    kind: string;
+    url: string;
+    status: ReferenceCheckStatus | null;
+    message: string | null;
+    checkedAt: string | null;
+    documentId: string | null;
+    searchUrl: string | null;
+    claimsCiting: number;
+  }>;
+}
+
+export interface ReferenceFigures {
+  checkedOn: string;
+  items: Array<{
+    id: string;
+    label: string;
+    value: string;
+    source: string;
+    sourceCheckedAt: string | null;
+    sourceStatus: ReferenceCheckStatus | null;
+    sourceDocumentId: string | null;
+    review: boolean;
+  }>;
 }
 
 export interface ReferenceLibraryStatus {
@@ -584,6 +636,11 @@ export interface Document {
   /** Tax references only: the ruling or guide code, and when to check it's current. */
   referenceCode?: string | null;
   referenceCheckBy?: string | null;
+  referenceLinkId?: string | null;
+  sourceUrl?: string | null;
+  retrievedAt?: string | null;
+  supersededAt?: string | null;
+  withdrawnNote?: string | null;
   createdAt: string;
   updatedAt: string;
   links?: DocumentLink[];
@@ -602,6 +659,7 @@ export interface DashboardSummary {
   backup: { lastBackupAt: string | null; remindAfterDays: number };
   staleValues: Array<{ id: string; name: string; value: number | null; since: string; route: string }>;
   missing: { red: number; amber: number; met: number; setAside: number; fyLabel: string } | null;
+  referenceCheck: { due: boolean; lastCheckedAt: string | null } | null;
   gettingStarted: {
     steps: Array<{ key: string; label: string; route: string; done: boolean; optional?: boolean }>;
     dismissed: boolean;
@@ -1972,6 +2030,21 @@ export const api = {
     carCompare: (data: Record<string, unknown>) =>
       request<{ baseIncome: number; incomeRecorded: boolean; options: CarOption[] }>("/payg/car-compare", { method: "POST", body: JSON.stringify(data) }),
   },
+  app: {
+    info: () => request<AppInfo>("/app/info"),
+    install: async (file: File): Promise<{ version: string; notes: string | null; restarting: boolean }> => {
+      const form = new FormData();
+      form.append("update", file);
+      const res = await fetch(`${BASE}/app/update`, { method: "POST", body: form });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Installing failed: ${res.status}`);
+      }
+      return res.json();
+    },
+    rollback: () => request<{ version: string; restarting: boolean }>("/app/rollback", { method: "POST" }),
+    updateSeen: () => request<void>("/app/update-seen", { method: "POST" }),
+  },
   expected: {
     get: (params: { fy?: string; target?: string } = {}) => {
       const q = new URLSearchParams(Object.entries(params).filter(([, v]) => v) as Array<[string, string]>).toString();
@@ -1992,6 +2065,13 @@ export const api = {
   referenceLibrary: {
     status: () => request<ReferenceLibraryStatus>("/reference-library"),
     load: () => request<{ added: number; alreadyHere: number; missing: string[] }>("/reference-library/load", { method: "POST" }),
+    checks: () => request<ReferenceChecks>("/reference-library/checks"),
+    check: () =>
+      request<{ checked: number; updated: number; newYear: number; withdrawn: number; broken: number; failed: number; current: number }>(
+        "/reference-library/check",
+        { method: "POST" }
+      ),
+    figures: () => request<ReferenceFigures>("/reference-library/figures"),
   },
   advisers: {
     list: () => request<Adviser[]>("/advisers"),

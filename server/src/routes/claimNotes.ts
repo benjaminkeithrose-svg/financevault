@@ -75,7 +75,11 @@ claimNotesRouter.get(
       describeTarget(targetType, targetId),
       prisma.claimNote.findUnique({
         where: { targetType_targetId: { targetType, targetId } },
-        include: { referenceDocument: { select: { id: true, originalFilename: true, referenceCode: true, referenceCheckBy: true } } },
+        include: {
+          referenceDocument: {
+            select: { id: true, originalFilename: true, referenceCode: true, referenceCheckBy: true, withdrawnNote: true, supersededAt: true, referenceLinkId: true },
+          },
+        },
       }),
     ]);
     const evidence = await prisma.document.findMany({ where: { id: { in: target.evidenceIds } }, select: { id: true, originalFilename: true, documentType: true } });
@@ -85,7 +89,14 @@ claimNotesRouter.get(
     // A reference past its check-by date may have been replaced or withdrawn.
     const checkBy = note?.referenceDocument?.referenceCheckBy ?? null;
     const referenceOverdue = !!checkBy && checkBy < new Date();
-    res.json({ target, note, evidence, history, referenceOverdue });
+    // "Check for new versions" found it withdrawn, or saved a newer copy.
+    const ref = note?.referenceDocument;
+    const referenceWithdrawn = ref?.withdrawnNote ?? null;
+    const newerCopy =
+      ref?.supersededAt && ref.referenceLinkId
+        ? await prisma.document.findFirst({ where: { referenceLinkId: ref.referenceLinkId, supersededAt: null }, select: { id: true } })
+        : null;
+    res.json({ target, note, evidence, history, referenceOverdue, referenceWithdrawn, newerReferenceId: newerCopy?.id ?? null });
   })
 );
 

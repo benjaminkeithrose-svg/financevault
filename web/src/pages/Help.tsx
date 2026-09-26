@@ -19,25 +19,35 @@ const SECTIONS: Section[] = [
   {
     id: "getting-started",
     title: "Starting and stopping",
-    keywords: "open launch install node close quit",
+    keywords: "open launch install node close quit desktop icon window shortcut terminal",
     body: (
       <>
         <p>
-          Double-click <strong>Start Financial Vault</strong> in the Financial Vault folder (the <code>.command</code> file
-          on a Mac, the <code>.bat</code> file on Windows). It opens in your web browser at{" "}
-          <code>http://localhost:4000</code>. The first start installs everything and takes a few minutes; after that it
-          starts in seconds.
+          The first time, open the Financial Vault folder and double-click <strong>Start Financial Vault</strong> (the{" "}
+          <code>.command</code> file on a Mac, the <code>.bat</code> file on Windows). It installs everything (a few minutes),
+          then puts a <strong>Financial Vault icon on your desktop</strong>. From then on, start it from that icon — no black
+          window, and it starts in seconds.
         </p>
         <p>
-          It runs entirely on your computer. Nothing is uploaded anywhere, and other devices on your Wi-Fi can't reach it.
+          It opens in <strong>its own window</strong>, with no tabs or address bar, using Microsoft Edge or Google Chrome
+          (Edge comes with Windows; on a Mac without Chrome or Edge it opens in your usual browser instead). Starting it again
+          while it's running just brings up another window.
         </p>
         <p>
-          To stop it, close the window it's running in. On Windows that's the separate window titled "Financial Vault".
-          Closing the browser tab alone leaves it running in the background, which is harmless.
+          To stop it, <strong>close its window</strong>. It stops by itself about a minute later. It runs entirely on your
+          computer: nothing is uploaded anywhere, and other devices on your Wi-Fi can't reach it.
         </p>
         <p>
           The only thing it needs is Node.js. If the start file says Node.js isn't installed, get the LTS version from{" "}
-          <code>nodejs.org</code>, install it, and double-click the start file again.
+          <code>nodejs.org</code>, install it, and double-click the start file again. On a Mac, the first time you open a new{" "}
+          <code>.command</code> file it may say it's from an unidentified developer: right-click it, choose Open, then Open again.
+        </p>
+        <h4>Where your records are</h4>
+        <p>
+          Your records, documents and backups live in their own folder, <strong>Documents → Financial Vault Data</strong>, apart
+          from the program. That's what makes updating simple: the program can be replaced without going near your records.
+          Records kept inside the program folder by earlier versions were moved there automatically; the old copies are
+          renamed "…moved-to-data-folder", not deleted. Settings → <strong>Program and updates</strong> shows the exact place.
         </p>
         <h4>Getting around</h4>
         <p>
@@ -53,46 +63,41 @@ const SECTIONS: Section[] = [
     ),
   },
   {
-    id: "updating",
-    title: "Updating to a new version without losing anything",
-    keywords: "update upgrade new version install download keep data database move copy old folder",
+    id: "updates",
+    title: "Updating to a new version",
+    keywords: "update upgrade new version install download zip keep data previous version put back rollback what's new",
     body: (
       <>
-        <p>
-          Your records and documents live inside your current <strong>financevault</strong> folder. A new download starts
-          empty, so your data is copied across into it. Nothing in the old folder is changed or deleted.
-        </p>
         <ol>
+          <li>Download the new version's ZIP file. Don't unzip it.</li>
           <li>
-            Open <Link to="/settings">Settings</Link> and click <strong>Download full backup</strong>. Keep the file — it's
-            your safety net.
+            In Financial Vault, go to <Link to="/settings#updates">Settings</Link> → <strong>Program and updates</strong>.
           </li>
-          <li>Close Financial Vault (close the window it's running in).</li>
           <li>
-            Rename your current folder from <strong>financevault</strong> to <strong>financevault-old</strong>.
+            Click <strong>Install an update</strong> and choose the ZIP.
           </li>
-          <li>Unzip the new download.</li>
-          <li>Move the new financevault folder to where the old one was.</li>
-          <li>
-            Open the <strong>new</strong> folder and double-click <strong>Copy My Data From Old Version</strong> (.command on
-            a Mac, .bat on Windows).
-          </li>
-          <li>When it asks, drag the financevault-old folder into that window, then press Enter.</li>
-          <li>Wait for "Done", then press Enter to close that window.</li>
-          <li>
-            In the new folder, double-click <strong>Start Financial Vault</strong>. The first start after an update takes a
-            few minutes while it updates your records to the new layout — it never removes them.
-          </li>
-          <li>Unlock with your usual passcode and check your people, properties and documents are all there.</li>
-          <li>After a week or two of everything looking right, delete the financevault-old folder.</li>
+          <li>Wait a minute or two. The window says it's installing, then comes back by itself on the new version.</li>
+          <li>A note at the top of the page says what's new. Click <strong>Got it</strong>.</li>
         </ol>
+        <p>What happens behind the scenes:</p>
+        <ul>
+          <li>It checks the ZIP is a Financial Vault download and newer than the version you have.</li>
+          <li>Your records are backed up first, into the Backups folder in your data folder.</li>
+          <li>The program is replaced — never your records or documents.</li>
+          <li>The version you had is kept, so it can be put back.</li>
+          <li>
+            If anything goes wrong, the previous version and your records are put back automatically, and a note says what
+            happened.
+          </li>
+        </ul>
         <p>
-          If something doesn't look right, don't delete anything: close Financial Vault and start the old folder's{" "}
-          <strong>Start Financial Vault</strong> instead. It still has everything exactly as it was.
+          <strong>Put back version …</strong> in the same place returns to the version you had before, keeping your records as
+          they are now. Usually the update only needs the internet if the new version needs new parts installed; otherwise it
+          works offline. Nothing is ever downloaded by the app itself.
         </p>
         <p>
-          The same steps are in the <strong>START HERE</strong> file in the financevault folder. Documents kept in a synced
-          folder (Settings → Document storage location) stay where they are and need nothing extra.
+          If Financial Vault won't start, there's a fallback: put the ZIP (still zipped) into the <strong>Updates</strong> folder
+          inside your data folder, then start Financial Vault. It installs it on the way in.
         </p>
       </>
     ),
@@ -469,8 +474,34 @@ const SECTIONS: Section[] = [
         </ol>
         <p>
           Every 31 July a single reminder goes in the calendar to check they're still current, after the new financial year's
-          guides come out. The addresses to download fresh copies are in the link pack (<code>reference/LINK-PACK.md</code>).
-          Search still finds them, and the <strong>Why is this claimed?</strong> icon can point to one.
+          guides come out. Search still finds them, and the <strong>Why is this claimed?</strong> icon can point to one.
+        </p>
+        <h4>Checking for new versions</h4>
+        <p>
+          On the Tax references list, <strong>Check for new versions</strong> goes to each official source (ATO, Revenue NSW,
+          APRA, ASIC). It's the only time the library goes online, only when you press it, and it sends nothing about you.
+        </p>
+        <ul>
+          <li>
+            <strong>Newer copy saved</strong> — the page changed. The new copy is saved and dated; the older one is kept and
+            marked "replaced", so a claim that relied on it still shows what it relied on.
+          </li>
+          <li>
+            <strong>New year's guide</strong> — next year's guide (rental properties, capital gains…) is out and saved.
+          </li>
+          <li>
+            <strong>Withdrawn</strong> — a ruling now says it's withdrawn or replaced. Any claim that cites it shows a warning in
+            its <strong>Why is this claimed?</strong> box.
+          </li>
+          <li>
+            <strong>Moved</strong> — the page has gone; <strong>Search for it</strong> looks for its new address.
+          </li>
+        </ul>
+        <p>
+          <strong>Figures the app uses</strong>, under the same card, lists the rates and thresholds Financial Vault calculates
+          with — tax rates, super caps, cents per kilometre, land tax thresholds and more — with each one's source and when that
+          was last checked. When a newer copy of a source is saved, its figures are marked <strong>Review</strong>; a new version
+          of Financial Vault brings the updated figures. The dashboard reminds you each new financial year.
         </p>
       </>
     ),

@@ -146,6 +146,18 @@ export function DocumentDetail() {
                   A tax reference is an official rule or guide, not anyone's own paperwork. It's never put in a document pack
                   and isn't tied to a person or entity.
                 </div>
+                {doc.withdrawnNote && (
+                  <div className="message-box warning">Withdrawn or replaced — the source now says: "{doc.withdrawnNote}"</div>
+                )}
+                {doc.supersededAt && (
+                  <div className="message-box info">A newer copy was saved on {formatDate(doc.supersededAt)}. This older copy is kept for claims that relied on it.</div>
+                )}
+                {doc.sourceUrl && (
+                  <p className="cap-explain">
+                    Saved from <a href={doc.sourceUrl} target="_blank" rel="noreferrer">{doc.sourceUrl}</a>
+                    {doc.retrievedAt ? ` on ${formatDate(doc.retrievedAt)}` : ""}.
+                  </p>
+                )}
                 <div className="grid grid-2">
                   <div>
                     <label>Ruling or guide code (e.g. TR 2000/2)</label>

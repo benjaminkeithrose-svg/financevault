@@ -2078,3 +2078,33 @@ label {
     break-inside: avoid;
   }
 }
+
+/* Program and updates */
+.restarting {
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--bg);
+}
+
+.release-notes ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.update-notice {
+  border-left: 4px solid var(--success);
+  margin-bottom: 20px;
+}
+
+.update-notice.failed {
+  border-left-color: var(--warning);
+}
+
+code.path {
+  word-break: break-all;
+}
+
+#updates {
+  scroll-margin-top: 64px;
+}
