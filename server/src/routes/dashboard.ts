@@ -4,6 +4,8 @@ import { asyncHandler } from "../middleware/errorHandler.js";
 import { financialYearLabelForDate } from "../services/financialYear.js";
 import { computeLiveBreakdown } from "../services/netWorth.js";
 import { BACKUP_AFTER_DAYS, gettingStarted, staleValues } from "../services/upkeep.js";
+import { expectedChecklist } from "../services/expected.js";
+import { parseFeaturesOff } from "./settings.js";
 
 export const dashboardRouter = Router();
 
@@ -148,6 +150,11 @@ dashboardRouter.get(
     res.json({
       backup: { lastBackupAt: settings?.lastBackupAt ?? null, remindAfterDays: BACKUP_AFTER_DAYS },
       staleValues: entityId ? [] : await staleValues(now),
+      // "What's missing", for the Worth doing card — unless switched off.
+      missing:
+        entityId || parseFeaturesOff(settings?.featuresOff).includes("expected")
+          ? null
+          : await expectedChecklist(undefined, now).then((r) => ({ ...r.counts, fyLabel: r.fyLabel })),
       gettingStarted: await gettingStarted(),
       documents: {
         pendingClassification,

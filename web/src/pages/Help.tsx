@@ -321,7 +321,7 @@ const SECTIONS: Section[] = [
           answer rather than an address.
         </p>
         <p>
-          <Link to="/advisers">Professional advisers</Link> (in the menu, under People & entities) keeps your
+          <Link to="/advisers">Professional advisers</Link> (at the foot of the People & entities page) keeps your
           accountant, solicitor, real estate agent and financial adviser in one place — add each once, and they're
           pulled straight into the Fact Find document pack below.
         </p>
@@ -734,10 +734,11 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <p>
-          Each kind of debt has its own list under Liabilities in the menu: <Link to="/loans">Property loans</Link> (choose
-          the property that secures each one so its LVR can be shown), <Link to="/vehicle-loans">Vehicle &amp; boat loans</Link>,{" "}
-          <Link to="/credit-cards">Credit cards</Link>, and <Link to="/liabilities">Personal &amp; other</Link> for everything
-          else.
+          Every debt is on one page, <Link to="/loans">Loans &amp; cards</Link> in the menu, in four sections — each with its
+          own <strong>New</strong> button: <Link to="/loans">Property loans</Link> (choose the property that secures each one
+          so its LVR can be shown), <Link to="/vehicle-loans">Vehicle &amp; boat loans</Link>,{" "}
+          <Link to="/credit-cards">Credit cards</Link>, and <Link to="/liabilities">Personal &amp; other debts</Link> for
+          everything else. The links at the top of the page jump to each section.
         </p>
         <p>
           For every loan, enter the <strong>repayment amount</strong> and how often it's <strong>paid</strong> (weekly,
@@ -1025,6 +1026,71 @@ const SECTIONS: Section[] = [
         <p>
           <strong>Print</strong> it to take to the appointment. Nothing here looks for schemes — the best protection is each claim
           with its record and the rule behind it.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "whats-missing",
+    title: "What's missing: insurance and paperwork",
+    keywords: "missing expected insurance documents checklist landlord building contents ctp green slip strata certificate of currency private health life tpd income protection rental statement council rates land tax interest statement depreciation trust deed distribution minutes super statement set aside not needed print",
+    body: (
+      <>
+        <p>
+          <Link to="/missing">What's missing</Link> (in the menu under Plan &amp; report) works out the insurance and paperwork
+          that's normal for what you've recorded, and shows what isn't here yet — grouped by property, vehicle, person and
+          trust. For example: landlord and building cover on a rental, a CTP green slip on a car, contents cover on a strata
+          home, private hospital cover above the Medicare levy surcharge threshold, the year's rental statement, rates notices
+          and loan interest statement, and a trust's deed and distribution minutes.
+        </p>
+        <ul>
+          <li>
+            <strong>Required</strong> — required by law or by a lender, or effectively essential.
+          </li>
+          <li>
+            <strong>Worth checking</strong> — normal for people in your position.
+          </li>
+        </ul>
+        <p>Items tick themselves off:</p>
+        <ol>
+          <li>
+            <strong>Insurance</strong> — tap <strong>Add policy</strong>. The property, vehicle or person's page opens with the
+            insurance form ready on that kind of policy.
+          </li>
+          <li>
+            <strong>Documents</strong> — tap <strong>Add document</strong>, and add it under Documents on that page. It counts
+            once it's filed as the right type (for example "Rental Statement") and, for yearly paperwork, dated in or filed to
+            that financial year.
+          </li>
+        </ol>
+        <p>
+          If something isn't needed — building cover inside the landlord policy, life cover held in super — tap{" "}
+          <strong>Not needed</strong> and say why. It's kept on record with your reason and stops flagging; <strong>Flag it
+          again</strong> brings it back. Yearly paperwork is checked for the financial year that has most recently ended; choose
+          another year at the top. <strong>Print</strong> gives one list to take to the broker or accountant.
+        </p>
+        <p>
+          The same items show on each property, vehicle, person and trust's own page, and the number missing shows on the
+          dashboard under Worth doing.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "features",
+    title: "Switching features on and off",
+    keywords: "features switch turn off hide menu modules smsf commercial gmail import vehicles investments super insurance advisers",
+    body: (
+      <>
+        <p>
+          Not everyone needs every part of the app. In <Link to="/settings#features">Settings</Link> → <strong>Features</strong>,
+          untick anything you don't use — for example Self-managed super fund, Commercial property, Import from Gmail or Job
+          &amp; work deductions.
+        </p>
+        <p>
+          A switched-off feature disappears from the menu, the dashboard and the pages it appears on. <strong>Nothing is
+          deleted</strong>: tick it again and everything comes back exactly as it was. The choice is saved in the vault, so it
+          applies on every computer that opens it.
         </p>
       </>
     ),
@@ -1389,29 +1455,38 @@ const SECTIONS: Section[] = [
   },
   {
     id: "look-and-feel",
-    title: "Look and feel: colours and style",
-    keywords: "theme colour color violet teal pink lilac bold soft appearance logo",
+    title: "Look and feel: colours, style, dark mode and logo",
+    keywords: "theme colour color violet teal pink lilac forest gold charcoal ocean terracotta grey greyscale bold soft dark light mode appearance logo keyhole vault monogram",
     body: (
       <>
-        <p>There are four colours and two styles to choose from:</p>
+        <p>There are nine colours, two styles, light or dark, and three logos to choose from:</p>
         <ul>
           <li>
-            <strong>Colours:</strong> Midnight violet, Deep teal, Navy & pink, and Cobalt & lilac.
+            <strong>Colours:</strong> Midnight violet, Deep teal, Navy & pink, Cobalt & lilac, Forest green, Charcoal & gold,
+            Ocean blue, Warm terracotta and Plain greyscale.
           </li>
           <li>
             <strong>Bold</strong> has square corners, heavy borders and a solid top bar. <strong>Soft</strong> is lighter
             with rounded corners.
+          </li>
+          <li>
+            <strong>Light</strong>, <strong>Dark</strong>, or <strong>Match computer</strong> (follows your computer's own
+            setting, switching at night if it does).
+          </li>
+          <li>
+            <strong>Logo:</strong> Keyhole, Vault door or Monogram — shown on the dashboard, the lock screen and the browser
+            tab.
           </li>
         </ul>
         <p>To change them:</p>
         <ol>
           <li>Open the ☰ menu.</li>
           <li>Scroll to the bottom, to <strong>Look and feel</strong>.</li>
-          <li>Tap a colour, then Bold or Soft. The change happens straight away.</li>
+          <li>Tap a colour, Bold or Soft, and Light, Dark or Auto. The change happens straight away.</li>
         </ol>
         <p>
-          The same choice is in <Link to="/settings">Settings</Link> → <strong>Look and feel</strong>, with the colour
-          names shown. Your choice is kept on this computer only, so each person who uses Financial Vault can pick their
+          The same choices are in <Link to="/settings">Settings</Link> → <strong>Look and feel</strong>, with the colour
+          names shown and the logo choice. Your choice is kept on this computer only, so each person who uses Financial Vault can pick their
           own. Red is always kept for delete buttons and warnings, whichever colour you choose.
         </p>
       </>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { MissingFlags } from "../components/MissingFlags.js";
 import { Link, useParams } from "react-router-dom";
 import { api, Asset, Entity } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
@@ -270,10 +271,11 @@ export function AssetDetail() {
 
       {!isItem && <AssetOwnershipPanel asset={asset} entities={entities} onChange={load} />}
 
+      {!isItem && isVehicle && <MissingFlags target={`asset:${asset.id}`} />}
       {!isItem && asset.assetType !== "SUPERANNUATION" && (
         <InsurancePanel
           assetId={asset.id}
-          defaultKind={isVehicle ? (["BOAT", "JET_SKI"].includes(asset.vehicleType ?? "") ? "BOAT" : "MOTOR") : "OTHER"}
+          defaultKind={isVehicle ? (["BOAT", "JET_SKI"].includes(asset.vehicleType ?? "") ? "BOAT" : ["CARAVAN", "TRAILER"].includes(asset.vehicleType ?? "") ? "CARAVAN" : "MOTOR") : "OTHER"}
           defaultHolderId={asset.entityId}
         />
       )}

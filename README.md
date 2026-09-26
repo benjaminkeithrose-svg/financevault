@@ -347,6 +347,28 @@ isn't safe to sync live, only the documents folder is.
   tax, cash after tax, tax on sale and the overall result, with trade-offs.
   `Asset.ownershipReason` records why each property is owned as it is.
 
+### Features, the shorter menu, "What's missing" and the look
+
+- **Feature switches** (`web/src/features.ts`, Settings → Features):
+  `Settings.featuresOff` holds the switched-off feature ids. A switched-off
+  feature leaves the menu, dashboard and pages (`FeatureGate`); its data is
+  untouched.
+- **Shorter menu**: property loans, vehicle loans, cards and personal debts
+  are sections of one "Loans & cards" page (`pages/LoansAndCards.tsx`; the
+  old addresses open at their section); professional advisers are a section
+  at the foot of People & entities.
+- **What's missing** (`services/expected.ts`, `routes/expected.ts`,
+  `/missing`): the insurance and paperwork expected for each property,
+  vehicle, adult and trust, marked Required or Worth checking. Policies meet
+  insurance items; documents of the right type, linked and in the financial
+  year, meet paperwork items. `ExpectationDismissal` keeps anything set
+  aside with its reason. New policy kinds: CTP green slip, landlord contents,
+  caravan/trailer. New document types: Private Health Statement, Super
+  Statement, Strata Certificate of Currency, Distribution Minutes.
+- **Look and feel** (`web/src/theme.ts`): nine colourways, Bold/Soft, light,
+  dark or match-the-computer, and three logo designs (keyhole, vault door,
+  monogram) used in the header, lock screen and browser tab.
+
 ### Investments, shares, ETFs and crypto
 
 Record-keeping and valuation for shares, ETFs, managed funds, crypto and

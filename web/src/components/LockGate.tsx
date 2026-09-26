@@ -198,8 +198,8 @@ export function LockGate({ children }: { children: ReactNode }) {
   return (
     <div className="lock-screen">
       <div className="card lock-card">
-        <div className="lock-brand">
-          <KeyholeMark size={40} />
+        <div className="lock-brand centred">
+          <KeyholeMark size={96} />
           <strong>Financial Vault</strong>
         </div>
 

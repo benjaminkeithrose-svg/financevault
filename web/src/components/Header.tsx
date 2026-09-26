@@ -28,11 +28,12 @@ const TITLES: Record<string, string> = {
   "/super": "Super",
   "/assets": "Other Assets",
   "/insurance": "Insurance",
-  "/advisers": "Professional Advisers",
-  "/loans": "Property Loans",
-  "/vehicle-loans": "Vehicle & Boat Loans",
-  "/credit-cards": "Credit Cards",
-  "/liabilities": "Personal & Other Debts",
+  "/advisers": "People & Entities",
+  "/loans": "Loans & Cards",
+  "/vehicle-loans": "Loans & Cards",
+  "/credit-cards": "Loans & Cards",
+  "/liabilities": "Loans & Cards",
+  "/missing": "What's missing",
   "/portfolio-plans": "Portfolio Plan",
   "/borrowing": "Borrowing",
   "/accountant-checklist": "Ask your accountant",
@@ -113,7 +114,14 @@ export function Header() {
             <IconChevronLeft />
           </button>
         )}
-        <div className="app-header-title">{title}</div>
+        {pathname === "/" ? (
+          <div className="app-header-title brand-home">
+            <KeyholeMark size={32} />
+            Financial Vault
+          </div>
+        ) : (
+          <div className="app-header-title">{title}</div>
+        )}
         <button className="icon-btn" aria-label="Search" onClick={() => setSearchOpen(true)}>
           <IconSearch />
         </button>

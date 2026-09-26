@@ -16,7 +16,6 @@ import { Properties } from "./pages/Properties.js";
 import { PropertyDetail } from "./pages/PropertyDetail.js";
 import { CommercialPropertyDetail } from "./pages/CommercialPropertyDetail.js";
 import { AcquisitionModel } from "./pages/AcquisitionModel.js";
-import { Liabilities } from "./pages/Liabilities.js";
 import { LiabilityDetail } from "./pages/LiabilityDetail.js";
 import { Investments } from "./pages/Investments.js";
 import { InvestmentAccountDetail } from "./pages/InvestmentAccountDetail.js";
@@ -43,8 +42,13 @@ import { IconPin } from "./components/icons.js";
 import { usePinnedMenu } from "./hooks/usePinnedMenu.js";
 import { Help } from "./pages/Help.js";
 import { Insurance, InsuranceDetail } from "./pages/InsuranceDetail.js";
-import { Advisers } from "./pages/Advisers.js";
 import { AssetTree } from "./pages/AssetTree.js";
+import { LoansAndCards } from "./pages/LoansAndCards.js";
+import { FeatureGate } from "./components/FeatureGate.js";
+import { FeatureId } from "./features.js";
+import { Missing } from "./pages/Missing.js";
+
+const gate = (feature: FeatureId, page: JSX.Element) => <FeatureGate feature={feature}>{page}</FeatureGate>;
 
 function Home() {
   const [landingPage, setLandingPage] = useState<string | null>(null);
@@ -84,42 +88,43 @@ export default function App() {
           <Route path="/documents/:id" element={<DocumentDetail />} />
           <Route path="/people" element={<PeopleAndEntities />} />
           <Route path="/people/:id" element={<PersonDetail />} />
-          <Route path="/people/:id/car" element={<CarCompare />} />
+          <Route path="/people/:id/car" element={gate("payg", <CarCompare />)} />
           <Route path="/entities" element={<PeopleAndEntities />} />
           <Route path="/entities/:id" element={<EntityDetail />} />
           <Route path="/search" element={<Search />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/properties/:id" element={<PropertyDetail />} />
-          <Route path="/commercial-properties/acquisition-model" element={<AcquisitionModel />} />
-          <Route path="/commercial-properties/:id" element={<CommercialPropertyDetail />} />
-          <Route path="/investments" element={<Investments />} />
-          <Route path="/investments/:id" element={<InvestmentAccountDetail />} />
+          <Route path="/commercial-properties/acquisition-model" element={gate("commercial", <AcquisitionModel />)} />
+          <Route path="/commercial-properties/:id" element={gate("commercial", <CommercialPropertyDetail />)} />
+          <Route path="/investments" element={gate("investments", <Investments />)} />
+          <Route path="/investments/:id" element={gate("investments", <InvestmentAccountDetail />)} />
           <Route path="/banking" element={<Banking />} />
           <Route path="/banking/:id" element={<AccountDetail />} />
-          <Route path="/loans" element={<Liabilities key="property" scope="property" />} />
-          <Route path="/vehicle-loans" element={<Liabilities key="vehicle" scope="vehicle" />} />
-          <Route path="/credit-cards" element={<Liabilities key="cards" scope="cards" />} />
-          <Route path="/liabilities" element={<Liabilities key="other" scope="other" />} />
+          <Route path="/loans" element={<LoansAndCards key="property" />} />
+          <Route path="/vehicle-loans" element={<LoansAndCards key="vehicle" focus="vehicle" />} />
+          <Route path="/credit-cards" element={<LoansAndCards key="cards" focus="cards" />} />
+          <Route path="/liabilities" element={<LoansAndCards key="other" focus="other" />} />
           <Route path="/liabilities/:id" element={<LiabilityDetail />} />
           <Route path="/assets" element={<Assets key="other" list="OTHER" />} />
-          <Route path="/super" element={<Assets key="super" list="SUPER" />} />
-          <Route path="/vehicles" element={<Assets key="vehicles" list="VEHICLE" />} />
+          <Route path="/super" element={gate("super", <Assets key="super" list="SUPER" />)} />
+          <Route path="/vehicles" element={gate("vehicles", <Assets key="vehicles" list="VEHICLE" />)} />
           <Route path="/assets/:id" element={<AssetDetail />} />
-          <Route path="/insurance" element={<Insurance />} />
-          <Route path="/insurance/:id" element={<InsuranceDetail />} />
-          <Route path="/advisers" element={<Advisers />} />
-          <Route path="/portfolio-plans" element={<PortfolioPlans />} />
-          <Route path="/portfolio-plans/:id" element={<PortfolioPlanDetail />} />
-          <Route path="/borrowing" element={<Borrowing />} />
-          <Route path="/accountant-checklist" element={<AccountantChecklist />} />
-          <Route path="/structure-comparison" element={<StructureComparison />} />
+          <Route path="/insurance" element={gate("insurance", <Insurance />)} />
+          <Route path="/insurance/:id" element={gate("insurance", <InsuranceDetail />)} />
+          <Route path="/advisers" element={<PeopleAndEntities />} />
+          <Route path="/portfolio-plans" element={gate("portfolio-plan", <PortfolioPlans />)} />
+          <Route path="/portfolio-plans/:id" element={gate("portfolio-plan", <PortfolioPlanDetail />)} />
+          <Route path="/borrowing" element={gate("borrowing", <Borrowing />)} />
+          <Route path="/accountant-checklist" element={gate("accountant", <AccountantChecklist />)} />
+          <Route path="/structure-comparison" element={gate("structure", <StructureComparison />)} />
+          <Route path="/missing" element={gate("expected", <Missing />)} />
           <Route path="/net-worth" element={<NetWorth />} />
           <Route path="/tax" element={<Tax />} />
           <Route path="/reports" element={<Reports />} />
-          <Route path="/packs" element={<Packs />} />
-          <Route path="/email-import" element={<EmailImport />} />
-          <Route path="/bulk-import" element={<BulkImport />} />
-          <Route path="/bulk-import/:id" element={<BulkImport />} />
+          <Route path="/packs" element={gate("packs", <Packs />)} />
+          <Route path="/email-import" element={gate("gmail", <EmailImport />)} />
+          <Route path="/bulk-import" element={gate("bulk-import", <BulkImport />)} />
+          <Route path="/bulk-import/:id" element={gate("bulk-import", <BulkImport />)} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/help" element={<Help />} />
           <Route

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { recordsChanged, useFeatures } from "../features.js";
+import { Link, useSearchParams } from "react-router-dom";
 import { api, Asset, Entity, InsurancePolicy, Person } from "../api/client.js";
 import { DraftNotice, FormActions } from "./FormActions.js";
 import { HelpLink } from "./HelpLink.js";
@@ -11,9 +12,12 @@ export const POLICY_KINDS: Record<string, string> = {
   CONTENTS: "Contents insurance",
   BUILDING_AND_CONTENTS: "Home and contents",
   LANDLORD: "Landlord insurance",
+  LANDLORD_CONTENTS: "Landlord contents (strata unit)",
   STRATA: "Strata insurance",
+  CTP: "CTP green slip",
   MOTOR: "Car or motorbike insurance",
   BOAT: "Boat insurance",
+  CARAVAN: "Caravan or trailer insurance",
   PUBLIC_LIABILITY: "Public liability",
   LIFE: "Life cover",
   TPD: "TPD cover",
@@ -168,7 +172,13 @@ export function RenewalBadge({ date }: { date?: string | null }) {
  * The insurance hung off one thing — an asset or a person — or, with
  * neither, every policy (with a choice of what a new one covers).
  */
-export function InsurancePanel({
+/** Cover on an asset, person or entity — hidden while Insurance is switched off. */
+export function InsurancePanel(props: Parameters<typeof InsurancePanelInner>[0]) {
+  const features = useFeatures();
+  return features.on("insurance") ? <InsurancePanelInner {...props} /> : null;
+}
+
+function InsurancePanelInner({
   assetId,
   personId,
   defaultKind,
@@ -192,10 +202,24 @@ export function InsurancePanel({
   const [policyNumber, setPolicyNumber] = useState("");
   const [showForm, setShowForm] = useState(draft.restored);
   const [error, setError] = useState<string | null>(null);
+  const [params, setParams] = useSearchParams();
+  const cardRef = useRef<HTMLDivElement>(null);
 
   function load() {
     api.insurance.list(assetId ? { assetId } : personId ? { personId } : undefined).then(setPolicies);
   }
+
+  // Arriving from "What's missing" → Add: open the form with that kind of policy.
+  useEffect(() => {
+    const kind = params.get("addPolicy");
+    if (!scoped || !kind || !POLICY_KINDS[kind]) return;
+    setForm((f) => ({ ...f, kind }));
+    setShowForm(true);
+    const next = new URLSearchParams(params);
+    next.delete("addPolicy");
+    setParams(next, { replace: true });
+    window.setTimeout(() => cardRef.current?.scrollIntoView({ block: "start" }), 150);
+  }, [params, scoped]);
   useEffect(load, [assetId, personId]);
   useEffect(() => {
     api.entities.list().then(setEntities);
@@ -217,6 +241,7 @@ export function InsurancePanel({
     }
     try {
       await api.insurance.create({ ...policyPayload(form), ...target, policyNumber: policyNumber || null });
+      recordsChanged();
       draft.clear();
       setPolicyNumber("");
       setShowForm(false);
@@ -233,7 +258,7 @@ export function InsurancePanel({
   }, 0);
 
   return (
-    <div className="card">
+    <div className="card" ref={cardRef} style={{ scrollMarginTop: 64 }}>
       <div className="toolbar" style={{ justifyContent: "space-between" }}>
         <h3 style={{ margin: 0 }}>
           {title} <HelpLink topic="insurance" />

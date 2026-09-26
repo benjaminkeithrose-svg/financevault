@@ -1127,6 +1127,9 @@ model Settings {
   // The borrowing estimate's assumptions (buffer, rent shading, card %,
   // expenses benchmark, LVRs…), as JSON, once changed from the defaults.
   borrowingAssumptions      String?
+  // Features switched off (JSON array of feature ids). Switching one off
+  // only hides it — its data is kept and returns when switched back on.
+  featuresOff               String?
 }
 
 // ---------------------------------------------------------------------------
@@ -1623,7 +1626,7 @@ model InvestmentAccountOwnership {
 // The policy number is encrypted like a TFN (see db.ts).
 model InsurancePolicy {
   id               String    @id @default(cuid())
-  kind             String // BUILDING | CONTENTS | BUILDING_AND_CONTENTS | LANDLORD | STRATA | MOTOR | BOAT | PUBLIC_LIABILITY | LIFE | TPD | TRAUMA | INCOME_PROTECTION | BUSINESS | OTHER
+  kind             String // BUILDING | CONTENTS | BUILDING_AND_CONTENTS | LANDLORD | LANDLORD_CONTENTS | STRATA | CTP | MOTOR | BOAT | CARAVAN | PRIVATE_HEALTH | PUBLIC_LIABILITY | LIFE | TPD | TRAUMA | INCOME_PROTECTION | BUSINESS | OTHER
   insurer          String?
   policyNumber     String? // encrypted
   coverAmount      Float?
@@ -1781,4 +1784,16 @@ model IncomeStatement {
   createdAt                DateTime  @default(now())
 
   @@index([personId, fyLabel])
+}
+
+// "What's missing" checklist: an expected insurance policy or document that
+// the family has said isn't needed (covered by the strata policy, held in
+// super, not needed…). Kept on record with the reason; it stops flagging.
+// key is the expectation's stable id, e.g. "ins:LANDLORD:asset:<id>" or
+// "doc:Land Tax Assessment:asset:<id>:2025-26".
+model ExpectationDismissal {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  reason    String
+  createdAt DateTime @default(now())
 }

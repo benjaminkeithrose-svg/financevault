@@ -56,6 +56,7 @@ export const DOCUMENT_TYPES: DocumentTypeDef[] = [
   { name: "Land Tax", category: "Property", keywords: ["land tax"] },
   { name: "Repairs & Maintenance", category: "Property", keywords: ["repair", "maintenance invoice"] },
   { name: "Property Management", category: "Property", keywords: ["property manager", "letting fee", "management fee"] },
+  { name: "Strata Certificate of Currency", category: "Property", keywords: ["certificate of currency", "strata", "owners corporation"] },
   { name: "Depreciation Schedule", category: "Property", keywords: ["depreciation schedule", "quantity surveyor", "capital allowance"] },
 
   // Investment
@@ -71,6 +72,12 @@ export const DOCUMENT_TYPES: DocumentTypeDef[] = [
   { name: "Vehicle Registration", category: "Personal", keywords: ["registration renewal", "vehicle registration"] },
   { name: "Utilities", category: "Personal", keywords: ["electricity", "gas bill", "utility bill"] },
   { name: "Home Insurance", category: "Personal", keywords: ["home and contents", "home insurance", "building insurance"] },
+  {
+    name: "Private Health Statement",
+    category: "Personal",
+    keywords: ["private health insurance statement", "private health insurance tax statement", "private health", "rebate"],
+  },
+  { name: "Super Statement", category: "Personal", keywords: ["member statement", "superannuation statement", "super statement", "your super balance"] },
   { name: "Medical", category: "Personal", keywords: ["medicare", "health fund", "medical invoice"] },
   { name: "Major Purchase", category: "Personal", keywords: ["tax invoice", "purchase receipt"] },
 
@@ -89,6 +96,11 @@ export const DOCUMENT_TYPES: DocumentTypeDef[] = [
   { name: "ASIC Document", category: "Trust/Company", keywords: ["asic", "australian securities and investments commission"] },
   { name: "Annual Statement", category: "Trust/Company", keywords: ["annual statement", "annual review"] },
   { name: "Distribution Statement (Trust)", category: "Trust/Company", keywords: ["trust distribution", "beneficiary distribution"] },
+  {
+    name: "Distribution Minutes",
+    category: "Trust/Company",
+    keywords: ["minutes of meeting of the trustee", "trustee resolution", "distribution resolution", "resolved that the net income"],
+  },
   { name: "Financial Statement", category: "Trust/Company", keywords: ["financial statements", "balance sheet", "profit and loss"] },
 
   // Commercial Property (spec section 29)

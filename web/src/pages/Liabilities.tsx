@@ -30,8 +30,11 @@ const emptyForm = (liabilityType: string) => ({
   interestOnly: false,
 });
 
-/** One list per kind of debt (see DEBT_LISTS) — property loans, vehicle loans, cards, the rest. */
-export function Liabilities({ scope }: { scope: DebtList }) {
+/**
+ * One list per kind of debt (see DEBT_LISTS) — property loans, vehicle loans,
+ * cards, the rest. `section` shows it as a part of the Loans & cards page.
+ */
+export function Liabilities({ scope, section = false }: { scope: DebtList; section?: boolean }) {
   const list = DEBT_LISTS[scope];
   const [params, setParams] = useSearchParams();
   const [liabilities, setLiabilities] = useState<Liability[]>([]);
@@ -65,7 +68,7 @@ export function Liabilities({ scope }: { scope: DebtList }) {
   // record a loan for that vehicle, owned by the same entity.
   useEffect(() => {
     const vehicleId = params.get("newLoanFor");
-    if (!vehicleId || vehicles.length === 0) return;
+    if (scope !== "vehicle" || !vehicleId || vehicles.length === 0) return;
     const vehicle = vehicles.find((v) => v.id === vehicleId);
     if (!vehicle) return;
     setForm({
@@ -81,7 +84,7 @@ export function Liabilities({ scope }: { scope: DebtList }) {
   // Arriving from an SMSF's "Add an LRBA loan": a limited recourse loan owed by the fund.
   useEffect(() => {
     const fundId = params.get("newLrbaFor");
-    if (!fundId) return;
+    if (scope !== "property" || !fundId) return;
     setForm({ ...emptyForm("LRBA_LOAN"), name: "SMSF property loan", entityId: fundId });
     setSecurityKind("residential");
     setShowForm(true);
@@ -130,11 +133,17 @@ export function Liabilities({ scope }: { scope: DebtList }) {
 
   return (
     <div>
-      <div className="page-header">
+      <div className={section ? "section-header" : "page-header"}>
         <div>
-          <h2>
-            {list.title} <HelpLink topic={scope === "vehicle" ? "vehicles" : "loans-assets"} />
-          </h2>
+          {section ? (
+            <h3>
+              {list.title} <HelpLink topic={scope === "vehicle" ? "vehicles" : "loans-assets"} />
+            </h3>
+          ) : (
+            <h2>
+              {list.title} <HelpLink topic={scope === "vehicle" ? "vehicles" : "loans-assets"} />
+            </h2>
+          )}
           <p>{list.blurb}</p>
         </div>
         <button className="btn" onClick={() => setShowForm((v) => !v)}>
@@ -332,7 +341,11 @@ export function Liabilities({ scope }: { scope: DebtList }) {
       )}
 
       {liabilities.length === 0 ? (
-        <p className="empty-state">Nothing here yet.</p>
+        section ? (
+          <p className="cap-explain">No {list.title.toLowerCase()} recorded.</p>
+        ) : (
+          <p className="empty-state">Nothing here yet.</p>
+        )
       ) : (
         <ul className="item-card-list">
           {liabilities.map((l) => (

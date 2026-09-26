@@ -18,7 +18,7 @@
   --mark-hole: var(--accent-fill);
   --success: #1f9d68;
   --success-bg: #e6f7ef;
-  --warning: #b5790a;
+  --warning: #8a5a00;
   --warning-bg: #fdf3dc;
   --danger: #d23f4f;
   --danger-bg: #fbe9eb;
@@ -214,6 +214,29 @@ h1, h2, h3, h4 {
 .page-header p {
   color: var(--text-muted);
   margin: 0;
+}
+
+/* A page-like section inside a longer page (Loans & cards, advisers). */
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 28px 0 12px;
+}
+
+.section-header h3 {
+  margin: 0 0 4px;
+}
+
+.section-header p {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.debt-section,
+#advisers {
+  scroll-margin-top: 64px;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -832,6 +855,13 @@ label {
   color: var(--text);
 }
 
+/* Standalone text buttons (in a list or a row of actions) get a full-size tap area. */
+.plain-list .link-button,
+.toolbar .link-button,
+.worth-block .link-button {
+  min-height: 40px;
+}
+
 /* ---------------------------------------------------------------------- */
 /* Menu pinned down the side (wide screens only — a phone has no room)    */
 /* ---------------------------------------------------------------------- */
@@ -1055,6 +1085,148 @@ label {
   --info-bg: #e0e7ff;
 }
 
+[data-theme="forest"] {
+  --ink: #14331f;
+  --bg: #f1f7f2;
+  --surface-2: #e4efe6;
+  --border: #c9dfcd;
+  --text: #14331f;
+  --text-muted: #4f6b57;
+  --accent: #276a3e;
+  --accent-dim: #dcefe2;
+  --accent-fill: #2f7d4a;
+  --on-accent: #ffffff;
+  --info: #276a3e;
+  --info-bg: #dcefe2;
+  /* Success is green too — a bluer green keeps "done" distinct from the accent. */
+  --success: #0f766e;
+  --success-bg: #ccfbf1;
+}
+
+[data-theme="gold"] {
+  --ink: #1f2328;
+  --bg: #f6f5f1;
+  --surface-2: #eeece5;
+  --border: #dcd8cc;
+  --text: #1f2328;
+  --text-muted: #5f636b;
+  /* Gold is too light for text, so links and outlines use a deep gold. */
+  --accent: #7a5c0c;
+  --accent-dim: #f5ecd2;
+  --accent-fill: #c9a227;
+  --on-accent: #1f2328;
+  --info: #7a5c0c;
+  --info-bg: #f5ecd2;
+  /* Warnings shift to orange so they don't blend into the gold. */
+  --warning: #c2410c;
+  --warning-bg: #ffedd5;
+}
+
+[data-theme="ocean"] {
+  --ink: #0c2d48;
+  --bg: #f0f7fc;
+  --surface-2: #e1eef8;
+  --border: #c6dcec;
+  --text: #0c2d48;
+  --text-muted: #4d6a82;
+  --accent: #0369a1;
+  --accent-dim: #e0f2fe;
+  --accent-fill: #0369a1;
+  --on-accent: #ffffff;
+  --info: #0369a1;
+  --info-bg: #e0f2fe;
+}
+
+[data-theme="terracotta"] {
+  --ink: #3b1f14;
+  --bg: #fbf4ef;
+  --surface-2: #f5e6dc;
+  --border: #ead0c0;
+  --text: #3b1f14;
+  --text-muted: #7a5647;
+  --accent: #a84a22;
+  --accent-dim: #fbe3d6;
+  --accent-fill: #b4532a;
+  --on-accent: #ffffff;
+  --info: #a84a22;
+  --info-bg: #fbe3d6;
+  /* A deep crimson so delete and errors stay distinct from terracotta. */
+  --danger: #9f1239;
+  --danger-bg: #ffe4e6;
+  --warning: #854d0e;
+  --warning-bg: #fef3c7;
+}
+
+[data-theme="grey"] {
+  --ink: #18181b;
+  --bg: #f5f5f5;
+  --surface-2: #ececec;
+  --border: #d9d9d9;
+  --text: #18181b;
+  --text-muted: #5c5c63;
+  --accent: #27272a;
+  --accent-dim: #e8e8e8;
+  --accent-fill: #27272a;
+  --on-accent: #ffffff;
+  --info: #27272a;
+  --info-bg: #ececec;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Dark: the same colourways on a dark page. Set by theme.ts as data-mode  */
+/* ("Match computer" follows the computer's own setting).                  */
+/* ---------------------------------------------------------------------- */
+
+[data-mode="dark"] {
+  --bg: #0f1117;
+  --surface: #181b24;
+  --surface-2: #222634;
+  --border: #323849;
+  --text: #e7e9f0;
+  --text-muted: #a0a7ba;
+  --success: #4ade80;
+  --success-bg: #12301f;
+  --warning: #fbbf24;
+  --warning-bg: #33280c;
+  --danger: #f87171;
+  --danger-bg: #3a1a1d;
+  --info-bg: #1c2540;
+  --card-shadow: none;
+}
+
+[data-mode="dark"][data-theme="violet"] { --ink: #c4b5fd; --accent: #b4a0fb; --accent-dim: #2e2160; --accent-fill: #7c3aed; --on-accent: #ffffff; --info: #b4a0fb; }
+[data-mode="dark"][data-theme="teal"] { --ink: #99f6e4; --accent: #5eead4; --accent-dim: #0d3b37; --accent-fill: #0f766e; --on-accent: #ffffff; --info: #5eead4; }
+[data-mode="dark"][data-theme="pink"] { --ink: #bfdbfe; --accent: #f9a8d4; --accent-dim: #4a1030; --accent-fill: #be185d; --on-accent: #ffffff; --info: #93c5fd; --danger: #fca5a5; }
+[data-mode="dark"][data-theme="lilac"] { --ink: #bfdbfe; --accent: #c4b5fd; --accent-dim: #2a2360; --accent-fill: #c4b5fd; --on-accent: #1e1b4b; --info: #93c5fd; }
+[data-mode="dark"][data-theme="forest"] { --ink: #bbf7d0; --accent: #86efac; --accent-dim: #12301d; --accent-fill: #2f7d4a; --on-accent: #ffffff; --info: #86efac; --success: #5eead4; --success-bg: #0d3b37; }
+[data-mode="dark"][data-theme="gold"] { --ink: #e7e2d3; --accent: #e3c15a; --accent-dim: #3a3113; --accent-fill: #c9a227; --on-accent: #1f2328; --info: #e3c15a; --warning: #fb923c; --warning-bg: #3a1f0c; }
+[data-mode="dark"][data-theme="ocean"] { --ink: #bae6fd; --accent: #7dd3fc; --accent-dim: #0b2f45; --accent-fill: #0369a1; --on-accent: #ffffff; --info: #7dd3fc; }
+[data-mode="dark"][data-theme="terracotta"] { --ink: #fed7c3; --accent: #f5a47c; --accent-dim: #3d2014; --accent-fill: #b4532a; --on-accent: #ffffff; --info: #f5a47c; --danger: #fb7185; --danger-bg: #3b1320; }
+[data-mode="dark"][data-theme="grey"] { --ink: #e4e4e7; --accent: #e4e4e7; --accent-dim: #2a2a2e; --accent-fill: #d4d4d8; --on-accent: #18181b; --info: #e4e4e7; }
+
+/* Bold in the dark: the header stays dark, with a light edge. */
+[data-mode="dark"][data-style="bold"] {
+  --header-bg: var(--surface);
+  --header-text: var(--text);
+  --mark-block: var(--ink);
+  --mark-hole: var(--accent-fill);
+  --card-shadow: 4px 4px 0 var(--border);
+}
+
+[data-mode="dark"][data-style="bold"] .app-header {
+  border-bottom: 2px solid var(--ink);
+}
+
+[data-mode="dark"][data-style="bold"] .app-header .icon-btn:hover {
+  background: var(--surface-2);
+}
+
+[data-mode="dark"] .preview-pane iframe,
+[data-mode="dark"] .preview-pane img {
+  /* Documents are printed on white — keep them that way. */
+  background: #fff;
+}
+
 /* Soft: the rounded, light look. */
 [data-style="soft"] {
   --radius: 10px;
@@ -1188,8 +1360,35 @@ label {
 }
 
 .lock-brand strong {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 900;
+}
+
+/* The lock screen: the mark as the centrepiece. */
+.lock-brand.centred {
+  flex-direction: column;
+  gap: 14px;
+  margin: 8px 0 20px;
+  text-align: center;
+}
+
+/* On the dashboard the header carries the mark and the name. */
+.app-header .brand-home {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 6px;
+}
+
+.app-header .keyhole-mark {
+  --mark-block: var(--header-text);
+  --mark-hole: var(--header-bg);
+}
+
+[data-style="soft"] .app-header .keyhole-mark,
+[data-mode="dark"] .app-header .keyhole-mark {
+  --mark-block: var(--ink);
+  --mark-hole: var(--accent-fill);
 }
 
 /* Theme picker (Settings → Look and feel, and the foot of the menu) */
@@ -1252,6 +1451,51 @@ label {
 
 .theme-picker .segmented {
   align-self: flex-start;
+}
+
+.theme-picker-label {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: -4px;
+}
+
+.theme-picker-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.logo-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.logo-choice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+  padding: 8px 12px 8px 8px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  --mark-block: var(--ink);
+  --mark-hole: var(--accent-fill);
+}
+
+.logo-choice .cap-explain {
+  display: block;
+  margin: 2px 0 0;
+}
+
+.logo-choice.selected {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px var(--accent-fill);
 }
 
 .theme-picker .segmented button {
@@ -1689,6 +1933,148 @@ label {
 
 /* An area the ATO watches: a quiet amber edge, not an alarm. */
 .checklist-watch {
-  border-left: 4px solid #d97706;
+  border-left: 4px solid var(--warning);
   padding-left: 12px;
+}
+
+/* Settings → Features: one switch per feature, two columns when there's room. */
+.feature-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 4px 16px;
+}
+
+.feature-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.feature-row input {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.feature-row .cap-explain {
+  display: block;
+  margin: 2px 0 0;
+}
+
+/* What's missing: one row per expected policy or document. Required items
+   use the warning colour — red stays for delete and errors. */
+.missing-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.missing-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+
+.missing-list li:first-child {
+  border-top: none;
+}
+
+.missing-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 14px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+}
+
+.missing-list li.required .missing-mark {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.missing-list li.worth .missing-mark {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.missing-list li.met .missing-mark {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.missing-list li.aside,
+.missing-list li.met {
+  color: var(--text-muted);
+}
+
+.missing-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.missing-body .cap-explain {
+  margin: 2px 0 0;
+}
+
+.missing-level {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  vertical-align: 1px;
+}
+
+.missing-level.required {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.missing-level.worth {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.missing-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.missing-actions .link-button {
+  min-height: 40px;
+}
+
+@media (max-width: 600px) {
+  .missing-list li {
+    flex-wrap: wrap;
+  }
+  .missing-actions {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding-left: 38px;
+  }
+}
+
+@media print {
+  .missing-group {
+    break-inside: avoid;
+  }
 }

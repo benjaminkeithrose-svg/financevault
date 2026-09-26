@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { MissingFlags } from "../components/MissingFlags.js";
 import { useParams } from "react-router-dom";
 import { api, Entity, Liability, Property } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
@@ -212,6 +213,7 @@ export function PropertyDetail() {
 
       <ItemsPanel parentAssetId={property.assetId} title="Items in this property" />
 
+      <MissingFlags target={`asset:${property.assetId}`} />
       <InsurancePanel assetId={property.assetId} defaultKind="BUILDING_AND_CONTENTS" defaultHolderId={property.asset?.entityId} />
 
       <div className="card">

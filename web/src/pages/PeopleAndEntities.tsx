@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { api, Entity, Person } from "../api/client.js";
+import { FeatureGate } from "../components/FeatureGate.js";
+import { Advisers } from "./Advisers.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
@@ -38,6 +41,14 @@ export function PeopleAndEntities() {
   }
 
   useEffect(load, []);
+
+  // The old Professional advisers address opens this page at that section.
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (pathname !== "/advisers") return;
+    const t = window.setTimeout(() => document.getElementById("advisers")?.scrollIntoView({ block: "start" }), 200);
+    return () => window.clearTimeout(t);
+  }, [pathname]);
 
   async function create() {
     if (!form.name.trim()) {
@@ -224,6 +235,12 @@ export function PeopleAndEntities() {
           })}
         </ul>
       )}
+
+      <FeatureGate feature="advisers" quiet>
+        <section id="advisers">
+          <Advisers embedded />
+        </section>
+      </FeatureGate>
     </div>
   );
 }

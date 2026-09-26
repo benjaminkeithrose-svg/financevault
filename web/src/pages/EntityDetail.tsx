@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { MissingFlags } from "../components/MissingFlags.js";
 import { Link, useParams } from "react-router-dom";
 import { api, Entity } from "../api/client.js";
 import { TfnField } from "../components/TfnField.js";
@@ -7,6 +8,7 @@ import { IconBin } from "../components/icons.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { SmsfPanel } from "../components/SmsfPanel.js";
+import { FeatureGate } from "../components/FeatureGate.js";
 import { UnitholdersPanel } from "../components/UnitholdersPanel.js";
 
 const ASSET_TYPE_ICONS: Record<string, string> = {
@@ -119,7 +121,11 @@ export function EntityDetail() {
         </div>
       )}
 
-      {entity.entityType === "SMSF" && <SmsfPanel fundId={entity.id} />}
+      {entity.entityType === "SMSF" && (
+        <FeatureGate feature="smsf" quiet>
+          <SmsfPanel fundId={entity.id} />
+        </FeatureGate>
+      )}
       {entity.entityType === "UNIT_TRUST" && (
         <UnitholdersPanel trust={entity} netAssets={entity.financialPosition?.netAssets ?? 0} entities={allEntities} onChange={load} />
       )}
@@ -426,6 +432,7 @@ export function EntityDetail() {
           </table>
         )}
       </div>
+      {!entity.personalFor && <MissingFlags target={`entity:${entity.id}`} />}
       {!entity.personalFor && (
         <DeleteSection
           title="Delete this entity"

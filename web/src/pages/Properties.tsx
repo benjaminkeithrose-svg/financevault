@@ -8,6 +8,7 @@ import { HelpLink } from "../components/HelpLink.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
 import { useDraft } from "../hooks/useDraft.js";
 import { OwnersPicker, useOwners, withOwners } from "../components/OwnersPicker.js";
+import { useFeatures } from "../features.js";
 
 function ResidentialProperties() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -109,7 +110,9 @@ function ResidentialProperties() {
 }
 
 export function Properties() {
-  const [view, setView] = useState<"residential" | "commercial">("residential");
+  const [chosen, setView] = useState<"residential" | "commercial">("residential");
+  const commercialOn = useFeatures().on("commercial");
+  const view = commercialOn ? chosen : "residential";
 
   return (
     <div>
@@ -124,14 +127,16 @@ export function Properties() {
         </div>
       </div>
 
-      <div className="segmented" style={{ marginBottom: 16 }}>
-        <button className={view === "residential" ? "selected" : ""} onClick={() => setView("residential")}>
-          Residential
-        </button>
-        <button className={view === "commercial" ? "selected" : ""} onClick={() => setView("commercial")}>
-          Commercial
-        </button>
-      </div>
+      {commercialOn && (
+        <div className="segmented" style={{ marginBottom: 16 }}>
+          <button className={view === "residential" ? "selected" : ""} onClick={() => setView("residential")}>
+            Residential
+          </button>
+          <button className={view === "commercial" ? "selected" : ""} onClick={() => setView("commercial")}>
+            Commercial
+          </button>
+        </div>
+      )}
 
       {view === "residential" ? <ResidentialProperties /> : <CommercialProperties />}
     </div>

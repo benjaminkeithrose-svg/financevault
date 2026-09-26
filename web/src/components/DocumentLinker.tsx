@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { recordsChanged } from "../features.js";
 import { Link } from "react-router-dom";
 import { api, Document, DocumentLink } from "../api/client.js";
 import { formatDate, humanize, confirmThenDelete } from "../utils.js";
@@ -38,6 +39,7 @@ export function DocumentLinker({
 
   async function linkExisting(documentId: string) {
     await api.documents.addLink(documentId, { targetType, targetId });
+    recordsChanged();
     setPickerOpen(false);
     load();
   }
@@ -48,6 +50,7 @@ export function DocumentLinker({
       () => api.documents.removeLink(documentId, linkId)
     );
     if (!deleted) return;
+    recordsChanged();
     load();
   }
 
@@ -58,6 +61,7 @@ export function DocumentLinker({
       for (const file of Array.from(files)) {
         const { document } = await api.documents.upload(file);
         await api.documents.addLink(document.id, { targetType, targetId });
+        recordsChanged();
       }
       load();
     } finally {

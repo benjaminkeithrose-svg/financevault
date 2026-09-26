@@ -1,5 +1,13 @@
-/** The Financial Vault mark: a keyhole cut through a solid block, in the current colourway. */
-export function KeyholeMark({ size = 28, label }: { size?: number; label?: string }) {
+import { useTheme } from "../hooks/useTheme.js";
+import { Logo, logoShapes } from "../theme.js";
+
+/**
+ * The Financial Vault mark, in the logo design and colourway chosen under
+ * Look and feel. `logo` draws a particular design (the picker's previews).
+ */
+export function KeyholeMark({ size = 28, label, logo }: { size?: number; label?: string; logo?: Logo }) {
+  const [theme] = useTheme();
+  const design = logo ?? theme.logo;
   return (
     <svg
       width={size}
@@ -11,8 +19,8 @@ export function KeyholeMark({ size = 28, label }: { size?: number; label?: strin
       className="keyhole-mark"
     >
       <rect width="140" height="140" fill="var(--mark-block)" />
-      <circle cx="70" cy="56" r="26" fill="var(--mark-hole)" />
-      <path d="M56 66 L84 66 L94 116 L46 116 Z" fill="var(--mark-hole)" />
+      {/* Fixed shapes from theme.ts — no user text reaches this markup. */}
+      <g dangerouslySetInnerHTML={{ __html: logoShapes(design, "var(--mark-hole)") }} />
     </svg>
   );
 }

@@ -63,7 +63,7 @@ export function LiabilityDetail() {
   }, []);
 
   if (!liability) {
-    if (loadError) return <LoadFailed message={loadError} backTo="/loans" backLabel="Back to property loans" />;
+    if (loadError) return <LoadFailed message={loadError} backTo="/loans" backLabel="Back to loans &amp; cards" />;
     return <div className="empty-state">Loading…</div>;
   }
 

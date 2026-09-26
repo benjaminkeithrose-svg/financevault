@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { MissingFlags } from "../components/MissingFlags.js";
 import { useParams } from "react-router-dom";
 import { api, CommercialProperty, Entity, FinancialYear, LeaseExtractionResponse } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
@@ -1136,6 +1137,7 @@ export function CommercialPropertyDetail() {
 
       <ItemsPanel parentAssetId={property.assetId} title="Plant & equipment" />
 
+      <MissingFlags target={`asset:${property.assetId}`} />
       <InsurancePanel assetId={property.assetId} defaultKind="BUILDING" defaultHolderId={property.asset?.entityId} />
 
       <div className="card">

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { MissingFlags } from "../components/MissingFlags.js";
 import { TfnField } from "../components/TfnField.js";
 import { Link, useParams } from "react-router-dom";
 import { api, Document, Entity, FamilySuggestion, FinancialYear, PayPeriod, Person } from "../api/client.js";
@@ -14,6 +15,7 @@ import { TrustFamilyPrompt } from "../components/TrustFamilyPrompt.js";
 import { PersonalDetailsPanel } from "../components/PersonalDetailsPanel.js";
 import { IncomeCard } from "../components/IncomeCard.js";
 import { PaygPanel } from "../components/PaygPanel.js";
+import { FeatureGate } from "../components/FeatureGate.js";
 
 const RELATIONSHIP_TYPES = [
   "SETTLOR",
@@ -351,12 +353,15 @@ export function PersonDetail() {
 
       <IncomeCard person={person} onChange={load} />
 
-      <PaygPanel person={person} onChange={load} />
+      <FeatureGate feature="payg" quiet>
+        <PaygPanel person={person} onChange={load} />
+      </FeatureGate>
 
       <FamilyPanel person={person} people={people} onChange={load} />
 
       <IdentityPanel personId={person.id} />
 
+      <MissingFlags target={`person:${person.id}`} />
       <InsurancePanel personId={person.id} title="Life & income cover" defaultHolderId={person.entityId} />
 
       <EstatePanel personId={person.id} />

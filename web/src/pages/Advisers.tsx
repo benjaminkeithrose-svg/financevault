@@ -21,7 +21,7 @@ const EMPTY = { kind: "ACCOUNTANT", firm: "", contactFirstName: "", contactSurna
  * the family — one list, reused whenever a broker or accountant asks who
  * else to contact, and pulled straight into the Fact Find document pack.
  */
-export function Advisers() {
+export function Advisers({ embedded = false }: { embedded?: boolean }) {
   const [advisers, setAdvisers] = useState<Adviser[]>([]);
   const [form, setForm, draft] = useDraft("advisers:new", EMPTY);
   const [showForm, setShowForm] = useState(draft.restored);
@@ -131,11 +131,17 @@ export function Advisers() {
 
   return (
     <div>
-      <div className="page-header">
+      <div className={embedded ? "section-header" : "page-header"}>
         <div>
-          <h2>
-            Professional advisers <HelpLink topic="personal-details" />
-          </h2>
+          {embedded ? (
+            <h3>
+              Professional advisers <HelpLink topic="personal-details" />
+            </h3>
+          ) : (
+            <h2>
+              Professional advisers <HelpLink topic="personal-details" />
+            </h2>
+          )}
           <p>Your accountant, solicitor, real estate agent and financial adviser — kept once, and included in the Fact Find document pack.</p>
         </div>
         {!showForm && !editingId && (

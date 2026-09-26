@@ -16,12 +16,26 @@ async function getOrCreateSettings() {
   });
 }
 
+/** Features switched off, as a list (stored as JSON). */
+export function parseFeaturesOff(raw: string | null | undefined): string[] {
+  try {
+    const list = JSON.parse(raw ?? "[]");
+    return Array.isArray(list) ? list.filter((x): x is string => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+async function respond(res: import("express").Response) {
+  const settings = await getOrCreateSettings();
+  const effectiveStorageDir = await getEffectiveStorageDir();
+  res.json({ ...settings, featuresOff: parseFeaturesOff(settings.featuresOff), effectiveStorageDir });
+}
+
 settingsRouter.get(
   "/",
   asyncHandler(async (_req, res) => {
-    const settings = await getOrCreateSettings();
-    const effectiveStorageDir = await getEffectiveStorageDir();
-    res.json({ ...settings, effectiveStorageDir });
+    await respond(res);
   })
 );
 
@@ -31,6 +45,7 @@ const updateInput = z.object({
   allowPriceLookups: z.boolean().optional(),
   defaultLandingPage: z.enum(["DASHBOARD", "VISUALIZATION"]).optional(),
   customStorageDir: z.string().optional().nullable(),
+  featuresOff: z.array(z.string().regex(/^[a-z-]{1,40}$/)).max(50).optional(),
 });
 
 settingsRouter.put(
@@ -53,8 +68,11 @@ settingsRouter.put(
     }
 
     await getOrCreateSettings();
-    const settings = await prisma.settings.update({ where: { id: 1 }, data: parsed });
-    const effectiveStorageDir = await getEffectiveStorageDir();
-    res.json({ ...settings, effectiveStorageDir });
+    const { featuresOff, ...rest } = parsed;
+    await prisma.settings.update({
+      where: { id: 1 },
+      data: { ...rest, ...(featuresOff ? { featuresOff: JSON.stringify([...new Set(featuresOff)]) } : {}) },
+    });
+    await respond(res);
   })
 );

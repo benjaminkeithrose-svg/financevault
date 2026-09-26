@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api, Settings as SettingsType } from "../api/client.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { ThemePicker } from "../components/ThemePicker.js";
+import { FEATURES, setFeaturesOff } from "../features.js";
 
 export function Settings() {
   const [settings, setSettings] = useState<SettingsType | null>(null);
@@ -17,6 +18,22 @@ export function Settings() {
   }
 
   useEffect(load, []);
+
+  // Arriving from a switched-off page's "Go to Features" link.
+  useEffect(() => {
+    if (!settings || window.location.hash !== "#features") return;
+    document.getElementById("features")?.scrollIntoView({ block: "start" });
+  }, [settings]);
+
+  async function toggleFeature(id: string, on: boolean) {
+    if (!settings) return;
+    const off = on ? settings.featuresOff.filter((f) => f !== id) : [...settings.featuresOff, id];
+    // Show the change straight away; the saved list comes back from the server.
+    setSettings({ ...settings, featuresOff: off });
+    const updated = await api.settings.update({ featuresOff: off });
+    setSettings(updated);
+    setFeaturesOff(updated.featuresOff);
+  }
 
   const [pcCurrent, setPcCurrent] = useState("");
   const [pcNew, setPcNew] = useState("");
@@ -92,6 +109,32 @@ export function Settings() {
           Pick a colour and a style. It's remembered on this computer only, so each person can choose their own.
         </p>
         <ThemePicker />
+      </div>
+
+      <div className="card" id="features">
+        <h3 style={{ marginTop: 0 }}>
+          Features <HelpLink topic="features" />
+        </h3>
+        <p style={{ color: "var(--text-muted)" }}>
+          Switch off what you don't use. It disappears from the menu, the dashboard and the pages — nothing is deleted, and
+          switching it back on brings everything back as it was. This applies on every computer that opens this vault.
+        </p>
+        {settings && (
+          <div className="feature-list">
+            {FEATURES.map((f) => {
+              const on = !settings.featuresOff.includes(f.id);
+              return (
+                <label key={f.id} className="feature-row">
+                  <input type="checkbox" checked={on} onChange={(e) => toggleFeature(f.id, e.target.checked)} />
+                  <span>
+                    <strong>{f.name}</strong>
+                    <span className="cap-explain">{f.blurb}</span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div className="card">

@@ -488,6 +488,34 @@ export interface CarOption {
   notes: string[];
 }
 
+export interface Expectation {
+  key: string;
+  kind: "INSURANCE" | "DOCUMENT";
+  label: string;
+  level: "RED" | "AMBER";
+  why: string;
+  fyLabel: string | null;
+  met: boolean;
+  metBy: { label: string; route: string } | null;
+  addAs: string;
+  dismissed: { reason: string; at: string } | null;
+}
+
+export interface ExpectationGroup {
+  target: string;
+  kind: "PROPERTY" | "COMMERCIAL_PROPERTY" | "VEHICLE" | "PERSON" | "ENTITY";
+  name: string;
+  route: string;
+  items: Expectation[];
+}
+
+export interface ExpectedResult {
+  fyLabel: string;
+  fyOptions: string[];
+  groups: ExpectationGroup[];
+  counts: { red: number; amber: number; met: number; setAside: number };
+}
+
 export interface ChecklistItem {
   id: string;
   title: string;
@@ -573,6 +601,7 @@ export interface DocumentLink {
 export interface DashboardSummary {
   backup: { lastBackupAt: string | null; remindAfterDays: number };
   staleValues: Array<{ id: string; name: string; value: number | null; since: string; route: string }>;
+  missing: { red: number; amber: number; met: number; setAside: number; fyLabel: string } | null;
   gettingStarted: {
     steps: Array<{ key: string; label: string; route: string; done: boolean; optional?: boolean }>;
     dismissed: boolean;
@@ -634,6 +663,7 @@ export interface Settings {
   allowPriceLookups: boolean;
   lastBackupAt?: string | null;
   checklistDismissed?: boolean;
+  featuresOff: string[];
 }
 
 export interface PropertyPerformanceRow {
@@ -1941,6 +1971,15 @@ export const api = {
     removeStatement: (id: string) => request<void>(`/payg/income-statements/${id}`, { method: "DELETE" }),
     carCompare: (data: Record<string, unknown>) =>
       request<{ baseIncome: number; incomeRecorded: boolean; options: CarOption[] }>("/payg/car-compare", { method: "POST", body: JSON.stringify(data) }),
+  },
+  expected: {
+    get: (params: { fy?: string; target?: string } = {}) => {
+      const q = new URLSearchParams(Object.entries(params).filter(([, v]) => v) as Array<[string, string]>).toString();
+      return request<ExpectedResult>(`/expected${q ? `?${q}` : ""}`);
+    },
+    setAside: (key: string, reason: string) =>
+      request<unknown>("/expected/set-aside", { method: "PUT", body: JSON.stringify({ key, reason }) }),
+    restore: (key: string) => request<void>(`/expected/set-aside?key=${encodeURIComponent(key)}`, { method: "DELETE" }),
   },
   advice: {
     checklist: () => request<{ items: ChecklistItem[]; referenceDocs: Record<string, string> }>("/accountant-checklist"),

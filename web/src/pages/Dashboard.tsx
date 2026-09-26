@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api, DashboardSummary, Entity } from "../api/client.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 import { WorthDoing } from "../components/WorthDoing.js";
+import { FeatureGate } from "../components/FeatureGate.js";
 
 export function Dashboard() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -70,14 +71,18 @@ export function Dashboard() {
           <div className="label">Property Value</div>
           <div className="value">{formatCurrency(financialSnapshot.propertyValue)}</div>
         </div>
-        <div className="stat-tile">
-          <div className="label">Investments</div>
-          <div className="value">{formatCurrency(financialSnapshot.investmentValue)}</div>
-        </div>
-        <div className="stat-tile">
-          <div className="label">Superannuation</div>
-          <div className="value">{formatCurrency(financialSnapshot.superannuation)}</div>
-        </div>
+        <FeatureGate feature="investments" quiet>
+          <div className="stat-tile">
+            <div className="label">Investments</div>
+            <div className="value">{formatCurrency(financialSnapshot.investmentValue)}</div>
+          </div>
+        </FeatureGate>
+        <FeatureGate feature="super" quiet>
+          <div className="stat-tile">
+            <div className="label">Superannuation</div>
+            <div className="value">{formatCurrency(financialSnapshot.superannuation)}</div>
+          </div>
+        </FeatureGate>
       </div>
 
       <div className="grid grid-2" style={{ marginTop: 20 }}>
@@ -148,6 +153,7 @@ export function Dashboard() {
         </div>
       </div>
 
+      <FeatureGate feature="commercial" quiet>
       <div className="card" style={{ marginTop: 16 }}>
         <h3 style={{ marginTop: 0 }}>Upcoming lease events</h3>
         <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
@@ -172,6 +178,7 @@ export function Dashboard() {
           </table>
         )}
       </div>
+      </FeatureGate>
 
       {!entityId && consolidated.byEntity.length > 0 && (
         <div className="card" style={{ marginTop: 16 }}>

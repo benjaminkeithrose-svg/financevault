@@ -408,6 +408,8 @@ exemption); each person's employment contract or benefits summary.
 
 ## 11. Turn features on or off
 
+**Status:** built in batch 5 (Settings → Features). Not yet: switching a feature per person.
+
 **Why:** not everyone needs every part of the app — SMSF, commercial
 property, salary packaging, car benefits, Gmail import and so on. Hidden
 features keep the menu and pages simple.
@@ -454,6 +456,8 @@ those features are built (batches 3 and 4).
 
 ## 13. Expected insurance and documents — what's missing, as a checklist
 
+**Status:** built in batch 5 (menu → What's missing, the box on each page, and the dashboard). Required items use the warning colour, not red (PREFERENCES.md keeps red for delete and errors). Not yet: flags in the asset tree.
+
 **Why:** the app has places for insurance and documents but doesn't say what
 *should* be there. It should predict what's normal for each person and asset,
 flag what's missing, and give a list to go and find.
@@ -495,6 +499,8 @@ PDF, or take to the broker or accountant. Items tick off as they're added.
 
 ## 14. Shorter side menu — without adding clicks
 
+**Status:** A, B and C built in batch 5 (26 menu items, including the new What's missing). D not done.
+
 **Done already:** Asset tree and Visualization merged into one entry
 ("Asset tree & diagram") with tabs; the menu opens the last-used tab.
 
@@ -511,6 +517,8 @@ Suggested: A, B and C; D optional.
 ---
 
 ## 15. Rebranding pass
+
+**Status:** built in batch 5 — nine colours, dark mode, three logos to pick from, larger logo on the dashboard and lock screen, contrast checked in every colour, light and dark. Not yet: the logo on reports and Document Packs, launcher icons, a pick-your-own accent colour. Name kept as Financial Vault.
 
 **Why:** make the app look finished and its own — a stronger logo, more
 colour choice.
