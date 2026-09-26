@@ -355,6 +355,7 @@ commercialPropertiesRouter.delete(
             planEquityDrawSources: true,
           },
         },
+        asset: { select: { _count: { select: { children: true } } } },
       },
     });
     if (!property) {
@@ -370,11 +371,14 @@ commercialPropertiesRouter.delete(
       { count: c.occupancySnapshots, one: "occupancy snapshot", many: "occupancy snapshots" },
       { count: c.annualSnapshots, one: "annual snapshot", many: "annual snapshots" },
       { count: c.planEquityDrawSources, one: "portfolio plan equity draw", many: "portfolio plan equity draws" },
+      { count: property.asset._count.children, one: "item recorded under it", many: "items recorded under it" },
     ]);
+    const maintenance = await prisma.maintenanceRecord.findMany({ where: { assetId: property.assetId }, select: { id: true } });
     await deleteWithLinks(
       [
         { type: "COMMERCIAL_PROPERTY", id: property.id },
         { type: "ASSET", id: property.assetId },
+        ...maintenance.map((m) => ({ type: "MAINTENANCE", id: m.id })),
       ],
       // Deleting the asset takes the commercial property record with it.
       (tx) => tx.asset.delete({ where: { id: property.assetId } })

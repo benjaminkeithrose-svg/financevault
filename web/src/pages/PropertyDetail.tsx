@@ -224,7 +224,7 @@ export function PropertyDetail() {
 
       <DeleteSection
         title="Delete this property"
-        note="Not possible while a loan is secured against it — change or remove the loan first. Linked documents are kept."
+        note="Sold it? Use Sold above instead — that keeps its history and capital gains record. Deleting isn't possible while a loan is secured against it or items (appliances, solar…) are recorded under it. Its documents stay in Documents, just no longer linked to it; its insurance policies stay in the insurance register; its servicing records are removed."
         question={`Delete ${property.asset?.name ?? "this property"}? This can't be undone.`}
         action={() => api.properties.remove(property.id)}
         redirectTo="/properties"

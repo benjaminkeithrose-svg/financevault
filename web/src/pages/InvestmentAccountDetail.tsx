@@ -678,7 +678,7 @@ export function InvestmentAccountDetail() {
       {securities.length === 0 && null}
       <DeleteSection
         title="Delete this investment account"
-        note="Only possible once it holds no purchases, sales or dividends — that is your cost-base and capital gains history. Linked documents are kept."
+        note="Only possible once it holds no purchases, sales or dividends — that is your cost-base and capital gains history. Its documents stay in Documents, just no longer linked to it."
         question={`Delete the ${account.institution} account? This can't be undone.`}
         action={() => api.investments.remove(account.id)}
         redirectTo="/investments"

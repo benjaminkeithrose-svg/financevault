@@ -281,7 +281,7 @@ export function LiabilityDetail() {
       </div>
       <DeleteSection
         title="Delete this loan"
-        note="Removes the loan from your records and totals. Linked documents are kept."
+        note="Removes the loan from your records and totals. Paid it off? Its documents are worth keeping — they'll stay in Documents, just no longer linked to it."
         question={`Delete ${liability.name}? This can't be undone.`}
         action={() => api.liabilities.remove(liability.id)}
         redirectTo={DEBT_LISTS[debtListFor(liability.liabilityType)].route}

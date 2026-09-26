@@ -1148,7 +1148,7 @@ export function CommercialPropertyDetail() {
 
       <DeleteSection
         title="Delete this property"
-        note="Only possible once it has no tenancies, outgoings, capital works, snapshots or secured loans — that history is kept on purpose. Linked documents are kept."
+        note="Sold it? Use Sold above instead — that keeps its history and capital gains record. Deleting is only possible once it has no tenancies, outgoings, capital works, snapshots, secured loans or items recorded under it — that history is kept on purpose. Its documents stay in Documents, just no longer linked to it."
         question={`Delete ${property.name}? This can't be undone.`}
         action={() => api.commercialProperties.remove(property.id)}
         redirectTo="/properties"

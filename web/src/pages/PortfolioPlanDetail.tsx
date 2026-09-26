@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, CommercialProperty, PlanProperty, PlanPropertyProjection, PortfolioPlan, PortfolioPlanProjection } from "../api/client.js";
 import { formatCurrency, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
+import { IconBin } from "../components/icons.js";
 
 function pct(v: number | null | undefined, digits = 1): string {
   if (v === null || v === undefined) return "—";
@@ -290,9 +291,9 @@ export function PortfolioPlanDetail() {
         ) : (
           <ul className="item-card-list">
             {(plan.properties || []).map((pp) => (
-              <li key={pp.id} className="item-card" style={{ cursor: "default", flexWrap: "wrap" }}>
-                <div className="item-card-body">
-                  <div className="item-card-title">
+              <li key={pp.id} className="item-card plan-property">
+                <div className="plan-property-body">
+                  <div className="plan-property-title">
                     {pp.name} — Year {pp.acquisitionYearNumber}
                   </div>
                   <div className="item-card-subtitle">
@@ -478,9 +479,11 @@ export function PortfolioPlanDetail() {
                     )}
                   </div>
                 </div>
-                <button className="btn danger secondary" onClick={() => removeProperty(pp.id)}>
-                  Remove property
-                </button>
+                <div className="toolbar plan-property-remove">
+                  <button className="btn danger secondary" onClick={() => removeProperty(pp.id)}>
+                    <IconBin /> Remove property
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

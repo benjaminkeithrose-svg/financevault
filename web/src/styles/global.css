@@ -290,6 +290,30 @@ h1, h2, h3, h4 {
   cursor: pointer;
 }
 
+/* A property in a portfolio plan: a small form of its own, so it stacks —
+   the name in full, then its details, then Remove at the bottom. */
+.item-card.plan-property {
+  display: block;
+  cursor: default;
+}
+
+.plan-property-title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.plan-property-remove {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.plan-property-remove svg {
+  width: 16px;
+  height: 16px;
+  vertical-align: -3px;
+}
+
 .item-card + .item-card {
   margin-top: 10px;
 }
@@ -592,6 +616,12 @@ tr:hover td {
 /* Inputs                                                                  */
 /* ---------------------------------------------------------------------- */
 
+input, select, textarea, button {
+  /* Browsers default form fields (and textareas especially) to their own
+     fonts — use the app's everywhere. */
+  font-family: inherit;
+}
+
 input, select, textarea {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -621,6 +651,24 @@ label {
   padding: 12px 16px;
   font-size: 15px;
   margin-bottom: 20px;
+}
+
+/* A search box opened from a button, with its close button beside it. */
+.search-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.search-row .icon-btn {
+  margin-top: 2px;
+}
+
+.page-header .btn svg {
+  width: 16px;
+  height: 16px;
+  vertical-align: -3px;
+  margin-right: 4px;
 }
 
 .empty-state {
@@ -1848,6 +1896,25 @@ label {
 }
 .checkbox-row input {
   width: auto;
+}
+
+/* Tick boxes big enough to hit, and their labels a full-size tap target. */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  min-height: 0;
+  flex-shrink: 0;
+  accent-color: var(--accent-fill);
+}
+
+label:has(> input[type="checkbox"]),
+label:has(> input[type="radio"]) {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
 }
 
 /* Label / value pairs on a record's page. */

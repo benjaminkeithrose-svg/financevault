@@ -191,17 +191,23 @@ propertiesRouter.delete(
   asyncHandler(async (req, res) => {
     const property = await prisma.property.findUnique({
       where: { id: req.params.id },
-      include: { _count: { select: { liabilities: true } } },
+      include: { _count: { select: { liabilities: true } }, asset: { select: { _count: { select: { children: true } } } } },
     });
     if (!property) {
       res.status(404).json({ error: "Property not found" });
       return;
     }
-    refuseIfInUse("property", [{ count: property._count.liabilities, one: "secured loan", many: "secured loans" }]);
+    // Items under it (appliances, solar…) would otherwise quietly become assets of their own.
+    refuseIfInUse("property", [
+      { count: property._count.liabilities, one: "secured loan", many: "secured loans" },
+      { count: property.asset._count.children, one: "item recorded under it", many: "items recorded under it" },
+    ]);
+    const maintenance = await prisma.maintenanceRecord.findMany({ where: { assetId: property.assetId }, select: { id: true } });
     await deleteWithLinks(
       [
         { type: "PROPERTY", id: property.id },
         { type: "ASSET", id: property.assetId },
+        ...maintenance.map((m) => ({ type: "MAINTENANCE", id: m.id })),
       ],
       // Deleting the asset takes the property record with it.
       (tx) => tx.asset.delete({ where: { id: property.assetId } })

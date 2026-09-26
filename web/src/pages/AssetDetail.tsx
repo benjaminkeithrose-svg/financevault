@@ -291,10 +291,10 @@ export function AssetDetail() {
         title={isItem ? "Delete this item" : isVehicle ? "Delete this vehicle" : "Delete this asset"}
         note={
           isItem
-            ? "Removes the item and its service history. Not possible while other items sit under it. Linked documents are kept."
+            ? "Removes the item and its service history. Not possible while other items sit under it. Its documents stay in Documents, just no longer linked to it."
             : isVehicle
-              ? "Not possible while a loan is linked to it — delete the loan or unlink it first. Linked documents are kept."
-              : "Removes the asset from your records and totals. Linked documents are kept."
+              ? "Not possible while a loan is linked to it — delete the loan or unlink it first. Its documents stay in Documents, just no longer linked to it."
+              : "Sold it? Use Sold above instead — that keeps its history. Deleting removes the asset from your records and totals. Its documents stay in Documents, just no longer linked to it."
         }
         question={`Delete ${asset.name}${
           (asset.maintenance?.length ?? 0) > 0

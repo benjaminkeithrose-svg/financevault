@@ -4,6 +4,7 @@ import { api, Document, ReferenceChecks, ReferenceFigures, ReferenceLibraryStatu
 import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
+import { IconClose, IconSearch } from "../components/icons.js";
 
 const STATUSES = ["", "PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"];
 
@@ -11,6 +12,8 @@ export function Documents() {
   const [params, setParams] = useSearchParams();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [q, setQ] = useState(params.get("q") || "");
+  // No permanent search box (PREFERENCES.md): a button opens it.
+  const [searching, setSearching] = useState(!!params.get("q"));
   const reviewStatus = params.get("reviewStatus") || "";
   const referencesOnly = params.get("reference") === "only";
   const [reloadKey, setReloadKey] = useState(0);
@@ -30,14 +33,34 @@ export function Documents() {
           <h2>Documents <HelpLink topic="documents" /></h2>
           <p>Every document is a first-class record — link it wherever it's relevant, never duplicate it.</p>
         </div>
+        {!searching && (
+          <button className="btn secondary" onClick={() => setSearching(true)}>
+            <IconSearch /> Search documents
+          </button>
+        )}
       </div>
 
-      <input
-        className="search-bar"
-        placeholder="Search filename, OCR text, supplier, notes…"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-      />
+      {searching && (
+        <div className="search-row">
+          <input
+            autoFocus
+            className="search-bar"
+            placeholder="Search filename, text, supplier, notes…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
+          <button
+            className="icon-btn"
+            aria-label="Close search"
+            onClick={() => {
+              setQ("");
+              setSearching(false);
+            }}
+          >
+            <IconClose />
+          </button>
+        </div>
+      )}
 
       <div className="chip-row" style={{ marginBottom: 16 }}>
         {STATUSES.map((status) => (
