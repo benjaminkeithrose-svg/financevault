@@ -642,3 +642,55 @@ its starting list.
 - Figures the app uses (tax rates, super caps, cents per km, WFH rate, land
   tax thresholds) show their source and "last checked" date, and are flagged
   for review when a newer source copy arrives.
+
+---
+
+## 19. Ready to move to Postgres when there are many users
+
+**Why:** for now Financial Vault goes to about 10 friends and family, each
+running their own copy on their own computer — one SQLite file each suits
+that best (no database server to install, one file to back up). If it grows
+to around 100 or more users, a shared Postgres database may make sense
+(especially if it becomes one service people log into). The aim now is to
+keep the jump small, with an upgrade path that can be switched on later —
+not to move yet.
+
+**Keep the code portable (from now on):**
+- All database access goes through Prisma, which also runs on Postgres. No
+  new raw SQL; where it can't be avoided, keep it in one place with a
+  Postgres version beside it.
+- Text searches should use Prisma's case-insensitive option, so they behave
+  the same on both (SQLite ignores case by default; Postgres doesn't).
+- JSON kept as text fields (9 of them today) can become proper JSON columns.
+
+**What's SQLite-specific today (to redo when moving):**
+- Backups and snapshots use `VACUUM INTO` — full backup (`routes/backup.ts`),
+  the backup before an update (`routes/appUpdate.ts`) and the daily records
+  backup (`services/mirror.ts`). On Postgres: `pg_dump`, or an export of the
+  records through Prisma.
+- Restore swaps the database file (`services/restore.ts`); the launcher
+  moves and checks the database file (`launcher/lib/data.mjs`, which reads
+  it with Node's built-in SQLite). On Postgres: restore by importing.
+- The 31 migrations are written for SQLite. A move starts Postgres from one
+  fresh baseline migration of the current schema.
+- The data folder holds `financevault.db`; with Postgres it holds only
+  documents, backups and logs, and the connection details go in settings.
+
+**The upgrade path, when it's switched on:**
+1. A "Move to a shared database" step: enter the Postgres connection, and
+   Financial Vault checks it, creates the tables, copies every record across
+   (encrypted fields stay encrypted — the key never leaves the passcode),
+   counts both sides to prove nothing was lost, and keeps the SQLite file as
+   the fallback.
+2. Documents: stay as encrypted files (or move to shared file storage).
+3. Many users also means: separate accounts and logins, each family's
+   records kept apart, and their own master password — plus hosting,
+   security on the internet, and Privacy Act obligations for other people's
+   financial records. That's its own project, decided when the time comes.
+
+**Related, possible sooner:** encrypt the whole database file with the
+passcode (today only secrets and documents are), so a copied file shows
+nothing readable. Works with SQLite now, and is the same idea Postgres would
+need.
+
+**Status:** idea only — not started.
