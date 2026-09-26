@@ -4,6 +4,7 @@ import { runPrivacyCleanup } from "./services/privacyCleanup.js";
 import { ensurePersonalEntities } from "./services/personalEntity.js";
 import { relinkMovedDocuments } from "./services/paths.js";
 import { ensureMonthlySnapshot } from "./services/monthlySnapshot.js";
+import { runMirror } from "./services/mirror.js";
 
 const PORT = Number(process.env.PORT) || 4000;
 
@@ -32,6 +33,10 @@ relinkMovedDocuments()
     if (n) console.log(`Found ${n} document${n === 1 ? "" : "s"} in this copy's storage folder and linked ${n === 1 ? "it" : "them"} up.`);
   })
   .catch((err) => console.error("Checking document locations failed:", err));
+
+// Readable copies of documents: caught up every 15 minutes while unlocked
+// (changes themselves trigger it within seconds).
+setInterval(() => void runMirror(), 15 * 60 * 1000).unref();
 
 // The family's net worth, saved once a month for the history.
 const monthly = () => ensureMonthlySnapshot().catch((err) => console.error("Monthly net worth snapshot failed:", err));

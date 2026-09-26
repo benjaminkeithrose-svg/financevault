@@ -1138,6 +1138,11 @@ model Settings {
   // Features switched off (JSON array of feature ids). Switching one off
   // only hides it — its data is kept and returns when switched back on.
   featuresOff               String?
+  // Readable copies of documents, in folders that follow the asset tree
+  // (for OneDrive and for checking by hand). Off when no folder is known.
+  // mirrorDir null = the data folder's "Readable documents" folder.
+  mirrorEnabled             Boolean   @default(true)
+  mirrorDir                 String?
 }
 
 // ---------------------------------------------------------------------------

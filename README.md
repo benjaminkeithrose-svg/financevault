@@ -369,6 +369,22 @@ isn't safe to sync live, only the documents folder is.
   dark or match-the-computer, and three logo designs (keyhole, vault door,
   monogram) used in the header, lock screen and browser tab.
 
+### Readable copies of documents
+
+- `services/mirror.ts`, Settings → *Readable copies of your documents*: every
+  document is also copied, decrypted, into a folder arranged like the asset
+  tree — owner (person, trust or company) / asset group / asset / financial
+  year — with loans inside the asset they're secured on, insurance, servicing
+  and tenancies inside theirs, `Not filed yet` and `Tax references`.
+  Identity documents and archived (deleted) documents are left out.
+- Default folder `<data folder>/Readable documents`; `Settings.mirrorDir`
+  points it elsewhere (e.g. OneDrive). Off when there's no folder.
+- Kept in step by `runMirror()`: a few seconds after any successful change
+  through the API, and every 15 minutes, while unlocked. A manifest
+  (`.financial-vault-copies.json`) records what it wrote, so only its own
+  files are ever replaced or removed. Each folder gets `_Index.csv`;
+  `Records backups/` gets a `VACUUM INTO` copy each day (last 7 kept).
+
 ### Reference library: checking for new versions
 
 - **Check for new versions** (`services/referenceUpdates.ts`, Documents →

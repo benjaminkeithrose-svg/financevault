@@ -1524,6 +1524,66 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "readable-copies",
+    title: "Readable copies of your documents (for OneDrive)",
+    keywords: "readable copies folder onedrive backup audit files explorer finder unencrypted mirror asset tree",
+    body: (
+      <>
+        <p>
+          Every document is also copied into ordinary folders you can open in File Explorer or Finder, arranged like the asset tree:
+        </p>
+        <ul>
+          <li>
+            each <strong>person</strong>, and each <strong>trust or company</strong>, has a folder;
+          </li>
+          <li>
+            inside, what they own — <strong>Properties</strong>, <strong>Vehicles &amp; boats</strong>, <strong>Bank accounts</strong>,{" "}
+            <strong>Investments</strong>, <strong>Loans &amp; cards</strong>… — with a loan's papers inside the property it's secured on;
+          </li>
+          <li>
+            then the <strong>financial year</strong>, e.g. <code>Alex / Properties / 5 Rent St / 2025-26 / Rental Statement – 31 Jul 2025.pdf</code>.
+          </li>
+        </ul>
+        <p>
+          Documents not linked to anything yet are in <strong>Not filed yet</strong>; ATO rulings and guides in <strong>Tax
+          references</strong>. The folder updates by itself a few seconds after each change — link a document to a property and it
+          appears in that property's folder; rename the property and the folder follows; delete the document and its copy goes.
+        </p>
+        <h4>Backing up with OneDrive</h4>
+        <ol>
+          <li>
+            Go to <Link to="/settings#readable-copies">Settings</Link> → <strong>Readable copies of your documents</strong>.
+          </li>
+          <li>
+            Type the address of a folder inside OneDrive, e.g. <code>C:\Users\you\OneDrive\Financial Vault</code>, and click{" "}
+            <strong>Use this folder</strong>.
+          </li>
+          <li>
+            Click <strong>Update the folder now</strong>. OneDrive then backs it up as you go.
+          </li>
+        </ol>
+        <h4>Good to know</h4>
+        <ul>
+          <li>
+            These copies are <strong>not encrypted</strong> — anyone who can open the folder or your OneDrive can read them. The
+            encrypted originals stay in the vault.
+          </li>
+          <li>ID documents (passport, licence, Medicare…) are never copied.</li>
+          <li>Changes you make in the folder aren't seen by Financial Vault — file things in the app. Files you add yourself are left alone.</li>
+          <li>
+            Each folder has an <code>_Index.csv</code> (opens in Excel) listing its documents, their dates, original names and a
+            fingerprint (SHA-256) of the original, for checking by hand.
+          </li>
+          <li>
+            <strong>Records backups</strong> holds a copy of your records from each of the last 7 days, so OneDrive backs those up
+            too. Restore one from Financial Vault's first screen on a fresh copy.
+          </li>
+          <li>The copies are made while Financial Vault is unlocked — it needs the passcode to read the documents.</li>
+        </ul>
+      </>
+    ),
+  },
+  {
     id: "backup",
     title: "Backups",
     keywords: "backup restore sync google drive dropbox onedrive copy",

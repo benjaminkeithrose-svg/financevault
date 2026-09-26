@@ -41,6 +41,8 @@ import { claimNotesRouter } from "./routes/claimNotes.js";
 import { borrowingRouter } from "./routes/borrowing.js";
 import { paygRouter } from "./routes/payg.js";
 import { expectedRouter } from "./routes/expected.js";
+import { mirrorRouter } from "./routes/mirror.js";
+import { mirrorSoon } from "./services/mirror.js";
 import { appUpdateRouter } from "./routes/appUpdate.js";
 import { appWindowRouter } from "./routes/appWindow.js";
 import { adviceRouter } from "./routes/advice.js";
@@ -58,6 +60,17 @@ app.use(securityHeaders);
 app.use(rejectCrossOriginWrites);
 app.use(express.json());
 
+// Any change that goes through — a document added, linked, renamed, deleted,
+// a property renamed — refreshes the readable copies a few seconds later.
+app.use((req, res, next) => {
+  if (req.method !== "GET" && req.path.startsWith("/api/")) {
+    res.on("finish", () => {
+      if (res.statusCode < 400) mirrorSoon();
+    });
+  }
+  next();
+});
+
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 
 // The only API routes reachable while locked are the ones that unlock it.
@@ -65,6 +78,7 @@ app.use("/api/vault", vaultRouter);
 app.use("/api/app-window", appWindowRouter);
 app.use("/api", requireSession);
 app.use("/api/app", appUpdateRouter);
+app.use("/api/mirror", mirrorRouter);
 
 app.use("/api/entities", entitiesRouter);
 app.use("/api/people", peopleRouter);

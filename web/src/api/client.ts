@@ -518,6 +518,13 @@ export interface ExpectedResult {
   counts: { red: number; amber: number; met: number; setAside: number };
 }
 
+export interface MirrorStatus {
+  folder: string | null;
+  enabled: boolean;
+  custom: boolean;
+  last: { at: string; folder: string; files: number; written: number; removed: number; problems: string[]; recordsBackup: string | null } | null;
+}
+
 export interface AppInfo {
   version: string;
   dataFolder: string | null;
@@ -2029,6 +2036,11 @@ export const api = {
     removeStatement: (id: string) => request<void>(`/payg/income-statements/${id}`, { method: "DELETE" }),
     carCompare: (data: Record<string, unknown>) =>
       request<{ baseIncome: number; incomeRecorded: boolean; options: CarOption[] }>("/payg/car-compare", { method: "POST", body: JSON.stringify(data) }),
+  },
+  mirror: {
+    status: () => request<MirrorStatus>("/mirror"),
+    update: (data: { enabled?: boolean; folder?: string | null }) => request<MirrorStatus>("/mirror", { method: "PUT", body: JSON.stringify(data) }),
+    sync: () => request<MirrorStatus>("/mirror/sync", { method: "POST" }),
   },
   app: {
     info: () => request<AppInfo>("/app/info"),
