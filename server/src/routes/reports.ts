@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../db.js";
+import { propertyProfit } from "../services/propertyProfit.js";
 import { computeDisposal } from "../services/cgt.js";
 import { capitalGainsForYear } from "../services/cgtReport.js";
 import { describeVehicle, monthlyRepayment } from "../services/debts.js";
@@ -65,6 +66,14 @@ reportsRouter.get(
       rows,
       formula: "netCashFlow = grossRent - expenses - estimatedInterest; estimatedYield = grossRent / currentValue",
     });
+  })
+);
+
+// After-tax profit per property — see services/propertyProfit.ts.
+reportsRouter.get(
+  "/property-profit",
+  asyncHandler(async (_req, res) => {
+    res.json(await propertyProfit());
   })
 );
 

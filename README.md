@@ -289,6 +289,39 @@ isn't safe to sync live, only the documents folder is.
   the explanation, the reference and the evidence. Deleting a use, an
   interest year or the loan removes its note.
 
+### Property profit after tax, land tax and borrowing capacity
+
+- **Property Profit** (`services/propertyProfit.ts`, Reports tab,
+  `GET /api/reports/property-profit`): per investment property (homes —
+  `Asset.mainResidence = FULL` — left out), rent − running costs − land tax
+  = net income; − interest (deductible interest from the debt allocation's
+  latest year where the loans' uses point at this property, else balance ×
+  rate of loans secured on it) = cash before tax; − depreciation and
+  capital works = tax result; each owner's tax on their share (individuals:
+  the change in tax on their salary + variable income, `incomeTax.ts`,
+  2026-27 resident rates + Medicare with the low-income phase-in; companies
+  25%, super funds 15%, trusts shown before tax) = cash after tax. Running
+  costs: `Property` fields plus insurance premiums on the asset; commercial
+  properties use the last 12 months' unrecovered outgoings.
+- **NSW land tax** (`services/landTax.ts`): per owner on their combined NSW
+  land value (share-weighted, home exempt), general rate $100 + 1.6% over
+  $1,075,000, 2% over $6,571,000; family/discretionary/unit trusts (special
+  trusts) 1.6% from $0. Shared back across the owner's properties by land
+  value. `Asset.landTaxPerYear` (the assessment) overrides; other states
+  aren't estimated. Simplifications are listed in the file.
+- **Borrowing capacity** (`services/borrowing.ts`, `/api/borrowing`, page
+  `/borrowing`): residential servicing at rate + buffer (APRA 3%), salary in
+  full, variable income and rent shaded, tax off, expenses the higher of
+  declared and benchmark, existing loans P&I at buffered rates, cards at a %
+  of the limit; the surplus's loan over the term, as a conservative-to-
+  generous range, with APRA's 6× debt-to-income line. Equity release is
+  usable equity capped by servicing. Commercial, lease-doc and SMSF loans:
+  the lower of net rent ÷ (interest cover × assessed rate) and value × LVR.
+  Assumptions are saved in `Settings.borrowingAssumptions`.
+- New inputs: `Person.grossSalary`/`variableIncome`; `Property` running
+  costs; `Asset.landValue`, `landTaxPerYear`, `depreciationPerYear`,
+  `capitalWorksPerYear`.
+
 ### Investments, shares, ETFs and crypto
 
 Record-keeping and valuation for shares, ETFs, managed funds, crypto and
@@ -550,8 +583,8 @@ schema, API or business-logic changes.
   (Recorded/Estimated/Needs review/Accountant confirmed — never presented
   as a final figure), plus the documents already tagged tax-relevant for
   that entity and year.
-- **Reports** (`/reports`): Property Performance (residential — equity,
-  gross rent, expenses, net cash flow, estimated yield), Investment
+- **Reports** (`/reports`): Property Profit (residential and commercial —
+  gross and net yield, cash before and after tax; see below), Investment
   Portfolio (cost base, market value at the latest recorded price,
   unrealised gain where every holding is priced, realised gain/loss and
   franking), Capital Gains, Tax Summary by financial year (including the

@@ -74,6 +74,12 @@ const createInput = z.object({
   tenantInfo: z.string().optional().nullable(),
   propertyManager: z.string().optional().nullable(),
   weeklyRent: z.number().nonnegative().optional().nullable(),
+  councilRates: z.number().nonnegative().optional().nullable(),
+  waterRates: z.number().nonnegative().optional().nullable(),
+  strataFees: z.number().nonnegative().optional().nullable(),
+  managementPercent: z.number().nonnegative().optional().nullable(),
+  repairsPerYear: z.number().nonnegative().optional().nullable(),
+  otherCostsPerYear: z.number().nonnegative().optional().nullable(),
   owners: ownersInput,
 });
 
@@ -113,6 +119,12 @@ propertiesRouter.post(
           tenantInfo: parsed.tenantInfo,
           propertyManager: parsed.propertyManager,
           weeklyRent: parsed.weeklyRent,
+          councilRates: parsed.councilRates,
+          waterRates: parsed.waterRates,
+          strataFees: parsed.strataFees,
+          managementPercent: parsed.managementPercent,
+          repairsPerYear: parsed.repairsPerYear,
+          otherCostsPerYear: parsed.otherCostsPerYear,
         },
         include: { asset: true, entity: true },
       });
@@ -158,6 +170,12 @@ propertiesRouter.put(
           tenantInfo: parsed.tenantInfo,
           propertyManager: parsed.propertyManager,
           weeklyRent: parsed.weeklyRent,
+          councilRates: parsed.councilRates,
+          waterRates: parsed.waterRates,
+          strataFees: parsed.strataFees,
+          managementPercent: parsed.managementPercent,
+          repairsPerYear: parsed.repairsPerYear,
+          otherCostsPerYear: parsed.otherCostsPerYear,
         },
         include: { asset: true, entity: true },
       });

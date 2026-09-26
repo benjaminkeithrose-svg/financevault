@@ -25,6 +25,7 @@ import { AccountDetail } from "./pages/AccountDetail.js";
 import { Assets } from "./pages/Assets.js";
 import { AssetDetail } from "./pages/AssetDetail.js";
 import { NetWorth } from "./pages/NetWorth.js";
+import { Borrowing } from "./pages/Borrowing.js";
 import { Tax } from "./pages/Tax.js";
 import { Reports } from "./pages/Reports.js";
 import { Packs } from "./pages/Packs.js";
@@ -105,6 +106,7 @@ export default function App() {
           <Route path="/advisers" element={<Advisers />} />
           <Route path="/portfolio-plans" element={<PortfolioPlans />} />
           <Route path="/portfolio-plans/:id" element={<PortfolioPlanDetail />} />
+          <Route path="/borrowing" element={<Borrowing />} />
           <Route path="/net-worth" element={<NetWorth />} />
           <Route path="/tax" element={<Tax />} />
           <Route path="/reports" element={<Reports />} />

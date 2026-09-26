@@ -9,13 +9,13 @@ import {
   FinancialYear,
   InterestScheduleRow,
   InvestmentPortfolioRow,
-  PropertyPerformanceRow,
+  PropertyProfitRow,
   TaxSummaryRow,
 } from "../api/client.js";
 import { financialYearLabelForToday, formatCurrency, formatDate, liabilityTypeLabel } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
 
-const TABS = ["Property Performance", "Investment Portfolio", "Capital Gains", "Tax Summary", "Loan Interest", "Debt Summary", "Income & Spending"] as const;
+const TABS = ["Property Profit", "Investment Portfolio", "Capital Gains", "Tax Summary", "Loan Interest", "Debt Summary", "Income & Spending"] as const;
 type Tab = (typeof TABS)[number];
 
 function pct(v: number | null | undefined) {
@@ -24,7 +24,7 @@ function pct(v: number | null | undefined) {
 }
 
 export function Reports() {
-  const [tab, setTab] = useState<Tab>("Property Performance");
+  const [tab, setTab] = useState<Tab>("Property Profit");
 
   return (
     <div>
@@ -43,7 +43,7 @@ export function Reports() {
         ))}
       </div>
 
-      {tab === "Property Performance" && <PropertyPerformance />}
+      {tab === "Property Profit" && <PropertyProfit />}
       {tab === "Investment Portfolio" && <InvestmentPortfolio />}
       {tab === "Capital Gains" && <CapitalGains />}
       {tab === "Tax Summary" && <TaxSummary />}
@@ -54,52 +54,162 @@ export function Reports() {
   );
 }
 
-function PropertyPerformance() {
-  const [rows, setRows] = useState<PropertyPerformanceRow[] | null>(null);
+/**
+ * After-tax profit per property: rent, less running costs and land tax (net
+ * yield), less interest (cash before tax), then each owner's tax on the
+ * result (cash after tax). Best first. Open a property for the workings.
+ */
+function PropertyProfit() {
+  const [data, setData] = useState<{ rows: PropertyProfitRow[]; taxYear: string; interestYear: string | null } | null>(null);
 
   useEffect(() => {
-    api.reports.propertyPerformance().then((r) => setRows(r.rows));
+    api.reports.propertyProfit().then(setData);
   }, []);
 
-  if (!rows) return <div className="empty-state">Loading…</div>;
+  if (!data) return <div className="empty-state">Loading…</div>;
+  const route = (r: PropertyProfitRow) => (r.kind === "PROPERTY" ? `/properties/${r.recordId}` : `/commercial-properties/${r.recordId}`);
+  const money = (n: number | null) => (n === null ? "—" : formatCurrency(n));
 
   return (
     <div className="card">
-      {rows.length === 0 ? (
-        <p className="empty-state">No residential properties recorded yet.</p>
+      <p style={{ marginTop: 0, color: "var(--text-muted)", fontSize: 13 }}>
+        What each investment property returns after running costs, land tax, interest and tax — a year's estimate from what's
+        recorded, best first. Tax at {data.taxYear} rates. <HelpLink topic="property-profit" />
+      </p>
+      {data.rows.length === 0 ? (
+        <p className="empty-state">No investment properties yet.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Property</th>
-              <th>Entity</th>
-              <th>Purchase price</th>
-              <th>Current value</th>
-              <th>Equity</th>
-              <th>Gross rent</th>
-              <th>Expenses</th>
-              <th>Net cash flow</th>
-              <th>Est. yield</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.id}>
-                <td>
-                  <Link to={`/properties/${r.id}`}>{r.name}</Link>
-                </td>
-                <td>{r.entityName}</td>
-                <td>{formatCurrency(r.purchasePrice)}</td>
-                <td>{formatCurrency(r.currentValue)}</td>
-                <td>{formatCurrency(r.equity)}</td>
-                <td>{formatCurrency(r.grossRent)}</td>
-                <td>{formatCurrency(r.expenses)}</td>
-                <td>{formatCurrency(r.netCashFlow)}</td>
-                <td>{pct(r.estimatedYield)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Property</th>
+                  <th>Rent</th>
+                  <th>Gross yield</th>
+                  <th>Net yield</th>
+                  <th>Cash before tax</th>
+                  <th>Cash after tax</th>
+                  <th>After-tax yield</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.rows.map((r) => (
+                  <tr key={r.assetId}>
+                    <td>
+                      <Link to={route(r)}>{r.name}</Link>
+                    </td>
+                    <td>{formatCurrency(r.rent)}</td>
+                    <td>{pct(r.grossYield)}</td>
+                    <td>{pct(r.netYield)}</td>
+                    <td className={r.cashBeforeTax < 0 ? "cap-note over" : ""}>{formatCurrency(r.cashBeforeTax)}</td>
+                    <td className={(r.cashAfterTax ?? 0) < 0 ? "cap-note over" : ""}>{money(r.cashAfterTax)}</td>
+                    <td>{pct(r.afterTaxYield)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <h3>How each is worked out</h3>
+          {data.rows.map((r) => (
+            <details key={r.assetId} className="profit-details">
+              <summary>{r.name}</summary>
+              <table className="kv-table">
+                <tbody>
+                  <tr>
+                    <td>Rent a year</td>
+                    <td>{formatCurrency(r.rent)}</td>
+                  </tr>
+                  {r.costBreakdown.map((c) => (
+                    <tr key={c.label}>
+                      <td>− {c.label}</td>
+                      <td>{formatCurrency(c.amount)}</td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td>
+                      − Land tax
+                      {r.landTax.notes.map((n) => (
+                        <div key={n} className="cap-explain">
+                          {n}
+                        </div>
+                      ))}
+                    </td>
+                    <td>{money(r.landTax.amount)}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Net income</strong> ({pct(r.netYield)} of {formatCurrency(r.value)})
+                    </td>
+                    <td>
+                      <strong>{formatCurrency(r.netIncome)}</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      − Interest
+                      <div className="cap-explain">
+                        {r.interestBasis === "DEBT_ALLOCATION"
+                          ? `The deductible interest for ${r.interestYear}, from what the loans' money was used for.`
+                          : r.interestBasis === "ESTIMATE"
+                            ? "Estimated from the loans secured on it (balance × rate). Record the loans' uses for the real figure."
+                            : "No loan recorded against it."}
+                      </div>
+                    </td>
+                    <td>{formatCurrency(r.interest)}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Cash before tax</strong>
+                    </td>
+                    <td>
+                      <strong>{formatCurrency(r.cashBeforeTax)}</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>− Depreciation and building write-off (not cash, but deductible)</td>
+                    <td>{formatCurrency(r.depreciation + r.capitalWorks)}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Tax result</strong> {r.taxResult < 0 ? "(a loss)" : ""}
+                    </td>
+                    <td>
+                      <strong>{formatCurrency(r.taxResult)}</strong>
+                    </td>
+                  </tr>
+                  {r.owners.map((o) => (
+                    <tr key={o.entityId}>
+                      <td>
+                        {o.entityName} ({Math.round(o.share * 100)}%)
+                        {o.note ? <div className="cap-explain">{o.note}</div> : null}
+                      </td>
+                      <td>
+                        {o.taxEffect === null ? "—" : o.taxEffect < 0 ? `${formatCurrency(-o.taxEffect)} tax saved` : `${formatCurrency(o.taxEffect)} tax`}
+                      </td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td>
+                      <strong>Cash after tax</strong>
+                    </td>
+                    <td>
+                      <strong>{money(r.cashAfterTax)}</strong>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              {r.notes.map((n) => (
+                <p key={n} className="cap-explain">
+                  {n}
+                </p>
+              ))}
+            </details>
+          ))}
+          <p className="cap-explain">
+            An estimate from the figures recorded here, not tax advice. Your accountant's return decides the real numbers.
+          </p>
+        </>
       )}
     </div>
   );

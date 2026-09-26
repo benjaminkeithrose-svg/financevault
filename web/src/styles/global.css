@@ -1675,3 +1675,14 @@ label {
   padding: 8px 0;
   border-bottom: 1px solid var(--border);
 }
+
+.profit-details {
+  border-top: 1px solid var(--border);
+  padding: 4px 0;
+}
+.profit-details summary {
+  min-height: 40px;
+  line-height: 40px;
+  cursor: pointer;
+  font-weight: 600;
+}

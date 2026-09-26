@@ -107,6 +107,8 @@ ownership shares, debt allocation (idea 2), the ATO reference figures (idea 3).
 **Needs:** each owner's expected income (for their marginal rate), rental
 statements or categorised transactions, depreciation schedules.
 
+**Status:** built in batch 3 (Reports → Property Profit), with NSW land tax. Not yet: the year-on-year trend — it needs a year's history first.
+
 ---
 
 ## 5. Suburb market data → "time to get a proper valuation" prompt
@@ -216,6 +218,8 @@ repayments), property values, commercial DSCR/ICR, Fact Find.
 lending); from the broker if they'll share — the assumptions their usual
 lenders use (rent shading %, card %, expense benchmark, max LVR, commercial
 ICR/LVR, lease-doc criteria).
+
+**Status:** built in batch 3 (menu → How much could I borrow?).
 
 ---
 

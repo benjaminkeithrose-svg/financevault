@@ -66,6 +66,9 @@ export interface Entity {
 export interface Person {
   id: string;
   name: string;
+  /** Income a year before tax; variable = bonus, overtime, commission. */
+  grossSalary?: number | null;
+  variableIncome?: number | null;
   dateOfBirth?: string | null;
   hasTfn?: boolean;
   tfnMasked?: string | null;
@@ -344,6 +347,87 @@ export interface ClaimView {
   evidence: Array<{ id: string; originalFilename: string; documentType: string | null }>;
   history: Array<{ id: string; action: string; timestamp: string }>;
   referenceOverdue: boolean;
+}
+
+export interface PropertyProfitRow {
+  assetId: string;
+  kind: "PROPERTY" | "COMMERCIAL_PROPERTY";
+  recordId: string;
+  name: string;
+  value: number | null;
+  rent: number;
+  runningCosts: number;
+  costBreakdown: Array<{ label: string; amount: number }>;
+  landTax: { amount: number | null; basis: string; notes: string[] };
+  netIncome: number;
+  interest: number;
+  interestBasis: "DEBT_ALLOCATION" | "ESTIMATE" | "NONE";
+  interestYear: string | null;
+  cashBeforeTax: number;
+  depreciation: number;
+  capitalWorks: number;
+  taxResult: number;
+  owners: Array<{ entityId: string; entityName: string; share: number; taxResult: number; taxEffect: number | null; note: string | null }>;
+  cashAfterTax: number | null;
+  grossYield: number | null;
+  netYield: number | null;
+  afterTaxYield: number | null;
+  notes: string[];
+}
+
+export interface BorrowingAssumptions {
+  newLoanRate: number;
+  buffer: number;
+  floorRate: number;
+  newLoanTermYears: number;
+  existingTermYears: number;
+  variableShading: [number, number];
+  rentShading: [number, number];
+  cardPercent: [number, number];
+  declaredExpenses: number | null;
+  benchmarkExpenses: number | null;
+  residentialLvr: number;
+  commercialLvr: [number, number];
+  smsfLvr: [number, number];
+  commercialIcr: [number, number];
+  commercialBuffer: number;
+}
+
+export interface BorrowingScenario {
+  label: string;
+  assessmentRate: number;
+  grossIncome: number;
+  countedIncome: number;
+  tax: number;
+  netIncomeMonthly: number;
+  expensesMonthly: number;
+  commitmentsMonthly: number;
+  commitments: Array<{ name: string; monthly: number; how: string }>;
+  surplusMonthly: number;
+  maxNewLoan: number;
+}
+
+export interface BorrowingEstimate {
+  assumptions: BorrowingAssumptions;
+  incomes: Array<{ name: string; salary: number; variable: number; rent: number }>;
+  debts: Array<{ name: string; balance: number; ratePct: number | null; remainingYears: number | null; cardLimit: number | null }>;
+  residential: {
+    scenarios: [BorrowingScenario, BorrowingScenario];
+    totalIncome: number;
+    existingDebt: number;
+    dtiLimitLoan: number;
+    dtiWarning: string | null;
+    notes: string[];
+  };
+  equity: { properties: Array<{ name: string; value: number; lvr: number; owing: number; usable: number }>; usableTotal: number; release: [number, number] };
+  propertyLoans: Array<{
+    recordId: string;
+    kind: "SMSF" | "COMMERCIAL";
+    name: string;
+    assessmentRate: number;
+    range: Array<{ label: string; byServicing: number; byLvr: number | null; total: number; release: number }>;
+    notes: string[];
+  }>;
 }
 
 export interface ReferenceLibraryStatus {
@@ -684,6 +768,10 @@ export interface Asset {
   improvementsCost?: number | null;
   capitalWorksClaimed?: number | null;
   lenderMaxLvr?: number | null;
+  landValue?: number | null;
+  landTaxPerYear?: number | null;
+  depreciationPerYear?: number | null;
+  capitalWorksPerYear?: number | null;
   sellingCosts?: number | null;
   mainResidence?: "NONE" | "FULL" | "PARTIAL" | null;
   mainResidencePercent?: number | null;
@@ -908,6 +996,12 @@ export interface Property {
   tenantInfo?: string | null;
   propertyManager?: string | null;
   weeklyRent?: number | null;
+  councilRates?: number | null;
+  waterRates?: number | null;
+  strataFees?: number | null;
+  managementPercent?: number | null;
+  repairsPerYear?: number | null;
+  otherCostsPerYear?: number | null;
   liabilities?: Liability[];
   documents?: Document[];
   summary?: Record<string, { total: number; byCategory: Record<string, number> }>;
@@ -1736,6 +1830,19 @@ export const api = {
     remove: (id: string) => request<void>(`/claim-notes/${id}`, { method: "DELETE" }),
     exportUrl: (targetType: ClaimTargetType, targetId: string) => `/api/claim-notes/export?${new URLSearchParams({ targetType, targetId })}`,
   },
+  borrowing: {
+    get: () =>
+      request<{
+        assumptions: BorrowingAssumptions;
+        defaults: BorrowingAssumptions;
+        people: Array<{ id: string; name: string; grossSalary: number | null; variableIncome: number | null }>;
+        spendingHintMonthly: number | null;
+      }>("/borrowing"),
+    estimate: (personIds: string[], assumptions: Partial<BorrowingAssumptions>) =>
+      request<BorrowingEstimate>("/borrowing/estimate", { method: "POST", body: JSON.stringify({ personIds, assumptions }) }),
+    saveAssumptions: (assumptions: Partial<BorrowingAssumptions>) =>
+      request<BorrowingAssumptions>("/borrowing/assumptions", { method: "PUT", body: JSON.stringify(assumptions) }),
+  },
   referenceLibrary: {
     status: () => request<ReferenceLibraryStatus>("/reference-library"),
     load: () => request<{ added: number; alreadyHere: number; missing: string[] }>("/reference-library/load", { method: "POST" }),
@@ -1976,6 +2083,7 @@ export const api = {
   },
 
   reports: {
+    propertyProfit: () => request<{ rows: PropertyProfitRow[]; taxYear: string; interestYear: string | null }>("/reports/property-profit"),
     propertyPerformance: () =>
       request<{ rows: PropertyPerformanceRow[]; formula: string }>("/reports/property-performance"),
     investmentPortfolio: () =>

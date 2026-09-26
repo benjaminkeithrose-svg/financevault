@@ -12,6 +12,7 @@ import { InsurancePanel } from "../components/InsurancePanel.js";
 import { EstatePanel } from "../components/EstatePanel.js";
 import { TrustFamilyPrompt } from "../components/TrustFamilyPrompt.js";
 import { PersonalDetailsPanel } from "../components/PersonalDetailsPanel.js";
+import { IncomeCard } from "../components/IncomeCard.js";
 
 const RELATIONSHIP_TYPES = [
   "SETTLOR",
@@ -346,6 +347,8 @@ export function PersonDetail() {
       )}
 
       <PersonalDetailsPanel person={person} onChange={load} />
+
+      <IncomeCard person={person} onChange={load} />
 
       <FamilyPanel person={person} people={people} onChange={load} />
 

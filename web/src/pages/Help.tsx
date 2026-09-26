@@ -874,6 +874,92 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "property-profit",
+    title: "Property profit after tax",
+    keywords: "yield net yield after tax negative gearing land tax running costs depreciation income salary rental profit property profit",
+    body: (
+      <>
+        <p>
+          <Link to="/reports">Reports</Link> → <strong>Property Profit</strong> shows what each investment property really returns
+          in a year, best first — so a property that looks like a 4% yield but is closer to 2% after costs is spotted before tax
+          time.
+        </p>
+        <ol>
+          <li>Rent, less running costs and land tax — the <strong>net yield</strong>.</li>
+          <li>Less interest — <strong>cash before tax</strong>.</li>
+          <li>
+            Less depreciation and the building write-off (not cash, but deductible) — the <strong>tax result</strong>. A loss
+            reduces the owner's tax on their other income (negative gearing).
+          </li>
+          <li>Each owner's tax on their share — <strong>cash after tax</strong>.</li>
+        </ol>
+        <p>To fill it in:</p>
+        <ol>
+          <li>
+            On each person's page, under <strong>Income</strong>, enter their salary and any bonus, overtime or commission.
+          </li>
+          <li>
+            On each property's page, under <strong>Running costs and tax figures</strong>, enter the rates, strata, management
+            percentage and so on, the land value, and the yearly depreciation from the schedule. Mark your home as your home — it's
+            left out.
+          </li>
+          <li>Weekly rent is on the property's main details; insurance comes from the policies recorded against it.</li>
+          <li>
+            Interest uses the deductible interest from the loan's recorded uses where there is one; otherwise it's estimated from
+            the loans secured on the property.
+          </li>
+        </ol>
+        <p>
+          <strong>Land tax</strong> is estimated at NSW rates on each owner's combined NSW land (not the home): nothing up to
+          $1,075,000, then $100 plus 1.6%, and 2% above $6,571,000. Family, discretionary and most unit trusts get no tax-free
+          threshold. If you have the assessment, enter the real amount instead. Other states aren't estimated.
+        </p>
+        <p>
+          Tax is at the 2026-27 resident rates plus Medicare. Companies are shown at 25%, super funds at 15%; a trust's result is
+          taxed in its beneficiaries' hands, so it's shown before tax. Estimates, not tax advice.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "borrowing-capacity",
+    title: "How much could I borrow?",
+    keywords: "borrowing capacity servicing buffer apra lend loan estimate equity release lease doc commercial smsf dti debt to income",
+    body: (
+      <>
+        <p>
+          <Link to="/borrowing">How much could I borrow?</Link> (in the menu under What you owe) estimates what most lenders
+          would lend, from the income, loans, cards and properties recorded here. It gives a range: conservative to generous
+          lender assumptions.
+        </p>
+        <ol>
+          <li>Tick who's borrowing, and enter your living expenses a month.</li>
+          <li>
+            The estimate counts salary in full, part of any bonus or overtime and part of the rent, takes off tax, your living
+            expenses and your existing loans and cards, and works out what new loan the rest could repay.
+          </li>
+          <li>
+            Repayments are assessed at the loan rate plus a 3% buffer (APRA's rule). Existing loans are counted as principal and
+            interest at the buffered rate, and cards at a share of the limit, even if unused.
+          </li>
+          <li>
+            If the loan would take your debts to 6× your income or more, it says so: from February 2026 banks can only make 20%
+            of their new loans at that level.
+          </li>
+        </ol>
+        <p>
+          <strong>Drawing equity</strong> shows each property's value × the maximum LVR, less what's owed, limited by what your
+          income can carry. <strong>Commercial, lease-doc and SMSF loans</strong> are worked out on the property's own rent
+          (interest cover) and a lower LVR.
+        </p>
+        <p>
+          Every assumption is under <strong>Lender assumptions</strong> — change any, and <strong>Save as my assumptions</strong>{" "}
+          keeps them. Ask your broker for the figures their lenders use. The broker's lender calculators have the final say.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "income-spending",
     title: "Income and spending for a loan application",
     keywords: "living expenses income spending cash flow budget monthly average loan application lender hem",

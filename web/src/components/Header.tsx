@@ -34,6 +34,7 @@ const TITLES: Record<string, string> = {
   "/credit-cards": "Credit Cards",
   "/liabilities": "Personal & Other Debts",
   "/portfolio-plans": "Portfolio Plan",
+  "/borrowing": "Borrowing",
   "/net-worth": "Net Worth",
   "/tax": "Tax",
   "/reports": "Reports",

@@ -49,6 +49,7 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
       { to: "/vehicle-loans", label: "Vehicle & boat loans" },
       { to: "/credit-cards", label: "Credit cards" },
       { to: "/liabilities", label: "Personal & other" },
+      { to: "/borrowing", label: "How much could I borrow?" },
     ],
   },
   {

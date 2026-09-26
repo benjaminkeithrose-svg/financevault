@@ -47,6 +47,10 @@ model Person {
   contactInfo  String? // JSON blob: address, phone, email — superseded by the explicit fields below; kept for compatibility, unused by the app
   notes        String?
   payFrequency String? // WEEKLY | FORTNIGHTLY | MONTHLY — used to work out expected pay periods for gap detection. Null = not tracked.
+  // Income a year, before tax — for the after-tax property figures and the
+  // borrowing estimate. Variable = bonus, overtime, commission (lenders shade it).
+  grossSalary    Float?
+  variableIncome Float?
 
   // Personal and contact details — what a lender's fact find asks for.
   phone                 String?
@@ -432,6 +436,14 @@ model Asset {
   mainResidencePercent Float? // PARTIAL: share of the ownership period it was the home
   // Property: the most a lender would lend against it (e.g. 0.8), for usable equity.
   lenderMaxLvr         Float?
+  // Property: the land value from the Valuer General (land tax is worked out
+  // on land only), or the land tax actually assessed, which wins if entered.
+  landValue            Float?
+  landTaxPerYear       Float?
+  // From the depreciation schedule: plant & equipment (Division 40) and the
+  // building write-off (capital works, Division 43), a year.
+  depreciationPerYear  Float?
+  capitalWorksPerYear  Float?
   depreciationInfo     String? // JSON: method, rate, effective life
   notes                String?
 
@@ -561,6 +573,14 @@ model Property {
   tenantInfo       String?
   propertyManager  String?
   weeklyRent       Float? // current rent, used for rent cover on an SMSF's LRBA loan
+  // Running costs a year, for the after-tax profit figures. Insurance comes
+  // from the policies recorded against the property.
+  councilRates     Float?
+  waterRates       Float?
+  strataFees       Float?
+  managementPercent Float? // of rent, e.g. 7.5
+  repairsPerYear   Float?
+  otherCostsPerYear Float?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
@@ -1092,6 +1112,9 @@ model Settings {
   lastBackupAt              DateTime?
   // The getting-started checklist on the dashboard, once put away.
   checklistDismissed        Boolean   @default(false)
+  // The borrowing estimate's assumptions (buffer, rent shading, card %,
+  // expenses benchmark, LVRs…), as JSON, once changed from the defaults.
+  borrowingAssumptions      String?
 }
 
 // ---------------------------------------------------------------------------

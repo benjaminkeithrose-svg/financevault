@@ -73,6 +73,8 @@ const personInput = z.object({
   contactInfo: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
   payFrequency: z.string().optional().nullable(), // WEEKLY | FORTNIGHTLY | MONTHLY
+  grossSalary: z.number().nonnegative().optional().nullable(),
+  variableIncome: z.number().nonnegative().optional().nullable(),
   phone: z.string().optional().nullable(),
   email: z.string().optional().nullable(),
   currentAddress: z.string().optional().nullable(),

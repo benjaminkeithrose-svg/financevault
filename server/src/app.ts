@@ -38,6 +38,7 @@ import { advisersRouter } from "./routes/advisers.js";
 import { referenceLibraryRouter } from "./routes/referenceLibrary.js";
 import { debtAllocationRouter } from "./routes/debtAllocation.js";
 import { claimNotesRouter } from "./routes/claimNotes.js";
+import { borrowingRouter } from "./routes/borrowing.js";
 import { apiNotFound, errorHandler } from "./middleware/errorHandler.js";
 import { rejectCrossOriginWrites, requireLoopbackHost, securityHeaders } from "./middleware/localOnly.js";
 
@@ -70,6 +71,7 @@ app.use("/api/advisers", advisersRouter);
 app.use("/api/reference-library", referenceLibraryRouter);
 app.use("/api/debt-allocation", debtAllocationRouter);
 app.use("/api/claim-notes", claimNotesRouter);
+app.use("/api/borrowing", borrowingRouter);
 app.use("/api/documents", documentsRouter);
 app.use("/api/financial-years", financialYearsRouter);
 app.use("/api/tax-categories", taxCategoriesRouter);
