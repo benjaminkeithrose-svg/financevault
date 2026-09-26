@@ -1,6 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import { z } from "zod";
+import { isTaxReference, nextReferenceCheck, TAX_REFERENCE_TYPE } from "../services/taxReference.js";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { prisma } from "../db.js";
@@ -29,11 +30,17 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 
 documentsRouter.get(
   "/",
   asyncHandler(async (req, res) => {
-    const { reviewStatus, entityId, financialYearId, q } = req.query as Record<string, string | undefined>;
+    const { reviewStatus, entityId, financialYearId, q, reference } = req.query as Record<string, string | undefined>;
 
     const where: Record<string, unknown> = {};
     // Archived documents are kept but stay out of the way unless asked for.
     where.reviewStatus = reviewStatus || { not: "ARCHIVED" };
+    // Tax references (rulings, guides) have their own list; the everyday
+    // list leaves them out unless searching or asked for.
+    if (reference === "only") where.documentType = TAX_REFERENCE_TYPE;
+    else if (reference === "include" || q) {
+      // all documents
+    } else where.AND = [{ OR: [{ documentType: null }, { documentType: { not: TAX_REFERENCE_TYPE } }] }];
     if (entityId) where.entityId = entityId;
     if (financialYearId) where.financialYearId = financialYearId;
     if (q) {
@@ -166,6 +173,8 @@ const updateInput = z.object({
   tags: z.string().optional().nullable(),
   documentDate: z.string().datetime().optional().nullable(),
   renewalDate: z.string().datetime().optional().nullable(),
+  referenceCode: z.string().max(40).optional().nullable(),
+  referenceCheckBy: z.string().datetime().optional().nullable(),
   reviewStatus: z
     .enum(["PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"])
     .optional(),
@@ -181,6 +190,17 @@ documentsRouter.put(
     const data: Record<string, unknown> = { ...rest };
     if (parsed.documentDate !== undefined) data.documentDate = parsed.documentDate ? new Date(parsed.documentDate) : null;
     if (parsed.renewalDate !== undefined) data.renewalDate = parsed.renewalDate ? new Date(parsed.renewalDate) : null;
+    if (parsed.referenceCheckBy !== undefined) data.referenceCheckBy = parsed.referenceCheckBy ? new Date(parsed.referenceCheckBy) : null;
+    // Filing something as a Tax reference makes it nobody's paperwork: no
+    // owner, not a claim, and a date to check it's still current.
+    if (parsed.documentType !== undefined && isTaxReference(parsed.documentType)) {
+      data.entityId = null;
+      data.taxRelevance = "NOT_RELEVANT";
+      if (parsed.referenceCheckBy === undefined) {
+        const current = await prisma.document.findUnique({ where: { id: req.params.id }, select: { referenceCheckBy: true } });
+        if (!current?.referenceCheckBy) data.referenceCheckBy = nextReferenceCheck();
+      }
+    }
     if (financialYearLabel !== undefined) {
       data.financialYearId = await ensureFinancialYear(financialYearLabel);
     }

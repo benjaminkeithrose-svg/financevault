@@ -6,6 +6,7 @@ import { SoldPanel } from "../components/SoldPanel.js";
 import { InsurancePanel } from "../components/InsurancePanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
+import { UsableEquityCard } from "../components/UsableEquityCard.js";
 import { ScenarioComparison } from "../components/ScenarioComparison.js";
 import { formatCurrency, formatDate, humanize, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
@@ -1127,6 +1128,8 @@ export function CommercialPropertyDetail() {
       </div>
 
       {property.asset && <AssetOwnershipPanel asset={property.asset} entities={entities} onChange={load} />}
+
+      {!property.asset?.disposalDate && <UsableEquityCard assetId={property.assetId} />}
 
       <ItemsPanel parentAssetId={property.assetId} title="Plant & equipment" />
 

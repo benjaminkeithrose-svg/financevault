@@ -243,5 +243,10 @@ export async function extractText(buffer: Buffer, mimeType: string): Promise<Ext
     }
   }
 
+  // A plain text file (a saved web page, say) is its own text.
+  if (mimeType === "text/plain") {
+    return { text: buffer.toString("utf8"), method: "pdf-text", lowConfidence: false };
+  }
+
   return { text: "", method: "none", lowConfidence: true };
 }

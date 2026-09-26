@@ -9,6 +9,7 @@ import { logAudit } from "./audit.js";
 import { getEffectiveStorageDir } from "./paths.js";
 import { redactTfns } from "./tfn.js";
 import { writeDocumentFile } from "./documentFiles.js";
+import { isTaxReference, nextReferenceCheck } from "./taxReference.js";
 
 export async function ensureFinancialYear(label: string | null) {
   if (!label) return null;
@@ -32,6 +33,8 @@ export interface IngestInput {
   suggestedEntityId?: string | null;
   /** Folder the file came from on a bulk import; feeds classification. */
   relativePath?: string | null;
+  /** A known ruling code, e.g. when loading the reference library. */
+  referenceCode?: string | null;
 }
 
 export type IngestResult =
@@ -70,7 +73,9 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
   // A rule's suggestion only fills a gap the classifier left — it never
   // overrides something read out of the document itself.
   const documentType = classification.documentType ?? input.suggestedDocumentType ?? null;
-  const entityId = classification.entityId ?? input.suggestedEntityId ?? null;
+  // A ruling or guide belongs to no one, whatever the folder rule suggests.
+  const reference = isTaxReference(documentType);
+  const entityId = reference ? null : (classification.entityId ?? input.suggestedEntityId ?? null);
 
   const document = await prisma.document.create({
     data: {
@@ -87,7 +92,9 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
       financialYearId: financialYearId ?? undefined,
       entityId: entityId ?? undefined,
       amount: classification.amount ?? undefined,
-      taxRelevance: classification.taxRelevance,
+      taxRelevance: reference ? "NOT_RELEVANT" : classification.taxRelevance,
+      referenceCode: reference ? (input.referenceCode ?? classification.referenceCode ?? null) : null,
+      referenceCheckBy: reference ? nextReferenceCheck() : null,
       confidenceScore: classification.confidenceScore,
       // Stored text is searchable and unencrypted, so a TFN read out of a tax
       // return is masked before it's saved. Classification above already

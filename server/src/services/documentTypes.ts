@@ -3,7 +3,7 @@
 
 export interface DocumentTypeDef {
   name: string;
-  category: "Tax" | "Property" | "Investment" | "Personal" | "Finance" | "Trust/Company" | "Commercial Property";
+  category: "Tax" | "Property" | "Investment" | "Personal" | "Finance" | "Trust/Company" | "Commercial Property" | "Reference";
   keywords: string[];
 }
 
@@ -14,6 +14,33 @@ export const DOCUMENT_TYPES: DocumentTypeDef[] = [
   { name: "PAYG Summary / Income Statement", category: "Tax", keywords: ["payg", "income statement", "payment summary"] },
   { name: "Payslip", category: "Tax", keywords: ["payslip", "pay advice", "net pay", "gross pay", "pay slip"] },
   { name: "Tax Agent Correspondence", category: "Tax", keywords: ["tax agent", "accountant letter"] },
+  // Rulings, guides and rate tables — general rules, kept out of every pack.
+  // Listed before ATO Correspondence so a ruling isn't filed as a letter.
+  {
+    name: "Tax Reference",
+    category: "Reference",
+    keywords: [
+      "taxation ruling",
+      "taxation determination",
+      "practical compliance guideline",
+      "law companion ruling",
+      "goods and services tax ruling",
+      "self managed superannuation funds ruling",
+      "public ruling",
+      "this ruling",
+      "print whole section",
+      "prudential practice guide",
+      "regulatory guide",
+      "australian prudential regulation authority",
+      "authorised deposit-taking institution",
+      // Printed web pages (ATO, Revenue NSW) rather than letters.
+      "our commitment to you",
+      "copyright notice",
+      "legal database",
+      "on this page",
+      "last updated",
+    ],
+  },
   { name: "ATO Correspondence", category: "Tax", keywords: ["australian taxation office", "ato.gov.au"] },
   { name: "Deduction Evidence", category: "Tax", keywords: ["receipt", "tax invoice"] },
 

@@ -15,7 +15,7 @@ import { ESTATE_KINDS } from "./estate.js";
  */
 export const calendarRouter = Router();
 
-export type CalendarCategory = "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF" | "INSURANCE" | "ESTATE";
+export type CalendarCategory = "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF" | "INSURANCE" | "ESTATE" | "REFERENCE";
 
 export interface CalendarEvent {
   id: string;
@@ -45,7 +45,7 @@ function day(d: Date): string {
 
 export async function collectEvents(from: Date, to: Date): Promise<CalendarEvent[]> {
   const range = { gte: from, lte: to };
-  const [ids, docs, assets, maintenance, tenancies, loans] = await Promise.all([
+  const [ids, docs, assets, maintenance, tenancies, loans, references] = await Promise.all([
     prisma.identityRecord.findMany({ where: { expiryDate: range }, include: { person: { select: { name: true } } } }),
     prisma.document.findMany({ where: { renewalDate: range, reviewStatus: { not: "ARCHIVED" } } }),
     prisma.asset.findMany({
@@ -57,6 +57,10 @@ export async function collectEvents(from: Date, to: Date): Promise<CalendarEvent
       include: { commercialProperty: { select: { id: true, name: true } } },
     }),
     prisma.liability.findMany({ where: { OR: [{ fixedPeriodEnds: range }, { maturityDate: range }] } }),
+    prisma.document.findMany({
+      where: { referenceCheckBy: range, reviewStatus: { not: "ARCHIVED" } },
+      select: { id: true, referenceCheckBy: true, referenceCode: true, originalFilename: true },
+    }),
   ]);
 
   const events: CalendarEvent[] = [];
@@ -70,6 +74,23 @@ export async function collectEvents(from: Date, to: Date): Promise<CalendarEvent
       title: `${r.label || ID_LABELS[r.kind] || "ID"} expires — ${r.person.name}`,
       detail: r.issuer,
       route: `/people/${r.personId}`,
+    });
+  }
+  // Tax references are checked together once a year, so they're one
+  // reminder per date rather than dozens.
+  const referencesByDay = new Map<string, typeof references>();
+  for (const r of references) {
+    const key = day(r.referenceCheckBy!);
+    referencesByDay.set(key, [...(referencesByDay.get(key) ?? []), r]);
+  }
+  for (const [date, refs] of referencesByDay) {
+    events.push({
+      id: `reference-${date}`,
+      date,
+      category: "REFERENCE",
+      title: refs.length === 1 ? `Check tax reference is still current — ${refs[0].referenceCode ?? refs[0].originalFilename}` : `Check ${refs.length} tax references are still current`,
+      detail: "New guides and rates come out each July. The link pack has the current addresses.",
+      route: refs.length === 1 ? `/documents/${refs[0].id}` : "/documents?reference=only",
     });
   }
   for (const d of docs) {

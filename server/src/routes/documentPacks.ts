@@ -5,6 +5,8 @@ import { shareOf } from "../services/ownership.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { readDocumentFile } from "../services/documentFiles.js";
 import { DOCUMENT_TYPES } from "../services/documentTypes.js";
+import { isTaxReference } from "../services/taxReference.js";
+import { interestSchedule, scheduleCsvRows } from "../services/debtAllocation.js";
 import { describeVehicle, monthlyRepayment } from "../services/debts.js";
 import { computeLiveBreakdown } from "../services/netWorth.js";
 import { incomeAndSpending } from "../services/cashflow.js";
@@ -30,7 +32,7 @@ export const documentPacksRouter = Router();
 
 const DOCUMENT_CATEGORIES = ["Tax", "Property", "Investment", "Personal", "Finance", "Trust/Company", "Commercial Property"] as const;
 const INCOME_DOCUMENT_TYPES = ["Payslip", "PAYG Summary / Income Statement"];
-const GENERATED_SUMMARIES = ["ASSETS_LIABILITIES", "TAX_SUMMARY", "INCOME_SUMMARY", "FACT_FIND"] as const;
+const GENERATED_SUMMARIES = ["ASSETS_LIABILITIES", "TAX_SUMMARY", "INCOME_SUMMARY", "FACT_FIND", "INTEREST_SCHEDULE"] as const;
 
 const MARITAL_STATUS_LABELS: Record<string, string> = {
   SINGLE: "Single",
@@ -191,6 +193,24 @@ export async function assetsLiabilitiesCsv(entityId: string): Promise<string> {
   rows.push(["Total monthly repayments (share)", "", "", "", "", "", "", totalMonthly.toFixed(2)]);
 
   return toCsv(rows);
+}
+
+/**
+ * Deductible loan interest for the pack's year (or the latest year with
+ * interest recorded): each loan this entity borrows on, its interest, the
+ * deductible share from what the money was used for, and this entity's part.
+ */
+async function interestScheduleFor(entityId: string, financialYearId: string | undefined) {
+  let label = financialYearId ? (await prisma.financialYear.findUnique({ where: { id: financialYearId } }))?.label : undefined;
+  if (!label) label = (await prisma.loanInterestYear.findFirst({ orderBy: { fyLabel: "desc" }, select: { fyLabel: true } }))?.fyLabel;
+  if (!label) return { label: null, rows: [] as Awaited<ReturnType<typeof interestSchedule>> };
+  return { label, rows: await interestSchedule(label, entityId) };
+}
+
+async function interestScheduleCsv(entityId: string, financialYearId: string | undefined): Promise<string> {
+  const { label, rows } = await interestScheduleFor(entityId, financialYearId);
+  const csv = scheduleCsvRows(rows, entityId);
+  return toCsv([[`Deductible loan interest ${label ?? "(no interest recorded)"} — split by what each loan's money was used for (TR 95/25, TR 2000/2)`], ...csv]);
 }
 
 async function taxSummaryCsv(entityId: string, financialYearId: string | undefined): Promise<string> {
@@ -442,6 +462,7 @@ documentPacksRouter.get(
       { key: "TAX_SUMMARY", label: "Tax Summary", count: taxRecordCount },
       { key: "INCOME_SUMMARY", label: "Income Summary", count: income.length },
       { key: "FACT_FIND", label: "Fact Find (for a broker)", count: 1 },
+      { key: "INTEREST_SCHEDULE", label: "Loan interest schedule (deductible share)", count: (await interestScheduleFor(entityId, financialYearId)).rows.length },
     ];
 
     res.json({ categories, generated });
@@ -479,6 +500,9 @@ documentPacksRouter.post(
       if (!(DOCUMENT_CATEGORIES as readonly string[]).includes(category)) continue;
       for (const d of await documentsForCategory(entityId, financialYearId, category)) documentsById.set(d.id, d);
     }
+    // Rulings and guides are nobody's paperwork — never sent in a pack, even
+    // if one got linked to a person or entity.
+    for (const [id, d] of documentsById) if (isTaxReference(d.documentType)) documentsById.delete(id);
 
     res.setHeader("Content-Type", "application/zip");
     res.setHeader("Content-Disposition", `attachment; filename="${entity.name.replace(/[^a-z0-9]+/gi, "_")}_pack.zip"`);
@@ -514,6 +538,9 @@ documentPacksRouter.post(
     }
     if (generated.includes("FACT_FIND")) {
       archive.append(await factFindCsv(entityId), { name: "fact_find.csv" });
+    }
+    if (generated.includes("INTEREST_SCHEDULE")) {
+      archive.append(await interestScheduleCsv(entityId, financialYearId), { name: "loan_interest_schedule.csv" });
     }
 
     await archive.finalize();

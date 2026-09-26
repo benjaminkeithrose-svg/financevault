@@ -75,6 +75,7 @@ const assetInput = z.object({
   buyingCosts: z.number().min(0).optional().nullable(),
   improvementsCost: z.number().min(0).optional().nullable(),
   capitalWorksClaimed: z.number().min(0).optional().nullable(),
+  lenderMaxLvr: z.number().min(0).max(1).optional().nullable(),
   sellingCosts: z.number().min(0).optional().nullable(),
   mainResidence: z.enum(["NONE", "FULL", "PARTIAL"]).optional().nullable(),
   mainResidencePercent: z.number().min(0).max(100).optional().nullable(),

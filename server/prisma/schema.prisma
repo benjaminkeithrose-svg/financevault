@@ -364,10 +364,19 @@ model Document {
 
   renewalDate DateTime? // for insurance/registrations etc.
 
+  // Tax reference documents (ATO rulings, guides, rate tables): general
+  // rules, not anyone's paperwork — never put in a pack. The ruling code
+  // (e.g. "TR 2000/2") and when to check it's still current.
+  referenceCode    String?
+  referenceCheckBy DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   links            DocumentLink[]
+  loanPurposes     LoanPurpose[]
+  loanInterestYears LoanInterestYear[]
+  claimNotesCiting ClaimNote[]
   transactions     Transaction[]
   auditLogs        AuditLog[]
   payPeriodEntries PayPeriodEntry[]
@@ -421,6 +430,8 @@ model Asset {
   capitalWorksClaimed  Float?
   mainResidence        String? // NONE | FULL | PARTIAL — the main residence exemption on sale
   mainResidencePercent Float? // PARTIAL: share of the ownership period it was the home
+  // Property: the most a lender would lend against it (e.g. 0.8), for usable equity.
+  lenderMaxLvr         Float?
   depreciationInfo     String? // JSON: method, rate, effective life
   notes                String?
 
@@ -452,6 +463,7 @@ model Asset {
   commercialProperty CommercialProperty?
   ownerships         AssetOwnership[]
   securedLoans       Liability[]
+  loanPurposes       LoanPurpose[]
   insurancePolicies  InsurancePolicy[]
 
   @@index([entityId])
@@ -492,6 +504,8 @@ model Liability {
   maturityDate                 DateTime?
   // When the loan was taken out (for an SMSF, when the LRBA was entered into).
   startDate                    DateTime?
+  // Loan splits under one facility share a name here, e.g. "CBA home loan".
+  facility                     String?
   securityPropertyId           String?
   securityCommercialPropertyId String?
   // The vehicle (car, boat, jet ski…) a vehicle or personal loan paid for.
@@ -519,6 +533,8 @@ model Liability {
   ownerships                 LiabilityOwnership[]
   offsetAccounts             Account[]            @relation("OffsetAccounts")
   holdingTrust               Entity?              @relation("HoldingTrust", fields: [holdingTrustEntityId], references: [id])
+  purposes                   LoanPurpose[]
+  interestYears              LoanInterestYear[]
 
   @@index([entityId])
   @@index([securityAssetId])
@@ -1630,4 +1646,62 @@ model Adviser {
   notes            String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+}
+
+// Debt allocation (IDEAS.md idea 2, stage 1). Interest is deductible by
+// what the borrowed money was used for, not what secures the loan (TR 95/25,
+// TR 2000/2). Each entry records one use of a loan's money, with evidence.
+model LoanPurpose {
+  id          String    @id @default(cuid())
+  liabilityId String
+  liability   Liability @relation(fields: [liabilityId], references: [id], onDelete: Cascade)
+  date        DateTime?
+  amount      Float
+  use         String // PROPERTY | SHARES | BUSINESS | PRIVATE | OTHER
+  deductible  Boolean // used to produce assessable income
+  assetId     String? // what it bought or paid for, where recorded
+  asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  description String
+  documentId  String? // evidence: settlement statement, loan statement…
+  document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  @@index([liabilityId])
+  @@index([assetId])
+}
+
+// The interest a loan charged in a financial year, from the lender's annual
+// interest statement — the figure the deductible share is applied to.
+model LoanInterestYear {
+  id              String    @id @default(cuid())
+  liabilityId     String
+  liability       Liability @relation(fields: [liabilityId], references: [id], onDelete: Cascade)
+  fyLabel         String // e.g. "2025-26"
+  interestCharged Float
+  documentId      String?
+  document        Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  notes           String?
+  createdAt       DateTime  @default(now())
+
+  @@unique([liabilityId, fyLabel])
+}
+
+// "Why is this claimed?" (IDEAS.md idea 12): the reason for a claim, the
+// rule behind it and the accountant's view, kept out of the way until asked
+// for. One note per claim; changes are kept in the audit log.
+model ClaimNote {
+  id                  String    @id @default(cuid())
+  targetType          String // LOAN_PURPOSE | LOAN_INTEREST_YEAR
+  targetId            String
+  reason              String
+  referenceDocumentId String?
+  referenceDocument   Document? @relation(fields: [referenceDocumentId], references: [id], onDelete: SetNull)
+  referencePinpoint   String? // e.g. "paragraphs 15-20"
+  accountantNote      String?
+  accountantAgreedOn  DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@unique([targetType, targetId])
 }

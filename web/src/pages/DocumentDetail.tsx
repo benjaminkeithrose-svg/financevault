@@ -13,6 +13,8 @@ function toDateInput(value?: string | null): string {
   return value.slice(0, 10);
 }
 
+const TAX_REFERENCE = "Tax Reference";
+
 export function DocumentDetail() {
   const { id } = useParams<{ id: string }>();
   const [doc, setDoc] = useState<Document | null>(null);
@@ -40,6 +42,8 @@ export function DocumentDetail() {
         tags: d.tags || "",
         documentDate: toDateInput(d.documentDate),
         renewalDate: toDateInput(d.renewalDate),
+        referenceCode: d.referenceCode || "",
+        referenceCheckBy: toDateInput(d.referenceCheckBy),
       });
     }).catch((e: Error) => setLoadError(e.message));
     api.audit.list(id).then(setAudit);
@@ -55,6 +59,8 @@ export function DocumentDetail() {
     if (loadError) return <LoadFailed message={loadError} backTo="/documents" backLabel="Back to documents" />;
     return <div className="empty-state">Loading…</div>;
   }
+
+  const isReference = form.documentType === TAX_REFERENCE;
 
   async function save() {
     if (!id) return;
@@ -73,6 +79,12 @@ export function DocumentDetail() {
         tags: form.tags || null,
         documentDate: form.documentDate ? new Date(form.documentDate).toISOString() : null,
         renewalDate: form.renewalDate ? new Date(form.renewalDate).toISOString() : null,
+        ...(isReference
+          ? {
+              referenceCode: form.referenceCode || null,
+              referenceCheckBy: form.referenceCheckBy ? new Date(form.referenceCheckBy).toISOString() : null,
+            }
+          : {}),
       });
       load();
     } finally {
@@ -122,64 +134,100 @@ export function DocumentDetail() {
 
             <label>Document type</label>
             <input value={form.documentType} onChange={(e) => setForm({ ...form, documentType: e.target.value })} />
+            {!isReference && (
+              <button className="link-button" onClick={() => setForm({ ...form, documentType: TAX_REFERENCE, entityId: "" })}>
+                This is an ATO ruling or guide — file it as a tax reference
+              </button>
+            )}
 
-            <label>Entity</label>
-            <select value={form.entityId} onChange={(e) => setForm({ ...form, entityId: e.target.value })}>
-              <option value="">— None —</option>
-              {entities.map((ent) => (
-                <option key={ent.id} value={ent.id}>
-                  {ent.name}
-                </option>
-              ))}
-            </select>
+            {isReference ? (
+              <>
+                <div className="message-box info" style={{ marginTop: 8 }}>
+                  A tax reference is an official rule or guide, not anyone's own paperwork. It's never put in a document pack
+                  and isn't tied to a person or entity.
+                </div>
+                <div className="grid grid-2">
+                  <div>
+                    <label>Ruling or guide code (e.g. TR 2000/2)</label>
+                    <input value={form.referenceCode} onChange={(e) => setForm({ ...form, referenceCode: e.target.value })} />
+                  </div>
+                  <div>
+                    <label>Check it's still current by</label>
+                    <input
+                      type="date"
+                      value={form.referenceCheckBy}
+                      onChange={(e) => setForm({ ...form, referenceCheckBy: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <label>Financial year it's for (yearly guides only)</label>
+                <input
+                  value={form.financialYearLabel}
+                  placeholder="2025-26"
+                  onChange={(e) => setForm({ ...form, financialYearLabel: e.target.value })}
+                />
+              </>
+            ) : (
+              <>
+              <label>Entity</label>
+              <select value={form.entityId} onChange={(e) => setForm({ ...form, entityId: e.target.value })}>
+                <option value="">— None —</option>
+                {entities.map((ent) => (
+                  <option key={ent.id} value={ent.id}>
+                    {ent.name}
+                  </option>
+                ))}
+              </select>
 
-            <label>Financial year (e.g. 2026-27)</label>
-            <input
-              value={form.financialYearLabel}
-              placeholder="2026-27"
-              onChange={(e) => setForm({ ...form, financialYearLabel: e.target.value })}
-            />
+              <label>Financial year (e.g. 2026-27)</label>
+              <input
+                value={form.financialYearLabel}
+                placeholder="2026-27"
+                onChange={(e) => setForm({ ...form, financialYearLabel: e.target.value })}
+              />
 
-            <div className="grid grid-2">
-              <div>
-                <label>Document date</label>
-                <input type="date" value={form.documentDate} onChange={(e) => setForm({ ...form, documentDate: e.target.value })} />
+              <div className="grid grid-2">
+                <div>
+                  <label>Document date</label>
+                  <input type="date" value={form.documentDate} onChange={(e) => setForm({ ...form, documentDate: e.target.value })} />
+                </div>
+                <div>
+                  <label>Renewal date</label>
+                  <input type="date" value={form.renewalDate} onChange={(e) => setForm({ ...form, renewalDate: e.target.value })} />
+                </div>
               </div>
-              <div>
-                <label>Renewal date</label>
-                <input type="date" value={form.renewalDate} onChange={(e) => setForm({ ...form, renewalDate: e.target.value })} />
-              </div>
-            </div>
 
-            <div className="grid grid-2">
-              <div>
-                <label>Amount</label>
-                <input type="number" step="0.01" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
+              <div className="grid grid-2">
+                <div>
+                  <label>Amount</label>
+                  <input type="number" step="0.01" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
+                </div>
+                <div>
+                  <label>Supplier</label>
+                  <input value={form.supplier} onChange={(e) => setForm({ ...form, supplier: e.target.value })} />
+                </div>
               </div>
-              <div>
-                <label>Supplier</label>
-                <input value={form.supplier} onChange={(e) => setForm({ ...form, supplier: e.target.value })} />
-              </div>
-            </div>
 
-            <label>Tax category</label>
-            <select value={form.taxCategoryId} onChange={(e) => setForm({ ...form, taxCategoryId: e.target.value })}>
-              <option value="">— None —</option>
-              {taxCategories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+              <label>Tax category</label>
+              <select value={form.taxCategoryId} onChange={(e) => setForm({ ...form, taxCategoryId: e.target.value })}>
+                <option value="">— None —</option>
+                {taxCategories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
 
-            <label>Tax relevance</label>
-            <select value={form.taxRelevance} onChange={(e) => setForm({ ...form, taxRelevance: e.target.value })}>
-              {TAX_RELEVANCE.map((v) => (
-                <option key={v} value={v}>
-                  {humanize(v)}
-                </option>
-              ))}
-            </select>
+              <label>Tax relevance</label>
+              <select value={form.taxRelevance} onChange={(e) => setForm({ ...form, taxRelevance: e.target.value })}>
+                {TAX_RELEVANCE.map((v) => (
+                  <option key={v} value={v}>
+                    {humanize(v)}
+                  </option>
+                ))}
+              </select>
+              </>
+            )}
 
             <label>Review status</label>
             <select value={form.reviewStatus} onChange={(e) => setForm({ ...form, reviewStatus: e.target.value })}>

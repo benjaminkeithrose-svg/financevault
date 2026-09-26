@@ -6,6 +6,7 @@ import { SoldPanel } from "../components/SoldPanel.js";
 import { InsurancePanel } from "../components/InsurancePanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
+import { UsableEquityCard } from "../components/UsableEquityCard.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
@@ -203,6 +204,8 @@ export function PropertyDetail() {
       </div>
 
       {property.asset && <AssetOwnershipPanel asset={property.asset} entities={entities} onChange={load} />}
+
+      {!property.asset?.disposalDate && <UsableEquityCard assetId={property.assetId} />}
 
       <ItemsPanel parentAssetId={property.assetId} title="Items in this property" />
 

@@ -443,6 +443,39 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "tax-references",
+    title: "Tax references: the ATO rules, kept to hand",
+    keywords: "ato ruling guide tax reference library tr 2000/2 reference code check current link pack rulings",
+    body: (
+      <>
+        <p>
+          A <strong>tax reference</strong> is an official rule or guide — an ATO ruling such as TR 2000/2, an ATO guide, a
+          Revenue NSW or APRA page. It isn't anyone's own paperwork, so it's never put in a document pack and isn't tied to a
+          person or entity. Each one keeps its code (e.g. "TR 2000/2") and a date to check it's still current.
+        </p>
+        <ol>
+          <li>
+            Go to <Link to="/documents?reference=only">Documents → Tax references</Link>.
+          </li>
+          <li>
+            Press <strong>Load the reference library</strong>. The official documents that come with Financial Vault are added
+            in one go (it can take a minute). Pressing it again only adds what's missing.
+          </li>
+          <li>To file a ruling you've downloaded yourself, upload it as usual — rulings and ATO guide printouts are recognised.</li>
+          <li>
+            If one wasn't, open it and press <strong>This is an ATO ruling or guide — file it as a tax reference</strong>, then
+            Save.
+          </li>
+        </ol>
+        <p>
+          Every 31 July a single reminder goes in the calendar to check they're still current, after the new financial year's
+          guides come out. The addresses to download fresh copies are in the link pack (<code>reference/LINK-PACK.md</code>).
+          Search still finds them, and the <strong>Why is this claimed?</strong> icon can point to one.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "bulk-import",
     title: "Import a folder: loading years of paperwork",
     keywords: "folder many files first load statements tax returns",
@@ -788,6 +821,59 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "loan-purposes",
+    title: "Loan interest: what the money was used for",
+    keywords: "debt allocation loan purpose deductible interest split facility redraw equity usable equity why claimed reason explain",
+    body: (
+      <>
+        <p>
+          Loan interest is deductible according to what the borrowed money was <strong>used for</strong> — not what the loan
+          is secured against. A loan secured on your home that paid for a rental property is deductible; a loan secured on
+          a rental that paid for a holiday isn't. Mixed loans are split by the share of money used for each (ATO ruling
+          TR 2000/2).
+        </p>
+        <ol>
+          <li>
+            On a loan's page, under <strong>What this loan's money was used for</strong>, press <strong>Add a use</strong>.
+          </li>
+          <li>
+            Enter the amount, what it paid for, and link the evidence (the settlement statement or loan statement). Tick
+            "Used to produce income" if it's for a rental, shares or a business.
+          </li>
+          <li>
+            Each year, press <strong>Add a year's interest</strong> and enter the interest from the lender's annual
+            statement. The deductible part is worked out from the uses.
+          </li>
+          <li>
+            <Link to="/reports">Reports</Link> → <strong>Loan Interest</strong> shows every loan for a year, split by use and
+            by borrower. The Accountant Pack includes it as a spreadsheet.
+          </li>
+        </ol>
+        <p>
+          <strong>Loan splits:</strong> give splits under one facility the same <strong>Facility</strong> name on each loan
+          (e.g. "CBA home loan"), so they're shown together.
+        </p>
+        <p>
+          <strong>Usable equity</strong> on a property page is its value × the lender's maximum loan-to-value ratio (80%
+          unless you change it), less what's owed on loans secured by it. Drawing it is new borrowing: its interest is
+          deductible only if the money goes to producing income. Keep investment and private draws in separate splits —
+          once a loan mixes both, every repayment is shared between them.
+        </p>
+        <h4>Why is this claimed?</h4>
+        <p>
+          The small book icon next to each use and each year's interest opens the reason for the claim, the rule behind it (a
+          tax reference and paragraph), the evidence and your accountant's note. It fills in blue once a reason is saved.{" "}
+          <strong>Explain this claim (download)</strong> gives one ZIP with the explanation, the ruling and the evidence —
+          ready to send if your accountant or the ATO asks.
+        </p>
+        <p>
+          This first stage assumes nothing was redrawn, and no sale money went back into the loan, during the year. If
+          something was, tell your accountant — they'll use the ATO's month-by-month method.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "income-spending",
     title: "Income and spending for a loan application",
     keywords: "living expenses income spending cash flow budget monthly average loan application lender hem",
@@ -940,8 +1026,9 @@ const SECTIONS: Section[] = [
           <strong>Broker Pack</strong> preset, then <strong>Generate &amp; download</strong>.
         </p>
         <p>
-          Only what you tick goes in. The summaries (assets and liabilities, tax, income) are spreadsheets built fresh
-          from your records at that moment, and every pack includes an index listing each document in it.
+          Only what you tick goes in. The summaries (assets and liabilities, tax, income, loan interest) are spreadsheets
+          built fresh from your records at that moment, and every pack includes an index listing each document in it. Tax
+          references (ATO rulings and guides) are never included.
         </p>
         <h4>Fact Find</h4>
         <p>

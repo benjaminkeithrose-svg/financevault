@@ -258,6 +258,37 @@ isn't safe to sync live, only the documents folder is.
   (employer details, a forward expense estimate). It never includes an
   encrypted number; tick the ID documents chip for scans instead.
 
+### Tax references, loan interest and "why is this claimed?"
+
+- **Tax references** — document type `Tax Reference` (category `Reference`,
+  `services/taxReference.ts`): ATO rulings and guides, Revenue NSW and APRA
+  pages. Recognised on upload (ruling wording or printed-web-page markers;
+  the code, e.g. "TR 2000/2", is only taken from the heading so quoted
+  rulings aren't mistaken for the document's own). No owner, not a claim,
+  `referenceCode` and `referenceCheckBy` (next 31 July). Left out of the
+  everyday Documents list (`?reference=only` lists them), never put in a
+  document pack, and grouped into one calendar reminder per date.
+- **Reference library** — `services/referenceLibrary.ts` loads the saved
+  copies in `reference/sources` (listed in `sources/index.json`, titled from
+  `link-pack.json`) as confirmed tax references. `GET/POST
+  /api/reference-library[/load]`; loading again only adds what's missing.
+- **Debt allocation, stage 1** (`services/debtAllocation.ts`,
+  `/api/debt-allocation`): each loan's uses (`LoanPurpose`: amount, date,
+  use, deductible, what it bought, evidence) and yearly interest from the
+  lender's statement (`LoanInterestYear`). Deductible share = money used to
+  produce income ÷ money borrowed, as at the year's end (TR 2000/2 — the
+  proportional method holds until a redraw or a sale; stage 2 applies the
+  monthly method). Loan splits share a `Liability.facility` name. Usable
+  equity = value × `Asset.lenderMaxLvr` (default 80%) − loans secured on it.
+  Reports → Loan Interest and the Accountant Pack's `INTEREST_SCHEDULE` CSV
+  split the deductible interest by use and by borrower.
+- **Why is this claimed?** (`ClaimNote`, `/api/claim-notes`) — one note per
+  claim (a loan use or interest year): reason, a tax reference and
+  paragraph, the accountant's note and date. Evidence is the claim's own
+  linked documents; history is the audit log; `/export` downloads a ZIP of
+  the explanation, the reference and the evidence. Deleting a use, an
+  interest year or the loan removes its note.
+
 ### Investments, shares, ETFs and crypto
 
 Record-keeping and valuation for shares, ETFs, managed funds, crypto and

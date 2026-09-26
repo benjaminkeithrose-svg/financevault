@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, Asset, Entity, Liability } from "../api/client.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
+import { LoanAllocationCard } from "../components/LoanAllocationCard.js";
 import { DEBT_LISTS, debtListFor, describeVehicle, formatCurrency, liabilityTypeLabel, monthlyEquivalent, REPAYMENT_FREQUENCIES } from "../utils.js";
 import { useBackTo } from "../hooks/useBackTo.js";
 import { LoadFailed } from "../components/LoadFailed.js";
@@ -45,6 +46,7 @@ export function LiabilityDetail() {
         fixedPeriodEnds: toDateInput(l.fixedPeriodEnds),
         maturityDate: toDateInput(l.maturityDate),
         startDate: toDateInput(l.startDate),
+        facility: l.facility || "",
         notes: l.notes || "",
       });
     }).catch((e: Error) => setLoadError(e.message));
@@ -89,6 +91,7 @@ export function LiabilityDetail() {
         fixedPeriodEnds: form.fixedPeriodEnds ? new Date(form.fixedPeriodEnds).toISOString() : null,
         maturityDate: form.maturityDate ? new Date(form.maturityDate).toISOString() : null,
         startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
+        ...(isCard ? {} : { facility: form.facility?.trim() || null }),
         notes: form.notes || null,
       });
       load();
@@ -124,6 +127,12 @@ export function LiabilityDetail() {
         <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
         <label>Lender</label>
         <input value={form.lender} onChange={(e) => setForm({ ...form, lender: e.target.value })} />
+        {!isCard && (
+          <>
+            <label>Facility (loan splits share one name, e.g. "CBA home loan")</label>
+            <input value={form.facility} onChange={(e) => setForm({ ...form, facility: e.target.value })} />
+          </>
+        )}
         <div className="grid grid-2">
           {isCard ? (
             <div>
@@ -263,6 +272,8 @@ export function LiabilityDetail() {
       {(liability.offsetAccounts ?? []).length > 0 && <OffsetCard liability={liability} />}
 
       <AssetOwnershipPanel kind="loan" asset={liability} entities={entities} onChange={load} />
+
+      {!isCard && <LoanAllocationCard liabilityId={liability.id} />}
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>

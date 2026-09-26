@@ -62,6 +62,7 @@ const liabilityInput = z.object({
   securityAssetId: z.string().optional().nullable(),
   creditLimit: z.number().nonnegative().optional().nullable(),
   holdingTrustEntityId: z.string().optional().nullable(),
+  facility: z.string().max(80).optional().nullable(),
   owners: ownersInput,
   interestOnly: z.boolean().optional().nullable(),
   loanTermYears: z.number().optional().nullable(),
@@ -143,9 +144,16 @@ liabilitiesRouter.delete(
 liabilitiesRouter.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    await deleteWithLinks([{ type: "LIABILITY", id: req.params.id }], (tx) =>
-      tx.liability.delete({ where: { id: req.params.id } })
-    );
+    // Its uses and interest years go with it (cascade); so do their "why claimed" notes.
+    const [purposes, years] = await Promise.all([
+      prisma.loanPurpose.findMany({ where: { liabilityId: req.params.id }, select: { id: true } }),
+      prisma.loanInterestYear.findMany({ where: { liabilityId: req.params.id }, select: { id: true } }),
+    ]);
+    const claimTargets = [...purposes, ...years].map((x) => x.id);
+    await deleteWithLinks([{ type: "LIABILITY", id: req.params.id }], async (tx) => {
+      await tx.claimNote.deleteMany({ where: { targetId: { in: claimTargets } } });
+      return tx.liability.delete({ where: { id: req.params.id } });
+    });
     await logAudit("LIABILITY_DELETED", { targetType: "Liability", targetId: req.params.id });
     res.status(204).send();
   })

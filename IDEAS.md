@@ -6,7 +6,7 @@ one go. Newest at the bottom.
 
 ---
 
-## 1. "Tax reference" document type — waiting on a yes
+## 1. "Tax reference" document type — built (batch 2)
 
 **Why:** ATO rulings uploaded now would be filed as "ATO Correspondence"
 (Tax category) and could land in an Accountant Pack as if they were
@@ -17,7 +17,8 @@ any person or entity, with its ruling code (e.g. TR 2000/2), the financial
 year it applies to, and a "check again" date each July. Do this before the
 ATO documents are uploaded.
 
-**Status:** asked, not yet answered.
+**Status:** built in batch 2, with a "Load the reference library" button
+that adds the saved documents in `reference/sources`.
 
 ---
 
@@ -36,6 +37,9 @@ Needs to be auditable.
 - Usable equity per property: value × lender's max LVR − loans secured on it.
 - Deductible-interest schedule per property per financial year, from the
   lender's annual interest statement × purpose split. Into the Accountant Pack.
+
+**Status:** stage 1 built in batch 2 (uses, interest years, facility
+splits, usable equity, Loan Interest report, Accountant Pack schedule).
 
 **Stage 2 — redraws and mixed loans**
 - "Draw equity" step on a property: amount + purpose → new split. Warns if
@@ -430,6 +434,11 @@ withdrawn or replaced.
 
 **Depends on:** ideas 1 (Tax reference type), 3 (library), 8 and 10
 (checklists), 2 (debt allocation).
+
+**Status:** built in batch 2 for loan uses and yearly loan interest (reason,
+reference and paragraph, evidence, accountant's note, history, ZIP export).
+Added to deductions, depreciation, car claims and structure choices as
+those features are built (batches 3 and 4).
 
 ---
 

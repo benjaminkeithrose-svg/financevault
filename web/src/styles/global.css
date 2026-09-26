@@ -1654,3 +1654,24 @@ label {
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
+
+/* "Why is this claimed?" — a quiet book icon; filled with the accent once a
+   reason is recorded. The dialog scrolls on a small screen. */
+.icon-btn.why-claimed {
+  color: var(--text-muted);
+}
+.icon-btn.why-claimed.has-reason {
+  color: var(--accent);
+}
+.why-claimed-dialog {
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+}
+
+.loan-purpose-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}

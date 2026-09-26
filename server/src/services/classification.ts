@@ -1,5 +1,6 @@
 import { findDocumentTypeByKeyword } from "./documentTypes.js";
 import { financialYearLabelForDate } from "./financialYear.js";
+import { detectReferenceCode, isTaxReference } from "./taxReference.js";
 
 export interface EntityCandidate {
   id: string;
@@ -29,6 +30,8 @@ export interface ClassificationResult {
   taxRelevance: "UNKNOWN" | "POSSIBLE";
   confidenceScore: number;
   needsReview: boolean;
+  /** Tax reference documents only: the ruling or guide code found in it. */
+  referenceCode?: string | null;
 }
 
 const AMOUNT_PATTERN = /\$\s?([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{2})?)/g;
@@ -133,6 +136,25 @@ export function classifyDocument(input: ClassificationInput): ClassificationResu
 
   const typeDef = findDocumentTypeByKeyword(haystack);
   if (typeDef) signals++;
+
+  // A ruling or guide is general — no owner, no amount, not a claim.
+  if (typeDef && isTaxReference(typeDef.name)) {
+    const referenceCode = detectReferenceCode(`${normalisePath(filename)}\n${text}`);
+    return {
+      documentType: typeDef.name,
+      entityId: null,
+      entityName: null,
+      financialYearLabel: financialYearLabelFromText(`${folderPath ?? ""} ${filename}`),
+      amount: null,
+      documentDate: null,
+      renewalDate: null,
+      taxRelevance: "UNKNOWN",
+      // A printed guide section has no code of its own, and that's fine.
+      confidenceScore: referenceCode ? 0.86 : 0.78,
+      needsReview: false,
+      referenceCode,
+    };
+  }
 
   let matchedEntity: EntityCandidate | null = null;
   for (const entity of entities) {

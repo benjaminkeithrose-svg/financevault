@@ -7,14 +7,15 @@ import {
   Entity,
   IncomeSpending as IncomeSpendingData,
   FinancialYear,
+  InterestScheduleRow,
   InvestmentPortfolioRow,
   PropertyPerformanceRow,
   TaxSummaryRow,
 } from "../api/client.js";
-import { formatCurrency, formatDate, liabilityTypeLabel } from "../utils.js";
+import { financialYearLabelForToday, formatCurrency, formatDate, liabilityTypeLabel } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
 
-const TABS = ["Property Performance", "Investment Portfolio", "Capital Gains", "Tax Summary", "Debt Summary", "Income & Spending"] as const;
+const TABS = ["Property Performance", "Investment Portfolio", "Capital Gains", "Tax Summary", "Loan Interest", "Debt Summary", "Income & Spending"] as const;
 type Tab = (typeof TABS)[number];
 
 function pct(v: number | null | undefined) {
@@ -46,6 +47,7 @@ export function Reports() {
       {tab === "Investment Portfolio" && <InvestmentPortfolio />}
       {tab === "Capital Gains" && <CapitalGains />}
       {tab === "Tax Summary" && <TaxSummary />}
+      {tab === "Loan Interest" && <LoanInterest />}
       {tab === "Debt Summary" && <DebtSummary />}
       {tab === "Income & Spending" && <IncomeSpending />}
     </div>
@@ -231,6 +233,117 @@ function TaxSummary() {
             ))}
           </tbody>
         </table>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Deductible loan interest for a year: each loan's interest (from the
+ * lender's statement) split by what its money was used for, and by borrower.
+ */
+function LoanInterest() {
+  const lastYear = (() => {
+    const start = Number(financialYearLabelForToday().slice(0, 4)) - 1;
+    return `${start}-${String((start + 1) % 100).padStart(2, "0")}`;
+  })();
+  const [fy, setFy] = useState(lastYear);
+  const [data, setData] = useState<{ rows: InterestScheduleRow[]; years: string[] } | null>(null);
+
+  useEffect(() => {
+    api.debtAllocation.schedule(fy).then(setData);
+  }, [fy]);
+
+  if (!data) return <div className="empty-state">Loading…</div>;
+  const years = [...new Set([lastYear, ...data.years])].sort().reverse();
+  const total = data.rows.reduce((s, r) => s + r.interestCharged, 0);
+  const deductible = data.rows.reduce((s, r) => s + r.deductibleInterest, 0);
+
+  return (
+    <div className="card">
+      <p style={{ marginTop: 0, color: "var(--text-muted)", fontSize: 13 }}>
+        Interest from each lender's annual statement, split by what the loan's money was used for — the use counts, not what
+        secures the loan. Record uses and interest on each loan's page. <HelpLink topic="loan-purposes" />
+      </p>
+      <div className="toolbar">
+        <label style={{ margin: 0 }}>Financial year</label>
+        <select value={fy} onChange={(e) => setFy(e.target.value)} style={{ maxWidth: 160 }}>
+          {years.map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
+      </div>
+      {data.rows.length === 0 ? (
+        <p className="empty-state">No interest recorded for {fy}. Add it on each loan's page under "Interest each year".</p>
+      ) : (
+        <>
+          <div className="grid grid-3" style={{ margin: "16px 0" }}>
+            <div className="stat-tile">
+              <div className="label">Interest charged</div>
+              <div className="value">{formatCurrency(total)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Deductible</div>
+              <div className="value">{formatCurrency(deductible)}</div>
+            </div>
+            <div className="stat-tile">
+              <div className="label">Private</div>
+              <div className="value">{formatCurrency(total - deductible)}</div>
+            </div>
+          </div>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Loan</th>
+                  <th>Interest</th>
+                  <th>Deductible share</th>
+                  <th>Deductible</th>
+                  <th>Used for</th>
+                  <th>By borrower</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.rows.map((r) => (
+                  <tr key={r.liabilityId}>
+                    <td>
+                      <Link to={`/liabilities/${r.liabilityId}`}>{r.loanName}</Link>
+                      {r.facility ? <div className="cap-explain">{r.facility}</div> : null}
+                      {r.notes.map((n) => (
+                        <div key={n} className="cap-explain over">
+                          {n}
+                        </div>
+                      ))}
+                    </td>
+                    <td>{formatCurrency(r.interestCharged)}</td>
+                    <td>{pct(r.deductibleShare)}</td>
+                    <td>{formatCurrency(r.deductibleInterest)}</td>
+                    <td>
+                      {r.byUse.map((u) => (
+                        <div key={u.description}>
+                          {u.assetName ?? u.description}: {formatCurrency(u.interest)}
+                        </div>
+                      ))}
+                    </td>
+                    <td>
+                      {r.owners.map((o) => (
+                        <div key={o.entityId}>
+                          {o.entityName} ({Math.round(o.share * 100)}%): {formatCurrency(o.deductibleInterest)}
+                        </div>
+                      ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="cap-explain">
+            This assumes nothing was redrawn or paid off with sale money during the year. If it was, the accountant applies the
+            ATO's monthly method (TR 2000/2 paragraphs 19 and 20) instead. The Accountant Pack includes this schedule.
+          </p>
+        </>
       )}
     </div>
   );

@@ -164,7 +164,7 @@ export interface EstateDocument {
 export interface CalendarEvent {
   id: string;
   date: string;
-  category: "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF" | "INSURANCE" | "ESTATE";
+  category: "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF" | "INSURANCE" | "ESTATE" | "REFERENCE";
   title: string;
   detail: string | null;
   route: string;
@@ -259,6 +259,98 @@ export interface TaxCategory {
   description?: string | null;
 }
 
+export type LoanUse = "PROPERTY" | "SHARES" | "BUSINESS" | "PRIVATE" | "OTHER";
+
+export interface LoanPurpose {
+  id: string;
+  liabilityId: string;
+  date: string | null;
+  amount: number;
+  use: LoanUse;
+  deductible: boolean;
+  assetId: string | null;
+  asset?: { id: string; name: string } | null;
+  description: string;
+  documentId: string | null;
+  document?: { id: string; originalFilename: string } | null;
+  notes: string | null;
+}
+
+export interface LoanInterestYear {
+  id: string;
+  liabilityId: string;
+  fyLabel: string;
+  interestCharged: number;
+  documentId: string | null;
+  document?: { id: string; originalFilename: string } | null;
+  notes: string | null;
+}
+
+export interface PurposeSplit {
+  total: number;
+  deductible: number;
+  private: number;
+  deductibleShare: number | null;
+  byUse: Array<{ purposeId: string; assetId: string | null; description: string; amount: number; share: number }>;
+}
+
+export interface LoanAllocation {
+  purposes: LoanPurpose[];
+  interestYears: LoanInterestYear[];
+  split: PurposeSplit;
+  uses: LoanUse[];
+  /** Claims (uses and interest years) that already have a reason recorded. */
+  reasonsFor: string[];
+}
+
+export interface InterestScheduleRow {
+  liabilityId: string;
+  loanName: string;
+  facility: string | null;
+  lender: string | null;
+  interestCharged: number;
+  statementDocumentId: string | null;
+  deductibleShare: number | null;
+  deductibleInterest: number;
+  privateInterest: number;
+  byUse: Array<{ description: string; assetId: string | null; assetName: string | null; interest: number }>;
+  owners: Array<{ entityId: string; entityName: string; share: number; deductibleInterest: number }>;
+  notes: string[];
+}
+
+export interface UsableEquity {
+  loans: Array<{ id: string; name: string; currentBalance: number | null }>;
+  equity: { value: number; maxLvr: number; maxLvrAssumed: boolean; limit: number; owing: number; usable: number } | null;
+}
+
+export type ClaimTargetType = "LOAN_PURPOSE" | "LOAN_INTEREST_YEAR";
+
+export interface ClaimNote {
+  id: string;
+  targetType: ClaimTargetType;
+  targetId: string;
+  reason: string;
+  referenceDocumentId: string | null;
+  referenceDocument?: { id: string; originalFilename: string; referenceCode: string | null; referenceCheckBy: string | null } | null;
+  referencePinpoint: string | null;
+  accountantNote: string | null;
+  accountantAgreedOn: string | null;
+  updatedAt: string;
+}
+
+export interface ClaimView {
+  target: { title: string; lines: string[]; evidenceIds: string[] };
+  note: ClaimNote | null;
+  evidence: Array<{ id: string; originalFilename: string; documentType: string | null }>;
+  history: Array<{ id: string; action: string; timestamp: string }>;
+  referenceOverdue: boolean;
+}
+
+export interface ReferenceLibraryStatus {
+  available: boolean;
+  items: Array<{ file: string; title: string; referenceCode: string | null; url: string | null; documentId: string | null }>;
+}
+
 export interface Document {
   id: string;
   originalFilename: string;
@@ -290,6 +382,9 @@ export interface Document {
   retentionDate?: string | null;
   reviewStatus: string;
   renewalDate?: string | null;
+  /** Tax references only: the ruling or guide code, and when to check it's current. */
+  referenceCode?: string | null;
+  referenceCheckBy?: string | null;
   createdAt: string;
   updatedAt: string;
   links?: DocumentLink[];
@@ -588,6 +683,7 @@ export interface Asset {
   buyingCosts?: number | null;
   improvementsCost?: number | null;
   capitalWorksClaimed?: number | null;
+  lenderMaxLvr?: number | null;
   sellingCosts?: number | null;
   mainResidence?: "NONE" | "FULL" | "PARTIAL" | null;
   mainResidencePercent?: number | null;
@@ -823,6 +919,8 @@ export interface Liability {
   id: string;
   name: string;
   liabilityType: string;
+  /** Loan splits under one facility share this name. */
+  facility?: string | null;
   entityId: string;
   entity?: Entity;
   lender?: string | null;
@@ -1618,6 +1716,30 @@ export const api = {
       request<PayPeriodEntry>(`/people/pay-periods/${entryId}/super`, { method: "PATCH", body: JSON.stringify({ superPaid }) }),
   },
 
+  debtAllocation: {
+    loan: (liabilityId: string) => request<LoanAllocation>(`/debt-allocation/loans/${liabilityId}`),
+    addPurpose: (liabilityId: string, data: Record<string, unknown>) =>
+      request<LoanPurpose>(`/debt-allocation/loans/${liabilityId}/purposes`, { method: "POST", body: JSON.stringify(data) }),
+    updatePurpose: (id: string, data: Record<string, unknown>) =>
+      request<LoanPurpose>(`/debt-allocation/purposes/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    removePurpose: (id: string) => request<void>(`/debt-allocation/purposes/${id}`, { method: "DELETE" }),
+    saveInterestYear: (liabilityId: string, data: Record<string, unknown>) =>
+      request<LoanInterestYear>(`/debt-allocation/loans/${liabilityId}/interest-years`, { method: "PUT", body: JSON.stringify(data) }),
+    removeInterestYear: (id: string) => request<void>(`/debt-allocation/interest-years/${id}`, { method: "DELETE" }),
+    schedule: (fy: string) => request<{ fy: string; rows: InterestScheduleRow[]; years: string[] }>(`/debt-allocation/schedule?fy=${fy}`),
+    usableEquity: (assetId: string) => request<UsableEquity>(`/debt-allocation/usable-equity/${assetId}`),
+  },
+  claimNotes: {
+    get: (targetType: ClaimTargetType, targetId: string) =>
+      request<ClaimView>(`/claim-notes?${new URLSearchParams({ targetType, targetId })}`),
+    save: (data: Record<string, unknown>) => request<ClaimNote>("/claim-notes", { method: "PUT", body: JSON.stringify(data) }),
+    remove: (id: string) => request<void>(`/claim-notes/${id}`, { method: "DELETE" }),
+    exportUrl: (targetType: ClaimTargetType, targetId: string) => `/api/claim-notes/export?${new URLSearchParams({ targetType, targetId })}`,
+  },
+  referenceLibrary: {
+    status: () => request<ReferenceLibraryStatus>("/reference-library"),
+    load: () => request<{ added: number; alreadyHere: number; missing: string[] }>("/reference-library/load", { method: "POST" }),
+  },
   advisers: {
     list: () => request<Adviser[]>("/advisers"),
     create: (data: Record<string, unknown>) => request<Adviser>("/advisers", { method: "POST", body: JSON.stringify(data) }),
