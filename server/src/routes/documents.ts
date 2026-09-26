@@ -1,0 +1,307 @@
+import { Router } from "express";
+import multer from "multer";
+import { z } from "zod";
+import { isTaxReference, nextReferenceCheck, TAX_REFERENCE_TYPE } from "../services/taxReference.js";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { prisma } from "../db.js";
+import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
+import { readDocumentFile } from "../services/documentFiles.js";
+import { logAudit } from "../services/audit.js";
+import { ensureFinancialYear, ingestDocument } from "../services/documentIngest.js";
+
+export const documentsRouter = Router();
+
+// SVG is deliberately absent: it's an image format that can contain script.
+const INLINE_SAFE_TYPES = new Set([
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/gif",
+  "image/webp",
+  "image/bmp",
+  "image/tiff",
+  "image/heic",
+]);
+
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
+
+documentsRouter.get(
+  "/",
+  asyncHandler(async (req, res) => {
+    const { reviewStatus, entityId, financialYearId, q, reference } = req.query as Record<string, string | undefined>;
+
+    const where: Record<string, unknown> = {};
+    // Archived documents are kept but stay out of the way unless asked for.
+    where.reviewStatus = reviewStatus || { not: "ARCHIVED" };
+    // Tax references (rulings, guides) have their own list; the everyday
+    // list leaves them out unless searching or asked for.
+    if (reference === "only") where.documentType = TAX_REFERENCE_TYPE;
+    else if (reference === "include" || q) {
+      // all documents
+    } else where.AND = [{ OR: [{ documentType: null }, { documentType: { not: TAX_REFERENCE_TYPE } }] }];
+    if (entityId) where.entityId = entityId;
+    if (financialYearId) where.financialYearId = financialYearId;
+    if (q) {
+      where.OR = [
+        { originalFilename: { contains: q } },
+        // Only matched when the file's extracted text is switched on —
+        // wrong OCR text shouldn't surface a document by accident.
+        { AND: [{ ocrText: { contains: q } }, { textExtractionEnabled: true }] },
+        { notes: { contains: q } },
+        { supplier: { contains: q } },
+        { documentType: { contains: q } },
+        { tags: { contains: q } },
+      ];
+    }
+
+    const documents = await prisma.document.findMany({
+      where,
+      orderBy: { uploadDate: "desc" },
+      include: { entity: true, financialYear: true, taxCategory: true },
+    });
+    res.json(documents);
+  })
+);
+
+// Registered before "/:id" so the literal path isn't swallowed by the param route.
+documentsRouter.get(
+  "/by-target",
+  asyncHandler(async (req, res) => {
+    const targetType = String(req.query.targetType || "");
+    const targetId = String(req.query.targetId || "");
+    if (!targetType || !targetId) {
+      res.status(400).json({ error: "targetType and targetId are required" });
+      return;
+    }
+    const links = await prisma.documentLink.findMany({
+      where: { targetType, targetId },
+      include: { document: { include: { entity: true, financialYear: true, taxCategory: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json(links);
+  })
+);
+
+documentsRouter.get(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const doc = await prisma.document.findUnique({
+      where: { id: req.params.id },
+      include: { entity: true, financialYear: true, taxCategory: true, links: true },
+    });
+    if (!doc) {
+      res.status(404).json({ error: "Document not found" });
+      return;
+    }
+    res.json(doc);
+  })
+);
+
+documentsRouter.get(
+  "/:id/file",
+  asyncHandler(async (req, res) => {
+    const doc = await prisma.document.findUnique({ where: { id: req.params.id } });
+    if (!doc) {
+      res.status(404).json({ error: "Document not found" });
+      return;
+    }
+    let bytes: Buffer;
+    try {
+      bytes = await readDocumentFile(path.resolve(doc.filePath));
+    } catch (e) {
+      if ((e as { status?: number }).status) throw e;
+      throw new HttpError(404, "The file for this document is missing from the documents folder.");
+    }
+    const safeName = doc.originalFilename.replace(/["\\\r\n]/g, "_");
+    res.setHeader("Content-Type", doc.mimeType);
+
+    // Uploaded files are served from the app's own origin, so an HTML or SVG
+    // file shown inline would run its scripts with full access to the app.
+    // Only types that can't carry script are displayed inline (and may be
+    // framed by the app's own preview); anything else is downloaded instead,
+    // with a sandbox policy in case a browser opens it anyway.
+    if (INLINE_SAFE_TYPES.has(doc.mimeType.toLowerCase())) {
+      res.setHeader("Content-Disposition", `inline; filename="${safeName}"`);
+      res.setHeader("X-Frame-Options", "SAMEORIGIN");
+      res.setHeader("Content-Security-Policy", "frame-ancestors 'self'");
+    } else {
+      res.setHeader("Content-Disposition", `attachment; filename="${safeName}"`);
+      res.setHeader("Content-Security-Policy", "sandbox; frame-ancestors 'none'");
+    }
+    res.setHeader("Content-Length", bytes.length);
+    res.end(bytes);
+  })
+);
+
+documentsRouter.post(
+  "/upload",
+  upload.single("file"),
+  asyncHandler(async (req, res) => {
+    if (!req.file) {
+      res.status(400).json({ error: "No file provided" });
+      return;
+    }
+
+    const result = await ingestDocument({
+      buffer: req.file.buffer,
+      originalFilename: req.file.originalname,
+      mimeType: req.file.mimetype,
+      fileSize: req.file.size,
+      source: "MANUAL_UPLOAD",
+    });
+
+    if (result.duplicate) {
+      res.status(200).json({ duplicate: true, document: result.document });
+      return;
+    }
+
+    res.status(201).json({ duplicate: false, document: result.document, proposed: result.classification });
+  })
+);
+
+const updateInput = z.object({
+  documentType: z.string().optional().nullable(),
+  entityId: z.string().optional().nullable(),
+  financialYearLabel: z.string().regex(/^\d{4}-\d{2}$/).optional().nullable(),
+  amount: z.number().optional().nullable(),
+  supplier: z.string().optional().nullable(),
+  taxCategoryId: z.string().optional().nullable(),
+  taxRelevance: z.enum(["UNKNOWN", "NOT_RELEVANT", "POSSIBLE", "CONFIRMED"]).optional(),
+  notes: z.string().optional().nullable(),
+  tags: z.string().optional().nullable(),
+  documentDate: z.string().datetime().optional().nullable(),
+  renewalDate: z.string().datetime().optional().nullable(),
+  referenceCode: z.string().max(40).optional().nullable(),
+  referenceCheckBy: z.string().datetime().optional().nullable(),
+  reviewStatus: z
+    .enum(["PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"])
+    .optional(),
+  textExtractionEnabled: z.boolean().optional(),
+});
+
+documentsRouter.put(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const parsed = updateInput.parse(req.body);
+    const { financialYearLabel, ...rest } = parsed;
+
+    const data: Record<string, unknown> = { ...rest };
+    if (parsed.documentDate !== undefined) data.documentDate = parsed.documentDate ? new Date(parsed.documentDate) : null;
+    if (parsed.renewalDate !== undefined) data.renewalDate = parsed.renewalDate ? new Date(parsed.renewalDate) : null;
+    if (parsed.referenceCheckBy !== undefined) data.referenceCheckBy = parsed.referenceCheckBy ? new Date(parsed.referenceCheckBy) : null;
+    // Filing something as a Tax reference makes it nobody's paperwork: no
+    // owner, not a claim, and a date to check it's still current.
+    if (parsed.documentType !== undefined && isTaxReference(parsed.documentType)) {
+      data.entityId = null;
+      data.taxRelevance = "NOT_RELEVANT";
+      if (parsed.referenceCheckBy === undefined) {
+        const current = await prisma.document.findUnique({ where: { id: req.params.id }, select: { referenceCheckBy: true } });
+        if (!current?.referenceCheckBy) data.referenceCheckBy = nextReferenceCheck();
+      }
+    }
+    if (financialYearLabel !== undefined) {
+      data.financialYearId = await ensureFinancialYear(financialYearLabel);
+    }
+
+    const doc = await prisma.document.update({ where: { id: req.params.id }, data });
+    // Turning the extracted text on or off isn't a classification change.
+    const textToggleOnly = Object.keys(rest).length === 1 && parsed.textExtractionEnabled !== undefined && financialYearLabel === undefined;
+    await logAudit(textToggleOnly ? (parsed.textExtractionEnabled ? "DOCUMENT_TEXT_TURNED_ON" : "DOCUMENT_TEXT_TURNED_OFF") : "DOCUMENT_CLASSIFIED", {
+      targetType: "Document",
+      targetId: doc.id,
+      documentId: doc.id,
+      data,
+    });
+    res.json(doc);
+  })
+);
+
+documentsRouter.post(
+  "/:id/confirm",
+  asyncHandler(async (req, res) => {
+    const doc = await prisma.document.update({
+      where: { id: req.params.id },
+      data: { reviewStatus: "CONFIRMED" },
+    });
+    await logAudit("USER_CONFIRMATION", { targetType: "Document", targetId: doc.id, documentId: doc.id });
+    res.json(doc);
+  })
+);
+
+const linkInput = z.object({
+  targetType: z.enum([
+    "PERSON",
+    "ENTITY",
+    "ASSET",
+    "LIABILITY",
+    "ACCOUNT",
+    "PROPERTY",
+    "COMMERCIAL_PROPERTY",
+    "TENANCY",
+    "INVESTMENT_ACCOUNT",
+    "TRANSACTION",
+    "TAX_RECORD",
+    "IDENTITY_RECORD",
+    "MAINTENANCE",
+    "INSURANCE_POLICY",
+    "ESTATE_DOCUMENT",
+  ]),
+  targetId: z.string(),
+  label: z.string().optional().nullable(),
+});
+
+documentsRouter.post(
+  "/:id/links",
+  asyncHandler(async (req, res) => {
+    const parsed = linkInput.parse(req.body);
+    const link = await prisma.documentLink.create({
+      data: { documentId: req.params.id, ...parsed },
+    });
+    await logAudit("DOCUMENT_LINK_ADDED", { targetType: "Document", targetId: req.params.id, documentId: req.params.id });
+    res.status(201).json(link);
+  })
+);
+
+documentsRouter.delete(
+  "/:id/links/:linkId",
+  asyncHandler(async (req, res) => {
+    await prisma.documentLink.delete({ where: { id: req.params.linkId } });
+    res.status(204).send();
+  })
+);
+
+documentsRouter.delete(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const doc = await prisma.document.findUnique({ where: { id: req.params.id } });
+    if (!doc) {
+      res.status(404).json({ error: "Document not found" });
+      return;
+    }
+
+    // Without ?permanent=true a delete only archives: the file and record are
+    // kept and it drops out of the everyday lists.
+    if (req.query.permanent !== "true") {
+      await prisma.document.update({ where: { id: doc.id }, data: { reviewStatus: "ARCHIVED" } });
+      await logAudit("DOCUMENT_ARCHIVED", { targetType: "Document", targetId: doc.id, documentId: doc.id });
+      res.status(204).send();
+      return;
+    }
+
+    // Permanent: the record goes (its links with it; payslips and
+    // transactions that referred to it keep their own details), then the
+    // stored file. The audit entry keeps the filename, since the document
+    // it would point to no longer exists.
+    await prisma.document.delete({ where: { id: doc.id } });
+    const sharedFile = await prisma.document.count({ where: { filePath: doc.filePath } });
+    if (sharedFile === 0) await fs.unlink(doc.filePath).catch(() => {});
+    await logAudit("DOCUMENT_DELETED", {
+      targetType: "Document",
+      targetId: doc.id,
+      data: { filename: doc.originalFilename },
+    });
+    res.status(204).send();
+  })
+);

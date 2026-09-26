@@ -1,0 +1,1827 @@
+// Financial Vault — data model
+//
+// Design principle (spec section 1 & 34): documents, entities, assets,
+// liabilities, accounts and transactions are independent records connected
+// by relationships and link tables, not by folders. A single document can be
+// linked to many things at once. New entity types/relationships never
+// require a schema change — EntityRelationship and DocumentLink are generic.
+//
+// SQLite has no native enum type, so fields that would otherwise be enums
+// are plain strings whose allowed values are validated at the API layer
+// (see server/src/routes/*.ts zod schemas). The allowed values are listed
+// in comments next to each field below.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// People vs. legal/ownership Entities — a deliberate distinction (spec:
+// "Ownership Structures, Trusts, Companies and Underlying Assets").
+//
+// A Person is a real human. An Entity is the legal/ownership vehicle that
+// actually owns assets — an individual acting in their own capacity, a
+// joint ownership arrangement, a trust, a company, a partnership, a super
+// fund or SMSF. A Person never owns an Asset directly in this schema; they
+// hold a relationship (trustee, director, shareholder, beneficiary,
+// individual owner, etc.) to the Entity that does. This is why "Benjamin"
+// the Person and "Benjamin (Personal)" the Entity are two different rows:
+// the Entity is what Assets/Liabilities/Accounts/Documents attach to.
+//
+// Entities are never asset/account types — PROPERTY, BANK_ACCOUNT and
+// INVESTMENT_ACCOUNT are Asset/Account concepts, not ownership vehicles,
+// and must not appear as an entityType value.
+// ---------------------------------------------------------------------------
+
+model Person {
+  id           String    @id @default(cuid())
+  name         String
+  dateOfBirth  DateTime?
+  tfn          String?
+  contactInfo  String? // JSON blob: address, phone, email — superseded by the explicit fields below; kept for compatibility, unused by the app
+  notes        String?
+  payFrequency String? // WEEKLY | FORTNIGHTLY | MONTHLY — used to work out expected pay periods for gap detection. Null = not tracked.
+  // Income a year, before tax — for the after-tax property figures and the
+  // borrowing estimate. Variable = bonus, overtime, commission (lenders shade it).
+  grossSalary    Float?
+  variableIncome Float?
+  // Employment — for the occupation deduction checklist and the fact find.
+  occupation     String? // e.g. "Sales and marketing", "Teacher"
+  employer       String?
+  employmentType String? // FULL_TIME | PART_TIME | CASUAL | CONTRACT | SELF_EMPLOYED
+  carAllowance   Float? // a year, shown separately on the income statement
+  benefits       String? // comma-separated: NOVATED_LEASE, COMPANY_CAR, FUEL_CARD, PHONE, LAPTOP, SALARY_SACRIFICE_SUPER, OTHER
+
+  // Personal and contact details — what a lender's fact find asks for.
+  phone                 String?
+  email                 String?
+  currentAddress        String?
+  previousAddress       String? // shown on a fact find when under 3 years at the current address
+  maritalStatus         String? // SINGLE | MARRIED | DE_FACTO | SEPARATED | DIVORCED | WIDOWED | OTHER
+  motherMaidenName      String? // encrypted — used as a security question by many institutions
+  nextOfKinName         String?
+  nextOfKinRelationship String?
+  nextOfKinPhone        String?
+  nextOfKinAddress      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Every person has their own personal (INDIVIDUAL) entity, created with
+  // them, so things they own personally can be recorded without setting the
+  // person up twice.
+  entityId       String? @unique
+  personalEntity Entity? @relation("PersonalEntity", fields: [entityId], references: [id], onDelete: SetNull)
+
+  entityRelationships PersonEntityRelationship[]
+  payPeriodEntries    PayPeriodEntry[]
+  familyFrom          PersonRelationship[]       @relation("FamilyFrom")
+  familyTo            PersonRelationship[]       @relation("FamilyTo")
+  identityRecords     IdentityRecord[]
+  superContributions  SuperContribution[]
+  smsfMemberYears     SmsfMemberYear[]
+  smsfPensions        SmsfPension[]
+  insurancePolicies   InsurancePolicy[]
+  estateDocuments     EstateDocument[]
+  workDeductions      WorkDeduction[]
+  incomeStatements    IncomeStatement[]
+  // Documents reference this Person via the polymorphic DocumentLink
+  // (targetType = PERSON, targetId = this.id) — no direct relation field,
+  // consistent with how every other linkable record works.
+
+  @@index([name])
+}
+
+// Family links between people. PARENT means fromPerson is a parent of
+// toPerson; PARTNER is stored once and read both ways.
+model PersonRelationship {
+  id               String   @id @default(cuid())
+  fromPersonId     String
+  toPersonId       String
+  relationshipType String // PARTNER | PARENT
+  createdAt        DateTime @default(now())
+
+  fromPerson Person @relation("FamilyFrom", fields: [fromPersonId], references: [id], onDelete: Cascade)
+  toPerson   Person @relation("FamilyTo", fields: [toPersonId], references: [id], onDelete: Cascade)
+
+  @@unique([fromPersonId, toPersonId, relationshipType])
+  @@index([toPersonId])
+}
+
+// A person's ID and cover documents — the things a broker or lender asks
+// to see. Numbers are encrypted like TFNs (see db.ts); scans attach through
+// DocumentLink with targetType IDENTITY_RECORD.
+model IdentityRecord {
+  id              String    @id @default(cuid())
+  personId        String
+  person          Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  kind            String // PRIVATE_HEALTH | MEDICARE | DRIVERS_LICENCE | PASSPORT | BIRTH_CERTIFICATE | CITIZENSHIP | PROOF_OF_AGE | OTHER
+  label           String? // e.g. "Bupa Gold Hospital + Extras", "NSW licence"
+  issuer          String? // insurer, issuing state or country
+  number          String? // encrypted
+  referenceNumber String? // encrypted — Medicare IRN, licence card number
+  issueDate       DateTime?
+  expiryDate      DateTime?
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([personId])
+}
+
+// One expected/actual pay period for a Person whose income is tracked
+// (spec: Document Packs — PAYG/payslip tracking). A period is either
+// LOGGED (a payslip document is attached, optionally with an amount) or
+// NON_WORKING (explicitly marked as an intentional gap — e.g. a casual
+// employee's week off — so it's never flagged as a missing payslip).
+// Periods that are neither are simply absent rows; gap detection is done
+// in application code by generating the expected periods from
+// Person.payFrequency and diffing against what's stored here.
+model PayPeriodEntry {
+  id          String    @id @default(cuid())
+  personId    String
+  person      Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  periodStart DateTime
+  periodEnd   DateTime
+  status      String // LOGGED | NON_WORKING
+  documentId  String?
+  document    Document? @relation(fields: [documentId], references: [id])
+  amount      Float?
+  // Payday super (from 1 July 2026): whether super arrived with this pay.
+  superPaid   Boolean?
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  @@unique([personId, periodStart])
+  @@index([personId])
+}
+
+// Generic relationship from a Person to the Entity they act in relation to,
+// e.g. trustee, director, shareholder, beneficiary, member, individual
+// owner, joint owner, guarantor, borrower, settlor, appointor.
+model PersonEntityRelationship {
+  id               String    @id @default(cuid())
+  personId         String
+  entityId         String
+  relationshipType String // SETTLOR | TRUSTEE | DIRECTOR | SHAREHOLDER | BENEFICIARY | MEMBER | INDIVIDUAL_OWNER | JOINT_OWNER | GUARANTOR | BORROWER | APPOINTOR | ACCOUNTANT | TAX_AGENT | OTHER
+  ownershipPercent Float? // meaningful for SHAREHOLDER / JOINT_OWNER
+  startDate        DateTime?
+  endDate          DateTime?
+  notes            String?
+  createdAt        DateTime  @default(now())
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  entity Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
+
+  @@index([personId])
+  @@index([entityId])
+}
+
+model Entity {
+  id                String    @id @default(cuid())
+  name              String
+  entityType        String // INDIVIDUAL | JOINT | TRUST (family/discretionary) | UNIT_TRUST | HOLDING_TRUST | COMPANY | PARTNERSHIP | SUPER_FUND | SMSF | OTHER
+  abn               String?
+  tfn               String?
+  acn               String?
+  establishmentDate DateTime? // trust/company establishment date
+  ownershipInfo     String? // free text / JSON describing ownership split, trustee, directors etc.
+  contactInfo       String? // JSON blob: address, phone, email, adviser contacts
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relationships where this entity is the source ("XYZ Pty Ltd owns Commercial Property A")
+  relationshipsFrom   EntityRelationship[]       @relation("RelationshipFrom")
+  // Relationships where this entity is the target
+  relationshipsTo     EntityRelationship[]       @relation("RelationshipTo")
+  // People who hold a role in relation to this entity (trustee, director, beneficiary, ...)
+  personRelationships PersonEntityRelationship[]
+  personalFor         Person?                    @relation("PersonalEntity")
+
+  documents            Document[]
+  assets               Asset[]
+  liabilities          Liability[]
+  accounts             Account[]
+  transactions         Transaction[]
+  properties           Property[]
+  commercialProperties CommercialProperty[]
+  investmentAccounts   InvestmentAccount[]
+  taxRecords           TaxRecord[]
+  assetOwnerships      AssetOwnership[]
+  liabilityOwnerships  LiabilityOwnership[]
+  accountOwnerships    AccountOwnership[]
+  investmentOwnerships InvestmentAccountOwnership[]
+  insurancePolicies    InsurancePolicy[]
+  estateNominations    EstateDocument[]             @relation("NominationFund")
+  netWorthSnapshots    NetWorthSnapshot[]
+  portfolioPlans       PortfolioPlan[]
+  emailImportRules     EmailImportRule[]
+
+  // SMSF only (see the SMSF section below).
+  smsfDetails        SmsfDetails?        @relation("SmsfFund")
+  trusteeOfSmsfs     SmsfDetails[]       @relation("SmsfCorporateTrustee")
+  superContributions SuperContribution[]
+  smsfMemberYears    SmsfMemberYear[]
+  smsfPensions       SmsfPension[]
+  // Holding (bare) trusts: the LRBA loans whose property this trust holds.
+  heldForLoans       Liability[]         @relation("HoldingTrust")
+
+  @@index([entityType])
+}
+
+// Generic, non-hardcoded relationship between two entities, e.g.
+// "owns", "trustee of" (for a corporate trustee), "subsidiary of".
+model EntityRelationship {
+  id               String   @id @default(cuid())
+  fromEntityId     String
+  toEntityId       String
+  relationshipType String // free-form label, e.g. OWNS, TRUSTEE_OF, SUBSIDIARY_OF
+  ownershipPercent Float?
+  notes            String?
+  createdAt        DateTime @default(now())
+
+  fromEntity Entity @relation("RelationshipFrom", fields: [fromEntityId], references: [id], onDelete: Cascade)
+  toEntity   Entity @relation("RelationshipTo", fields: [toEntityId], references: [id], onDelete: Cascade)
+
+  @@index([fromEntityId])
+  @@index([toEntityId])
+}
+
+// Explicit, time-boxed ownership record for an Asset — supplements
+// Asset.entityId (the current/primary owner, kept for simple queries) so
+// that fractional and changing ownership (e.g. Benjamin 50% / Spouse 50%
+// of Property B) can be recorded without losing the simple case. Absence
+// of any record here just means Asset.entityId is the sole 100% owner.
+model AssetOwnership {
+  id               String    @id @default(cuid())
+  assetId          String
+  ownerEntityId    String
+  ownershipPercent Float
+  ownershipType    String? // e.g. LEGAL | BENEFICIAL
+  startDate        DateTime?
+  endDate          DateTime?
+  notes            String?
+  createdAt        DateTime  @default(now())
+
+  asset       Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  ownerEntity Entity @relation(fields: [ownerEntityId], references: [id])
+
+  @@index([assetId])
+  @@index([ownerEntityId])
+}
+
+// A loan owed jointly — e.g. a mortgage 50/50 between two people. Works the
+// same way as AssetOwnership: Liability.entityId stays the primary borrower
+// on record, and with no rows here it owes 100%.
+model LiabilityOwnership {
+  id               String   @id @default(cuid())
+  liabilityId      String
+  ownerEntityId    String
+  ownershipPercent Float
+  notes            String?
+  createdAt        DateTime @default(now())
+
+  liability   Liability @relation(fields: [liabilityId], references: [id], onDelete: Cascade)
+  ownerEntity Entity    @relation(fields: [ownerEntityId], references: [id])
+
+  @@index([liabilityId])
+  @@index([ownerEntityId])
+}
+
+// ---------------------------------------------------------------------------
+// Financial years — Australian FY (1 Jul -> 30 Jun), e.g. "2026-27"
+// ---------------------------------------------------------------------------
+
+model FinancialYear {
+  id        String   @id @default(cuid())
+  label     String   @unique // "2026-27"
+  startDate DateTime // 2026-07-01
+  endDate   DateTime // 2027-06-30
+
+  documents               Document[]
+  transactions            Transaction[]
+  taxRecords              TaxRecord[]
+  annualPropertySnapshots AnnualPropertySnapshot[]
+  portfolioPlans          PortfolioPlan[]
+  investmentDisposals     InvestmentDisposal[]
+  investmentDividends     InvestmentDividend[]
+}
+
+// ---------------------------------------------------------------------------
+// Tax categories — organiser labels, not tax advice
+// ---------------------------------------------------------------------------
+
+model TaxCategory {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  group       String // INCOME | EXPENSE | CAPITAL | OTHER
+  description String?
+
+  documents    Document[]
+  transactions Transaction[]
+}
+
+// ---------------------------------------------------------------------------
+// Documents — first-class objects, immutable originals + metadata/versions
+// ---------------------------------------------------------------------------
+
+model Document {
+  id               String @id @default(cuid())
+  originalFilename String
+  storedFilename   String
+  filePath         String
+  mimeType         String
+  fileSize         Int
+  fileHash         String @unique // sha256 of original bytes — integrity + de-dup
+  version          Int    @default(1)
+
+  documentType String? // e.g. "Insurance", "Tax Return", "Rental Statement" — see DocumentType catalogue in app code
+  source       String  @default("MANUAL_UPLOAD") // MANUAL_UPLOAD | GMAIL | CSV_IMPORT | ...
+
+  uploadDate   DateTime  @default(now())
+  documentDate DateTime?
+
+  financialYearId String?
+  financialYear   FinancialYear? @relation(fields: [financialYearId], references: [id])
+
+  entityId String?
+  entity   Entity? @relation(fields: [entityId], references: [id])
+
+  amount   Float?
+  supplier String?
+
+  taxCategoryId String?
+  taxCategory   TaxCategory? @relation(fields: [taxCategoryId], references: [id])
+  taxRelevance  String       @default("UNKNOWN") // UNKNOWN | NOT_RELEVANT | POSSIBLE | CONFIRMED
+
+  confidenceScore       Float? // 0-1, set by the classifier
+  ocrText               String?
+  // Extracted text from images/scans is sometimes badly wrong, so it can be
+  // turned off per file — stops it being searched or shown, without
+  // touching the original file or needing it re-scanned.
+  textExtractionEnabled Boolean @default(true)
+  aiSummary             String?
+  tags                  String? // comma-separated
+  notes                 String?
+
+  retentionDate DateTime?
+  reviewStatus  String    @default("PENDING_CLASSIFICATION") // PENDING_CLASSIFICATION | NEEDS_CONFIRMATION | MISSING_INFORMATION | CONFIRMED | ARCHIVED
+
+  renewalDate DateTime? // for insurance/registrations etc.
+
+  // Tax reference documents (ATO rulings, guides, rate tables): general
+  // rules, not anyone's paperwork — never put in a pack. The ruling code
+  // (e.g. "TR 2000/2") and when to check it's still current.
+  referenceCode    String?
+  referenceCheckBy DateTime?
+  // Reference copies: which link-pack entry it's a copy of, where it came
+  // from and when; superseded when a newer copy (or next year's guide) is
+  // saved; withdrawnNote when the source says it's withdrawn or replaced.
+  referenceLinkId  String?
+  sourceUrl        String?
+  retrievedAt      DateTime?
+  supersededAt     DateTime?
+  withdrawnNote    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  links            DocumentLink[]
+  loanPurposes     LoanPurpose[]
+  loanInterestYears LoanInterestYear[]
+  workDeductions   WorkDeduction[]
+  incomeStatements IncomeStatement[]
+  claimNotesCiting ClaimNote[]
+  transactions     Transaction[]
+  auditLogs        AuditLog[]
+  payPeriodEntries PayPeriodEntry[]
+  importBatchFiles ImportBatchFile[]
+
+  @@index([reviewStatus])
+  @@index([financialYearId])
+  @@index([entityId])
+}
+
+// Generic polymorphic link so one document can be attached to many records
+// at once (an insurance invoice linked to an entity, a property AND a tax
+// record simultaneously) without duplicating the document.
+model DocumentLink {
+  id         String   @id @default(cuid())
+  documentId String
+  targetType String // PERSON | ENTITY | ASSET | LIABILITY | ACCOUNT | PROPERTY | COMMERCIAL_PROPERTY | TENANCY | INVESTMENT_ACCOUNT | TRANSACTION | TAX_RECORD
+  targetId   String
+  label      String? // e.g. "Renewal", "Supporting evidence"
+  createdAt  DateTime @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([targetType, targetId])
+}
+
+// ---------------------------------------------------------------------------
+// Asset & liability registers (generic — property/vehicle/shares/other)
+// ---------------------------------------------------------------------------
+
+model Asset {
+  id                   String    @id @default(cuid())
+  name                 String
+  assetType            String // PROPERTY | COMMERCIAL_PROPERTY | VEHICLE | SHARES | MANAGED_FUND | EQUIPMENT | SUPERANNUATION | CASH | OTHER
+  entityId             String
+  entity               Entity    @relation(fields: [entityId], references: [id])
+  acquisitionDate      DateTime?
+  acquisitionCost      Float?
+  currentValue         Float?
+  valuationDate        DateTime?
+  // Sold: the asset stays on record (in the tree, under Sold) but drops out
+  // of every total from this date. Also used to work out the capital gain.
+  disposalDate         DateTime?
+  disposalValue        Float?
+  buyingCosts          Float? // stamp duty, legal and other costs of buying — part of the cost base
+  improvementsCost     Float? // capital improvements over the years — part of the cost base
+  sellingCosts         Float? // agent, advertising, legal costs of selling
+  // Building write-off (capital works) deductions claimed or claimable over
+  // the years. The ATO requires these to come off the cost base on sale.
+  capitalWorksClaimed  Float?
+  mainResidence        String? // NONE | FULL | PARTIAL — the main residence exemption on sale
+  mainResidencePercent Float? // PARTIAL: share of the ownership period it was the home
+  // Property: the most a lender would lend against it (e.g. 0.8), for usable equity.
+  lenderMaxLvr         Float?
+  // Property: the land value from the Valuer General (land tax is worked out
+  // on land only), or the land tax actually assessed, which wins if entered.
+  landValue            Float?
+  landTaxPerYear       Float?
+  // Why it's owned by whom it is — worth recording at purchase (IDEAS.md idea 9).
+  ownershipReason      String?
+  // From the depreciation schedule: plant & equipment (Division 40) and the
+  // building write-off (capital works, Division 43), a year.
+  depreciationPerYear  Float?
+  capitalWorksPerYear  Float?
+  depreciationInfo     String? // JSON: method, rate, effective life
+  notes                String?
+
+  // Vehicle details — only meaningful when assetType is VEHICLE, which
+  // covers anything registrable or financeable the same way: cars,
+  // motorcycles, boats, jet skis, caravans, trailers.
+  vehicleType        String? // CAR | MOTORCYCLE | BOAT | JET_SKI | CARAVAN | CAMPERVAN | TRAILER | OTHER
+  make               String?
+  model              String?
+  year               Int?
+  registration       String?
+  registrationExpiry DateTime?
+  identifier         String? // VIN, hull identification number, or an item's serial number
+
+  // Sub-assets: an item that belongs to another asset — an air conditioner
+  // in a rental, the washing machine at home, an outboard on a boat. Its
+  // value is part of the parent's, so it's never added to totals itself.
+  parentAssetId  String?
+  parent         Asset?              @relation("SubAssets", fields: [parentAssetId], references: [id])
+  children       Asset[]             @relation("SubAssets")
+  itemCategory   String? // APPLIANCE | HEATING_COOLING | HOT_WATER | SOLAR | POOL_SPA | SECURITY | FURNITURE | ELECTRONICS | FIXTURE | EQUIPMENT | OTHER
+  warrantyExpiry DateTime?
+  maintenance    MaintenanceRecord[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  property           Property?
+  commercialProperty CommercialProperty?
+  ownerships         AssetOwnership[]
+  securedLoans       Liability[]
+  loanPurposes       LoanPurpose[]
+  insurancePolicies  InsurancePolicy[]
+
+  @@index([entityId])
+  @@index([assetType])
+  @@index([parentAssetId])
+}
+
+// Service, repair and running-cost history for an asset or sub-asset.
+model MaintenanceRecord {
+  id          String    @id @default(cuid())
+  assetId     String
+  asset       Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  date        DateTime
+  kind        String // SERVICE | REPAIR | INSPECTION | INSTALLATION | PART | OTHER
+  description String
+  cost        Float?
+  provider    String?
+  nextDueDate DateTime? // when the next service is due — shows in the expiry calendar
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  @@index([assetId])
+}
+
+model Liability {
+  id                           String    @id @default(cuid())
+  name                         String
+  liabilityType                String // HOME_LOAN | INVESTMENT_LOAN | COMMERCIAL_LOAN | VEHICLE_LOAN | CREDIT_CARD | PERSONAL_LOAN | OTHER
+  entityId                     String
+  entity                       Entity    @relation(fields: [entityId], references: [id])
+  lender                       String?
+  originalAmount               Float?
+  currentBalance               Float?
+  interestRate                 Float?
+  loanType                     String? // fixed/variable
+  fixedPeriodEnds              DateTime?
+  repaymentAmount              Float?
+  maturityDate                 DateTime?
+  // When the loan was taken out (for an SMSF, when the LRBA was entered into).
+  startDate                    DateTime?
+  // Loan splits under one facility share a name here, e.g. "CBA home loan".
+  facility                     String?
+  securityPropertyId           String?
+  securityCommercialPropertyId String?
+  // The vehicle (car, boat, jet ski…) a vehicle or personal loan paid for.
+  securityAssetId              String?
+  // Credit cards: lenders assess a card on its limit, not its balance.
+  creditLimit                  Float?
+  // SMSF limited recourse borrowing (LRBA_LOAN): the holding (bare) trust
+  // that holds legal title to the property until the loan is repaid.
+  holdingTrustEntityId         String?
+  // Commercial-specific loan detail (spec section 17) — nullable, only
+  // meaningful when this liability secures a CommercialProperty.
+  interestOnly                 Boolean?
+  loanTermYears                Float?
+  repaymentFrequency           String? // WEEKLY | FORTNIGHTLY | MONTHLY | QUARTERLY
+  loanFees                     Float?
+  establishmentFees            Float?
+  valuationFees                Float?
+  notes                        String?
+  createdAt                    DateTime  @default(now())
+  updatedAt                    DateTime  @updatedAt
+
+  securityProperty           Property?            @relation(fields: [securityPropertyId], references: [id])
+  securityCommercialProperty CommercialProperty?  @relation(fields: [securityCommercialPropertyId], references: [id])
+  securityAsset              Asset?               @relation(fields: [securityAssetId], references: [id])
+  ownerships                 LiabilityOwnership[]
+  offsetAccounts             Account[]            @relation("OffsetAccounts")
+  holdingTrust               Entity?              @relation("HoldingTrust", fields: [holdingTrustEntityId], references: [id])
+  purposes                   LoanPurpose[]
+  interestYears              LoanInterestYear[]
+
+  @@index([entityId])
+  @@index([securityAssetId])
+  @@index([securityCommercialPropertyId])
+}
+
+// ---------------------------------------------------------------------------
+// Properties (stage 2 module — schema present now so the model never needs
+// to change; UI ships later)
+// ---------------------------------------------------------------------------
+
+model Property {
+  id               String    @id @default(cuid())
+  assetId          String    @unique
+  asset            Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  entityId         String
+  entity           Entity    @relation(fields: [entityId], references: [id])
+  address          String
+  state            String?
+  purchaseDate     DateTime?
+  settlementDate   DateTime?
+  purchasePrice    Float?
+  ownershipPercent Float?
+  tenantInfo       String?
+  propertyManager  String?
+  weeklyRent       Float? // current rent, used for rent cover on an SMSF's LRBA loan
+  // Running costs a year, for the after-tax profit figures. Insurance comes
+  // from the policies recorded against the property.
+  councilRates     Float?
+  waterRates       Float?
+  strataFees       Float?
+  managementPercent Float? // of rent, e.g. 7.5
+  repairsPerYear   Float?
+  otherCostsPerYear Float?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  liabilities Liability[]
+
+  @@index([entityId])
+}
+
+// ---------------------------------------------------------------------------
+// Commercial property — a distinct asset class from residential Property
+// (spec: Commercial Property & Investment Module, section 37). Backed by an
+// Asset like Property is, but with its own specialised profile, tenancies,
+// leases, outgoings and capital expenditure rather than reusing the
+// residential model.
+// ---------------------------------------------------------------------------
+
+model CommercialProperty {
+  id       String @id @default(cuid())
+  assetId  String @unique
+  asset    Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  entityId String
+  entity   Entity @relation(fields: [entityId], references: [id])
+
+  name          String
+  address       String
+  state         String?
+  postcode      String?
+  // Comma-separated list, e.g. "INDUSTRIAL,WAREHOUSE" — a property can carry
+  // multiple classifications (spec section 2). Allowed values: OFFICE |
+  // RETAIL | INDUSTRIAL | WAREHOUSE | LOGISTICS | MEDICAL | CHILDCARE |
+  // HOSPITALITY | MIXED_USE | DEVELOPMENT_SITE | LAND | OTHER
+  propertyTypes String
+
+  ownershipPercent Float?
+  purchaseDate     DateTime?
+  settlementDate   DateTime?
+  purchasePrice    Float?
+  valuationDate    DateTime?
+  valuer           String?
+
+  // Characteristics
+  buildingArea      Float?
+  landArea          Float?
+  areaUnit          String? // SQM | HECTARES | ACRES
+  numberOfTenancies Int?
+  numberOfBuildings Int?
+  carSpaces         Int?
+  zoning            String?
+  constructionType  String?
+  yearBuilt         Int?
+  refurbishmentDate DateTime?
+  nla               Float? // net lettable area
+  gla               Float? // gross lettable area
+  siteArea          Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenancies             Tenancy[]
+  loans                 Liability[]
+  outgoings             OutgoingRecord[]
+  capitalExpenditure    CapitalExpenditureItem[]
+  occupancySnapshots    OccupancySnapshot[]
+  annualSnapshots       AnnualPropertySnapshot[]
+  planProperty          PlanProperty?
+  planEquityDrawSources PlanEquityDraw[]
+
+  @@index([entityId])
+}
+
+model Tenancy {
+  id                   String             @id @default(cuid())
+  commercialPropertyId String
+  commercialProperty   CommercialProperty @relation(fields: [commercialPropertyId], references: [id], onDelete: Cascade)
+
+  tenantName      String
+  tenantLegalName String?
+  tradingName     String?
+  contactDetails  String? // JSON: phone, email
+
+  leaseCommencement DateTime?
+  leaseExpiry       DateTime?
+  optionPeriods     String? // free text, e.g. "2 x 5 years"
+  rentCommencement  DateTime?
+
+  currentBaseRent Float?
+  rentFrequency   String? // WEEKLY | MONTHLY | ANNUALLY
+  rentPerAnnum    Float?
+  rentPerSqm      Float?
+  nlaOccupied     Float?
+
+  securityDeposit Float?
+  bankGuarantee   Float?
+  bond            Float?
+
+  incentives     String?
+  rentFreeMonths Float?
+
+  reviewMechanism  String? // FIXED_PERCENT | CPI | MARKET | HYBRID | FIXED
+  reviewPercentage Float?
+  nextRentReview   DateTime?
+  cpiLinked        Boolean?
+
+  outgoingsArrangement String? // GROSS | NET | NET_NET | NET_NET_NET | GROSS_PLUS_RECOVERIES
+  gstTreatment         String?
+
+  leaseStatus String @default("PROPOSED") // PROPOSED | NEGOTIATING | ACTIVE | EXPIRED | TERMINATED | VACANT
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rentReviews    RentReview[]
+  outgoingLinked OutgoingRecord[]
+
+  @@index([commercialPropertyId])
+}
+
+model RentReview {
+  id        String  @id @default(cuid())
+  tenancyId String
+  tenancy   Tenancy @relation(fields: [tenancyId], references: [id], onDelete: Cascade)
+
+  reviewDate       DateTime
+  reviewMechanism  String? // FIXED_PERCENT | CPI | MARKET | HYBRID | FIXED
+  previousRent     Float?
+  newRent          Float?
+  actualVsExpected String?
+  notes            String?
+
+  createdAt DateTime @default(now())
+
+  @@index([tenancyId])
+}
+
+model OutgoingRecord {
+  id                   String             @id @default(cuid())
+  commercialPropertyId String
+  commercialProperty   CommercialProperty @relation(fields: [commercialPropertyId], references: [id], onDelete: Cascade)
+
+  date     DateTime
+  category String // COUNCIL_RATES | WATER | LAND_TAX | INSURANCE | STRATA | REPAIRS | MAINTENANCE | CLEANING | SECURITY | FIRE_SERVICES | LIFT | AIRCON | ELECTRICAL | BUILDING_MANAGEMENT | PROPERTY_MANAGEMENT | WASTE | GARDENING | PEST_CONTROL | COMPLIANCE | OTHER
+  supplier String?
+  amount   Float
+  gst      Float?
+
+  tenancyId String?
+  tenancy   Tenancy? @relation(fields: [tenancyId], references: [id])
+
+  recoverable     Boolean @default(false)
+  recoveryPercent Float?
+  recoveredAmount Float?
+
+  notes String?
+
+  createdAt DateTime @default(now())
+
+  @@index([commercialPropertyId])
+  @@index([tenancyId])
+}
+
+model CapitalExpenditureItem {
+  id                   String             @id @default(cuid())
+  commercialPropertyId String
+  commercialProperty   CommercialProperty @relation(fields: [commercialPropertyId], references: [id], onDelete: Cascade)
+
+  date               DateTime
+  description        String
+  amount             Float
+  gst                Float?
+  usefulLifeYears    Float?
+  depreciationInfo   String? // JSON: method, rate
+  taxTreatmentStatus String   @default("NEEDS_REVIEW") // CONFIRMED | PROPOSED | NEEDS_REVIEW
+
+  notes String?
+
+  createdAt DateTime @default(now())
+
+  @@index([commercialPropertyId])
+}
+
+model OccupancySnapshot {
+  id                   String             @id @default(cuid())
+  commercialPropertyId String
+  commercialProperty   CommercialProperty @relation(fields: [commercialPropertyId], references: [id], onDelete: Cascade)
+
+  asAtDate    DateTime
+  totalNla    Float
+  occupiedNla Float
+  notes       String?
+
+  createdAt DateTime @default(now())
+
+  @@index([commercialPropertyId])
+}
+
+// Historical, immutable year-by-year record (spec section 33) — created
+// explicitly by the user (optionally pre-filled from a live calculation),
+// never silently recalculated or overwritten.
+model AnnualPropertySnapshot {
+  id                   String             @id @default(cuid())
+  commercialPropertyId String
+  commercialProperty   CommercialProperty @relation(fields: [commercialPropertyId], references: [id], onDelete: Cascade)
+  financialYearId      String
+  financialYear        FinancialYear      @relation(fields: [financialYearId], references: [id])
+
+  propertyValue     Float?
+  debt              Float?
+  equity            Float?
+  rent              Float?
+  recoveries        Float?
+  operatingExpenses Float?
+  noi               Float?
+  interest          Float?
+  principal         Float?
+  cashFlow          Float?
+  capRate           Float?
+  grossYield        Float?
+  netYield          Float?
+  lvr               Float?
+
+  status String  @default("ACTUAL") // ACTUAL | ESTIMATED | PROJECTED
+  notes  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([commercialPropertyId, financialYearId])
+}
+
+// ---------------------------------------------------------------------------
+// Portfolio Plan — a persisted, multi-property forward projection (spec:
+// "follow my purchase from inception... all the way through to trending
+// against the predicted"). Unlike the Acquisition Model / Scenario
+// Comparison calculators (deliberately ephemeral), a plan's assumptions are
+// saved so it can be revisited and compared against real outcomes over
+// years — but the year-by-year table itself is always computed live from
+// these inputs, never persisted, so a later assumption change is instantly
+// reflected rather than requiring a re-save.
+//
+// Each PlanProperty models one property's own trajectory (value and rent
+// growing at the plan's rate, an interest-only loan held flat between
+// refinances). PlanRefinance events are chosen by the user, not
+// auto-triggered — this mirrors how the source material (a portfolio
+// compounding illustration) works: it shows how much capital a property
+// has freed up, but the decision of when/what to buy or refinance next is
+// always the user's.
+// ---------------------------------------------------------------------------
+
+model PortfolioPlan {
+  id       String  @id @default(cuid())
+  name     String
+  entityId String?
+  entity   Entity? @relation(fields: [entityId], references: [id])
+
+  startFinancialYearId String
+  startFinancialYear   FinancialYear @relation(fields: [startFinancialYearId], references: [id])
+  projectionYears      Int           @default(10)
+
+  interestRate       Float // e.g. 0.028 — flat, interest-only, applied to each property's current loan balance
+  rentalGrowthRate   Float // e.g. 0.03 — applied to both rent and property value each year (matches source model)
+  capRate            Float // e.g. 0.06 — used to derive a property's starting rent when not entered explicitly
+  annualContribution Float @default(0) // extra cash added to the portfolio pool each year, tracked as a running total
+  refinanceLvrTarget Float // e.g. 0.70 — default LVR a refinance resets a property's loan back up to
+  depositPercent     Float @default(0.3) // default suggested deposit % when adding a new planned property
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  properties PlanProperty[]
+
+  @@index([entityId])
+}
+
+model PlanProperty {
+  id                    String        @id @default(cuid())
+  planId                String
+  plan                  PortfolioPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  name                  String
+  acquisitionYearNumber Int // 1-based year-in-plan this property is acquired
+  purchasePrice         Float
+  initialLvr            Float
+  initialRent           Float? // null = derive from purchasePrice * plan.capRate
+  // Buying costs, so the cash needed isn't just the deposit.
+  transferDuty          Float? // null = estimate from the NSW general rates
+  otherBuyingCosts      Float? // legal, inspections, lender fees
+  gstPayable            Boolean @default(false) // false = GST-free going concern
+
+  // Once actually purchased, link to the real record so the projection can
+  // show actuals (from its saved AnnualPropertySnapshots) alongside the
+  // prediction. Null means this is still a hypothetical future purchase.
+  commercialPropertyId String?             @unique
+  commercialProperty   CommercialProperty? @relation(fields: [commercialPropertyId], references: [id])
+
+  notes     String?
+  createdAt DateTime @default(now())
+
+  refinances  PlanRefinance[]
+  equityDraws PlanEquityDraw[]
+
+  @@index([planId])
+}
+
+model PlanRefinance {
+  id             String       @id @default(cuid())
+  planPropertyId String
+  planProperty   PlanProperty @relation(fields: [planPropertyId], references: [id], onDelete: Cascade)
+  yearNumber     Int // plan-year-number this refinance happens
+  targetLvr      Float? // null = use the plan's default refinanceLvrTarget
+  notes          String?
+  createdAt      DateTime     @default(now())
+
+  @@index([planPropertyId])
+}
+
+// A cost-bearing funding source for a planned property's deposit — pulling
+// equity from a REAL property you already own, which is NOT itself part of
+// this plan (a PlanRefinance already covers the case of refinancing a
+// property that IS in the plan; its cost is captured there via that
+// property's own higher loan/interest, so this model deliberately doesn't
+// duplicate that path — a draw always points at a real CommercialProperty,
+// or is left unspecified for "money from somewhere not yet decided").
+// Nothing here changes the real property's own loan/liability records —
+// it's a hypothetical cost tracked only within the plan.
+model PlanEquityDraw {
+  id             String       @id @default(cuid())
+  planPropertyId String
+  planProperty   PlanProperty @relation(fields: [planPropertyId], references: [id], onDelete: Cascade)
+  yearNumber     Int // year this funding cost starts applying
+  amount         Float
+  interestRate   Float? // null = use the plan's default interestRate
+
+  sourceCommercialPropertyId String?
+  sourceCommercialProperty   CommercialProperty? @relation(fields: [sourceCommercialPropertyId], references: [id])
+
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([planPropertyId])
+}
+
+// ---------------------------------------------------------------------------
+// Investment accounts (stage 2 module — schema present now)
+// ---------------------------------------------------------------------------
+
+model InvestmentAccount {
+  id          String   @id @default(cuid())
+  institution String
+  accountRef  String?
+  entityId    String
+  entity      Entity   @relation(fields: [entityId], references: [id])
+  accountType String // SHARES | ETF | MANAGED_FUND | TERM_DEPOSIT | BOND | OTHER
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parcels    InvestmentParcel[]
+  disposals  InvestmentDisposal[]
+  dividends  InvestmentDividend[]
+  ownerships InvestmentAccountOwnership[]
+
+  @@index([entityId])
+}
+
+// ---------------------------------------------------------------------------
+// Banking — generic account + transactions
+// ---------------------------------------------------------------------------
+
+model Account {
+  id                   String     @id @default(cuid())
+  institution          String
+  accountName          String
+  accountNumber        String?
+  bsb                  String?
+  entityId             String
+  entity               Entity     @relation(fields: [entityId], references: [id])
+  accountType          String // TRANSACTION | SAVINGS | OFFSET | CREDIT_CARD | OTHER
+  currency             String     @default("AUD")
+  openingBalance       Float?
+  currentBalance       Float?
+  // An offset account: its balance reduces the interest charged on this loan.
+  offsetForLiabilityId String?
+  offsetFor            Liability? @relation("OffsetAccounts", fields: [offsetForLiabilityId], references: [id], onDelete: SetNull)
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+
+  transactions Transaction[]
+  ownerships   AccountOwnership[]
+
+  @@index([entityId])
+}
+
+model Transaction {
+  id              String         @id @default(cuid())
+  accountId       String
+  account         Account        @relation(fields: [accountId], references: [id])
+  date            DateTime
+  description     String
+  amount          Float
+  counterparty    String?
+  taxCategoryId   String?
+  taxCategory     TaxCategory?   @relation(fields: [taxCategoryId], references: [id])
+  entityId        String?
+  entity          Entity?        @relation(fields: [entityId], references: [id])
+  financialYearId String?
+  financialYear   FinancialYear? @relation(fields: [financialYearId], references: [id])
+  taxRelevance    String         @default("UNKNOWN") // UNKNOWN | NOT_RELEVANT | POSSIBLE | CONFIRMED
+  status          String         @default("UNREVIEWED") // UNREVIEWED | CATEGORISED | MATCHED | RECONCILED | NEEDS_REVIEW
+  notes           String?
+
+  documentId String?
+  document   Document? @relation(fields: [documentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([accountId])
+  @@index([financialYearId])
+  @@index([entityId])
+}
+
+// ---------------------------------------------------------------------------
+// Tax records — links income/expense/capital-gain items to a financial year
+// without assuming a category always implies a tax treatment (spec section 8)
+// ---------------------------------------------------------------------------
+
+model TaxRecord {
+  id              String        @id @default(cuid())
+  financialYearId String
+  financialYear   FinancialYear @relation(fields: [financialYearId], references: [id])
+  entityId        String
+  entity          Entity        @relation(fields: [entityId], references: [id])
+  recordType      String // INCOME | EXPENSE | CAPITAL_GAIN | CAPITAL_LOSS
+  description     String
+  amount          Float?
+  status          String        @default("RECORDED") // RECORDED | ESTIMATED | NEEDS_REVIEW | ACCOUNTANT_CONFIRMED
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([financialYearId])
+  @@index([entityId])
+}
+
+// ---------------------------------------------------------------------------
+// Audit log — every significant event, never silently overwritten
+// ---------------------------------------------------------------------------
+
+model AuditLog {
+  id         String    @id @default(cuid())
+  timestamp  DateTime  @default(now())
+  action     String // DOCUMENT_IMPORTED | DOCUMENT_CLASSIFIED | METADATA_CHANGED | ...
+  targetType String?
+  targetId   String?
+  documentId String?
+  document   Document? @relation(fields: [documentId], references: [id])
+  details    String? // JSON
+
+  @@index([timestamp])
+  @@index([action])
+}
+
+// ---------------------------------------------------------------------------
+// Net worth — an explicit, immutable point-in-time balance-sheet snapshot
+// (spec section 21). entityId null means the consolidated, all-entities
+// view; set it to snapshot a single entity instead. Never recalculated
+// after saving — a later change to assets/liabilities only affects the
+// live preview, not a snapshot already taken.
+// ---------------------------------------------------------------------------
+
+model NetWorthSnapshot {
+  id       String   @id @default(cuid())
+  asAtDate DateTime
+  entityId String? // null = consolidated across all entities
+  entity   Entity?  @relation(fields: [entityId], references: [id])
+
+  cash            Float
+  propertyValue   Float
+  investmentValue Float
+  superValue      Float
+  vehicleValue    Float
+  otherAssets     Float
+  totalAssets     Float
+
+  mortgages        Float
+  creditCards      Float
+  personalLoans    Float
+  vehicleLoans     Float @default(0)
+  otherLiabilities Float
+  totalLiabilities Float
+
+  netPosition Float
+  notes       String?
+
+  createdAt DateTime @default(now())
+
+  @@index([entityId])
+  @@index([asAtDate])
+}
+
+// ---------------------------------------------------------------------------
+// Application settings — single-row config (e.g. external AI processing toggle)
+// ---------------------------------------------------------------------------
+
+model Settings {
+  id                        Int       @id @default(1)
+  allowExternalAiProcessing Boolean   @default(false)
+  defaultLandingPage        String    @default("DASHBOARD") // DASHBOARD | VISUALIZATION
+  // Where NEW document uploads are written — e.g. a folder inside a Google
+  // Drive/OneDrive/Dropbox sync folder, for continuous backup. Null means
+  // the default (STORAGE_DIR env var, or server/storage/documents).
+  // Existing documents keep their already-recorded filePath; changing this
+  // never moves files that are already stored. The database file itself
+  // isn't covered — relocating it needs server/.env (DATABASE_URL) and a
+  // restart, since Prisma's connection is fixed at process start.
+  customStorageDir          String?
+  // Off by default. When on, the app may look up market prices for the
+  // securities you hold. A lookup discloses which codes you hold to the
+  // price provider — never quantities, values, accounts or anything
+  // identifying. Everything still works with prices entered by hand.
+  allowPriceLookups         Boolean   @default(false)
+  // Bumped once the one-off pass that masks TFNs in stored document text and
+  // scrubs secrets from older audit entries has run. Defaults to 0 in a
+  // restored older backup, so that data gets cleaned too.
+  privacyCleanupVersion     Int       @default(0)
+  // When the last full backup was downloaded — for the dashboard reminder.
+  lastBackupAt              DateTime?
+  // The getting-started checklist on the dashboard, once put away.
+  checklistDismissed        Boolean   @default(false)
+  // The borrowing estimate's assumptions (buffer, rent shading, card %,
+  // expenses benchmark, LVRs…), as JSON, once changed from the defaults.
+  borrowingAssumptions      String?
+  // Features switched off (JSON array of feature ids). Switching one off
+  // only hides it — its data is kept and returns when switched back on.
+  featuresOff               String?
+  // Readable copies of documents, in folders that follow the asset tree
+  // (for OneDrive and for checking by hand). Off when no folder is known.
+  // mirrorDir null = the data folder's "Readable documents" folder.
+  mirrorEnabled             Boolean   @default(true)
+  mirrorDir                 String?
+}
+
+// ---------------------------------------------------------------------------
+// Email import — pulls financial documents out of Gmail as attachments and
+// feeds them through the same ingestion pipeline as a manual upload.
+//
+// Connection is Gmail IMAP with an app-specific password rather than OAuth.
+// OAuth's gmail.readonly is a RESTRICTED scope: an unverified personal app
+// has to stay in "Testing" publishing status, where refresh tokens expire
+// every 7 days — meaning a weekly re-consent through a Google Cloud project
+// the user would have to create themselves. An app password is one paste
+// into Settings and keeps working. The honest tradeoff, stated in the UI:
+// an app password grants broader IMAP/SMTP access than a read-only scope
+// would, and is stored locally in this database, which is not yet encrypted
+// at rest. It can be revoked independently of the account password.
+//
+// Nothing here ever sends, deletes, or modifies mail — it opens mailboxes
+// read-only and copies attachments out.
+// ---------------------------------------------------------------------------
+
+model EmailAccount {
+  id           String  @id @default(cuid())
+  emailAddress String  @unique
+  provider     String  @default("GMAIL") // GMAIL — the only IMAP host wired up today
+  // App-specific password. Stored as entered; see the encryption-at-rest
+  // note in the security posture section of the README.
+  appPassword  String
+  enabled      Boolean @default(true)
+
+  lastSyncAt     DateTime?
+  lastSyncStatus String? // SUCCESS | ERROR
+  lastSyncError  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rules            EmailImportRule[]
+  importedMessages ImportedEmailAttachment[]
+}
+
+model EmailImportRule {
+  id             String       @id @default(cuid())
+  emailAccountId String
+  emailAccount   EmailAccount @relation(fields: [emailAccountId], references: [id], onDelete: Cascade)
+
+  name       String
+  // Raw Gmail search syntax, passed through IMAP's X-GM-RAW extension, so
+  // anything that works in Gmail's own search box works here —
+  // e.g. `from:commbank.com.au has:attachment filename:pdf`.
+  gmailQuery String
+
+  // Proposed classification for anything this rule brings in. Only fills a
+  // gap the document classifier left — never overrides what was read out of
+  // the document, and never marks a document confirmed.
+  suggestedDocumentType String?
+  suggestedEntityId     String?
+  suggestedEntity       Entity? @relation(fields: [suggestedEntityId], references: [id])
+
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  importedMessages ImportedEmailAttachment[]
+
+  @@index([emailAccountId])
+}
+
+// One row per attachment ever pulled in, so re-running an import never
+// creates a second copy of something already seen — including when the
+// resulting Document was a content-hash duplicate of a file uploaded by
+// hand, or was later archived.
+model ImportedEmailAttachment {
+  id             String       @id @default(cuid())
+  emailAccountId String
+  emailAccount   EmailAccount @relation(fields: [emailAccountId], references: [id], onDelete: Cascade)
+
+  ruleId String?
+  rule   EmailImportRule? @relation(fields: [ruleId], references: [id], onDelete: SetNull)
+
+  messageId          String // RFC822 Message-ID header
+  attachmentFilename String
+  subject            String?
+  fromAddress        String?
+  messageDate        DateTime?
+
+  documentId String? // null when skipped as a duplicate of an existing document
+  outcome    String // IMPORTED | DUPLICATE | SKIPPED_UNSUPPORTED_TYPE | SKIPPED_TOO_LARGE
+
+  importedAt DateTime @default(now())
+
+  @@unique([emailAccountId, messageId, attachmentFilename])
+  @@index([emailAccountId])
+}
+
+// ---------------------------------------------------------------------------
+// Bulk import — a first-time load of a whole folder of documents.
+//
+// The hard part of importing 100 files isn't the upload, it's that reviewing
+// 100 individually-proposed classifications is unusable. So a batch keeps
+// per-file state, and the review step groups files that look alike (same
+// proposed type, same source folder) so one decision can settle dozens.
+//
+// Per-file rows also mean a failure is isolated — one unreadable PDF never
+// abandons the other 99 — and that progress survives closing the page.
+// ---------------------------------------------------------------------------
+
+model ImportBatch {
+  id     String @id @default(cuid())
+  name   String
+  status String @default("UPLOADING") // UPLOADING | READY_FOR_REVIEW | COMPLETED
+
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  files ImportBatchFile[]
+}
+
+model ImportBatchFile {
+  id      String      @id @default(cuid())
+  batchId String
+  batch   ImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  originalFilename String
+  // Folder path the file came from, relative to the folder that was picked.
+  // A user's own folder structure ("Tax Returns/2023") is a strong and
+  // completely free classification signal, so it's kept rather than dropped.
+  relativePath     String?
+
+  status       String // IMPORTED | DUPLICATE | FAILED
+  errorMessage String?
+
+  documentId String?
+  document   Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  // What the classifier proposed, kept so the review screen can cluster and
+  // display without re-reading every document.
+  proposedDocumentType String?
+  confidenceScore      Float?
+  // Filename with digit runs collapsed ("Statement_2024_05" -> "Statement_#_#"),
+  // so a run of same-shaped filenames is recognisable as one set.
+  filenameTemplate     String?
+
+  createdAt DateTime @default(now())
+
+  @@index([batchId])
+}
+
+// ---------------------------------------------------------------------------
+// Investments — parcel-level, because Australian CGT is parcel-level.
+//
+// The 50% CGT discount depends on how long a SPECIFIC parcel was held, and a
+// partial sale draws from parcels the owner nominates. A single flat row per
+// holding can't express "bought CBA three times, sold half", so acquisitions,
+// disposals and the allocation between them are separate records.
+//
+// This is record-keeping for tax and net worth, not a trading platform:
+// nothing here places orders, connects to a broker, or streams quotes.
+// ---------------------------------------------------------------------------
+
+// A tradeable thing that can be held and priced. One row per code, shared
+// across every account and entity that holds it, so a price is fetched once.
+model Security {
+  id         String  @id @default(cuid())
+  code       String  @unique // ASX ticker, crypto symbol, APIR code, or a name for unlisted things
+  name       String?
+  assetClass String // SHARE | ETF | MANAGED_FUND | CRYPTO | SUPER | BOND | OTHER
+  exchange   String? // e.g. ASX, NASDAQ
+
+  // How a price is obtained. MANUAL is a first-class option, not a failure
+  // case — managed funds and super rarely have a usable free feed, so their
+  // prices are entered by hand and dated like any other.
+  priceSource    String  @default("MANUAL") // MANUAL | YAHOO | COINGECKO
+  // The provider's own identifier when it differs from `code`
+  // (Yahoo wants "CBA.AX" for ASX; CoinGecko wants "bitcoin", not "BTC").
+  providerSymbol String?
+
+  currency String  @default("AUD")
+  notes    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parcels   InvestmentParcel[]
+  disposals InvestmentDisposal[]
+  dividends InvestmentDividend[]
+  prices    SecurityPrice[]
+
+  @@index([assetClass])
+}
+
+// One acquisition. Quantity is Float because crypto is held to 8 decimals.
+model InvestmentParcel {
+  id                  String            @id @default(cuid())
+  investmentAccountId String
+  investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+  securityId          String
+  security            Security          @relation(fields: [securityId], references: [id])
+
+  acquisitionDate DateTime
+  quantity        Float
+  unitPrice       Float
+  brokerage       Float    @default(0)
+
+  // Where the parcel came from. A dividend reinvestment creates a real parcel
+  // at the reinvestment price — a common way for cost base records to rot if
+  // it isn't recorded as an acquisition in its own right.
+  acquisitionType String @default("PURCHASE") // PURCHASE | DRP | BONUS_ISSUE | TRANSFER_IN | SPLIT_ADJUSTMENT
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  allocations DisposalAllocation[]
+
+  @@index([investmentAccountId])
+  @@index([securityId])
+}
+
+// One sale. What it actually drew from is recorded in DisposalAllocation
+// rather than inferred, so the cost base and discount eligibility behind a
+// realised gain can still be explained years later.
+model InvestmentDisposal {
+  id                  String            @id @default(cuid())
+  investmentAccountId String
+  investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+  securityId          String
+  security            Security          @relation(fields: [securityId], references: [id])
+
+  disposalDate DateTime
+  quantity     Float
+  unitPrice    Float
+  brokerage    Float    @default(0)
+  // How parcels were picked. Recorded because it's a decision with tax
+  // consequences, and the ATO expects consistency.
+  method       String   @default("FIFO") // FIFO | SPECIFIC
+
+  financialYearId String?
+  financialYear   FinancialYear? @relation(fields: [financialYearId], references: [id])
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  allocations DisposalAllocation[]
+
+  @@index([investmentAccountId])
+  @@index([securityId])
+  @@index([financialYearId])
+}
+
+// How much of a disposal came out of which parcel.
+model DisposalAllocation {
+  id         String             @id @default(cuid())
+  disposalId String
+  disposal   InvestmentDisposal @relation(fields: [disposalId], references: [id], onDelete: Cascade)
+  parcelId   String
+  parcel     InvestmentParcel   @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+
+  quantity Float
+
+  @@index([disposalId])
+  @@index([parcelId])
+}
+
+// A dividend or distribution. Franking is split out because franked and
+// unfranked amounts are taxed differently and the franking credit is claimed
+// separately — for Australian investors this is the point of the record.
+model InvestmentDividend {
+  id                  String            @id @default(cuid())
+  investmentAccountId String
+  investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+  securityId          String
+  security            Security          @relation(fields: [securityId], references: [id])
+
+  paymentDate        DateTime
+  frankedAmount      Float    @default(0)
+  unfrankedAmount    Float    @default(0)
+  frankingCredit     Float    @default(0)
+  // Managed funds and ETFs distribute these separately on an annual tax
+  // statement; they aren't ordinary income and affect the cost base.
+  capitalGainsAmount Float    @default(0)
+  foreignIncome      Float    @default(0)
+  foreignTaxCredit   Float    @default(0)
+
+  // Set when the dividend was reinvested, pointing at the parcel it created,
+  // so the cost base trail from dividend to new units stays explicit.
+  reinvestedParcelId String? @unique
+
+  financialYearId String?
+  financialYear   FinancialYear? @relation(fields: [financialYearId], references: [id])
+
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([investmentAccountId])
+  @@index([securityId])
+  @@index([financialYearId])
+}
+
+// A price on a date. Kept as dated history rather than a single "latest"
+// field so an immutable net worth snapshot keeps the price it was actually
+// taken with, instead of silently changing when prices refresh.
+model SecurityPrice {
+  id         String   @id @default(cuid())
+  securityId String
+  security   Security @relation(fields: [securityId], references: [id], onDelete: Cascade)
+
+  priceDate DateTime
+  price     Float
+  source    String // MANUAL | YAHOO | COINGECKO
+
+  createdAt DateTime @default(now())
+
+  @@unique([securityId, priceDate])
+  @@index([securityId])
+}
+
+// ---------------------------------------------------------------------------
+// The vault: what's needed to turn a passcode back into the key that
+// decrypts sensitive fields — and nothing that can do so on its own.
+//
+// A random data key encrypts the fields. That key is stored only in wrapped
+// (encrypted) form, twice: once under a key derived from the passcode, once
+// under a key derived from the recovery key shown at setup. Neither the
+// passcode nor the data key is ever stored, so this row alone — or a whole
+// copy of the database — can't decrypt anything.
+//
+// Changing the passcode only re-wraps the data key; the encrypted fields
+// themselves never need rewriting.
+// ---------------------------------------------------------------------------
+
+model Vault {
+  id Int @id @default(1)
+
+  // scrypt parameters are stored so they can be raised later without
+  // breaking vaults created under the old ones.
+  kdfN Int
+  kdfR Int
+  kdfP Int
+
+  passcodeSalt         String
+  keyWrappedByPasscode String
+
+  recoverySalt         String
+  keyWrappedByRecovery String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Self-managed super funds. The fund is an Entity (entityType SMSF); its
+// members are People with a MEMBER role on it. These tables add what only a
+// super fund has: member balances, contributions checked against the caps,
+// trustee and compliance details, and pensions with their minimum
+// drawdowns. Financial years are stored by label ("2026-27") because the
+// caps and pension rules are looked up by year label (services/superRules.ts).
+// ---------------------------------------------------------------------------
+
+model SmsfDetails {
+  id                 String    @id @default(cuid())
+  entityId           String    @unique
+  fund               Entity    @relation("SmsfFund", fields: [entityId], references: [id], onDelete: Cascade)
+  trusteeType        String? // INDIVIDUAL | CORPORATE
+  corporateTrusteeId String?
+  corporateTrustee   Entity?   @relation("SmsfCorporateTrustee", fields: [corporateTrusteeId], references: [id], onDelete: SetNull)
+  auditorName        String?
+  auditorNumber      String? // SMSF auditor number (SAN)
+  lodgedBy           String? // TAX_AGENT | SELF
+  lastReturnLodged   String? // label of the latest year whose annual return is done, e.g. "2024-25"
+  returnDueDate      DateTime? // set only to override the usual due date
+  strategyReviewedOn DateTime? // investment strategy last reviewed
+  notes              String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+// A member's position at 30 June of a year.
+model SmsfMemberYear {
+  id                String   @id @default(cuid())
+  fundId            String
+  fund              Entity   @relation(fields: [fundId], references: [id])
+  personId          String
+  person            Person   @relation(fields: [personId], references: [id])
+  fyLabel           String // the year ending on that 30 June
+  closingBalance    Float // member balance in this fund
+  taxFreeComponent  Float?
+  totalSuperBalance Float? // across all their super funds, when they have others
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([fundId, personId, fyLabel])
+  @@index([personId])
+}
+
+// Money into super for a member. The source decides which cap it counts
+// against (superRules.ts contributionKind). Contributions paid into a
+// member's other funds can be recorded too, since the caps are per person.
+model SuperContribution {
+  id                String   @id @default(cuid())
+  fundId            String
+  fund              Entity   @relation(fields: [fundId], references: [id])
+  personId          String
+  person            Person   @relation(fields: [personId], references: [id])
+  date              DateTime
+  amount            Float
+  source            String // EMPLOYER | SALARY_SACRIFICE | PERSONAL_DEDUCTED | PERSONAL | SPOUSE | DOWNSIZER | OTHER_EXCLUDED
+  paidIntoOtherFund String? // name of the other fund, when it wasn't paid into this one
+  notes             String?
+  createdAt         DateTime @default(now())
+
+  @@index([fundId])
+  @@index([personId, date])
+}
+
+model SmsfPension {
+  id           String    @id @default(cuid())
+  fundId       String
+  fund         Entity    @relation(fields: [fundId], references: [id])
+  personId     String
+  person       Person    @relation(fields: [personId], references: [id])
+  kind         String // ACCOUNT_BASED | TRANSITION_TO_RETIREMENT
+  startDate    DateTime
+  startBalance Float
+  endDate      DateTime? // commuted or fully paid out
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  balances SmsfPensionBalance[]
+  payments SmsfPensionPayment[]
+
+  @@index([fundId])
+  @@index([personId])
+}
+
+// The pension account balance on 1 July — what that year's minimum is worked out from.
+model SmsfPensionBalance {
+  id             String      @id @default(cuid())
+  pensionId      String
+  pension        SmsfPension @relation(fields: [pensionId], references: [id], onDelete: Cascade)
+  fyLabel        String
+  openingBalance Float
+
+  @@unique([pensionId, fyLabel])
+}
+
+model SmsfPensionPayment {
+  id        String      @id @default(cuid())
+  pensionId String
+  pension   SmsfPension @relation(fields: [pensionId], references: [id], onDelete: Cascade)
+  date      DateTime
+  amount    Float
+  notes     String?
+  createdAt DateTime    @default(now())
+
+  @@index([pensionId, date])
+}
+
+// Joint bank and investment accounts — same rules as AssetOwnership: the
+// account's entityId is the owner on record, who keeps whatever share
+// isn't listed.
+model AccountOwnership {
+  id               String   @id @default(cuid())
+  accountId        String
+  ownerEntityId    String
+  ownershipPercent Float
+  createdAt        DateTime @default(now())
+
+  account     Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  ownerEntity Entity  @relation(fields: [ownerEntityId], references: [id])
+
+  @@index([accountId])
+  @@index([ownerEntityId])
+}
+
+model InvestmentAccountOwnership {
+  id                  String   @id @default(cuid())
+  investmentAccountId String
+  ownerEntityId       String
+  ownershipPercent    Float
+  createdAt           DateTime @default(now())
+
+  investmentAccount InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+  ownerEntity       Entity            @relation(fields: [ownerEntityId], references: [id])
+
+  @@index([investmentAccountId])
+  @@index([ownerEntityId])
+}
+
+// An insurance policy, hung off what it covers: an asset (building,
+// landlord, car) or a person (life, income protection). The owner is the
+// entity that holds the policy. Renewals go into the expiry calendar.
+// The policy number is encrypted like a TFN (see db.ts).
+model InsurancePolicy {
+  id               String    @id @default(cuid())
+  kind             String // BUILDING | CONTENTS | BUILDING_AND_CONTENTS | LANDLORD | LANDLORD_CONTENTS | STRATA | CTP | MOTOR | BOAT | CARAVAN | PRIVATE_HEALTH | PUBLIC_LIABILITY | LIFE | TPD | TRAUMA | INCOME_PROTECTION | BUSINESS | OTHER
+  insurer          String?
+  policyNumber     String? // encrypted
+  coverAmount      Float?
+  premium          Float?
+  premiumFrequency String? // MONTHLY | QUARTERLY | ANNUALLY
+  renewalDate      DateTime?
+  assetId          String?
+  asset            Asset?    @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  personId         String?
+  person           Person?   @relation(fields: [personId], references: [id], onDelete: SetNull)
+  entityId         String?
+  entity           Entity?   @relation(fields: [entityId], references: [id], onDelete: SetNull)
+  heldInSuper      Boolean   @default(false) // life/TPD/income cover held through a super fund
+  notes            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([assetId])
+  @@index([personId])
+  @@index([entityId])
+}
+
+// Wills and estate papers, per person: where the original is, when it was
+// signed, and when it needs reviewing. Binding death benefit nominations
+// can lapse (usually three years), so their expiry goes to the calendar.
+model EstateDocument {
+  id           String    @id @default(cuid())
+  personId     String
+  person       Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  kind         String // WILL | ENDURING_POA | GENERAL_POA | GUARDIANSHIP | ADVANCE_CARE | BDBN_LAPSING | BDBN_NON_LAPSING | REVERSIONARY | OTHER
+  signedDate   DateTime?
+  expiryDate   DateTime? // lapsing nominations
+  reviewDate   DateTime? // when to look at it again
+  heldBy       String? // where the original is kept — solicitor, safe, fund
+  fundEntityId String? // nominations: which super fund
+  fund         Entity?   @relation("NominationFund", fields: [fundEntityId], references: [id], onDelete: SetNull)
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([personId])
+}
+
+// Accountant, solicitor, real estate agent, financial adviser — one list
+// for the whole family, reused whenever a broker or accountant asks who
+// else to contact.
+model Adviser {
+  id               String   @id @default(cuid())
+  kind             String // ACCOUNTANT | SOLICITOR | REAL_ESTATE_AGENT | FINANCIAL_ADVISER | OTHER
+  firm             String?
+  contactFirstName String?
+  contactSurname   String?
+  phone            String?
+  email            String?
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+// Debt allocation (IDEAS.md idea 2, stage 1). Interest is deductible by
+// what the borrowed money was used for, not what secures the loan (TR 95/25,
+// TR 2000/2). Each entry records one use of a loan's money, with evidence.
+model LoanPurpose {
+  id          String    @id @default(cuid())
+  liabilityId String
+  liability   Liability @relation(fields: [liabilityId], references: [id], onDelete: Cascade)
+  date        DateTime?
+  amount      Float
+  use         String // PROPERTY | SHARES | BUSINESS | PRIVATE | OTHER
+  deductible  Boolean // used to produce assessable income
+  assetId     String? // what it bought or paid for, where recorded
+  asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  description String
+  documentId  String? // evidence: settlement statement, loan statement…
+  document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  @@index([liabilityId])
+  @@index([assetId])
+}
+
+// The interest a loan charged in a financial year, from the lender's annual
+// interest statement — the figure the deductible share is applied to.
+model LoanInterestYear {
+  id              String    @id @default(cuid())
+  liabilityId     String
+  liability       Liability @relation(fields: [liabilityId], references: [id], onDelete: Cascade)
+  fyLabel         String // e.g. "2025-26"
+  interestCharged Float
+  documentId      String?
+  document        Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  notes           String?
+  createdAt       DateTime  @default(now())
+
+  @@unique([liabilityId, fyLabel])
+}
+
+// "Why is this claimed?" (IDEAS.md idea 12): the reason for a claim, the
+// rule behind it and the accountant's view, kept out of the way until asked
+// for. One note per claim; changes are kept in the audit log.
+model ClaimNote {
+  id                  String    @id @default(cuid())
+  targetType          String // LOAN_PURPOSE | LOAN_INTEREST_YEAR
+  targetId            String
+  reason              String
+  referenceDocumentId String?
+  referenceDocument   Document? @relation(fields: [referenceDocumentId], references: [id], onDelete: SetNull)
+  referencePinpoint   String? // e.g. "paragraphs 15-20"
+  accountantNote      String?
+  accountantAgreedOn  DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@unique([targetType, targetId])
+}
+
+// Work-related deductions for an employee, by financial year (IDEAS.md idea
+// 10). Categories follow the ATO's work-related deductions pages; car and
+// work-from-home claims can be worked out from kilometres or hours.
+model WorkDeduction {
+  id          String    @id @default(cuid())
+  personId    String
+  person      Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  fyLabel     String
+  category    String // CAR | TRAVEL | WORK_FROM_HOME | CLOTHING | SELF_EDUCATION | TOOLS | PHONE_INTERNET | MEMBERSHIPS | OTHER
+  description String
+  amount      Float
+  method      String? // car: CENTS_PER_KM | LOGBOOK; WFH: FIXED_RATE | ACTUAL_COST
+  quantity    Float? // kilometres or hours, for the fixed-rate methods
+  documentId  String?
+  document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  @@index([personId, fyLabel])
+}
+
+// The end-of-year income statement (myGov) or PAYG payment summary, read by
+// the person from the document, for the year.
+model IncomeStatement {
+  id                       String    @id @default(cuid())
+  personId                 String
+  person                   Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  fyLabel                  String
+  employer                 String?
+  grossPayments            Float
+  taxWithheld              Float?
+  allowances               Float? // e.g. car allowance, shown separately
+  reportableFringeBenefits Float?
+  reportableSuper          Float? // reportable employer super (salary sacrifice)
+  lumpSums                 Float?
+  documentId               String?
+  document                 Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  createdAt                DateTime  @default(now())
+
+  @@index([personId, fyLabel])
+}
+
+// "What's missing" checklist: an expected insurance policy or document that
+// the family has said isn't needed (covered by the strata policy, held in
+// super, not needed…). Kept on record with the reason; it stops flagging.
+// key is the expectation's stable id, e.g. "ins:LANDLORD:asset:<id>" or
+// "doc:Land Tax Assessment:asset:<id>:2025-26".
+model ExpectationDismissal {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  reason    String
+  createdAt DateTime @default(now())
+}
+
+// "Check for new versions" of the reference library (IDEAS.md idea 18): the
+// last result for each link-pack entry. Only ever filled when the button is
+// pressed — the one time the library goes online.
+model ReferenceCheck {
+  id          String   @id @default(cuid())
+  linkId      String   @unique
+  checkedAt   DateTime
+  status      String // CURRENT | UPDATED | NEW_YEAR | WITHDRAWN | BROKEN | FAILED | NOT_YET
+  message     String?
+  contentHash String?
+  latestYear  Int? // yearly guides: the newest year found
+  documentId  String? // the newest saved copy
+  url         String? // the address that was checked (next year's, for guides)
+}

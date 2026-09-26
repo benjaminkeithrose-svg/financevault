@@ -1,0 +1,3285 @@
+                                                  Print whole section
+
+
+
+Rental expenses
+Check the expenses you can claim as a deduction for your
+rental property.
+
+
+
+  How to claim rental expenses
+  When to apportion and claim rental expenses, what you can’t
+  claim, and how to include deductions in your tax return.
+
+
+
+
+  Common property expenses
+  Check the common rental expenses you can claim a deduction
+  for.
+
+
+
+
+  Depreciating assets in rental properties
+  How to claim a deduction for depreciating assets and work out
+  decline in value.
+
+
+
+
+  Repair and maintenance expenses
+  Find out how and when to claim your repair and maintenance
+  expenses.
+
+
+
+
+  Capital expenses
+  What to do with your capital expenses, including capital works,
+
+
+  Borrowing expenses
+  Find out which borrowing expenses you can claim, and how to
+  claim them.
+
+
+
+
+  Interest expenses
+  Find out which interest expenses you can claim and what to do if
+  your loan account is used for private purposes.
+
+
+
+
+  Rental properties and travel expenses
+  If you have a residential rental property, you may not be able to
+  claim a deduction for related travel expenses.
+
+
+
+
+  Asbestos-affected properties
+  If you own an asbestos-affected investment property, check the
+  deductions you can claim. CGT may apply if you sell it.
+
+
+
+
+  Apartment building defect expenses
+  If you own an apartment in a building complex, you may be able
+  to claim deductions for shared expenses to fix defects.
+
+
+
+
+QC 103903
+
+
+
+How to claim rental expenses
+When to apportion and claim rental expenses, what you
+can’t claim, and how to include deductions in your tax
+return.
+Last updated 23 July 2026
+
+
+
+
+            Recent negative gearing changes
+            Recent changes to negative gearing announced in the
+            2026–27 Federal Budget don’t apply in the 2025–26 tax
+            return.
+
+
+Rental expense categories
+There are 3 rental expense categories, those for which you:
+
+   can claim a deduction now (in the income year you incur the
+   expense) – for example, interest on loans, council rates, repairs and
+   maintenance and depreciating assets costing $300 or less
+
+   can claim a deduction over several years – for example, capital
+   works, borrowing expenses and the decline in value of depreciating
+   assets that cost more than $300
+
+   can't claim a deduction – for example, personal expenses, including
+   expenses arising from your personal use of the property, some
+   expenses of a capital nature and the purchase of second-hand (or
+   used) depreciating assets after 9 May 2017.
+
+You can claim expenditure such as interest on loans, local council,
+water and sewerage rates, land taxes and emergency service levies
+you incur prior to using it provided you are holding it to produce
+assessable rental income. Evidence of your holding the property to
+produce rental income, such as communications with real estate
+agents or rental managers, must be kept. You won't be holding the
+property to produce rental income if you have decided not to rent it
+out – for example, if you decide to use the property for private
+purposes.
+
+If the land is vacant under the vacant land provisions, you generally
+can't claim deductions for expenses incurred in holding land before the
+property can be occupied and held to produce assessable rental
+income.
+
+If your rental property is used as a holiday home, you may not be able
+to claim your ownership and use expenses. For more information, see
+Holiday homes.
+It is important to claim each expense under the correct expense type
+to make sure you treat it correctly for tax purposes.
+
+
+Claim the right amount of expenses –
+methods of apportionment
+You will need to work out the amount of the expense that relates to
+your income-producing activities (apportion your expenses), if any of
+the following apply:
+
+  your property is only held to produce assessable rental income for
+  part of the year
+
+  your property is treated as vacant land for part of the year
+
+  you use your property for private or personal purposes for part of
+  the year
+
+  your property is your holiday home
+
+  you only use part of your property to earn rent
+
+  you rent your property at less than market rates (non-commercial
+  rates)
+
+  you use your investment loan for private purposes.
+
+If your property is your holiday home, you can't claim deductions for
+ownership and use of the property unless it is used (or held for use)
+mainly to produce rental income.
+
+If you co-own your rental property with someone, rental income and
+expenses must be attributed to each co-owner according to your legal
+interest in the property.
+
+Expenses, other than those that aren't allowable because your
+property is a holiday home, need to be apportioned on a fair and
+reasonable basis if your rental property is used for more than one
+purpose during the income year. For example, if your rental property is
+used, or held to, produce assessable income and you also use it for
+private purposes, your expenses will need to be apportioned.
+
+What is fair and reasonable usually depends on the:
+
+  period of time the property was rented (time-based method)
+
+  area of the property rented (area-based method).
+You may need to use a combination of the time-based apportionment
+and the area-based method if you rented out part of your property for
+part (or parts) of the income year.
+
+Your expenses may also need to be apportioned if you charge rent
+which is less than the market value. If the rent is assessable, it's
+considered fair and reasonable in these circumstances to apportion for
+your private and domestic use of the property by limiting the
+deductible rental expenses to the amount of the rental income you
+receive. For more information on how to apportion deductions when
+you charge less than market rates for rent, see Other methods.
+
+If the rent isn't assessable, no expenses will be allowed as deductions.
+For more information on when rent will and won't be assessable, see
+Rental income you must declare.
+
+You don't need to apportion expenses that relate solely to renting out
+the property, such as advertising for tenants and real estate
+commissions. These are fully deductible in the year they are incurred.
+
+Time-based method
+To work out your rental property deductions for periods when you
+used (or held) the property to earn assessable rental income using the
+time-based method, use the following formula:
+
+    [(days used to produce income + days held to produce
+    income) ÷ number of days in the income year you owned the
+    property] × expenses
+
+Where:
+
+    The 'days used to produce income' is the number of days your
+    property is occupied for rent, which includes days for which rent is
+    paid even if the property is not physically occupied.
+
+    The 'days held to produce income' is the number of days your
+    property is unoccupied but available for rent on commercial terms.
+
+If you rent out a room in your home, your property won't be available
+for rent on commercial terms on days when the room is unoccupied
+during the income year. This means your 'days held to produce income'
+will be zero and only those days where the room is rented will be taken
+into account.
+
+When there is a clear change in the use of your rental property during
+the income year, for example, when your property starts or stops being
+used as a rental, the time-based method can be used to apportion
+your expenses.
+
+The change of use must be definite and will be determined based on
+the actual use of the property. The use of a rental property doesn't
+change due to fluctuations in the use of the property due to seasonal
+patterns, such as a ski lodge or a beach house.
+
+
+
+  Example 1: change in use of rental property
+  Sunita owns a property in Geraldton which she has rented out as
+  a long-term rental for 8 years. After she retires, Sunita decides to
+  move into the Geraldton property.
+
+  The tenants move out on 1 March and Sunita moves into the
+  property a couple of weeks later. From 2 March, the property is
+  used by Sunita for private purposes.
+
+  During the income year (which is not a leap year), Sunita incurs:
+
+     interest expenses and rates expenses of $21,596
+
+     repair expenses (which relate solely to damage caused by the
+     tenant) of $951
+
+     real estate commission expenses of $1,664.
+
+  Sunita can claim a deduction of $1,664 for the real estate
+  commission expenses and a deduction of $951 for the repair
+  expenses. These expenses don't need to be apportioned
+  because they relate solely to the period she rented the property
+  out.
+
+  Sunita must apportion the other expenses because the property
+  stopped being a rental part way through the income year. Sunita
+  calculates the number of days the property was used to produce
+  income as 245 days (period from 1 July to 2 March).
+
+  Using the time-based method, Sunita calculates her interest,
+  rates and repair expenses as:
+
+  245 days ÷ 365 days × $21,596 = $14,496
+
+  The total deductions Sunita can claim for the income year is
+  $17,111 ($14,496 + $951 + $1,664).
+Example 2: apportionment for private use and days
+not held to produce income
+Daniel and Kate are both chefs. They own a cottage in an area
+that is popular with summer holidaymakers but has limited rental
+potential during the colder seasons.
+
+In October, Daniel and Kate move into their cottage so they can
+work at a nearby restaurant. Their contracts are for 6 months
+from October to March the following year.
+
+Apart from living in the cottage for 6 months to work in the area,
+Daniel and Kate don’t use it. As the cottage hasn't been used by
+Daniel and Kate for their holidays and recreation (or the holidays
+and recreation of their family and friends), the cottage isn't their
+holiday home.
+
+When they are not living in the house, Daniel and Kate
+occasionally rent the property to itinerant workers based on word
+of mouth only. Daniel and Kate only rent the house out for
+14 days of the year.
+
+The property isn't held to produce income during the periods the
+property is unoccupied because it isn't actively advertised or
+managed as a rental property during that time.
+
+During the income year, Daniel and Kate receive rent of $1,852
+and incur interest expenses, electricity, council rates and water
+rates of $16,894 for the cottage.
+
+Daniel and Kate apportion their interest expenses, electricity,
+council and water rates on a time basis, using the days the
+cottage was used to produce income (14 days out of 365 days)
+and calculate them as follows:
+
+14 days ÷ 365 days × $16,894 = $648
+
+Daniel and Kate's total rental deductions will be $648.
+
+As they own the property jointly, Daneil and Kate will each
+declare 50% of the rental income (50% × $1,852 = $926) and
+claim 50% of the rental expense as a deduction
+($648 × 50% = $324).
+Example 3: apportionment for private use of holiday
+home used (or held to use) mainly to produce rental
+income
+Gail and Craig jointly own a rental property which they also use
+as a holiday home. They advertise the property for rent through a
+real estate agent. The rental terms, including the amount of rent,
+for the property are similar to comparable properties in the area.
+Gail and Craig have instructed the real estate agent to actively
+monitor requests for bookings so they can maximise occupancy
+for the property.
+
+Gail and Craig use the property themselves for 30 days during
+the year when it isn't rented and in a period when it is unlikely to
+be rented.
+
+Gail and Craig's holiday home is used (or held for use) mainly to
+produce rental income because they maximise occupancy and
+rental income by getting their real estate agent to actively
+monitor requests and by not blocking it out for their personal use.
+Also, when they do use it, it is during periods when the property
+isn't already rented and is unlikely to be rented.
+
+Excluding the 30 days Gail and Craig use it, it is rented or held for
+rent for 335 days during the income year.
+
+During the year, Gail and Craig's expenses for the property are
+$36,628. This includes:
+
+  $1,828 for the agent's commission and the cost of advertising
+  for tenants
+
+  interest on the funds borrowed to purchase the property
+
+  insurance
+
+  maintenance costs
+
+  council rates
+
+  the decline in value of depreciating assets and capital works
+  deductions.
+  Gail and Craig claim the full $1,828 as a deduction for the agent's
+  commission and costs of advertising for tenants. They can also
+  claim deductions for their other expenses ($34,800) using the
+  time-based method. Gail and Craig will need to apportion their
+  deduction for the year (which is not a leap year) as follows:
+
+  335 ÷ 365 × $34,800 = $31,940
+
+  Gail and Craig can rental deductions of $33,768
+  ($31,940 + $1,828). However, as they own the property jointly,
+  Gail and Craig will each be entitled to claim rental deductions of
+  $16,884 ($33,768 x 50%).
+
+
+
+Area-based method
+If you rent out part of your property (for example, the lower floor of a
+2-floor property or a bedroom in your home) you need to work out
+your expenses using the area-based method. You must also apportion
+your expenses using the time-based method if you only rented that
+separate part of your property for part of the year.
+
+The formula for apportioning expenses using the area-based method
+is:
+
+    [A + (B ÷ 2) ÷ C] × expenses incurred
+
+Where:
+
+  A is the floor area of the property solely occupied by the tenant
+
+  B is the floor area of the common areas
+
+  C is the floor area of the whole property.
+
+
+
+
+  Example 1: apportionment using area-based method
+  Kim owns a 2-storey townhouse and rents out the bottom floor
+  to a long-term tenant. They each have exclusive possession of
+  their floor. They share the use of the gardens around the house.
+
+  The top floor has a large deck and is 55 square metres, the
+  bottom floor is 45 square metres, and the gardens are
+35 square metres. The total property is 135 square metres
+(55 + 45 + 35 = 135).
+
+Kim would work out her apportionment percentage using the
+area-based method as follows:
+
+[45 square metres + (35 square metres ÷ 2)] ÷ 135 square metres = 0.4629
+
+0.4629 x 100 = 46.3%.
+
+Kim can claim 46.3% of the allowable expenses she incurs
+related to the property as a deduction.
+
+
+
+
+Example 2: apportionment using area-based method
+and time-based method
+Leanne has a 2-bedroom, 2-bathroom unit in a high-rise
+apartment. Leanne lives alone and mainly uses the master
+bedroom and ensuite bathroom. The second bedroom and main
+bathroom is accessible from the common areas of the unit
+including the lounge, kitchen and balcony and are mainly used by
+visitors.
+
+Part way through the year, Leanne decides to let out the second
+bedroom using a sharing economy platform to earn extra income.
+She actively monitors replies from the listing and doesn't refuse
+guests when the room is available. Leanne rents the second
+bedroom of her property for 100 days during the income year.
+
+The unit is 80 square metres in total. The second bedroom being
+let is 10 square metres. Leanne also gives paying guests access
+to common areas including the main bathroom, kitchen, lounge
+and balcony, which totals 50 square metres and allows guests
+access to her wi-fi for free if they wish to.
+
+For the period guests are staying and have access to the
+common areas (along with Leanne), Leanne can claim 50% of the
+deductible portion of associated costs related to the common
+areas.
+
+During the income year, Leanne incurs interest expenses, rates,
+body corporate fees, capital works deductions, electricity and
+internet expenses for the property of $26,153 and sharing
+platform commission fees of $425.
+
+To apportion her expenses and work out how much she can
+claim as a deduction, Leanne must use the area-based method.
+Leanne must also use the time-based method, because she only
+rented her second bedroom for 100 days during the income year.
+
+Even if Leanne had the room listed for rent for the whole income
+year, the days it was unoccupied wouldn't be treated as days
+held to produce income. This is because when the room is not
+being rented out, it is treated as being used privately by Leanne
+as part of her home. Therefore, the number of days held to
+produce income will be zero.
+
+Step 1 – apply the area-based method
+
+Leanne works out the percentage of the house her guests have
+access to when they are there using the area-based method as
+follows:
+
+10 square metres + (50 square metres ÷ 2) ÷ 80 square metres = 0.4375
+
+0.4375 × 100 = 43.75%
+
+Step 2 – apply the time-based method
+
+Leanne lets out the spare bedroom of her property, being her
+home, for 100 days of the year (which is not a leap year). As she
+has rented the bedroom out for only part of the income year, she
+will also need to apportion her deductible expenses using the
+time-based method. Leanne uses the following formula:
+
+100 days used to produce income ÷ 365 days = 0.27397
+
+0.27397 × 100 = 27.4%
+
+By multiplying the time-based method and area-based method
+together, Leanne will be able to work out what percentage of her
+yearly expenses are deductible.
+
+43.75% × 27.4% = 11.99%
+
+Leanne can claim a deduction for 11.99% of her interest
+expenses, rates, body corporate fees, capital works deductions,
+electricity and internet expenses ($26,153 x 11.99% = $3,136).
+Leanne can also claim 100% of the expenses associated solely
+  with renting out the second bedroom, that is, the sharing
+  economy platform's service fees or commission ($425).
+
+  For the income year, Leanne can claim a deduction for rental
+  expenses of $3,561 ($3,136 + $425).
+
+
+
+
+Other methods
+If you are renting your property to family or friends and not charging
+rent at a market rate, it is likely that your property has a mixed use,
+these uses are:
+
+  producing assessable rental income
+
+  a private or domestic use of providing accommodation for your
+  family and friends.
+
+In these circumstances, your deductions must be apportioned to
+exclude the amount related to the private or domestic use of the
+property. Where the expenses you incur that would otherwise be
+deductible exceed the amount of rent you receive, a fair and
+reasonable way to apportion your expenses is to limit them to the
+amount of rental income derived from the property. This will result in
+no net rental income or loss.
+
+
+
+
+  Example: rent below market rate to family
+  Jana rents a property she owns to her mother for her to live in.
+  Although Jana's mother has signed a standard lease agreement,
+  Jana has set the rent at a below market rates.
+
+  Jana provides the discount for private or domestic reasons to
+  assist her mother who can't afford to pay rent at the market rate.
+
+  During the income year Jana receives rent of $15,600 from her
+  mother and she incurs rental expenses, including mortgage
+  interest expenses, insurance, council and water rates and capital
+  works of $20,578.
+
+  The rent that Jana receives from her mother ($15,600) is
+  assessable rental income. As Jana's deductible expenses exceed
+   the amount of rent Jana receives, she limits her deductions
+   related to property for mortgage interest, insurance capital
+   works, council and water rates to the amount of rent received
+   from her mother ($15,600).
+
+   Jana has no net rental income or loss.
+
+
+
+
+If you rent your property to family and friends at the market rate of
+rent, you don't need to apportion your expenses.
+
+To establish that the property has been rented at a market rate, you
+will need to provide evidence to show how the market rate was
+calculated at the time the rent amount was set. For example, a real
+estate rent valuation or listings for similar properties available in the
+area the property is located at the same time your property was
+available for rent.
+
+For more information, see:
+
+   TR 2026/1 Income tax: rental property income and deductions for
+   individuals who are not in business
+
+   PCG 2026/2 Apportionment of rental property deductions – ATO
+   compliance approach
+
+   PCG 2026/3 Application of section 26-50 of the Income Tax
+   Assessment Act 1997 to holiday homes that you also rent out – ATO
+   compliance approach.
+
+
+Positive or negative gearing
+Your rental property is:
+
+   positively geared if your deductible expenses are less than the
+   income you earn from the property – you make a profit from renting
+   out your property
+
+   negatively geared if your deductible expenses are more than the
+   income you earn from the property. You can claim deductions for
+   rental expenses against your rental and other income – such as
+   salary, wages or business income. If your other income isn’t enough
+   to absorb the loss, you can carry forward your loss to the next
+   income year. For more information on the changes to negative
+  gearing announced in the 2026–27 Federal Budget, see Tax reform
+  – Boosting home ownership – Reforming negative gearing and
+  capital gains tax.
+
+
+Expenses you can’t claim
+You can’t claim a deduction for:
+
+  expenses not actually paid by you, such as water or electricity
+  charges paid by your tenants
+
+  acquisition and disposal costs, including the purchase cost,
+  conveyancing and advertising costs (instead, these are usually
+  included in the property's cost base, which would reduce any
+  capital gains tax when you sell the property)
+
+  decline in value of second hand depreciating assets
+
+  ownership or use expenses for a holiday home that isn't used (or
+  held for use) mainly to produce rental income
+
+  GST credits for anything you purchase to lease the premises – GST
+  doesn't apply to residential rental properties, however, when
+  claiming the expense as a deduction, you claim the total amount
+  you've paid (inclusive of GST, if applicable).
+
+Find out about other expenses you can’t claim below.
+
+Deductions for vacant land
+In most cases, you can’t claim a deduction for the cost of holding
+vacant land. For more information, see Deductions for vacant land.
+
+
+Supplier ABNs
+When you hire a contractor for services and repairs connected with
+your rental property, you will need to check they have an Australian
+business number (ABN). If they don't provide you with their ABN, you
+may have to withhold 47% from the payment you make to them and
+transfer that withheld amount to us.
+
+You may not be able to claim deductions for these expenses if you
+don't withhold when you were required to.
+How to include rental expenses in your tax
+return
+If you lodge your own tax return using myTax, you need to select:
+
+   'You had Australian interest, or other Australian income or losses
+   from investments or property'
+
+   'Other foreign income' for overseas property.
+
+Once you have completed the rental property details and the related
+income fields, you can add your expenses in the 'Rental expenses'
+fields.
+
+
+Including rental income and expenses in
+myTax
+
+Media: How to include rental income and expenses in myTax
+https://tv.ato.gov.au/media/bd1bdiubtjsfhw   (Duration: 1:56)
+
+
+
+
+QC 23633
+
+
+
+Common property expenses
+Check the common rental expenses you can claim a
+deduction for.
+
+Last updated 21 May 2026
+
+
+
+
+Expenses you can claim
+You can claim an immediate deduction for some expenses in the
+income year you incur them provided your property is held to produce
+assessable income, that is, rented or available to rent on commercial
+terms.
+
+If your rental property is also your holiday home, you can only claim an
+immediate deduction for ownership and use expenses, such as body
+corporate fees and land tax, if you used the property (or held it for
+use) mainly to produce rental income. For more information about
+what expenses you can and can't claim for a holiday home, see
+Holiday homes.
+
+To claim a deduction you must:
+
+  actually incur the cost – you can't claim a deduction where the cost
+  is paid by the tenant or someone else
+
+  keep adequate records to prove your deductions if we ask for
+  evidence.
+
+There are some rental expenses you must claim over several years –
+for example, capital works and borrowing expenses.
+
+Expenses you can claim an immediate deduction for include:
+
+  advertising for tenants
+
+  body corporate administrative fund fees and charges
+
+  council rates, water charges, land tax
+
+  cleaning, gardening and lawn mowing
+
+  pest control
+
+  insurance (building, contents, public liability, loss of rent)
+
+  interest expenses
+
+  pre-paid expenses
+
+  property agent's fees and commission
+
+  repairs and maintenance
+
+  legal expenses.
+
+For more information, see Rental properties guide.
+
+
+Body corporate administrative fund fees
+and charges
+You may be able to claim a deduction for body corporate fees and
+charges you pay. Not all body corporate fees are deductible in full in
+the income year you incur them.
+
+Body corporate fees are a cost you pay to the body corporate or strata
+to manage the property and maintain common areas. Strata title body
+corporates are constituted under the strata title legislation of the
+various states and territories.
+
+These fees and charges may go towards payments to:
+
+  cover the cost of day-to-day expenses to maintain and manage the
+  building – for example, insurance premiums, maintenance of
+  gardens and management of the body corporate itself
+
+  a special purpose fund, for a specific expense – for example, roof
+  repairs and building insurance.
+
+Regular payments you make to body corporate administration funds or
+general purpose sinking funds for ongoing administration and general
+maintenance are considered to be payments for the provision of
+services by the body corporate. You can claim an immediate deduction
+for these regular payments at the time you incur them.
+
+You can’t claim a deduction for a special levy you are required by the
+body corporate to pay to fund a particular capital improvement. You
+may be able to claim a capital works deduction for the cost of capital
+improvements or repairs of a capital nature once the work is
+completed. The cost must also be charged to either the special
+purpose fund or the general purpose sinking fund, if a special
+contribution has been levied.
+
+For a summary fact sheet of what you can and can't claim, go to the
+ATO Publication Ordering Service to download Rental property body
+corporate fees and charges (NAT 75375, PDF 222KB) .
+
+
+Pre-paid expenses
+A pre-paid expense is a cost you incur under an agreement for
+services to be done (in whole or in part) in a later income year. For
+example, payment of an insurance premium on 1 January that provides
+cover for the entire calendar year or pre-paid interest on money you
+borrow.
+
+You can generally claim an immediate deduction in the income year
+you make the prepayment for:
+
+  expenses of less than $1,000
+
+  expenses of $1,000 or more where the eligible service period is
+  12 months or less and ends in the next income year (such as
+   payment of an annual insurance premium part way through an
+   income year).
+
+The eligible service period is the time taken for a thing to be done
+under an agreement in return for payment.
+
+The eligible service period begins on the later of either:
+
+   the day the thing under the agreement begins to be done
+
+   the day the expense is incurred.
+
+The eligible service period continues until the earlier of:
+
+   the end of the last day the thing under the agreement stops being
+   done
+
+   10 years.
+
+A pre-paid expense for your rental property of more than $1,000,
+where the eligible service period is greater than 12 months, or ends
+later than the following income year, will have to be spread over the
+shorter of either:
+
+   the eligible service period
+
+   10 years.
+
+For more information, see Deductions for prepaid expenses.
+
+
+Legal expenses
+Rental property legal expenses are costs you incur to prepare, register,
+protect and manage your rental property.
+
+You can claim a deduction for some of the legal expenses you incur to
+produce your rental income. You can claim these expenses in the
+income year you incur them.
+
+You can claim the cost of the following as deductions:
+
+   evicting a non-paying tenant
+
+   expenses for taking court action for loss of rental income
+
+   defending a claim for damages from injuries suffered by a third
+   party on your rental property.
+
+You can also claim a deduction for solicitor’s fees for the preparation of
+loan documents as borrowing expenses. If the total of your borrowing
+expenses is more than $100, your deduction is spread over the life of
+the loan or 5 years, whichever is less.
+
+Most other legal expenses you incur relating to your rental property
+are capital and can’t be claimed as a deduction. The following legal
+expenses may be included in the cost base when you sell the
+property:
+
+  solicitor's fees for the purchase or sale of the property
+
+  legal costs associated with resisting land resumption
+
+  legal costs associated with defending your title to the property (for
+  example, defending an action by the mortgagee to take possession
+  of the property where you have defaulted under the loan).
+
+
+Land tax expenses
+If you earn rental income from a property, you can claim a deduction
+for land tax. Include the deduction in the income year the liability
+relates to, not the year you pay it.
+
+State authorities sometimes issue land tax assessments for different
+periods of time, including amounts from earlier years (arrears). If you
+pay an amount in arrears, you must amend your tax return for the
+relevant year so the deduction is claimed correctly.
+
+You can claim a land tax deduction for:
+
+  the current year as a deduction in your tax return
+
+  prior years by lodging an amendment for the year the liability relates
+  to.
+
+Land tax deductions don't need to be apportioned in the income year
+you:
+
+  start to use the property as your main residence
+
+  sell the property.
+
+You need to declare any land tax adjustments as rental income when
+you sell the property.
+
+For more information, see Rental properties guide – land tax.
+QC 103905
+
+
+
+Depreciating assets in rental
+properties
+How to claim a deduction for depreciating assets and work
+out decline in value.
+
+Last updated 21 May 2026
+
+
+
+
+Depreciating assets
+Depreciating assets are items that can be described as plant, that
+don't form part of rental property premises. Premises refers to the
+actual structure of the rental property's building.
+
+Under the uniform capital allowance rules, you can claim a deduction
+for the decline in value of depreciating assets used for income-
+producing purposes, for example a dishwasher in a rental property
+which is held to produce assessable income, that is, rented or available
+to rent on commercial terms.
+
+Some assets don't decline in value, such as land, trading stock and
+some intangible assets (for example, goodwill).
+
+We recommend you keep a spreadsheet (as a minimum) for your
+depreciating assets as part of your record keeping. A quantity surveyor
+can prepare a report at the time a rental property is purchased.
+
+Depreciating assets are usually:
+
+   separately identifiable
+
+   unlikely to be permanent
+
+   replaced within a relatively short period
+
+   not part of the structure of the building.
+
+None of these factors alone can determine if an item is part of the
+premises. They must all be considered together.
+
+For a list of common rental property items and their treatment as
+depreciating assets or capital works, see Residential rental property
+items.
+
+You can claim a deduction for the item's decline in value. You can
+choose to use either:
+
+  the effective life the Commissioner determines for these assets
+
+  your own reasonable estimate of the effective life.
+
+You must keep records to show how you work out the decline in value.
+
+For a summary of the difference between repairs, maintenance and
+capital expenses, go to the ATO Publication Ordering Service to
+download Rental repairs, maintenance and capital expense
+(NAT 75208, PDF 242KB) .
+
+
+Decline in value of depreciating assets
+Depreciating assets have an effective useful life and are reasonably
+expected to decline in value over time.
+
+For depreciating assets costing more than $300, you can claim
+deductions for the decline in value over its effective useful life.
+Examples of such assets in your rental property or holiday home
+include:
+
+  floating timber flooring
+
+  carpets
+
+  curtains
+
+  appliances like a washing machine or fridge
+
+  furniture.
+
+When you purchase a rental property, either new or second-hand, you
+have bought a building plus separate depreciating assets, such as air
+conditioners, stoves and other items.
+
+There are limitations that apply to decline in value of second-hand
+depreciating assets.
+
+The decline in value of a depreciating asset starts when you first use it
+or install it ready for use – it doesn't matter whether it's for a private
+purpose or to earn assessable income. For example, if you purchased
+and installed a new asset on 1 January and used it for private purposes
+for the first 2 weeks, you calculate the decline in value from that date.
+However, your deduction must be reduced for any private use of the
+asset.
+
+Special rules apply to some assets that may allow you to claim
+deductions for their decline in value (depreciation) more quickly.
+
+This video explains depreciating assets and when you can claim them
+as a deduction for a rental property.
+
+
+Media: Claiming depreciating assets
+https://tv.ato.gov.au/ato-tv/media?v=bd1bdiun85ity3        (Duration:
+2:21)
+
+
+Depreciating assets costing $300 or less
+Assets costing $300 or less can be claimed as an immediate deduction
+(a full deduction) in the income year you used the asset for a taxable
+purpose.
+
+You can't claim an immediate deduction if the asset is part of a set of
+assets that together cost more than $300. For example, if you buy
+4 dining chairs each costing $250 for your rental property you can't
+treat them as separate assets.
+
+
+New assets
+You can claim the decline in value of new depreciating assets.
+
+This includes depreciating assets purchased with a newly built or
+substantially renovated property, if no one was previously entitled to a
+deduction for the decline in value, and either:
+
+  no one resided at the property before you acquired it
+
+  the asset was installed for use, or used at the property, and you
+  acquired the property within 6 months of it being newly built or
+  substantially renovated.
+
+
+
+
+  Example: claiming the decline in value of
+  depreciating assets
+  Kerrie purchased a unit off-the-plan from a developer as an
+  investment (it was new and no one lived in it prior to that time).
+The property included depreciating assets such as curtains and
+furniture installed before settlement and the transfer of title to
+Kerrie.
+
+Kerrie engages a qualified quantity surveyor to get a full list of all
+depreciating assets that she can claim each year until the end of
+their effective lives.
+
+Kerrie is entitled to claim deductions for decline in value of the
+depreciating assets because no one has lived in it before she
+purchased it.
+
+
+
+
+Example: claiming the decline in value of
+depreciating assets
+Kate purchased a residential investment apartment from a
+developer 4 months after completion. It was already tenanted
+when Kate purchased it. The developer wasn’t entitled to claim a
+deduction for the decline in value of the depreciating assets at
+the property because they were his trading stock.
+
+The property included depreciating assets such as curtains and
+furniture installed before settlement and the transfer of title to
+Kate.
+
+Kate engages a qualified quantity surveyor to get a full list of all
+depreciating assets that she can claim each year until the end of
+their effective lives.
+
+Kate is entitled to claim a deduction for decline in value of the
+depreciating assets (although they have been used by the
+tenants) because both of the following apply:
+
+   no one could claim any deductions for decline in value of the
+   depreciating assets
+
+   the property was supplied to Kate within 6 months of being
+   built.
+
+If Kate had entered into the contract to buy this apartment after
+6 months of it being newly built, she wouldn’t have been entitled
+  to claim a deduction for the decline in value of any of the
+  depreciating assets that were already in it at that time.
+
+
+
+
+Calculating deductions for decline in value
+To work out your deduction for decline in value, use either the:
+
+  diminishing value method – the decline in value each year is a
+  constant portion of the remaining value – claiming higher
+  deductions in the early years of its effective life
+
+  prime cost method – the decline in value each year is a uniform
+  amount of the original value over its effective life – claiming a lower
+  but more constant portion each year.
+
+Depreciating assets valued at less than $1,000 can be grouped in a
+low-value asset pool and depreciated together.
+
+
+
+
+  Example: calculating deductions for decline in
+  value
+  Laura purchased a new outdoor table for her rental property on
+  1 July 2025, for $1,500. It has an effective life of 5 years. She can
+  choose to use either the diminishing value or prime cost method.
+
+  Diminishing value method
+  The formula for the annual decline in value using the diminishing
+  value method is:
+
+       Asset's cost × (days held ÷ 365) × (200% ÷ asset's effective
+       life)
+
+  The decline in value for 2025–26 is $600, worked out as follows:
+
+       1,500 × (365 ÷ 365) × (200% ÷ 5)
+
+  Laura is entitled to a deduction for decline in value of $600.
+
+  The adjustable value of the asset on 30 June 2026 is $900. This
+  is the cost of the asset ($1,500) less its decline in value up to
+  30 June 2026 ($600).
+
+  Prime cost method
+   The formula for the annual decline in value using the prime cost
+   method is:
+
+       Asset's cost × (days held ÷ 365) × (100% ÷ asset's effective
+       life)
+
+   The decline in value for 2025–26 is $300, worked out as follows:
+
+       $1,500 × (365 ÷ 365) × (100% ÷ 5)
+
+   Laura is entitled to a deduction for decline in value of $300.
+
+   The adjustable value of the asset on 30 June 2026 is $1,200.
+   This is the cost of the asset ($1,500) less its decline in value up
+   to 30 June 2026 ($300).
+
+
+For help to help work out the deduction you can claim from a
+depreciating asset, see Depreciation and capital allowances tool.
+
+
+
+
+   Second-hand depreciating assets
+   In most cases you can't claim a deduction for second-hand
+   depreciating assets after 1 July 2017.
+
+
+
+
+QC 103906
+
+
+
+Second-hand depreciating assets
+In most cases you can't claim a deduction for second-hand
+depreciating assets after 1 July 2017.
+
+Last updated 22 June 2026
+
+
+
+Second-hand depreciating assets you
+can't claim
+Second-hand depreciating assets are depreciating assets that were
+already installed ready for use or used:
+
+   by another entity (except as trading stock)
+  in your private residence
+
+  for a non-taxable purpose, unless that use was occasional (for
+  example, staying at the property for one evening while carrying out
+  maintenance activities would be occasional use).
+
+Second-hand depreciating assets for residential rental properties are
+generally things that were in a property when you purchased it, or your
+private residence that you later rent out.
+
+You can’t claim a deduction for certain second-hand depreciating
+assets unless you are either:
+
+  using the property in carrying on a business (including a business of
+  letting rental properties)
+
+  one of the following
+
+     corporate tax entity
+
+     superannuation plan that is not a self-managed super fund
+
+     public unit trust
+
+     managed investment trust
+
+     unit trust or a partnership, where all of the members are entities
+     of a type listed above.
+
+Otherwise, you can only claim deductions for second-hand or used
+depreciating assets in residential rental properties if both of the
+following apply:
+
+  you purchased the asset before 7:30 pm on 9 May 2017
+
+  you installed it into your rental property before 1 July 2017.
+
+
+
+  Example: Tim's rental property
+  Sue purchased her house in 2009. In October 2025, she listed
+  her house for sale. While it was advertised, she moved out and
+  replaced the carpet. No one lived in the house while it was
+  advertised. The house was then sold to Tim. After purchasing the
+  property, Tim rented it out immediately.
+
+  Tim can't claim a deduction for the decline in value of the
+  depreciating assets in the property because they were all
+  previously used. He also can't claim a deduction for the decline in
+  value for the carpet because he didn't own the asset when it was
+  first installed ready for use.
+
+
+
+
+  Example: asset used privately
+  Eliza purchased a dishwasher in April 2017 and used it for private
+  purposes at home (her main residence). In July 2019, she
+  installed this dishwasher in her residential rental property. Eliza
+  can't claim deductions for the dishwasher's decline in value
+  because:
+
+     she had previously used it privately, and
+
+     she installed it in her rental property after 30 June 2017.
+
+
+
+Home turned into a residential rental property
+If you turn your home into a residential rental property on or after
+1 July 2017, you can't claim a deduction for the decline in value for
+depreciating assets that were in your home. You can only claim a
+deduction for the decline in value for any new depreciating assets that
+you purchase for your residential rental property.
+
+
+
+  Example: changing main residence as a residential
+  property
+  At the start of 2016, Kendrick purchased a home as his main
+  residence. In August 2017, Kendrick moved out and rented out
+  the property fully furnished, which included the furniture and
+  fittings he had been using while living there.
+
+  As Kendrick's home was made available for rent on or after 1 July
+  2017, he isn't able to claim a deduction for the decline in value for
+  any remaining effective life of the used depreciating assets in it.
+  Kendrick can claim a deduction for the decline in value of the
+  new depreciating assets that he purchases for his rental
+  property.
+
+
+
+
+Exceptions – when you can claim
+You can claim a deduction for the decline in value of second-hand
+depreciating assets if any of the following apply:
+
+  You are carrying on a business of letting rental properties.
+
+  You purchased your residential rental property or a second-hand
+  depreciating asset for your residential rental property before
+  7:30 pm (AEST) on 9 May 2017.
+
+  You used a depreciating asset that you acquired before 7:30 pm
+  (AEST) on 9 May 2017 and then, before 1 July 2017, you installed it
+  at your residential rental property.
+
+  Your rental property is not used to provide residential
+  accommodation; for example, it is let out for commercial purposes
+  (such as a doctor's surgery).
+
+  The entity that owns the residential rental property is an excluded
+  entity.
+
+  The income generating activities at your rental property are
+  unrelated to providing residential accommodation (for example,
+  solar panels used in generating income from the sale of electricity).
+
+
+
+  Example: claiming the decline in value of
+  second-hand assets
+  Sharon has been renting out her residential property since
+  September 2015. In March 2017, she purchased a second-hand
+  fridge to replace the fridge that had broken down.
+
+  Because Sharon purchased the second-hand fridge for her rental
+  property before 7:30 pm on 9 May 2017, she can claim a
+  deduction for the decline in value for any remaining effective life
+  of the asset.
+  Example: second-hand depreciating asset
+  Don purchased a second-hand clothes dryer and installed it in
+  his residential rental property on 8 May 2017.
+
+  Assuming the dryer had 5 years of remaining effective life, Don
+  can claim deductions for its decline in value for 5 years because
+  he had purchased and installed the dryer before 9 May 2017.
+
+
+
+
+Home turned into a rental property before
+1 July 2017
+If you turned your home into a residential rental property, you can only
+claim a deduction for the decline in value of assets in it if both of the
+following apply:
+
+  You purchased your home before 7:30 pm on 9 May 2017.
+
+  You turned your home into a residential rental property before 1 July
+  2017.
+
+
+
+
+  Example: assets bought after 9 May 2017
+  At the start of 2016, Marty purchased a home as his main
+  residence.
+
+  In June 2017, Marty moved out and rented out the property fully
+  furnished, which included the furniture and fittings he had been
+  using while living there.
+
+  As Marty rented out his home before 1 July 2017, and he
+  purchased it before 7:30 pm on 9 May 2017, he can claim a
+  deduction for the decline in value for any remaining effective life
+  of the used depreciating assets in it.
+
+  However, from the 2017–18 income year, Marty can’t claim a
+  deduction for the decline in value of any second-hand
+  depreciating asset that he purchases and installs after 7:30 pm
+  on 9 May 2017.
+   If Marty:
+
+      Moved out in June 2017 and the property was vacant until he
+      made it available for rent in July 2017, he couldn’t claim a
+      deduction for the decline in value for any remaining effective
+      life of the used depreciating assets in it.
+
+      Purchased a new asset for the rental property after he moved
+      out, he can claim a deduction for its decline in value, as the
+      asset wasn’t previously used.
+
+
+For more information on depreciation, including a list of rental property
+items that can be depreciated, see the Rental properties guide or the
+Guide to depreciating assets.
+
+
+
+
+QC 103908
+
+
+
+Repair and maintenance expenses
+Find out how and when to claim your repair and
+maintenance expenses.
+
+Last updated 22 May 2026
+
+
+
+
+What you can claim
+Repair and maintenance expenses are costs you incur to:
+
+   keep your property in a tenantable condition
+
+   fix wear and tear or damage that occurs while renting out your
+   property.
+
+To be a deductible expense, the property must either continue to be:
+
+   rented on an ongoing basis
+
+   held to produce assessable income, that is, it must remain available
+   for rent on commercial terms, even if there is a short period where
+   the property is unoccupied – for example, unseasonable weather
+   causes cancellations.
+If your rental property is also your holiday home, you can't claim a
+deduction for repair and maintenance expenses, or any other
+ownership or use expenses, unless you use the property, (or hold it for
+use) mainly to produce rental income. For more information about
+holiday homes and what expenses you can claim, see Holiday homes.
+
+If you do your own repairs or maintenance work, you can’t claim a
+deduction for the value of your contribution to the work, that is, your
+labour. However, you can claim a deduction for the cost of any
+materials you buy to carry out the repair or maintenance work.
+
+For more information, see TR 97/25 Income tax: property development:
+deduction for capital expenditure on construction of income producing
+capital works, including buildings and structural improvements.
+
+Some repairs are considered capital in nature and must be claimed
+over several years. This may include:
+
+  initial repairs for defects that existed at the date you acquired the
+  property
+
+  improvements, which are capital works
+
+  replacement of entire units of property, including depreciating
+  assets.
+
+
+
+
+  Example: doing your own repairs or
+  maintenance
+  Sanjay owns a rental and his tenants have just moved out. Due to
+  wear and tear on the property by his former tenants, he needs to
+  repaint a few walls before getting new tenants in.
+
+  Sanjay decides to repaint the walls himself over a weekend.
+
+  Sanjay can claim a deduction for the cost of the materials to
+  prepare and paint the walls. He can’t claim a deduction for what
+  he considers to be the value of his own labour.
+  Example: replacement of an entirety
+  Robin has owned his rental property for 10 years when a toilet is
+  damaged. The entire toilet needs to be replaced.
+
+  The toilet is a fixture but also an entirety because:
+
+     it is identifiable as a separate item of capital equipment
+
+     it provides a useful function independent of the rest of the
+     premises.
+
+  Replacing an entirety is not a repair. The cost of installing the
+  new toilet is claimed as a capital works deduction.
+
+
+
+
+Repairs
+Repairs are done to remedy defects in, damage to or deterioration of
+the property. Repairs must relate directly to wear and tear or other
+damage that occurred while you were renting out the property.
+
+Any repairs for remedying damage that existed when you acquired the
+property are initial repairs and are capital in nature.
+
+Examples of repairs you can claim immediately include:
+
+  replacing a cracked pane of glass in a window
+
+  replacing part of the gutter
+
+  fixing or replacing part of a fence
+
+  repairing electrical appliances or machinery.
+
+If you no longer rent the property, you may still be able to claim repair
+expenses where both:
+
+  the need for repairs related to a period when the property was
+  income producing
+
+  the property was income producing during the income year you
+  incurred the expenses.
+
+
+Repairs versus improvements
+If you make repairs and improvements to your property simultaneously,
+you can only claim a deduction for the cost of repairs if you can
+separate the cost of the repairs from the cost of the improvements.
+
+An improvement is anything that makes part of the property better,
+more valuable, more desirable or changes the character of the item
+that is being worked on (for example, a renovation).
+
+If you hire a builder or other professionals to carry out these works, we
+recommend you ask for an itemised invoice to help work out your
+claim.
+
+
+
+  Example: apportioning expenses between
+  repairs and improvements
+  Caitlin modernised her rental property by hiring tradespeople to
+  render and paint the external walls.
+
+  She also asked the painter to paint the internal walls, which had
+  deteriorated during the time she rented out the property.
+
+  As Caitlin requested an itemised invoice from the painter, she
+  could separate the cost of the internal and external painting, and
+  rendering. Because of this, she could claim a deduction for the
+  cost:
+
+     of painting the internal walls as a repair
+
+     of rendering and painting the external walls as a capital works
+     deduction.
+
+
+
+
+Maintenance
+Maintenance means work to prevent deterioration or fix existing
+deterioration. Maintenance generally involves keeping your property in
+a tenantable condition.
+
+Examples of maintenance include:
+
+  repainting faded or damaged walls
+
+  oiling, brushing or cleaning something that is otherwise in good
+  working condition – for example, oiling a deck or cleaning a
+  swimming pool
+  maintaining plumbing.
+
+You can claim a deduction for maintenance expenses in the income
+year you incur them.
+
+
+Initial repairs
+Initial repairs to rectify damage, defects or deterioration that existed at
+the time of purchasing a property can't be claimed as an immediate
+deduction. It doesn’t matter if you were unaware of the need to make
+repairs to the property at the time you purchased it.
+
+Initial repairs to property such as a fence or building can generally be
+claimed as a capital works deduction over 40 years. Initial repairs to
+depreciating assets can't be claimed as a deduction, however the
+decline in value of new replacement assets is generally deductible as
+capital allowances.
+
+The cost of initial repairs forms part of the capital gains tax (CGT) cost
+base when you sell the property. You must reduce the CGT cost base
+by amounts claimed (or that you were entitled to claim) as capital
+works for the initial repairs.
+
+
+
+  Example: initial repairs not deductible (existing
+  damage)
+  Lisa buys a property with the intention of renting it out. At the
+  time of purchase Lisa knew that she would need to repair the
+  roof (replace all roof tiles) and part of the ceiling as they were in
+  a poor condition.
+
+  When carrying out the works, Lisa discovered there was extra
+  structural damage that required her immediate attention. The
+  repair to the ceiling cost her $2,000, the replacement of roof tiles
+  cost her $9,000 and the structural work cost her a total of
+  $15,000.
+
+  The 'initial' repair of the ceiling of $2,000 isn't deductible, but as
+  with the replacement of the entire roof and the structural work, it
+  can be claimed as a capital works deduction.
+
+  When the property is sold, Lisa can include the $26,000 for the
+  work to rectify the existing damage in her CGT cost base,
+   reduced by the amount of the capital works deductions she has
+   already claimed (or was entitled to claim).
+
+
+For more information about how CGT applies to rental properties, see
+our Guide to capital gains tax.
+
+For a summary of the difference between repairs, maintenance and
+capital expenses, go to the ATO Publication Ordering Service to
+download Rental repairs, maintenance and capital expense
+(NAT 75208, PDF 242KB) .
+
+
+
+
+   Work out the category of your rental
+   upkeep expenses
+   Use our quick reference guide to categorise and claim rental
+   repairs, maintenance and capital works.
+
+
+
+
+QC 103907
+
+
+
+Work out the category of your
+rental upkeep expenses
+Use our quick reference guide to categorise and claim
+rental repairs, maintenance and capital works.
+
+Last updated 22 May 2026
+
+It's important to correctly categorise upkeep expenses for your rental
+property to ensure they are treated correctly for tax purposes. Our
+quick reference guide in the table below will help you to work out
+which category your expense relates to.
+
+If your property is your holiday home, you can't claim deductions for
+repairs and maintenances unless the property is used (or held for use)
+mainly to produce rental income.
+Table: working out the category of your rental property
+expense
+
+   Situation      Category         Example           Claim at
+
+
+ Replacing       Repair           Replacing        Repairs and
+ something                        part of a        maintenance
+ that is worn                     fence
+ out,                             damaged in
+ damaged or                       a storm
+ broken while
+ renting out                      Hiring a
+ the property                     plumber to
+                                  fix a leaking
+                                  tap
+
+ Preventing      Maintenance      Repainting       Repairs and
+ or fixing                        faded            maintenance
+ deterioration                    interior walls
+ of an item
+ that                             Re-oiling a
+ occurred                         deck
+ while renting
+ out the
+ property
+
+ Repairing       Initial repair   Fixing           Capital
+ damage that                      floorboards      works
+ existed when                     or repairing
+ the property                     deteriorated     This is an
+ was bought                       window           initial repair
+ (whether it                      frames           and the
+ was known                        where the        construction
+ at the time                      damage           expenditure
+ of purchase                      existed          is written off
+ or not)                          when the         at 2.5% over
+                                  property         40 years.
+                                  was bought       This doesn't
+                                                   include initial
+                                                   repairs to
+                                                   depreciating
+                                                   assets in the
+                                                   property, for
+                                                   which no
+                                                   deduction
+                                                   can be
+                                                   claimed.
+  Replacing an        Capital          Replacing an       Capital
+  entire              works            entire fence       works
+  structure
+
+  Renovating          Capital          Adding a           Capital
+  or adding a         works            carport            works
+  new
+  structure to
+  the property
+
+  Installing a        Depreciating     Buying a           Capital
+  brand-new           asset            new                allowances
+  appliance or                         dishwasher
+  window
+  covering                             Installing
+                                       new blinds
+
+
+
+
+QC 103912
+
+
+
+Capital expenses
+What to do with your capital expenses, including capital
+works, improvements, and substantial renovations.
+
+Last updated 21 May 2026
+
+
+
+What are capital expenses
+Capital expenses are expenses that provide long-term benefits to your
+property. These costs typically improve the property's value or extend
+its useful life. For example, installing a new roof, upgrading appliances,
+or adding a deck are capital expenses. They differ from regular
+operating expenses, like repairs and maintenance, which are typically
+short-term and recurring.
+
+Capital expenses includes capital works and depreciating assets.
+These expenses are claimed over several years, rather than being
+deducted in the year they are incurred.
+
+For a summary of the difference between repairs, maintenance and
+capital expenses, go to the ATO Publication Ordering Service to
+download Rental repairs, maintenance and capital expenditure
+(NAT 75208, PDF 242KB) .
+
+
+Capital works
+Capital works includes expenses for building the property as well as
+structural improvements, alterations and extensions to the property.
+The rate of deduction for these capital works is generally 2.5% or 4%
+per year, spread over a period of 40 or 25 years respectively. Capital
+works deductions can't exceed your construction expenses.
+
+You can only claim a deduction for the capital works on rental
+properties once construction has been fully completed, if the property:
+
+  was built after 17 July 1985
+
+  is rented or held to produce assessable income, that is, it must be
+  available for rent on commercial terms .
+
+An asset that is fixed to, or otherwise part of, a building or structural
+improvement, will generally be a construction expense and can only be
+claimed as capital works.
+
+Preliminary expenses such as architect fees, engineering fees,
+surveying fees, foundation excavation expenses and costs of building
+permits also form part of construction expenses.
+
+Examples of capital works expenses include:
+
+  building and construction costs
+
+  alterations to a building
+
+  major renovations to a room
+
+  substantial renovations to a property
+
+  adding a fence
+
+  building extensions such as garages and patios
+
+  adding structural improvements such as a driveway or retaining
+  wall.
+Example: completion of capital works before
+claiming a deduction
+Jin decides to add a carport to his rental property. He organises
+a company to supply and install it and pays a deposit of $1,000
+on 24 June 2024. The carport is completed on 1 July 2025 (the
+following income year) and he pays the remainder $2,500.
+
+Jin can start claiming a capital works deduction of $87.50
+($3,500 x 2.5%) in the income year the work was completed. The
+capital works deduction will be spread over a period of 40 years,
+at 2.5% per year.
+
+
+
+
+Example: replacing assets in a residential
+property
+Janet has owned and rented out a residential property since
+12 January 1986. In 2025, she replaced the old kitchen fixtures,
+including the cupboards and appliances. The old cupboards had
+deteriorated through water damage and wear and tear.
+
+The kitchen cupboards are separately identifiable capital items
+with their own function. This means the cost of completely
+replacing them is a capital cost. Because of this, Janet can claim:
+
+  capital works deductions for the construction cost of this work
+
+  deductions for the decline in value of the new kitchen
+  appliances (none of these appliances were previously used).
+
+This is the case regardless of whether:
+
+  new fittings are of a similar size, design and quality as the
+  originals
+
+  new cupboards are made from a modern equivalent of the
+  material used in the originals
+
+  layout and design of the new kitchen may be substantially the
+  same as the original.
+Improvements
+An improvement is anything that makes part of the property better,
+more valuable, more desirable or changes the character of the item
+that is being worked on.
+
+Capital improvements (such as remodelling a bathroom or adding a
+pergola) should be claimed as capital works deductions.
+
+Improvements include work that:
+
+  provides something new
+
+  furthers the income-producing ability or expected life of the
+  property
+
+  goes beyond just restoring the efficient functioning of the property.
+
+Improvements can be either capital works where it is a structural
+improvement or capital allowances where the item is a depreciating
+asset.
+
+
+
+
+  Example: property improvements
+  Tim replaced a fibre cement sheeting wall inside his property
+  because it was damaged by tenants. He replaced the old wall
+  with a brick feature wall.
+
+  The new wall is an improvement because Tim did more than just
+  restore the efficient function of the wall. This means Tim can't
+  claim the cost of the new wall as a repair, but he can claim it as
+  capital works deductions.
+
+  If Tim replaced the fibro with a current equivalent, such as
+  plasterboard, he could have claimed his costs as a repair. This is
+  because it would have restored the efficient function of the wall
+  without changing its character, even though a different material
+  was used.
+
+
+
+
+Substantial renovations
+Substantial renovations of a rental property are where all or
+substantially all, of a building is removed or is replaced. This could
+include the removal or replacement of foundations, external walls,
+interior supporting walls, floors, roof or staircases.
+
+For renovations to be substantial, they must directly affect most rooms
+in a building.
+
+Renovations you make to a house are considered collectively, such as
+the:
+
+  removal and replacement of the exterior walls
+
+  removal of some internal walls
+
+  replacement of the flooring
+
+  replacement of the kitchen.
+
+If the renovations are substantial, the property is treated as new
+residential premises.
+
+Apart from the cost of replacing depreciating assets, the cost of all
+renovations are deductible as capital works.
+
+The cost of replacing depreciating assets as part of substantial
+renovations, can be claimed as a decline in value deduction, provided
+the asset has been acquired as a new asset for the purpose of gaining
+income from rental income.
+
+
+
+  Example: claiming the cost of renovations
+  Jake bought a 4 bedroom residential property in October 2025
+  as a rental property. As Jake was keen to get tenants as soon as
+  he took possession of the property, he engaged a real estate
+  agent when the contract became unconditional. The real estate
+  agent advised him of the maximum rent he could charge and
+  started to advertise the property as being available to rent from
+  one day after settlement.
+
+  Three months before selling, the previous owners removed a wall
+  between 2 bedrooms and turned the space into a large bedroom
+  with an ensuite. They also repainted and recarpeted the room.
+
+  Even though Jake acquired the property within 6 months of the
+  renovations being completed, the renovations only affected a
+  part of the house, and aren't classified as being substantial
+  renovations.
+   The previous owners provide Jake with the renovation
+   construction costs.
+
+   The cost of the renovations, excluding the new carpet and any
+   other depreciating assets replaced, can be claimed as a capital
+   works deduction by Jake.
+
+   As the new carpet and other depreciating assets are not
+   acquired as new assets by Jake, he can't claim a deduction for
+   their decline in value.
+
+   However, if Jake buys any brand-new depreciating assets for the
+   property, he will be able to claim a deduction for their decline in
+   value.
+
+
+
+
+   Work out your capital works deductions
+   You can claim capital works deductions for certain construction
+   costs for your rental property.
+
+
+
+
+QC 103909
+
+
+
+Work out your capital works
+deductions
+You can claim capital works deductions for certain
+construction costs for your rental property.
+
+Last updated 22 June 2026
+
+
+
+Limits to claiming capital works
+deductions
+You can only claim a deduction for those periods during the year you
+used your rental property for income-producing purposes. You can't
+claim for the period you use the property for personal purposes.
+ Example: how to work out capital works
+ deductions from the date construction starts
+ On 1 March 2026, Meg purchased a rental property for $700,000
+ and immediately rented it out. Meg obtained a report from a
+ quantity surveyor stating:
+
+ Construction of the property started in February 2005.
+
+ The property is a residential townhouse.
+
+ Construction was completed in November 2005.
+
+ The townhouse was built by a developer.
+
+ The estimated cost of constructing the townhouse was
+ $500,000.
+
+ Meg claims a capital works deduction in her 2026 tax return for
+ her rental property based on the estimate of the construction
+ costs she gets from the quantity surveyor. However, she only
+ claims a deduction for that part of the year her property was
+ used for an income producing purpose (1 March 2026 to 30 June
+ 2026). The rate of deduction she claims was 2.5% as
+ construction of her residential property started after
+ 15 September 1987.
+
+ Her annual capital works deduction was calculated as follows:
+
+     $500,000 × 2.5% (see note) = $12,500
+
+ Note: See the date construction started for different rates of
+ reduction.
+
+ As the property was only used for income producing purposes
+ for 122 days in 2026, her 2025–26 claim was calculated as
+ follows:
+
+     $12,500 × (122 ÷ 365) = $4,178
+
+
+
+
+What you need to know to work out your
+claim
+As a general rule, you can claim a capital works deduction for the cost
+of construction for 40 years from the date the construction was
+completed. However, to make sure that you are eligible, you must have
+all of the following:
+
+  details of the type of construction
+
+  the date construction commenced
+
+  the date construction was completed
+
+  the construction cost (not the purchase price)
+
+  details of who carried out the construction work
+
+  details of the period during the year that the property was used for
+  income producing purposes.
+
+Capital works expenses you incur form part of the cost base of your
+property for capital gains tax purposes. If you claim a capital works
+deduction, you will need to take this into account when you work out
+your capital gain or loss.
+
+If it isn't possible to determine the actual construction costs, you can
+obtain an estimate from a quantity surveyor or other independent
+qualified person. You can claim a deduction for the fees you pay to
+obtain this estimate.
+
+For information about how capital works deductions affect the CGT
+cost base, see Cost base adjustments for capital works.
+
+Types of construction and the date construction
+commenced
+To be eligible to claim a capital works deduction, construction work
+must start after the date relevant to that type of construction in the
+table below.
+
+The amount you can claim for construction expenses depends on the
+type of construction and the date you start construction. Your capital
+works deductions can't exceed the construction expenses. This table
+shows the rate of deduction and the period over which you can claim
+the deduction depending on the type of construction.
+
+
+Table: Capital works deductions for buildings and
+structural improvements
+                        Construction     Applicable years
+Type of
+                        commenced        and deduction
+construction
+                        after            rate per year
+
+
+You intend to use the   21 August 1979   22 August 1979 to
+building on                              21 August 1984 –
+completion to provide                    2.5%
+short-term
+accommodation to                         22 August 1984 to
+travellers in:                           15 September
+                                         1987 – 4%
+  apartment
+  buildings in which                     16 September
+  you own or lease                       1987 to
+  at least                               26 February 1992
+  10 apartments                          – 2.5% (where the
+  units or flats                         construction
+                                         related to certain
+  hotels                                 pre-16 September
+                                         1987 contracts,
+  motels                                 the rate is 4%)
+  guest houses with
+  at least                               27 February 1992
+  10 bedrooms.                           onwards – 4%
+
+
+Building intended to    19 July 1982     20 July 1982 to
+be used on                               21 August 1984 –
+completion for non-                      2.5%
+residential purposes
+such as a shop or                        22 August 1984 to
+office.                                  15 September
+                                         1987 – 4%
+
+                                         16 September
+                                         1987 onwards –
+                                         2.5%
+
+Any building intended   17 July 1985     18 July 1985 to
+to be used on                            15 September
+completion for                           1987 – 4%
+residential purposes
+or to produce income.                    16 September
+                                         1987 onwards –
+                                         2.5% (where the
+                                         construction
+                                         related to certain
+                                         pre-16 September
+                                                 1987 contracts,
+                                                 the rate is 4%)
+
+  Structural                26 February          27 February 1992
+  improvements              1992                 onwards – 2.5%
+  intended to be used
+  on completion for
+  residential purposes
+  or to produce income.
+
+  Environment               18 August 1992       18 August 1992
+  protection                                     onwards – 2.5%
+  earthworks intended
+  to be used on
+  completion for
+  residential purposes
+  or to produce income.
+
+  Any capital works         30 June 1997         The capital works
+  used to produce                                must actually be
+  income, even if they                           used in a
+  were not intended to                           deductible way in
+  be used for that                               the income year in
+  purpose.                                       which the
+                                                 deduction is
+  For pre-1 July 1997                            claimed (see
+  works only, the                                above onwards
+  capital works must                             rates details for
+  have been intended                             each type of
+  for use for specified                          construction).
+  purposes at the time
+  of completion.
+
+
+Two point 5 per cent means that you can claim deductions for
+40 years and 4% means for 25 years.
+
+You can start claiming capital works deductions only when
+construction of the relevant capital works is completed.
+
+Although you may be able to claim capital works deductions for your
+building costs, you may not be able to claim these deductions for
+certain costs such as for general landscaping.
+
+
+Construction cost
+You must provide evidence of the construction costs by either of the
+following:
+  precise documents that show the construction costs such as
+  receipts
+
+  a report written by an appropriately qualified person.
+
+The following items can't be used as the construction cost:
+
+  the purchase price of the building and land
+
+  the insured cost
+
+  the replacement cost.
+
+If you were the owner builder
+If you carried out the construction as an owner builder, the value of
+your contribution to the works doesn't form part of the construction
+cost. This includes:
+
+  your labour and expertise
+
+  any notional profit element – that is, an amount you might consider
+  as a profit margin on the construction cost.
+
+Obtaining the construction information
+You should make sure you keep records that detail the construction
+costs whether:
+
+  you carry out the construction
+
+  you contract a builder to carry out the construction.
+
+If you don't have a record of the construction costs (for example,
+where the vendor didn't provide them) you will need to obtain this
+information from either the previous owner or an appropriately
+qualified person. This could be a:
+
+  quantity surveyor
+
+  clerk of works, such as a project organiser for major building
+  projects
+
+  supervising architect who approves payments at project stages
+
+  builder with experience estimating construction costs of similar
+  building projects.
+You can claim a deduction for your costs of obtaining this information
+from an appropriately qualified person in the income year you pay it.
+
+Quantity surveyor reports can also include a schedule of depreciable
+assets (capital allowances). You can claim a separate deduction for the
+decline in value of depreciating assets in a rental property:
+
+  if you bought the rental property before 7:30 pm (AEST) on 9 May
+  2017 – it doesn't matter if the property was brand new or not
+
+  if the depreciating asset is brand new – purchased at or after
+  7:30 pm (AEST) on 9 May 2017
+
+     as part of your brand-new property
+
+     that you subsequently bought for your existing (non-new)
+     property
+
+  if you bought the property on or after 7:30 pm (AEST) on 9 May
+  2017 to provide residential accommodation, the property has to be
+  brand new or substantially renovated if no one previously claimed
+  any depreciation deductions on the asset, and either
+
+     no one lived in the property when you acquired it, or
+
+     if anyone lived in the property after it was built or renovated, you
+     acquired it within 6 months of the property being built or
+     renovated
+
+  the property doesn't provide residential accommodation, or
+
+  the asset is used in carrying on a business, or
+
+  the entity claiming depreciation is a
+
+     corporate tax entity
+
+     superannuation plan other than a self-managed superannuation
+     fund
+
+     public unit trust
+
+     managed investment trust
+
+     unit trust or partnership whose members are any of the entities
+     in this list.
+
+You should provide the buyer with a capital works notice containing
+information to allow them to work out their capital works deduction if
+you both:
+   are a vendor disposing of capital works begun after 26 February
+   1992
+
+   were able to claim a deduction for those capital works.
+
+The notice should be provided within 6 months following the income
+year that you dispose of the property or a further period allowed by us.
+
+Where you don't use the property to gain rental income, the vendor
+disposing of the property doesn't need to provide the purchaser with a
+notice. In this situation, the purchaser can obtain an estimate, usually
+from an appropriately qualified person.
+
+Remember to obtain your construction costs report as soon as
+possible, as these reports can take a long time to prepare. If you
+obtain a report after you lodge your tax return, you can amend your tax
+return by a certain later date. There is a time limit on amending tax
+returns where we have already issued a notice of assessment.
+
+
+
+
+QC 21620
+
+
+
+Borrowing expenses
+Find out which borrowing expenses you can claim, and
+how to claim them.
+
+Last updated 22 May 2026
+
+
+
+About borrowing expenses
+Borrowing expenses are the expenses you incur to take out a loan to
+buy property.
+
+You must claim a deduction for all eligible borrowing expenses for
+5 years or spread it over the term of the loan, whichever is shorter.
+
+If the total deductible borrowing expenses are $100 or less, they are
+fully deductible in the income year you incur them.
+
+If you have refinanced or redrawn on your loan, see Interest expenses.
+
+If your rental property is also your holiday home, borrowing expenses
+will be an ownership expense, you can only claim a deduction for
+ownership and use expenses if you used the property (or held it for
+use) mainly to produce rental income. For more information about what
+expenses you can and can't claim for a holiday home, see Holiday
+homes.
+
+For a summary of this information in poster format, go to the ATO
+Publication Ordering Service to download Rental borrowing expenses
+(NAT 75210, PDF 210KB) .
+
+
+Borrowing expenses you can claim
+You can claim a deduction for the following as borrowing expenses:
+
+  loan establishment fees
+
+  lender's mortgage insurance (insurance taken out by the lender and
+  billed to you)
+
+  title search fees your lender charges
+
+  costs for preparing and filing mortgage documents (including
+  solicitors' fees)
+
+  mortgage broker fees
+
+  fees for a valuation required for loan approval
+
+  stamp duty you pay on the mortgage.
+
+
+Borrowing expenses you can't claim
+You can't claim any of the following as borrowing expenses:
+
+  the amount you borrow for the property
+
+  loan balances for the property
+
+  interest expenses (as these are claimed separately)
+
+  repayments of principal against the loan balance
+
+  stamp duty charged by your state or territory government on the
+  transfer (purchase) of the property title (as this is a capital expense)
+
+  legal expenses including solicitors' and conveyancers' fees for the
+  purchase of the property (as this is a capital expense)
+  stamp duty you incur to acquire a leasehold interest in property
+  such as an Australian Capital Territory 99-year crown lease (but you
+  may be able to claim this as a lease document expense)
+
+  insurance premiums where, under the policy, your loan will be paid
+  out in the event that you die, become disabled or unemployed (as
+  this is a private expense)
+
+  borrowing expenses on any portion of the loan you use for private
+  purposes (for example, money you use to buy a car).
+
+You may be able to include capital expenses in the 'cost base' of your
+property. This can help you reduce the amount of capital gains tax
+(CGT) you pay when you sell your property. The expenses you incur
+when purchasing and selling your rental property are capital expenses.
+
+
+
+
+  Example: calculating borrowing expenses over
+  5 years
+  On 3 July, Peter took out a 25-year loan of $300,000 to purchase
+  a rental property. Peter's deductible borrowing expenses were:
+
+     $800 stamp duty on the mortgage
+
+     $500 loan establishment fees
+
+     $300 valuation fee required by the bank for the loan.
+
+  Peter also paid $12,000 in stamp duty on the transfer of the
+  property title. He can't claim a deduction for this expense but it
+  will form part of the cost base of the property for CGT purposes
+  when he sells the property.
+
+  As Peter's borrowing expenses are $1,600, which is more than
+  $100, he must claim them over 5 years from the date he took out
+  his loan for the property. He works out his borrowing expense
+  deduction as follows:
+
+     For the first year, Peter performs the following steps
+
+        Step 1: work out the number of days from 3 July to 30 June
+        (363)
+
+        Step 2: work out the number of days in the 5-year period
+        from 3 July in Year 1 to 2 July in Year 6(1,826)
+     Step 3: divide the number of days in Step 1 by the number
+     of days in Step 2 (363 ÷ 1,826)
+
+     Step 4: multiply Step 3 result by the total borrowing
+     expenses of $1,600 (363 ÷ 1826) × $1,600 = $318.07). He
+     claims $318.07 as a deduction in his tax return.
+
+   For Years 2 to 5, Peter performs the following steps
+
+     Step 1: works out the remaining borrowing expenses, by
+     reducing the original borrowing expenses of $1,600 by
+     deductions already claimed in previous years
+
+     Step 2: works out the number of days in the income year
+     (Year 4 is a leap year)
+
+     Step 3: works out the number of days remaining in the
+     5 years (this includes the number of days in the income
+     year for which he is preparing the tax return)
+
+     Step 4: divides Step 2 result by Step 3 result
+
+     Step 5: multiplies Step 4 result by Step 1 result (equals the
+     amount he claims as a deduction in his tax return).
+
+   By the end of the Year 5, Peter has claimed deductions
+   totalling $1,598.25 on his respective tax returns.
+
+   In the final year, Peter performs the following steps
+
+     Step 1: works out the remaining borrowing expenses, which
+     equals $1.75 ($1,600 minus $1,598.25)
+
+     Step 2: works out the number of days between 1 July and
+     2 July (equals 2)
+
+     Step 3: works out the number of days remaining in the
+     5 years (1,826 − 1,824 = 2)
+
+     Step 4: divides Step 2 result by Step 3 result (equals one)
+
+     Step 5: multiplies Step 4 result by Step 1 result (equals
+     $1.75). Thus, Peter claims a deduction of $1.75 in his Year 6
+     tax return.
+
+
+
+
+How to calculate borrowing expenses
+Generally, borrowing expenses are claimed over the first 5 years of
+owning your rental property.
+
+If you got the loan part way through the income year, you need to
+adjust your claim according to the number of days in the year you had
+the loan.
+
+You can claim a deduction for the balance of the borrowing expenses
+in the final year of repayment if you either:
+
+  repay sooner than the term of the loan
+
+  repay your loan in less than 5 years.
+
+You can use our Deductible borrowing expenses calculator
+(xlsx, 178KB)   to work out your claim.
+
+
+
+
+  Example: work out borrowing expenses for the
+  maximum 5-year period
+  Fiona and Max (as joint tenants each with 50% interest) secure a
+  20-year loan of $209,000 to buy:
+
+     a rental property for $170,000
+
+     a car for private use for $39,000.
+
+  They pay for establishment fees, valuation fees and stamp duty
+  on the mortgage. Their borrowing expenses on the loan total
+  $1,670.
+
+  As their borrowing expenses are more than $100, they must
+  apportion their deduction over 5 years because it's less than the
+  period of the loan (20 years).
+
+  As they use part of the loan ($39,000) for a private purpose, they
+  can't claim a deduction for borrowing expenses on this portion of
+  the loan.
+
+  Fiona and Max secure the loan on 17 July. They work out the
+  borrowing expense deduction for the first year as follows:
+
+       Borrowing expenses × (number of relevant days in income
+       year ÷ number of days in the 5-year period) × (amount of
+       rental property loan ÷ total amount borrowed) = deduction
+       for the year.
+  As joint tenants, they need to report their share (50%) in each of
+  their tax returns.
+
+  They work out their borrowing expenses deduction for each
+  income year as shown in the table below. Year 4 is a leap year.
+  Borrowing expense calculation
+
+
+  Borrowing expense calculation
+
+                                                         Available
+                                                         deduction
+    Year                  Calculation
+                                                          for the
+                                                           year
+
+
+    1          $1,670.00 × (349 ÷ 1,826) = $319.18          $259.62
+                  $319.18 × ($170,000 ÷ $209,000)
+
+    2         $1,350.82 × (365 ÷ 1,477) = $333.82           $271.53
+                 $333.82 × ($170,000 ÷ $209,000)
+
+    3          $1,017.00 × (365 ÷ 1,112) = $333.82          $271.53
+                $333.82 × ($170,000 ÷ $209,000)
+
+    4             $683.18 × (366 ÷ 747) = $334.73           $272.27
+    (leap        $334.73 × ($170,000 ÷ $209,000)
+    year)
+
+    5             $348.45 × (365 ÷ 381) = 333.82            $271.53
+                 $333.82 × ($170,000 ÷ $209,000)
+
+    6                  $14.63 × (16 ÷ 16) = $14.63           $11.90
+                  $14.63 × ($170,000 ÷ $209,000)
+
+
+
+
+QC 103910
+
+
+
+Interest expenses
+Find out which interest expenses you can claim and what
+to do if your loan account is used for private purposes.
+
+Last updated 21 May 2026
+
+
+
+About interest expenses
+When you take out a loan for a rental property, you need to pay
+interest on the amount you borrow from your bank or lender. We refer
+to these as interest expenses. The principal amount is the money you
+borrow from your bank or lender.
+
+If you use the principal amount to buy a rental property and it is rented
+or held to produce assessable income, for the entire income year, you
+can claim a deduction for the interest charged on the loan.
+
+You can only claim a portion of your interest expenses as a deduction
+if you either:
+
+   use a portion of the principal amount to buy your rental property
+
+   the property is rented or held to produce assessable income for
+   rent for part of the income year.
+
+If your rental property is also your holiday home, you can't claim a
+deduction for interest expenses, or any other ownership or use
+expenses, unless you used the property (or held it for use), mainly to
+produce rental income. For more information about holiday homes and
+what expenses you can claim, see Holiday homes.
+
+You can't claim a deduction for additional payments made to reduce
+the principal amount of the loan.
+
+
+Claiming interest expenses
+For a summary fact sheet of what you can and can't claim, go to the
+ATO Publication Ordering Service to download Rental interest
+expenses (NAT 75207, PDF 215KB) .
+
+
+Interest expenses you can claim
+You can claim the interest expenses on the loan principal (mortgage)
+you use to:
+  buy a rental property
+
+  buy a depreciating asset for the rental property – for example, an air
+  conditioner for the rental property
+
+  pay for deductible expenses – for example, to make repairs to the
+  property that arise as a result of you renting it out
+
+  finance renovations and extensions to the rental property.
+
+You can also claim interest expenses when:
+
+  you have pre-paid interest expenses up to 12 months in advance
+
+  during the period you're repairing damage to your rental property,
+  making it uninhabitable while the repairs are taking place.
+
+
+
+
+  Example: joint borrowers, joint owners –
+  claiming share of interest incurred
+  Kosta and Jenny take out an investment loan for $350,000 to
+  purchase an apartment they hold as joint tenants.
+
+  They rent out the property for the whole year from 1 July. They
+  incur interest of $30,000 for the year.
+
+  Kosta and Jenny can each make an interest claim of $15,000 in
+  their respective tax returns for the first year of owning the
+  property.
+
+
+
+
+  Example: joint borrowers, sole owner – claiming
+  all interest incurred
+  Simone decides to purchase a rental property. When she
+  approaches her bank for a loan, they require her husband Jarrod
+  to be a co-borrower, even though the rental property will be
+  solely in Simone’s name.
+
+  When Simone and Jarrod enter into the loan agreement with the
+  bank, they also enter into a separate legally enforceable written
+  agreement with each other. The agreement is witnessed by a
+  justice of the peace and states that Simone, as the sole owner of
+  the rental property, is 100% liable for the loan repayments and
+  interest.
+
+  As the sole owner of the property, Simone must declare 100% of
+  the rental income in her tax return.
+
+  Simone can also claim a deduction for 100% of the interest
+  expenses. Simone's agreement with Jarrod shows her intention
+  to be liable for all of the loan repayments and interest charged on
+  the joint loan. Simone's bank statements also support her
+  intention as they show that she paid all the repayments and
+  interest expenses from her own bank account.
+
+
+
+
+Interest expenses you can't claim
+You can't claim a deduction for interest expenses:
+
+  for any period the property is used for private purposes, even if it's
+  a short period of time
+
+  on the portion of the loan used for private purposes (for example, to
+  purchase a car), either when
+
+     you took out the loan
+
+     you refinance the loan
+
+  on a loan you used to buy a new home if you don't use the new
+  home to produce income, even if you use your rental property as
+  security for the loan
+
+  on a loan to purchase your holiday home unless you use the
+  property (or hold it for use), mainly to produce rental income.
+
+
+
+
+  Example: claiming part of the interest incurred
+  Yoko takes out a loan of $400,000 and uses the loan to:
+
+     buy a rental property for $380,000
+
+     buy a new car for $20,000 for private use.
+
+  Yoko rents her property for the whole year from 1 July. Her total
+  interest expense on the $400,000 loan is $35,000.
+  Yoko works out how much interest she can claim as a deduction,
+  using the following calculation:
+
+       Total interest expenses × (rental property loan ÷ total
+       borrowings) = deductible interest
+
+       $35,000 × ($380,000 ÷ $400,000) = $33,250
+
+  Yoko can claim an interest expense deduction of $33,250.
+
+  The ratio between the deductible and private components of the
+  loan is 95% and 5%. Yoko must continue to apportion interest in
+  accordance with this ratio for the life of the loan. Similarly, any
+  repayments of principal are applied in the same ratio.
+
+
+
+
+Loan accounts used for private and rental
+expenses
+If you have a loan account used for both private purposes and rental
+property expenses, you must keep accurate records to enable you to
+calculate the interest that applies to the rental property portion of the
+loan.
+
+You must separate the interest relating to the rental property from any
+interest on funds used for private purposes.
+
+You can't only repay the portion of the loan for your private purchases.
+All loan repayments must be apportioned across both rental and
+private portions of the loan for the length of the loan.
+
+For apportionment calculations in these situations, see paragraphs
+19 and 20 of TR 2000/2 Income tax: deductibility of interest on
+moneys drawn down under line of credit facilities and redraw facilities.
+
+
+
+  Example: interest incurred on a mortgage for a
+  new home
+  Zac and Lucy take out a $400,000 loan secured against their
+  existing home to purchase a new home.
+
+  Rather than sell their existing home, they decide to rent it out.
+They have a mortgage of $25,000 remaining on their existing
+home which is added to the $400,000 loan under a loan facility
+with sub-accounts – that is, the 2 loans are managed separately
+but are secured by the one property.
+
+Zac and Lucy can claim a deduction for the interest charged on
+the $25,000 loan for their original home, as it is now rented out.
+
+They can't claim a deduction for the interest charged on the
+$400,000 loan used to purchase their new home. Even though
+the loan is secured against their rental property, the new home
+isn’t being used to produce income.
+
+
+
+
+Example: interest incurred on funds redrawn
+from the loan halfway through the year
+Tyler has an investment loan for his rental property with a redraw
+facility. He is ahead on his repayments by $9,500 which he can
+redraw. Halfway through the year, Tyler redraws the available
+amount of $9,500 and buys himself a new TV and a lounge suite.
+
+The outstanding balance of the loan after the redraw increases
+to $365,000 and total interest expenses incurred immediately
+before the redraw are $9,300. The total interest on $365,000 for
+the year is $19,000.
+
+Tyler can only claim the interest expenses on the portion of the
+loan relating to the rental property. He uses the following
+calculations:
+
+    Total loan balance − redraw amount = rental property loan
+    portion
+
+    $365,000 − $9,500 = $355,500
+
+To work out how much interest he can claim, he does the
+following calculation for the period following the redraw:
+
+    Total interest expenses after the redraw × (rental property
+    loan portion ÷ loan balance at the time of the
+    redraw) = deductible interest
+    ($19,000 − $9,300) × ($355,500 ÷ $365,000) = $9,448
+
+Tyler can claim interest of $18,748, being $9,300 plus $9,448.
+
+The ratio between the deductible and private components of the
+loan is 97.4% and 2.6%. Tyler must continue to apportion interest
+and repayments of principal in accordance with this ratio for the
+life of the loan.
+
+
+
+
+Example: interest incurred on deposit
+Pauline has an existing home which is her main residence and
+isn't rented. She wants to purchase a rental property for
+$700,000. She receives pre-approval from the lender for an
+investment loan amount of $630,000. Pauline redraws $140,000
+from her personal home loan to pay a deposit of $140,000 to buy
+the property.
+
+When the property settles, the lender advances $630,000 to her.
+She uses $560,000 to settle the purchase of the property. The
+remaining $70,000 of the $630,000 is paid to reduce the amount
+redrawn from her personal home loan. This amount was used to
+pay the deposit, reducing the redrawn amount from $140,000 to
+$70,000. She immediately begins renting the property.
+
+Pauline can claim a deduction for the interest charged on the
+entire $630,000 loan:
+
+  She can claim a deduction for the interest on the $560,000
+  component of the loan used to settle the property, as that is
+  being used to purchase the rental property from which she will
+  earn assessable income.
+
+  She can claim a deduction for the interest on the $70,000
+  component of the investment loan that was used to partially
+  repay the drawdown. This is because the funds used to
+  refinance the drawdown takes on the same character as the
+  drawdown. Since interest on the original drawdown would be
+  deductible, because it was used to pay the deposit for the
+  rental property, interest on the $70,000 amount used to repay
+  the drawdown would also be deductible.
+  She can also claim a deduction for interest expenses charged on
+  the remaining $70,000 of the drawdown that was used to finance
+  the deposit on the rental property.
+
+
+
+
+  Example: interest incurred on personal funds
+  Barbara wants to purchase a rental property for $700,000. She
+  obtains pre-approval for an investment loan of $630,000. She
+  pays a deposit of $140,000 to purchase the property which is
+  funded from a gift by her parents.
+
+  When the property settles, the lender advances $630,000 to
+  Barbara. She uses $560,000 to settle the purchase of the
+  property. The remaining $70,000 is left in a savings account
+  where it will be used for private purposes.
+
+  Barbara can't claim a deduction for the whole interest expense
+  charged on the total loan amount of $630,000:
+
+     She can claim a deduction for the interest charged on the
+     $560,000 component of the total loan amount which was
+     used to settle the property, as that is being used to purchase
+     the rental property from which she will earn assessable
+     income.
+
+     She can’t claim a deduction for the interest charged on the
+     remaining $70,000 amount that is now in her savings account
+     to be used for private purposes. The funds are not being used
+     to refinance a loan used to pay the deposit as the amount
+     provided by her parents wasn't a loan. The $70,000 in her
+     savings account is being used for private purposes and isn't
+     being used to earn assessable income.
+
+
+
+
+Thin capitalisation
+Thin capitalisation rules may affect you if the combined debt
+deductions (for example, interest) of you and your associated entities
+are more than $2 million in any income year and you are:
+   an Australian resident and you (or any associated entities) have
+
+      certain international dealings
+
+      overseas interests
+
+   a foreign resident (or associated entity) with certain investments in
+   Australia.
+
+You must consider the thin capitalisation rules each year.
+
+
+
+
+QC 103911
+
+
+
+Rental properties and travel
+expenses
+If you have a residential rental property, you may not be
+able to claim a deduction for related travel expenses.
+
+Last updated 22 June 2026
+
+
+
+Deductions for travel expenses
+From 1 July 2017 you can't claim any deductions for the cost of travel
+you incur relating to your residential rental property unless you are
+either:
+
+   in the business of letting rental properties
+
+   an excluded entity.
+
+Prior to 1 July 2017:
+
+   you could claim your travel expenses relating to your residential
+   rental property, and
+
+   you didn’t include the travel expenses in the cost base or reduced
+   cost base when calculating any capital gain or capital loss when you
+   sold the property.
+
+Travel expenses include the costs you incur on car expenses, airfare,
+taxi, hire car, public transport, accommodation and meals to:
+   inspect, maintain or collect rent for a rental property you own or
+   have an ownership interest in
+
+   travel to any other place as long as it is associated with earning
+   rental income from your existing rental property (for example,
+   visiting your real estate agent to discuss your current rental
+   property).
+
+A residential premises (property) is land or a building that is:
+
+   occupied as a residence or for residential accommodation
+
+   intended to be occupied, and is capable of being occupied, as a
+   residence or for residential accommodation.
+
+To be residential premises, the premises must be fit for human
+habitation.
+
+For example, a house or a unit used as residential accommodation to
+produce rental income is residential rental property.
+
+A caravan or a houseboat is generally not residential rental property.
+
+
+
+
+   Example: individual with residential rental
+   property
+   Sarah owned and rented out her residential rental property in the
+   2025–26 income year. She travelled to the property to repair
+   damages caused by tenants during the year.
+
+   As the investment is a residential property and Sarah isn't in the
+   business of letting rental properties or an excluded entity, she
+   can't claim a deduction for her travel expenses.
+
+
+Commercial rental properties, for example factories or office blocks,
+are not residential rental properties. If you own or have an ownership
+interest in a commercial rental property, you can claim a deduction for
+travel expenses incurred in earning your rental income from the
+property.
+
+
+
+
+   Example: ownership interest in commercial
+   property
+  Kei is the sole owner of a commercial rental property. Her
+  husband, Bert, occasionally drives to the rental property in his
+  own car to undertake maintenance. As he has no ownership
+  interest in the property, Bert can't claim travel expenses.
+  Similarly, since Kei didn't travel to the property to undertake the
+  maintenance, she can't claim a deduction.
+
+  As the property is a commercial rental property rather than a
+  residential rental property, if Kei and Bert co-owned the property,
+  Bert could share his travel expenses with Kei in line with their
+  legal interest in the property.
+
+
+  Example: individual with a commercial
+  investment property
+  In the 2025–26 income year, Greg purchased a shopfront and
+  leased the property to Paul. Paul used the shopfront to operate a
+  bakery and paid rent to Greg under a 12-month lease contract.
+
+  Greg travelled to the shopfront to inspect the property at the end
+  of the tenancy agreement. As the property was used for
+  commercial purposes, Greg can claim the travel expenses.
+
+
+
+In the business of letting rental properties
+You can claim your travel expenses if you are in the business of letting
+rental properties. Generally, owning one or several rental properties
+will not be considered being in the business of letting rental properties.
+
+If you are an individual and you receive income from letting property to
+a tenant, or multiple tenants, you are not typically carrying on a
+business of letting rental properties. Generally, we consider your
+activities are a form of investment rather than a business, so you can't
+claim deductions for travel expenses.
+
+Entities that can claim travel expenses
+You can claim travel expenses, if you're a:
+
+  corporate tax entity
+
+  superannuation plan that isn't a self-managed superannuation fund
+
+  public unit trust
+   managed investment trust
+
+   unit trust or a partnership, where all of the members are entities of a
+   type listed above.
+
+
+
+   Example: an excluded entity in 2025–26
+   Terry's Pty Ltd, a property manager, incurred travel expenses in
+   2025–26 to inspect a tenanted residential investment property.
+   Since Terry's Pty Ltd is a corporate tax entity (a company), it can
+   claim a deduction for travel expenses.
+
+
+
+
+Travel expenses you can't claim
+Even if you are eligible to claim travel expenses, you still can't claim for
+expenses related to:
+
+   your personal use of the property or for purely private purposes
+
+   carrying out general maintenance of the property while it's not
+   genuinely available for rent
+
+   undertaking repairs, where those repairs are not because of
+   damage or wear and tear incurred while you rented out the
+   property.
+
+For example, if you travel to undertake initial repairs before you rent
+the property for the first time, these are capital expenses and may be
+included as part of the cost base for capital gains tax calculation when
+the property is being sold later.
+
+If your travel expenses are partly for private purposes and partly
+related to the rental property, you can only claim the amount relating
+to the rental property.
+
+Travel expenses before you purchase
+You can't claim for travel expenses to inspect a property before you
+buy it.
+
+You also can't claim for travel expenses to (or other costs for) rental
+seminars about helping you find a rental property to invest in.
+Seminars are only tax deductible if they relate to earning rental income
+from your existing rental property. When a seminar teaches you how to
+locate a suitable rental property to buy, you can't claim a deduction
+against rental income for the cost of the seminar because the costs
+incurred are 'too soon' before the start of the income producing
+activity.
+
+Some promoters have incorrectly told taxpayers that they can claim
+the cost of their travel to and from a property they may purchase. You
+can't claim these costs for properties within Australia nor overseas.
+
+
+Travel expenses you can claim
+If you are in the business of letting rental properties or an excluded
+entity, and eligible to claim travel expenses, the types of expenses you
+can claim include:
+
+  preparing the property for new tenants (except for the first tenants)
+
+  inspecting the property during or at the end of tenancy
+
+  undertaking repairs, where those repairs are because of damage or
+  wear and tear incurred while you rented out the property
+
+  maintaining the property, such as cleaning and gardening, while it is
+  rented or genuinely available for rent
+
+  collecting the rent
+
+  visiting your agent to discuss your rental property.
+
+For more information, see Rental expenses.
+
+
+Car travel
+If you are in the business of letting rental properties or an excluded
+entity, and eligible to claim travel expenses, and you use your own car
+to travel to inspect your rental property or to collect rent, you must use
+the same method to calculate your deductions as work-related car
+expenses.
+
+
+Overnight travel
+If you are in the business of letting rental properties or an excluded
+entity, and eligible to claim travel expenses you can claim a deduction
+for travel expenses for travelling to your rental property if:
+  you own a rental property that is far away from where you live
+
+  it would be unreasonable to expect you not to stay near the rental
+  property overnight when making an inspection
+
+  your main purpose in travelling was to inspect and maintain the
+  rental property.
+
+Where you stay overnight, you can claim meals and accommodation.
+
+Where your trip is mainly for private purposes (for example, having a
+holiday) and inspecting the property is incidental to that main purpose,
+you can't claim the costs of getting to your destination or returning
+home. You can only claim local expenses incurred after you arrive at
+your destination that are directly related to the property inspection
+such as taxi fares to and from the rental property. You may also be
+able to claim a proportion of your accommodation expenses.
+
+
+Overseas travel
+If you are in the business of letting rental properties or an excluded
+entity, and eligible to claim travel expenses, and you are an Australian
+resident and own a rental property overseas, you may travel overseas
+on holiday and inspect your rental property at the same time.
+
+If the main purpose of the trip is a holiday, you can't claim the cost of
+getting there. You can only claim local expenses incurred after you
+arrive at your destination that are directly related to inspecting the
+property, such as taxi fares to and from the rental property. You may
+also be able to claim a deduction for part of your accommodation
+expenses.
+
+You must be able to show your reason for visiting the rental property.
+
+The records you keep, such as invoices for your accommodation or
+airline tickets, will help you do this.
+
+
+Record keeping for travel expenses
+If you can claim your travel expenses and you travel over a
+considerable distance to inspect a rental property (for example,
+interstate), you need written records to show that you travelled and
+what expenses you incurred.
+
+Written records can include:
+   a travel diary
+
+   receipts for
+
+      airline tickets
+
+      fuel
+
+      accommodation
+
+      other purchases while travelling
+
+      items you used for repairs and maintenance that you purchased
+      when you travelled to, or stayed near, the rental property.
+
+If you spend 6 or more nights away from where you live, you must
+keep a travel diary or similar document that shows the nature of the
+activities, dates, places, times and duration of your activities and
+travel.
+
+
+
+
+QC 22093
+
+
+
+Asbestos-affected properties
+If you own an asbestos-affected investment property,
+check the deductions you can claim. CGT may apply if you
+sell it.
+
+Last updated 22 June 2026
+
+
+
+Claiming expenses
+Asbestos contamination may mean a property can no longer be rented
+out or must be vacated for a time. In that case some deductions may
+still apply, including for:
+
+   interest on loans against the property (these are deductible for the
+   whole year, if the property is later rented out after remediation)
+
+   expenses such as council rates, water and land tax
+
+   repairs and maintenance – for example, ensuring living areas are
+   sealed from contaminated areas, such as ceiling, internal cavities
+  and subfloor
+
+  decline in value of written-off and replacement depreciating assets,
+  such as carpet
+
+  capital works for replacement buildings, fences and similar.
+
+Expenses for capital works are claimed over a period of 40 or
+25 years. The decline in value of depreciating assets is also generally
+claimed over several years.
+
+For more information on expenses you can claim, see TR 2004/4
+Income tax: deductions for interest incurred prior to the
+commencement of, or following the cessation of, relevant income
+earning activities.
+
+
+Environmental protection costs
+If your asbestos-related remediation expenses aren't covered by the
+above deductions, costs to remove asbestos from a rental property
+can be classified as an environmental protection activity under section
+40-755 of the Income Tax Assessment Act 1997.
+
+For more information, see TR 2020/2 Income tax: deductions for
+expenditure on environmental protection activities.
+
+
+Government buy-back program
+If you participate in a buy-back program, the CGT implications will vary
+depending on your situation.
+
+If the property was solely used as your main residence for the entire
+period of ownership, there are no CGT implications on the disposal of
+your property.
+
+If you used the property to produce income, there are CGT
+implications. These will depend on your circumstances, including if it
+was ever your main residence and how long you've owned it.
+
+
+
+
+QC 43708
+Apartment building defect
+expenses
+If you own an apartment in a building complex, you may be
+able to claim deductions for shared expenses to fix
+defects.
+
+Last updated 22 June 2026
+
+
+
+Apartment building defects
+The apartment complex
+If you own an apartment in a building complex, you may have a shared
+responsibility to fix building defects. You may need to make:
+
+   a contribution to a special body corporate levy (this is most
+   common)
+
+   changes as required by a state government building authority.
+
+This is usually for common property. Common property is generally all
+areas of the land, building and external structures not contained within
+your apartment.
+
+
+The apartment itself
+If your apartment is a rental property, you can claim deductions for
+repairs, environmental protection activities and capital works on the
+same basis as if you:
+
+   directly own the building
+
+   were directly paying the expense.
+
+
+Repairs and maintenance you can claim
+You can claim an immediate deduction for the expenses you incur
+when you contribute to the repair or maintenance of either:
+
+   an apartment you use to earn rental income
+  part of the building complex that you hold or use as part of earning
+  rental income.
+
+These expenses must meet the requirements for a deduction as a
+repair or maintenance. That is, they must relate directly to wear and
+tear or damage because of renting out the property. Repairs generally
+involve a replacement or renewal of a worn out or broken part.
+Maintenance is work done to prevent deterioration, defects or damage.
+For example, repainting of the outside parts of the building where the
+paint is peeling is a repair as well as maintenance.
+
+You can't claim an immediate deduction for capital repairs or capital
+maintenance. For example, expenses which are capital or of a capital
+nature include:
+
+  replacement of an entire structure or unit of property
+
+  improvement in the function of the replacement item
+
+  initial repairs to rectify damage, defects or deterioration that
+  existed at the time of purchasing a property.
+
+
+Combustible cladding replacements you
+can claim
+You can claim a deduction for costs you incur to replace or contribute
+to the replacement of combustible cladding to meet government
+requirements.
+
+To be able to claim a deduction, you must replace the combustible
+cladding with fire resistant cladding. You treat the replacement of the
+cladding as capital works. This is because we treat the replacement of
+cladding as:
+
+  an entire functional structure (being the outer covering of the
+  building)
+
+  an improvement in the function of the outer covering of the building.
+
+This means the building is no longer a fire hazard and becomes fire
+resistant as an improved functional operation of the cladding.
+
+You can claim a deduction for the amount you contribute over a period
+of either 25 or 40 years. That is, 4% or 2.5% of the cost of the
+ improvement being allowed in each year. See Table 1 – types of rental
+ property construction that qualify for deduction.
+
+ The replacement of combustible cladding doesn't meet the
+ requirements to be deductible as a repair or environmental protection
+ activity.
+
+
+ Environmental protection activities you
+ can claim
+ You can claim a deduction for costs you incur to carry out
+ environmental protection activities.
+
+ Environmental protection activities are those you carry out because
+ your earning activities will result or likely result in the need for you to:
+
+    prevent, fight or remedy pollution
+
+    treat, clean up, remove or store waste.
+
+ You can't claim a deduction as environmental protection activities
+ where you incur the costs to either:
+
+    replace building products that don't conform to statutory legal
+    requirements
+
+    remove building products that don't conform to statutory legal
+    requirements.
+
+ For more information on deductions and strata titles, see:
+
+    TR 97/23 Income tax: deductions for repairs
+
+    TR 2020/2 Income tax: deductions for expenditure on
+    environmental protection activities
+
+    TR 2015/3 Income tax: matters relating to strata title bodies
+    constituted under strata title legislation paragraphs 40 and 41.
+
+
+
+
+ QC 63879
+
+
+
+Our commitment to you
+We are committed to providing you with accurate, consistent and clear
+information to help you understand your rights and entitlements and meet
+your obligations.
+
+If you follow our information and it turns out to be incorrect, or it is
+misleading and you make a mistake as a result, we will take that into
+account when determining what action, if any, we should take.
+
+Some of the information on this website applies to a specific financial year.
+This is clearly marked. Make sure you have the information for the right year
+before making decisions based on that information.
+
+If you feel that our information does not fully cover your circumstances, or
+you are unsure how it applies to you, contact us or seek professional
+advice.
+
+
+Copyright notice
+© Australian Taxation Office for the Commonwealth of Australia
+
+You are free to copy, adapt, modify, transmit and distribute this material as
+you wish (but not in any way that suggests the ATO or the Commonwealth
+endorses you or any of your services or products).
+

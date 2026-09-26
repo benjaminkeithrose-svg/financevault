@@ -1,0 +1,343 @@
+How to calculate transfer duty
+  revenue.nsw.gov.au/taxes-duties-levies-royalties/transfer-duty/understanding-transfer-duty/calculate-transfer-duty
+
+
+Learn how transfer duty and premium duty are calculated on a property’s dutiable value.
+View current rates and thresholds, and calculation examples.
+
+Last updated: 19 August 2026
+On this page
+Transfer duty calculatorDutiable value of the propertyCurrent thresholds and
+ratesTransfer duty calculation examplesNeed more detailed information?Related
+InformationContact us
+To calculate how much transfer duty (stamp duty) you will pay, you need to know:
+
+     if you are eligible for a transfer duty exemption or concession
+     the dutiable value of the property you are acquiring, and
+     the thresholds and rates that apply.
+
+A legal representative, such as a solicitor or conveyancer, can work with you to calculate
+the correct amount of duty you owe.
+
+Transfer duty calculator
+Use the Transfer of Land or Business Calculator to estimate how much transfer duty you
+will pay when you purchase or acquire property in NSW.
+
+Calculate your transfer duty
+
+
+
+
+Dutiable value of the property
+Transfer duty is calculated on the dutiable value of property. This is the higher of:
+
+     the purchase price you agreed to pay, or
+     the property's market value.
+
+
+
+                                                                                                                       1/7
+Market value
+
+The market value of a property is the price for which it may be reasonably sold, free from
+encumbrances, on the open market.
+
+We do not consider encumbrances when calculating transfer duty, such as a mortgage.
+
+Trading at arm’s length
+
+This term describes transactions between unrelated parties who deal with each other
+independently.
+
+When a property transaction is at arm’s length, the price paid for the property is usually
+considered to be the market value of the property.
+
+When valuations are required
+You will need to provide formal evidence of property value when:
+
+     there is no consideration for the transaction (consideration is what the seller
+     receives in exchange for transferring the property)
+     consideration is non-monetary
+     parties are related or associated persons
+     there is no selling agent involved in an agreement for sale
+     the same legal firms represent both parties
+     the transaction involves fractional interests in property, or
+     Revenue NSW is not satisfied that the consideration adequately reflects the
+     property's unencumbered value.
+
+When a formal valuation is needed, it must:
+
+     be by a suitably qualified person
+     show the full market value of the property in its present condition
+     be conducted as at the transaction date or within an acceptable time period, and
+     must indicate that an inspection was undertaken.
+
+For more details read Revenue Ruling DUT 012 v4: Evidence of value requirements and
+guidelines.
+
+
+Back to top
+
+
+Current thresholds and rates
+The thresholds and rates for general transfer duty and premium duty are adjusted each
+year in line with Consumer Price Index (CPI) changes.
+
+To determine your rate year, use:
+
+
+                                                                                             2/7
+     the contract date, or
+     the date of transfer if there is no contract.
+
+Transfer duty
+Transfer duty is not calculated on a fixed rate, but on a sliding scale of rates based on a
+property’s dutiable value.
+
+The rates for the 2026/2027 financial year are in the table below. View transfer duty rates
+from past financial years.
+
+ Thresholds for dutiable value      Transfer duty rates
+
+
+ $0 to $18,000                      $1.25 for every $100 (minimum $20)
+
+ $18,001 to $38,000                 $225 plus $1.50 for every $100 over $18,000
+
+ $38,001 to $103,000                $525 plus $1.75 for every $100 over $38,000
+
+ $103,001 to $387,000               $1,662 plus $3.50 for every $100 over $103,000
+
+ $387,001 to $1,290,000             $11,602 plus $4.50 for every $100 over $387,000
+
+ Over $1,290,000                    $52,237 plus $5.50 for every $100 over $1,290,000
+
+First home buyers
+
+If you qualify for the First Home Buyers Assistance Scheme you will not pay transfer duty
+on:
+
+     a new or existing property valued at $800,000 or less, or
+     vacant land valued at $350,000 or less.
+
+Reduced transfer duty rates are available for new or existing property valued under $1
+million and vacant land under $450,000.
+
+The First Home Buyer Assistance Scheme Calculator will estimate how much you will
+save on transfer duty if you meet the Scheme's eligibility requirements.
+
+Foreign buyers
+
+If you are a foreign person and acquire residential-related property in NSW, you may pay
+surcharge purchaser duty unless you qualify for an exemption or concession.
+
+Surcharge purchaser duty is calculated on the dutiable value and is paid in addition to
+transfer duty.
+
+Unlike transfer duty, there is a flat rate for surcharge purchaser duty. The current rate is
+9% of the dutiable value.
+
+                                                                                               3/7
+Use the Surcharge Purchaser Duty Calculator to estimate how much transfer duty and
+surcharge purchaser duty you will pay.
+
+Premium duty
+
+Premium property duty is a higher duty rate that is payable when you:
+
+     buy a residential property in NSW, and
+     the value is above the premium threshold.
+
+The premium threshold and rate for the 2026/2027 financial year is in the table
+below. View premium rates from past financial years.
+
+ Premium threshold for dutiable
+ value                                    Premium rate
+
+
+ $3,870,000                               $194,137 plus $7.00 for every $100 over
+                                          $3,870,000.
+
+Residential properties also used for business
+
+The premium rate applies to residential properties only.
+
+If your property value is above the premium threshold and part of it is used for business,
+we will only use the part that is used for residential purposes when applying the premium
+transfer duty rate.
+
+Rate for land over 2 hectares
+
+For large residential properties, the premium transfer rate is calculated only on the first 2
+hectares of the property, as a proportion of the overall value of the property.
+
+The remainder of your property will be charged at the general rate.
+
+Read chapter 10 of the Contracts for sale of land and transfers guide for more details.
+
+
+Back to top
+
+Transfer duty calculation examples
+The following examples show how:
+
+     dutiable value is determined in common types of property sales, and
+     the formulas used to calculate transfer duty.
+
+These examples are based on the transfer duty rates for the 2026/2027 financial year.
+
+
+
+                                                                                                4/7
+Auction purchase – market value equals purchase price
+
+Sarah and Michael attend a competitive auction for a residential property in Yamba.
+
+After spirited bidding, they successfully purchase their home for $1,350,000.
+
+Analysis
+
+     Purchase price: $1,350,000
+     Market value: $1,350,000 (the auction process demonstrates the property's market
+     value, as multiple willing buyers competed in an open market)
+     Dutiable value: $1,350,000 (both values are equal)
+
+Outcome
+
+Because the auction was conducted at arm's length with competitive bidding, the
+purchase price reflects the market value.
+
+Sarah and Michael do not need to provide a valuation.
+
+Calculation
+
+The rate for a property with a dutiable value of $1,350,000 is $52,237 plus $5.50 for every
+$100 over $1,290,000.
+
+The formula for this property is:
+
+$52,237 + ($1,350,000 - $1,290,000) x 0.055 = $55,537
+
+Total transfer duty payable is $55,537.
+
+Pre-auction offer – purchase price exceeds market value – premium duty
+
+A waterfront property in Balmain is scheduled for auction in two weeks with a price guide
+of $3.65 - $3.85 million.
+
+Similar waterfront properties in the street have recently sold at auction for between $3.6 -
+$3.8 million.
+
+Emma falls in love with the property and is worried about losing it at auction. She makes a
+pre-auction offer of $4 million, which the vendor accepts immediately, cancelling the
+scheduled auction.
+
+Analysis
+
+     Purchase price: $4 million (the amount Emma offered to secure the property pre-
+     auction)
+     Market value: $3.7 million (based on recent comparable auction results)
+     Dutiable value: $4 million (the higher of the two values)
+
+
+
+
+                                                                                               5/7
+Outcome
+
+The amount she paid to secure the property represents the actual consideration, and
+Revenue NSW will use this higher amount for calculating duty.
+
+Emma does not need to provide a formal valuation.
+
+Calculation
+
+The dutiable value of this property is over the current premium threshold.
+
+The rate for a property with a dutiable value of $4,000,000 is $194,137 plus $7.00 for
+every $100 over $3,870,000.
+
+The premium duty formula for this property is:
+
+$194,137 + ($4,000,000 - $3,870,000) x 0.07 = $203,237
+
+Total transfer duty and premium duty payable is $203,237.
+
+Family transfer – market value exceeds purchase price
+
+Tuan owns a block of vacant residential land in Nowra valued at $450,000.
+
+He decides to sell the land to his son, Duy, for $300,000 so that Duy can build a larger
+home for a growing young family.
+
+Duy already owns a small apartment with his partner and does not qualify for the First
+Home Buyers Assistance Scheme.
+
+Analysis
+
+     Purchase price: $300,000 (the amount Duy actually paid)
+     Market value: $450,000 (the price the land would fetch in an open market
+     transaction)
+     Dutiable value: $450,000 (the higher of the two values)
+
+Outcome
+
+Despite Tuan only paying $300,000, transfer duty will be calculated on the market value
+of $450,000.
+
+Revenue NSW will typically ask for a valuation to determine the market value for
+transactions that are not conducted at arm's length.
+
+Calculation
+
+The rate for a property with a dutiable value of $450,000 is $11,602 plus $4.50 for every
+$100 over $387,000.
+
+The transfer duty formula for the property is:
+
+
+                                                                                            6/7
+$11,602 + ($450,000 - $387,000) x 0.045 = $14,437
+
+Total transfer duty payable is $14,437.
+
+
+
+
+Need more detailed information?
+Revenue Ruling DUT 012 v4: Evidence of value requirements and guidelines sets out
+when valuations are required and what types of evidence are acceptable.
+
+Revenue Ruling DUT 044 v2: Valuation of property – suitably qualified valuer clarifies who
+the Chief Commissioner considers ‘suitably qualified’ to provide property valuations for
+transfer duty purposes in NSW.
+
+Revenue Ruling DUT 033 v2: Consideration for duties transactions outlines how Revenue
+NSW determines what constitutes ‘consideration’ for transfer duty purposes.
+
+Revenue Ruling DUT 018: Dutiable transactions over land and improvements clarifies
+how NSW transfer duty applies to land sales involving building improvements (like house
+and land packages).
+
+If you are a solicitor, conveyancer or accountant visit the Property Professionals Resource
+Centre for access to eDuties and Electronic Duties Return, as well as detailed guides.
+
+
+Related Information
+     The Home Buyer Assistance Finder helps you assess your eligibility for schemes
+     offered by the NSW Government.
+     How to pay transfer duty
+     How land tax is calculated
+
+Contact us
+Call the duties team on 1300 139 814 or +61 2 7808 6916 if you are overseas. Staff are
+available Monday to Friday, 8.30am to 5.00pm AEST (excluding public holidays).
+
+You can also email duties@revenue.nsw.gov.au. You will receive a response within 10
+business days.
+
+
+
+
+                                                                                              7/7
+

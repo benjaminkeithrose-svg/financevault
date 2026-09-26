@@ -1,0 +1,29 @@
+node_modules/
+dist/
+build/
+*.log
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+
+# Local-first data — never commit real financial documents or the database
+server/storage/documents/*
+!server/storage/documents/.gitkeep
+
+# OCR language data (~11MB), downloaded once on first use and cached here
+server/storage/tessdata/
+server/prisma/dev.db
+server/prisma/dev.db-journal
+*.db
+*.db-journal
+
+.DS_Store
+.vscode/
+.idea/
+
+# Databases set aside by restore or the copy-data helper
+*.db.before-*
+
+# Release downloads made by npm run release
+financevault-*.zip
