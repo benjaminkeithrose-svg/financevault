@@ -17,7 +17,7 @@ fi
 
 if [ ! -d "node_modules" ]; then
   echo "First run — installing everything (this can take a few minutes)..."
-  npm install --no-audit --no-fund || { read -r -p "Installing failed — see above. Press Enter to close..."; exit 1; }
+  npm install --include=dev --no-audit --no-fund || { read -r -p "Installing failed — see above. Press Enter to close..."; exit 1; }
 fi
 
 # "exec" so an update can safely replace this file while Financial Vault runs.

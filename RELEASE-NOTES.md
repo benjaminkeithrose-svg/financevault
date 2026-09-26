@@ -3,6 +3,10 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.1.2 — 27 September 2026
+- Fixes the first start on a new computer stopping with "'tsc' is not recognized": the tools that build the app are now always installed.
+- Finds your earlier Financial Vault records in more places (Documents, OneDrive, Desktop, Downloads, and a folder up from where the new version was unzipped), and isn't put off by an empty start left by a start that went wrong.
+
 ## 1.1.1 — 26 September 2026
 - The Documents page's search box now opens from a "Search documents" button instead of always showing.
 - Tick boxes are bigger and easier to hit, and text boxes use the same lettering as the rest of the app.

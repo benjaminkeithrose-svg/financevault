@@ -18,7 +18,7 @@ if errorlevel 1 (
 
 if not exist "node_modules" (
   echo First run - installing everything ^(this can take a few minutes^)...
-  call npm install --no-audit --no-fund
+  call npm install --include=dev --no-audit --no-fund
   if errorlevel 1 (
     echo Installing failed - see the messages above.
     pause

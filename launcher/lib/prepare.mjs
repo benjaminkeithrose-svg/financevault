@@ -65,9 +65,18 @@ async function step(label, fn) {
 export async function prepareProgram(programDir, env) {
   const lockHash = hashOf(path.join(programDir, "package-lock.json"));
   const lockStamp = path.join(programDir, "node_modules", ".fv-installed");
-  if (!fs.existsSync(path.join(programDir, "node_modules")) || readStamp(lockStamp) !== lockHash) {
+  // The tools that build the app on this computer. An install told it was a
+  // "production" one leaves them out (1.1.1 did), so check they're really there.
+  const tools = ["typescript", "vite", "prisma", "tsx"];
+  const toolsMissing = tools.some((t) => !fs.existsSync(path.join(programDir, "node_modules", t, "package.json")));
+  if (!fs.existsSync(path.join(programDir, "node_modules")) || readStamp(lockStamp) !== lockHash || toolsMissing) {
     log("Installing the libraries this version needs (this needs the internet, once)…");
-    await step("Installing the libraries it needs (this needs the internet)", () => run("npm", ["install", "--no-audit", "--no-fund"], { cwd: programDir, env }));
+    const installEnv = { ...env };
+    delete installEnv.NODE_ENV;
+    delete installEnv.npm_config_production;
+    await step("Installing the libraries it needs (this needs the internet)", () =>
+      run("npm", ["install", "--include=dev", "--no-audit", "--no-fund"], { cwd: programDir, env: installEnv })
+    );
     fs.writeFileSync(lockStamp, lockHash);
   }
 
@@ -75,13 +84,13 @@ export async function prepareProgram(programDir, env) {
   const schemaHash = hashOf(path.join(server, "prisma", "schema.prisma"));
   const generated = path.join(programDir, "node_modules", ".fv-prisma-generated");
   if (readStamp(generated) !== schemaHash) {
-    await step("Preparing the database library", () => run("npx", ["prisma", "generate"], { cwd: server, env }));
+    await step("Preparing the database library", () => run("npx", ["--no", "prisma", "generate"], { cwd: server, env }));
     fs.writeFileSync(generated, schemaHash);
   }
 
   log("Bringing your records up to this version's layout…");
-  await step("Updating your records to the new layout", () => run("npx", ["prisma", "migrate", "deploy"], { cwd: server, env }));
-  await step("Setting up the standard lists", () => run("npx", ["tsx", "prisma/seed.ts"], { cwd: server, env, quiet: true }));
+  await step("Updating your records to the new layout", () => run("npx", ["--no", "prisma", "migrate", "deploy"], { cwd: server, env }));
+  await step("Setting up the standard lists", () => run("npx", ["--no", "tsx", "prisma/seed.ts"], { cwd: server, env, quiet: true }));
 
   const built = path.join(programDir, "server", "dist", ".fv-built");
   const sources = [path.join(server, "src"), path.join(programDir, "web", "src"), path.join(programDir, "web", "index.html")];

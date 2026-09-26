@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import readline from "node:readline/promises";
 import { log } from "./log.mjs";
@@ -69,37 +70,102 @@ export function moveLegacyData(legacy, l, { renameOld = true } = {}) {
   return docs;
 }
 
-/** Other copies of Financial Vault next to this one (e.g. "financevault-old") that hold records. */
+/**
+ * Other copies of Financial Vault that hold records — beside this one (e.g.
+ * "financevault-old"), one folder up (when the new one was unzipped into a
+ * folder of its own), and in Documents, OneDrive, the desktop and Downloads.
+ */
 export function findOtherCopies(programDir = PROGRAM_DIR) {
-  const parent = path.dirname(programDir);
+  const home = os.homedir();
+  const places = [
+    path.dirname(programDir),
+    path.dirname(path.dirname(programDir)),
+    path.join(home, "Documents"),
+    path.join(home, "OneDrive", "Documents"),
+    path.join(home, "OneDrive"),
+    path.join(home, "Desktop"),
+    path.join(home, "OneDrive", "Desktop"),
+    path.join(home, "Downloads"),
+    home,
+  ];
+  const seen = new Set();
   const found = [];
-  let names = [];
-  try {
-    names = fs.readdirSync(parent);
-  } catch {
-    return found;
-  }
-  for (const name of names) {
-    const dir = path.join(parent, name);
-    if (dir === programDir || !/vault/i.test(name)) continue;
-    for (const candidate of [dir, path.join(dir, "financevault")]) {
-      if (!fs.existsSync(path.join(candidate, "server", "package.json"))) continue;
-      const legacy = legacyData(candidate);
-      if (legacy.hasRecords) found.push({ dir: candidate, legacy });
+  const consider = (dir) => {
+    let real;
+    try {
+      real = fs.realpathSync(dir);
+    } catch {
+      return;
+    }
+    if (seen.has(real) || real === fs.realpathSync(programDir)) return;
+    seen.add(real);
+    if (!fs.existsSync(path.join(real, "server", "package.json"))) return;
+    const legacy = legacyData(real);
+    if (legacy.hasRecords) found.push({ dir: real, legacy });
+  };
+  const children = (dir) => {
+    try {
+      return fs.readdirSync(dir, { withFileTypes: true }).filter((e) => e.isDirectory() && /vault/i.test(e.name)).map((e) => path.join(dir, e.name));
+    } catch {
+      return [];
+    }
+  };
+  for (const place of places) {
+    for (const dir of children(place)) {
+      consider(dir);
+      // "financevault-1.0.0/financevault" — an unzipped download's own folder.
+      for (const inner of children(dir)) consider(inner);
     }
   }
-  return found;
+  // Newest first: the copy most recently used is the one to offer.
+  return found.sort((a, b) => fs.statSync(b.legacy.db).mtimeMs - fs.statSync(a.legacy.db).mtimeMs);
+}
+
+/**
+ * Whether the data folder's records are real ones: a passcode has been set.
+ * A start that went wrong can leave an empty set of records behind, which
+ * shouldn't stop the old records being copied in. Uses Node's built-in
+ * SQLite where there is one; otherwise assumes they're real.
+ */
+async function recordsInUse(dbFile) {
+  if (!fs.existsSync(dbFile) || fs.statSync(dbFile).size === 0) return false;
+  // Node marks its built-in SQLite "experimental"; that notice means nothing here.
+  const emit = process.emitWarning;
+  process.emitWarning = (w, ...rest) => (String(w).includes("SQLite") ? undefined : emit.call(process, w, ...rest));
+  try {
+    const { DatabaseSync } = await import("node:sqlite");
+    const db = new DatabaseSync(dbFile, { readOnly: true });
+    try {
+      const row = db.prepare('SELECT COUNT(*) AS n FROM "Vault"').get();
+      return Number(row?.n ?? 0) > 0;
+    } finally {
+      db.close();
+    }
+  } catch {
+    return true;
+  } finally {
+    process.emitWarning = emit;
+  }
 }
 
 /**
  * Makes sure the data folder has records: already there → nothing to do;
- * in this program folder → moved; in an older copy beside it → offered
- * (asked in the window, since it's someone else's folder).
+ * in this program folder → moved; in an older copy elsewhere → offered
+ * (asked in the window, since it's someone else's folder). An empty set of
+ * records left by a start that went wrong is set aside, not deleted.
  */
 export async function ensureDataMoved(l, { interactive = process.stdin.isTTY } = {}) {
-  if (fs.existsSync(l.db) && fs.statSync(l.db).size > 0) return "present";
+  if (await recordsInUse(l.db)) return "present";
+  const setAsideEmpty = () => {
+    if (!fs.existsSync(l.db)) return;
+    const to = `${l.db}.empty-${stamp()}`;
+    fs.renameSync(l.db, to);
+    for (const ext of ["-journal", "-wal", "-shm"]) fs.rmSync(l.db + ext, { force: true });
+    log(`Set aside an empty set of records as ${path.basename(to)}.`);
+  };
   const here = legacyData(PROGRAM_DIR);
   if (here.hasRecords) {
+    setAsideEmpty();
     moveLegacyData(here, l);
     return "moved";
   }
@@ -110,6 +176,7 @@ export async function ensureDataMoved(l, { interactive = process.stdin.isTTY } =
       const answer = (await rl.question(`\nFound Financial Vault records in:\n  ${other.dir}\nCopy them into this version? (Y/n) `)).trim().toLowerCase();
       if (answer === "" || answer.startsWith("y")) {
         rl.close();
+        setAsideEmpty();
         // Someone else's folder: copy only, never rename.
         moveLegacyData(other.legacy, l, { renameOld: false });
         return "copied";
@@ -117,5 +184,6 @@ export async function ensureDataMoved(l, { interactive = process.stdin.isTTY } =
     }
     rl.close();
   }
+  if (!others.length) log("No earlier Financial Vault records were found — starting fresh. (A backup can be restored on the first screen.)");
   return "fresh";
 }

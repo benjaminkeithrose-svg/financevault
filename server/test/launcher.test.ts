@@ -12,7 +12,7 @@ import { compareVersions, layout } from "../../launcher/lib/paths.mjs";
 // @ts-expect-error — as above
 import { inspectUpdate, keepPreviousVersion, latestNotes, putBackPrevious, replaceProgram } from "../../launcher/lib/update.mjs";
 // @ts-expect-error — as above
-import { legacyData, moveLegacyData } from "../../launcher/lib/data.mjs";
+import { findOtherCopies, legacyData, moveLegacyData } from "../../launcher/lib/data.mjs";
 
 // Batch 6: the data folder, updates from a ZIP, and putting a version back.
 
@@ -165,6 +165,19 @@ describe("moving records into the data folder", () => {
     expect(fs.readFileSync(path.join(data.documents, "abc.pdf"), "utf8")).toBe("pdf");
     expect(fs.existsSync(path.join(prog, "server", "prisma", "dev.db"))).toBe(false);
     expect(fs.readdirSync(path.join(prog, "server", "prisma")).some((n) => n.startsWith("dev.db.moved-to-data-folder"))).toBe(true);
+  });
+});
+
+describe("finding the old copy", () => {
+  it("finds it one folder up, when the new version was unzipped into a folder of its own", () => {
+    const base = path.join(tmp(), "financial vault");
+    const prog = path.join(base, "financevault-1.1.2", "financevault");
+    write(path.join(prog, "server", "package.json"), "{}");
+    write(path.join(base, "financevault-old", "server", "package.json"), "{}");
+    write(path.join(base, "financevault-old", "server", "prisma", "dev.db"), "records");
+    const found = findOtherCopies(prog).map((o: { dir: string }) => o.dir);
+    expect(found).toContain(fs.realpathSync(path.join(base, "financevault-old")));
+    expect(found).not.toContain(fs.realpathSync(prog));
   });
 });
 

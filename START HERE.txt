@@ -8,9 +8,15 @@ FIRST TIME ON THIS COMPUTER
 ---------------------------
 1. Install Node.js if you haven't already: go to https://nodejs.org,
    download the LTS version and install it. (One time only.)
-2. Unzip the Financial Vault download.
-3. Move the "financevault" folder somewhere you'll keep it, such as your
-   Documents folder.
+2. Unzip the Financial Vault download. (Windows: right-click it, choose
+   "Extract All...", then "Extract".)
+3. Inside what you unzipped is a folder called "financevault". Move that
+   folder somewhere OneDrive, Google Drive or Dropbox does NOT sync, such
+   as your own user folder: in File Explorer, type %USERPROFILE% in the
+   address bar and press Enter, then paste the folder there. (The program
+   has thousands of small files that syncing services struggle with. Your
+   records are kept separately, and can be copied to OneDrive for you —
+   see Settings > Readable copies of your documents.)
 4. Open the folder and double-click:
      Mac:     Start Financial Vault.command
      Windows: Start Financial Vault.bat
@@ -52,8 +58,9 @@ the "Install an update" button. This one time:
    "Download full backup". Keep that file somewhere safe.
 2. Close Financial Vault (close the window it's running in).
 3. Rename your current folder from "financevault" to "financevault-old".
-4. Unzip the new download and put its "financevault" folder in the same
-   place as "financevault-old" (side by side).
+4. Unzip the new download and move its "financevault" folder somewhere
+   OneDrive doesn't sync, as in step 3 of FIRST TIME above. It finds
+   "financevault-old" in your Documents or OneDrive folders by itself.
 5. In the NEW folder, double-click "Start Financial Vault".
 6. It finds your records in "financevault-old" and asks:
    "Copy them into this version? (Y/n)". Press Enter.

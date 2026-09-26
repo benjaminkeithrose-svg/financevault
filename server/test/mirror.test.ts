@@ -88,7 +88,7 @@ describe("through the app", () => {
     expect(fs.readdirSync(at("Robin Mirror", "Properties", "9 Copy St", "2025-26"))).toEqual(["my own notes.txt"]);
 
     const plan = await planCopies();
-    const rates = plan.find((p) => p.rel.includes("Council Rates"))!;
+    const rates = plan.find((p) => p.rel.includes("9 Copy Street") && p.rel.includes("Council Rates"))!;
     await agent.delete(`/api/documents/${rates.documentId}`).expect(204);
     await syncMirror();
     expect(fs.existsSync(at("Robin Mirror", "Properties", "9 Copy Street", "2025-26", "Council Rates – 14 Aug 2025.txt"))).toBe(false);
