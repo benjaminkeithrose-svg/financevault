@@ -16,7 +16,7 @@ import { fyRange } from "../services/superRules.js";
  */
 export const claimNotesRouter = Router();
 
-const TARGET_TYPES = ["LOAN_PURPOSE", "LOAN_INTEREST_YEAR"] as const;
+const TARGET_TYPES = ["LOAN_PURPOSE", "LOAN_INTEREST_YEAR", "WORK_DEDUCTION"] as const;
 type TargetType = (typeof TARGET_TYPES)[number];
 
 const money = (n: number) => `$${n.toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -35,6 +35,18 @@ async function describeTarget(targetType: TargetType, targetId: string): Promise
         `Interest on it is ${p.deductible ? "claimed as deductible" : "not claimed (private)"}.`,
       ],
       evidenceIds: p.documentId ? [p.documentId] : [],
+    };
+  }
+  if (targetType === "WORK_DEDUCTION") {
+    const d = await prisma.workDeduction.findUnique({ where: { id: targetId }, include: { person: { select: { name: true, occupation: true } } } });
+    if (!d) throw new HttpError(404, "That claim no longer exists");
+    return {
+      title: `${d.person.name}: ${d.description} (${d.fyLabel})`,
+      lines: [
+        `Work-related deduction for ${d.person.name}${d.person.occupation ? `, ${d.person.occupation}` : ""}, ${d.fyLabel}`,
+        `${d.description}: ${money(d.amount)}${d.quantity ? ` (${d.quantity.toLocaleString("en-AU")} ${d.category === "CAR" ? "km" : "hours"})` : ""}`,
+      ],
+      evidenceIds: d.documentId ? [d.documentId] : [],
     };
   }
   const y = await prisma.loanInterestYear.findUnique({ where: { id: targetId }, include: { liability: { include: { purposes: true } } } });

@@ -51,6 +51,12 @@ model Person {
   // borrowing estimate. Variable = bonus, overtime, commission (lenders shade it).
   grossSalary    Float?
   variableIncome Float?
+  // Employment — for the occupation deduction checklist and the fact find.
+  occupation     String? // e.g. "Sales and marketing", "Teacher"
+  employer       String?
+  employmentType String? // FULL_TIME | PART_TIME | CASUAL | CONTRACT | SELF_EMPLOYED
+  carAllowance   Float? // a year, shown separately on the income statement
+  benefits       String? // comma-separated: NOVATED_LEASE, COMPANY_CAR, FUEL_CARD, PHONE, LAPTOP, SALARY_SACRIFICE_SUPER, OTHER
 
   // Personal and contact details — what a lender's fact find asks for.
   phone                 String?
@@ -83,6 +89,8 @@ model Person {
   smsfPensions        SmsfPension[]
   insurancePolicies   InsurancePolicy[]
   estateDocuments     EstateDocument[]
+  workDeductions      WorkDeduction[]
+  incomeStatements    IncomeStatement[]
   // Documents reference this Person via the polymorphic DocumentLink
   // (targetType = PERSON, targetId = this.id) — no direct relation field,
   // consistent with how every other linkable record works.
@@ -380,6 +388,8 @@ model Document {
   links            DocumentLink[]
   loanPurposes     LoanPurpose[]
   loanInterestYears LoanInterestYear[]
+  workDeductions   WorkDeduction[]
+  incomeStatements IncomeStatement[]
   claimNotesCiting ClaimNote[]
   transactions     Transaction[]
   auditLogs        AuditLog[]
@@ -440,6 +450,8 @@ model Asset {
   // on land only), or the land tax actually assessed, which wins if entered.
   landValue            Float?
   landTaxPerYear       Float?
+  // Why it's owned by whom it is — worth recording at purchase (IDEAS.md idea 9).
+  ownershipReason      String?
   // From the depreciation schedule: plant & equipment (Division 40) and the
   // building write-off (capital works, Division 43), a year.
   depreciationPerYear  Float?
@@ -1727,4 +1739,46 @@ model ClaimNote {
   updatedAt           DateTime  @updatedAt
 
   @@unique([targetType, targetId])
+}
+
+// Work-related deductions for an employee, by financial year (IDEAS.md idea
+// 10). Categories follow the ATO's work-related deductions pages; car and
+// work-from-home claims can be worked out from kilometres or hours.
+model WorkDeduction {
+  id          String    @id @default(cuid())
+  personId    String
+  person      Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  fyLabel     String
+  category    String // CAR | TRAVEL | WORK_FROM_HOME | CLOTHING | SELF_EDUCATION | TOOLS | PHONE_INTERNET | MEMBERSHIPS | OTHER
+  description String
+  amount      Float
+  method      String? // car: CENTS_PER_KM | LOGBOOK; WFH: FIXED_RATE | ACTUAL_COST
+  quantity    Float? // kilometres or hours, for the fixed-rate methods
+  documentId  String?
+  document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  @@index([personId, fyLabel])
+}
+
+// The end-of-year income statement (myGov) or PAYG payment summary, read by
+// the person from the document, for the year.
+model IncomeStatement {
+  id                       String    @id @default(cuid())
+  personId                 String
+  person                   Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  fyLabel                  String
+  employer                 String?
+  grossPayments            Float
+  taxWithheld              Float?
+  allowances               Float? // e.g. car allowance, shown separately
+  reportableFringeBenefits Float?
+  reportableSuper          Float? // reportable employer super (salary sacrifice)
+  lumpSums                 Float?
+  documentId               String?
+  document                 Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  createdAt                DateTime  @default(now())
+
+  @@index([personId, fyLabel])
 }

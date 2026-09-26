@@ -1686,3 +1686,9 @@ label {
   cursor: pointer;
   font-weight: 600;
 }
+
+/* An area the ATO watches: a quiet amber edge, not an alarm. */
+.checklist-watch {
+  border-left: 4px solid #d97706;
+  padding-left: 12px;
+}

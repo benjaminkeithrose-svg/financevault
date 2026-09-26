@@ -58,6 +58,8 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
       { to: "/net-worth", label: "Net Worth" },
       { to: "/tax", label: "Tax" },
       { to: "/reports", label: "Reports" },
+      { to: "/accountant-checklist", label: "Worth asking your accountant" },
+      { to: "/structure-comparison", label: "Who should own it?" },
       { to: "/portfolio-plans", label: "Portfolio Plan" },
       { to: "/packs", label: "Document Packs" },
     ],

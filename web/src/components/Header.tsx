@@ -35,6 +35,8 @@ const TITLES: Record<string, string> = {
   "/liabilities": "Personal & Other Debts",
   "/portfolio-plans": "Portfolio Plan",
   "/borrowing": "Borrowing",
+  "/accountant-checklist": "Ask your accountant",
+  "/structure-comparison": "Who should own it?",
   "/net-worth": "Net Worth",
   "/tax": "Tax",
   "/reports": "Reports",

@@ -283,6 +283,8 @@ debt allocation (idea 2), depreciation schedules.
 - The best protection against scrutiny is the paper trail: each claim links
   to its evidence and ATO source, so it stands up if questioned.
 
+**Status:** built in batch 4 (menu → Worth asking your accountant).
+
 ---
 
 ## 9. Structure comparison — "who should own the next property, and why"
@@ -328,6 +330,8 @@ distributions) is under review after the High Court's Bendel decision
 (June 2026). Any trust distribution modelling carries that note, with a
 link to the ruling. (Gap analysis fix A6 — the app has no trust
 distribution feature yet, so the note lands here.)
+
+**Status:** built in batch 4 (menu → Who should own it?), with a "why it's owned this way" note on each property.
 
 ---
 
@@ -397,6 +401,8 @@ exemption); each person's employment contract or benefits summary.
 - The app already has a "PAYG Summary / Income Statement" document type;
   this reads the figures out of it (checked by the person, since the text
   read from a scan can be wrong).
+
+**Status:** built in batch 4 — job and benefits, the deduction checklist with calculators and records, income statement figures, and the car comparison. Still to add: occupation-specific checklists, once each person's ATO occupation guide is saved (only the list of guides was downloaded).
 
 ---
 

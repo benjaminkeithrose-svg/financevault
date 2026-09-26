@@ -69,6 +69,11 @@ export interface Person {
   /** Income a year before tax; variable = bonus, overtime, commission. */
   grossSalary?: number | null;
   variableIncome?: number | null;
+  occupation?: string | null;
+  employer?: string | null;
+  employmentType?: string | null;
+  carAllowance?: number | null;
+  benefits?: string | null;
   dateOfBirth?: string | null;
   hasTfn?: boolean;
   tfnMasked?: string | null;
@@ -326,7 +331,7 @@ export interface UsableEquity {
   equity: { value: number; maxLvr: number; maxLvrAssumed: boolean; limit: number; owing: number; usable: number } | null;
 }
 
-export type ClaimTargetType = "LOAN_PURPOSE" | "LOAN_INTEREST_YEAR";
+export type ClaimTargetType = "LOAN_PURPOSE" | "LOAN_INTEREST_YEAR" | "WORK_DEDUCTION";
 
 export interface ClaimNote {
   id: string;
@@ -428,6 +433,88 @@ export interface BorrowingEstimate {
     range: Array<{ label: string; byServicing: number; byLvr: number | null; total: number; release: number }>;
     notes: string[];
   }>;
+}
+
+export interface WorkDeduction {
+  id: string;
+  personId: string;
+  fyLabel: string;
+  category: string;
+  description: string;
+  amount: number;
+  method: string | null;
+  quantity: number | null;
+  documentId: string | null;
+  document?: { id: string; originalFilename: string } | null;
+  notes: string | null;
+}
+
+export interface IncomeStatement {
+  id: string;
+  fyLabel: string;
+  employer: string | null;
+  grossPayments: number;
+  taxWithheld: number | null;
+  allowances: number | null;
+  reportableFringeBenefits: number | null;
+  reportableSuper: number | null;
+  lumpSums: number | null;
+  documentId: string | null;
+  document?: { id: string; originalFilename: string } | null;
+}
+
+export interface PaygView {
+  fy: string;
+  categories: Array<{ key: string; label: string; canClaim: string; records: string; source: string; claimed: boolean }>;
+  deductions: WorkDeduction[];
+  total: number;
+  estimatedTaxSaved: number | null;
+  rates: { carCentsPerKm: number; carRateYear: string; carKmCap: number; wfhPerHour: number; wfhRateYear: string; immediateLimit: number };
+  incomeStatements: IncomeStatement[];
+  checks: string[];
+  reasonsFor: string[];
+}
+
+export interface CarOption {
+  key: string;
+  label: string;
+  totalCosts: number;
+  preTax: number;
+  postTax: number;
+  taxChange: number;
+  netCost: number;
+  salaryReduction: number;
+  workings: string[];
+  notes: string[];
+}
+
+export interface ChecklistItem {
+  id: string;
+  title: string;
+  why: string;
+  rule: string;
+  risk: "SETTLED" | "ARGUABLE" | "ATO_TARGETED";
+  source: { label: string; referenceCode?: string };
+  action: string;
+  link: string | null;
+  facts?: string[];
+}
+
+export interface StructureOption {
+  key: string;
+  label: string;
+  available: boolean;
+  landTax: number;
+  interest: number;
+  taxResult: number;
+  yearlyTax: number;
+  yearlyCashAfterTax: number;
+  saleGain: number;
+  saleTax: number;
+  overallAfterTax: number;
+  good: string[];
+  watch: string[];
+  sources: string[];
 }
 
 export interface ReferenceLibraryStatus {
@@ -770,6 +857,7 @@ export interface Asset {
   lenderMaxLvr?: number | null;
   landValue?: number | null;
   landTaxPerYear?: number | null;
+  ownershipReason?: string | null;
   depreciationPerYear?: number | null;
   capitalWorksPerYear?: number | null;
   sellingCosts?: number | null;
@@ -1842,6 +1930,25 @@ export const api = {
       request<BorrowingEstimate>("/borrowing/estimate", { method: "POST", body: JSON.stringify({ personIds, assumptions }) }),
     saveAssumptions: (assumptions: Partial<BorrowingAssumptions>) =>
       request<BorrowingAssumptions>("/borrowing/assumptions", { method: "PUT", body: JSON.stringify(assumptions) }),
+  },
+  payg: {
+    get: (personId: string, fy: string) => request<PaygView>(`/payg/people/${personId}?fy=${fy}`),
+    addDeduction: (personId: string, data: Record<string, unknown>) =>
+      request<WorkDeduction>(`/payg/people/${personId}/deductions`, { method: "POST", body: JSON.stringify(data) }),
+    removeDeduction: (id: string) => request<void>(`/payg/deductions/${id}`, { method: "DELETE" }),
+    addStatement: (personId: string, data: Record<string, unknown>) =>
+      request<IncomeStatement>(`/payg/people/${personId}/income-statements`, { method: "POST", body: JSON.stringify(data) }),
+    removeStatement: (id: string) => request<void>(`/payg/income-statements/${id}`, { method: "DELETE" }),
+    carCompare: (data: Record<string, unknown>) =>
+      request<{ baseIncome: number; incomeRecorded: boolean; options: CarOption[] }>("/payg/car-compare", { method: "POST", body: JSON.stringify(data) }),
+  },
+  advice: {
+    checklist: () => request<{ items: ChecklistItem[]; referenceDocs: Record<string, string> }>("/accountant-checklist"),
+    factsUrl: (id: string) => `/api/accountant-checklist/${encodeURIComponent(id)}/facts`,
+    structurePeople: () =>
+      request<{ people: Array<{ id: string; name: string; income: number; incomeRecorded: boolean; existingNswLand: number }> }>("/structure-comparison"),
+    compareStructures: (data: Record<string, unknown>) =>
+      request<{ options: StructureOption[] }>("/structure-comparison", { method: "POST", body: JSON.stringify(data) }),
   },
   referenceLibrary: {
     status: () => request<ReferenceLibraryStatus>("/reference-library"),

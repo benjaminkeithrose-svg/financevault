@@ -27,6 +27,12 @@ const SUGGESTED: Record<ClaimTargetType, { reason: (deductible: boolean) => stri
     code: "TR 2000/2",
     pinpoint: "paragraphs 13 to 16",
   },
+  WORK_DEDUCTION: {
+    reason: () =>
+      "Spent to earn my employment income, not reimbursed by my employer, and the record is attached — the ATO's three rules for a work-related deduction.",
+    code: "",
+    pinpoint: "",
+  },
 };
 
 export function WhyClaimed({
@@ -94,7 +100,7 @@ function WhyClaimedDialog({
     setReferences(refs);
     const n = v.note;
     const suggestion = SUGGESTED[targetType];
-    const suggestedRef = refs.find((r) => r.referenceCode === suggestion.code);
+    const suggestedRef = suggestion.code ? refs.find((r) => r.referenceCode === suggestion.code) : undefined;
     setForm({
       reason: n?.reason ?? suggestion.reason(deductible),
       referenceDocumentId: n ? (n.referenceDocumentId ?? "") : (suggestedRef?.id ?? ""),

@@ -38,6 +38,7 @@ export function PropertyCostsCard({ property, asset, onChange }: { property: Pro
     const f: Record<string, string> = { home: isHome ? "yes" : "no" };
     for (const c of COSTS) f[c.key] = str(property?.[c.key]);
     for (const a of ASSET_FIELDS) f[a.key] = str(asset[a.key]);
+    f.ownershipReason = asset.ownershipReason ?? "";
     setForm(f);
   }, [property, asset, isHome]);
 
@@ -49,6 +50,7 @@ export function PropertyCostsCard({ property, asset, onChange }: { property: Pro
     }
     const assetData: Record<string, unknown> = {};
     for (const a of ASSET_FIELDS) assetData[a.key] = num(form[a.key]);
+    assetData.ownershipReason = form.ownershipReason?.trim() || null;
     if (residential && !asset.disposalDate) assetData.mainResidence = form.home === "yes" ? "FULL" : "NONE";
     await api.assets.update(asset.id, assetData);
     setEditing(false);
@@ -75,6 +77,11 @@ export function PropertyCostsCard({ property, asset, onChange }: { property: Pro
       {!editing && (
         <>
           {residential && isHome && <p className="cap-explain">Your home — left out of the profit report and exempt from land tax.</p>}
+          {asset.ownershipReason && (
+            <p style={{ margin: "8px 0" }}>
+              <strong>Why it's owned this way:</strong> {asset.ownershipReason}
+            </p>
+          )}
           {shown.length === 0 ? (
             <p className="cap-explain">
               Nothing recorded yet. These feed Reports → Property Profit.{" "}
@@ -121,6 +128,13 @@ export function PropertyCostsCard({ property, asset, onChange }: { property: Pro
               </div>
             ))}
           </div>
+          <label>Why it's owned this way (who owns it, and why)</label>
+          <textarea
+            rows={2}
+            placeholder="e.g. In Alex's name for negative gearing against the higher salary"
+            value={form.ownershipReason ?? ""}
+            onChange={(e) => setForm({ ...form, ownershipReason: e.target.value })}
+          />
           <p className="cap-explain">
             Land value is on the Valuer General's notice or your land tax assessment — land only, not the building. Depreciation and
             the building write-off are on the quantity surveyor's depreciation schedule.

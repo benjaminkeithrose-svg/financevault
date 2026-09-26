@@ -76,6 +76,7 @@ const assetInput = z.object({
   improvementsCost: z.number().min(0).optional().nullable(),
   capitalWorksClaimed: z.number().min(0).optional().nullable(),
   lenderMaxLvr: z.number().min(0).max(1).optional().nullable(),
+  ownershipReason: z.string().max(2000).optional().nullable(),
   landValue: z.number().nonnegative().optional().nullable(),
   landTaxPerYear: z.number().nonnegative().optional().nullable(),
   depreciationPerYear: z.number().nonnegative().optional().nullable(),

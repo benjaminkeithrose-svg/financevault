@@ -85,6 +85,11 @@ const personInput = z.object({
   nextOfKinRelationship: z.string().optional().nullable(),
   nextOfKinPhone: z.string().optional().nullable(),
   nextOfKinAddress: z.string().optional().nullable(),
+  occupation: z.string().max(120).optional().nullable(),
+  employer: z.string().max(120).optional().nullable(),
+  employmentType: z.enum(["FULL_TIME", "PART_TIME", "CASUAL", "CONTRACT", "SELF_EMPLOYED", ""]).optional().nullable(),
+  carAllowance: z.number().nonnegative().optional().nullable(),
+  benefits: z.string().max(300).optional().nullable(),
 });
 
 // Plain text fields: an empty string means "clear it", same as null.
@@ -99,6 +104,10 @@ const BLANKABLE = [
   "nextOfKinRelationship",
   "nextOfKinPhone",
   "nextOfKinAddress",
+  "occupation",
+  "employer",
+  "employmentType",
+  "benefits",
 ] as const;
 
 function personData<T extends Partial<z.infer<typeof personInput>>>(parsed: T) {

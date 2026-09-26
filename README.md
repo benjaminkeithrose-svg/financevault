@@ -322,6 +322,31 @@ isn't safe to sync live, only the documents folder is.
   costs; `Asset.landValue`, `landTaxPerYear`, `depreciationPerYear`,
   `capitalWorksPerYear`.
 
+### PAYG deductions, the accountant checklist and structure comparison
+
+- **Employment and work deductions** (`routes/payg.ts`,
+  `services/workDeductions.ts`): `Person` occupation, employer, type, car
+  allowance, benefits; `WorkDeduction` per person per financial year by ATO
+  category, with cents-per-km (2026-27 91c, 5,000 km cap) and
+  working-from-home fixed-rate (70c/hour) calculators, evidence documents
+  and "why claimed" notes; `IncomeStatement` figures, compared with the
+  income recorded. Checks flag missing records, a car allowance with no car
+  claim, and items over $300.
+- **Car comparison** (`services/carCompare.ts`, `/people/:id/car`):
+  allowance vs novated lease (employee contribution = 20% statutory
+  value, so no FBT) vs an FBT-exempt electric car; after-tax cost and the
+  payslip salary reduction. Notes the 1 April 2027 change for electric cars
+  over $75,000.
+- **Worth asking your accountant** (`services/accountantChecklist.ts`,
+  `/accountant-checklist`): rule-based prompts rated Settled / Arguable /
+  ATO-targeted, each with its rule and source; facts for a private ruling
+  as a text download; printable.
+- **Who should own it?** (`services/structureCompare.ts`,
+  `/structure-comparison`): a proposed purchase under each person, two
+  people jointly, a family trust, a company and an SMSF — land tax, yearly
+  tax, cash after tax, tax on sale and the overall result, with trade-offs.
+  `Asset.ownershipReason` records why each property is owned as it is.
+
 ### Investments, shares, ETFs and crypto
 
 Record-keeping and valuation for shares, ETFs, managed funds, crypto and

@@ -26,6 +26,9 @@ import { Assets } from "./pages/Assets.js";
 import { AssetDetail } from "./pages/AssetDetail.js";
 import { NetWorth } from "./pages/NetWorth.js";
 import { Borrowing } from "./pages/Borrowing.js";
+import { AccountantChecklist } from "./pages/AccountantChecklist.js";
+import { StructureComparison } from "./pages/StructureComparison.js";
+import { CarCompare } from "./pages/CarCompare.js";
 import { Tax } from "./pages/Tax.js";
 import { Reports } from "./pages/Reports.js";
 import { Packs } from "./pages/Packs.js";
@@ -81,6 +84,7 @@ export default function App() {
           <Route path="/documents/:id" element={<DocumentDetail />} />
           <Route path="/people" element={<PeopleAndEntities />} />
           <Route path="/people/:id" element={<PersonDetail />} />
+          <Route path="/people/:id/car" element={<CarCompare />} />
           <Route path="/entities" element={<PeopleAndEntities />} />
           <Route path="/entities/:id" element={<EntityDetail />} />
           <Route path="/search" element={<Search />} />
@@ -107,6 +111,8 @@ export default function App() {
           <Route path="/portfolio-plans" element={<PortfolioPlans />} />
           <Route path="/portfolio-plans/:id" element={<PortfolioPlanDetail />} />
           <Route path="/borrowing" element={<Borrowing />} />
+          <Route path="/accountant-checklist" element={<AccountantChecklist />} />
+          <Route path="/structure-comparison" element={<StructureComparison />} />
           <Route path="/net-worth" element={<NetWorth />} />
           <Route path="/tax" element={<Tax />} />
           <Route path="/reports" element={<Reports />} />

@@ -960,6 +960,99 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "work-deductions",
+    title: "Work deductions, income statements and car options",
+    keywords: "payg employee occupation deductions work from home car cents per km logbook self-education tools uniform income statement payment summary novated lease electric car allowance fbt salary packaging",
+    body: (
+      <>
+        <p>
+          On each person's page, <strong>Job and work benefits</strong> records their occupation, employer, car allowance and
+          salary packaging. <strong>Work-related deductions</strong> keeps the year's claims, each with its receipt or record.
+        </p>
+        <ol>
+          <li>Pick the financial year, then <strong>Add a claim</strong>.</li>
+          <li>
+            For a car, choose <strong>Cents per km</strong> and enter the work kilometres: the claim is worked out at the ATO's rate
+            (91c in 2026-27, up to 5,000 km). For working from home, choose <strong>Fixed rate</strong> and enter the hours (70c an
+            hour).
+          </li>
+          <li>Attach the receipt or record. The book icon records why it's claimed.</li>
+          <li>
+            The checklist underneath lists what can be claimed and the records needed. Warnings show missing records, a car
+            allowance with no car claim, and items over $300 (those are depreciated, not claimed at once).
+          </li>
+          <li>
+            Add the <strong>income statement</strong> figures from myGov after 30 June — it's compared with the income on the page.
+          </li>
+        </ol>
+        <p>
+          Every claim needs three things: you spent the money and weren't paid back; it was for earning your income; and you have a
+          record. The ATO's guide for each occupation (linked from the card) lists what that job can claim.
+        </p>
+        <p>
+          <strong>Compare car options</strong> works out what a car costs after tax as a car allowance, a novated lease, or an
+          electric car on a novated lease (exempt from fringe benefits tax until the rules change for new leases from 1 April 2027
+          on cars over $75,000). It also shows how much each lowers the payslip salary a lender sees.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "accountant-checklist",
+    title: "Worth asking your accountant",
+    keywords: "missed deductions concessions checklist super carry forward co-contribution medicare levy surcharge depreciation schedule borrowing costs split loan trust distributions private binding ruling part iva",
+    body: (
+      <>
+        <p>
+          <Link to="/accountant-checklist">Worth asking your accountant</Link> (in the menu under Reports) goes through your
+          records for deductions, offsets and concessions you may be entitled to but aren't using — unused super cap, a missing
+          depreciation schedule, loan uses not recorded, borrowing costs, the Medicare levy surcharge, share parcels just under 12
+          months, trust distributions and more.
+        </p>
+        <p>Each item says why the app thinks so, the rule, its source, and what to ask. They're grouped by how settled they are:</p>
+        <ul>
+          <li>
+            <strong>Settled</strong> — clearly allowed; claim it with records.
+          </li>
+          <li>
+            <strong>Arguable</strong> — a reasonable position; take it to your accountant. <strong>Facts for a private ruling</strong>{" "}
+            downloads the facts laid out for them to ask the ATO — a favourable ruling binds the ATO.
+          </li>
+          <li>
+            <strong>ATO watches this</strong> — areas the ATO has warned about, so you know where the line is.
+          </li>
+        </ul>
+        <p>
+          <strong>Print</strong> it to take to the appointment. Nothing here looks for schemes — the best protection is each claim
+          with its record and the rule behind it.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "structure-comparison",
+    title: "Who should own the next property?",
+    keywords: "structure comparison ownership trust company smsf joint individual negative gearing land tax cgt why owned",
+    body: (
+      <>
+        <p>
+          <Link to="/structure-comparison">Who should own it?</Link> models the same purchase owned by each person, by two people
+          half each, by a family trust, a company and an SMSF — with each person's real income and the NSW land they already own.
+          For each: land tax, tax each year, cash after tax, tax on selling, and the overall result over the years held, plus the
+          trade-offs in plain English.
+        </p>
+        <p>
+          The owner is decided at purchase: changing it later usually costs stamp duty and capital gains tax. Take the comparison
+          to your accountant before buying.
+        </p>
+        <p>
+          On each property, <strong>Running costs and tax figures</strong> has a place to note <strong>why it's owned this way</strong>{" "}
+          — useful years later.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "income-spending",
     title: "Income and spending for a loan application",
     keywords: "living expenses income spending cash flow budget monthly average loan application lender hem",
