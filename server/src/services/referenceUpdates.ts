@@ -48,7 +48,13 @@ export const httpFetch: Fetcher = async (url) => {
   const res = await fetch(url, {
     redirect: "follow",
     signal: AbortSignal.timeout(25_000),
-    headers: { "User-Agent": "Mozilla/5.0 (compatible; FinancialVault reference check)", Accept: "text/html,application/pdf;q=0.9,*/*;q=0.5" },
+    // Asked for the way the Edge window does: some government sites turn away
+    // requests that don't look like a browser.
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,application/pdf;q=0.9,*/*;q=0.8",
+      "Accept-Language": "en-AU,en;q=0.9",
+    },
   });
   return { status: res.status, contentType: res.headers.get("content-type") ?? "", body: Buffer.from(await res.arrayBuffer()) };
 };

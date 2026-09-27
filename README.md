@@ -430,6 +430,18 @@ isn't safe to sync live, only the documents folder is.
   put there before. What's missing expects a current logbook and the
   year's odometer readings for any vehicle with a logbook (kind `RECORD`).
 
+### Downloading the official documents (1.2.2)
+
+- `services/referenceDownload.ts`, Documents → Tax references → *Download
+  every official document into a folder (for Claude)*: fetches every
+  link-pack source (text for pages, the PDF itself for PDFs, plus each
+  page's "Print whole section" PDF when it has one) and crawls the ATO
+  occupation guides from their index (same section only, three levels,
+  400 pages at most) into `<data folder>/Reference downloads/<date>/`, with
+  `index.json` (files, what each covers, failures) and a ZIP beside it.
+  Runs in the background (`POST /api/reference-library/download`, polled
+  with GET); `GET …/download/zip` serves the ZIP. Nothing enters the vault.
+
 ### Readable copies of documents
 
 - `services/mirror.ts`, Settings → *Readable copies of your documents*: every

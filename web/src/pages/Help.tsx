@@ -472,7 +472,7 @@ const SECTIONS: Section[] = [
   {
     id: "tax-references",
     title: "Tax references: the ATO rules, kept to hand",
-    keywords: "ato ruling guide tax reference library tr 2000/2 reference code check current link pack rulings",
+    keywords: "ato ruling guide tax reference library tr 2000/2 reference code check current link pack rulings download claude zip occupation guides folder",
     body: (
       <>
         <p>
@@ -524,6 +524,30 @@ const SECTIONS: Section[] = [
           with — tax rates, super caps, cents per kilometre, land tax thresholds and more — with each one's source and when that
           was last checked. When a newer copy of a source is saved, its figures are marked <strong>Review</strong>; a new version
           of Financial Vault brings the updated figures. The dashboard reminds you each new financial year.
+        </p>
+        <h4>Downloading everything for Claude</h4>
+        <p>
+          The ATO doesn't let cloud computers read its site, so Claude can't fetch the official documents itself. Financial
+          Vault can, from your computer:
+        </p>
+        <ol>
+          <li>
+            Go to <Link to="/documents?reference=only">Documents → Tax references</Link>, and open{" "}
+            <strong>Download every official document into a folder (for Claude)</strong>.
+          </li>
+          <li>
+            Press <strong>Download everything</strong>. It fetches every source in the reference list and every ATO
+            occupation guide (following the guides' index down to each one, with its "print whole section" PDF where there is
+            one). It can take 10 minutes or more; the page shows how it's going.
+          </li>
+          <li>
+            Press <strong>Save the ZIP for Claude</strong>, then upload that ZIP into the conversation with Claude. The same
+            files are in Documents → Financial Vault Data → Reference downloads, in a folder named by the date.
+          </li>
+        </ol>
+        <p>
+          Anything that couldn't be downloaded is listed with its link — open it, print it to PDF and upload it with the ZIP.
+          Nothing is added to your records, and only public pages are asked for.
         </p>
       </>
     ),

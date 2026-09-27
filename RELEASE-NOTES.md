@@ -3,6 +3,10 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.2.2 — 27 September 2026
+- Download every official document into a folder, for Claude: on Documents → Tax references, one button fetches every source in the reference list and every ATO occupation guide into a dated folder, with a ZIP to upload. It runs on your computer, which the ATO lets in.
+- Checks for new versions now ask for pages the way the Edge window does, as some government sites turn other requests away.
+
 ## 1.2.1 — 27 September 2026
 - Business use of a car no longer needs a logbook to keep going: enter the year's business share yourself on its schedule, and the claim and work deductions use it. The schedule notes that the ATO expects a logbook to back it, and What's missing lists a logbook as worth checking rather than required.
 

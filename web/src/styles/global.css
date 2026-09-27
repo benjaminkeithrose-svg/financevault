@@ -2470,3 +2470,10 @@ code.path {
 .calendar-year > .card {
   margin: 0;
 }
+
+/* A long list of sources that couldn't be downloaded scrolls rather than filling the page. */
+.reference-failed {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-left: 18px;
+}

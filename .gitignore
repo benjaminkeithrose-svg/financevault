@@ -13,6 +13,7 @@ server/storage/documents/*
 
 # OCR language data (~11MB), downloaded once on first use and cached here
 server/storage/tessdata/
+server/storage/Reference downloads/
 server/prisma/dev.db
 server/prisma/dev.db-journal
 *.db

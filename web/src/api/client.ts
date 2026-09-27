@@ -264,6 +264,20 @@ export interface BusinessUseSchedule {
   notes: string[];
 }
 
+export interface ReferenceDownloadStatus {
+  running: { startedAt: string; done: number; current: string; error?: string } | null;
+  last: null | {
+    folder: string;
+    zip: string;
+    savedAt: string;
+    files: number;
+    sources: number;
+    occupationPages: number;
+    occupationSections: number;
+    failed: Array<{ title: string; url: string; reason: string }>;
+  };
+}
+
 export interface MaintenanceRecord {
   id: string;
   assetId: string;
@@ -2171,6 +2185,9 @@ export const api = {
         { method: "POST" }
       ),
     figures: () => request<ReferenceFigures>("/reference-library/figures"),
+    downloadStatus: () => request<ReferenceDownloadStatus>("/reference-library/download"),
+    startDownload: () => request<ReferenceDownloadStatus>("/reference-library/download", { method: "POST" }),
+    downloadZipUrl: `${BASE}/reference-library/download/zip`,
   },
   advisers: {
     list: () => request<Adviser[]>("/advisers"),

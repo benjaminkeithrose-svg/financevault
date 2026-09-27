@@ -5,6 +5,7 @@ import { ItemCard } from "../components/ItemCard.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { IconClose, IconSearch } from "../components/icons.js";
+import { ReferenceDownload } from "../components/ReferenceDownload.js";
 
 const STATUSES = ["", "PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"];
 
@@ -250,6 +251,7 @@ function ReferenceLibraryCard({ onLoaded }: { onLoaded: () => void }) {
           </ul>
         </details>
       )}
+      <ReferenceDownload />
       <FiguresList />
     </div>
   );
