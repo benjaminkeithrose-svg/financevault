@@ -163,6 +163,10 @@ const SECTIONS: Section[] = [
           <li>A trust with two trustees appears under both of them — it's the same trust, not a copy.</li>
           <li>An item's figure is what it cost; its value is already part of the asset it sits under.</li>
           <li>Loans not secured on a particular asset are under <strong>Other debts</strong>; sold assets under <strong>Sold</strong>.</li>
+          <li>
+            A flag such as <strong>2 missing (1 required)</strong> means <Link to="/missing">What's missing</Link> has
+            insurance or paperwork still to add for it — tap the flag to see the list.
+          </li>
         </ul>
       </>
     ),
@@ -572,7 +576,7 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <p>
-          <Link to="/bulk-import">Import a folder</Link> is for loading years of paperwork at once. Choose a folder (or a set
+          <Link to="/bulk-import">Import a folder</Link> (a button at the top of Documents) is for loading years of paperwork at once. Choose a folder (or a set
           of files) and it uploads them a few at a time, showing progress. A file that can't be read fails on its own
           without stopping the rest.
         </p>
@@ -600,7 +604,7 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <p>
-          <Link to="/email-import">Import from Gmail</Link> collects attachments — bills, statements, contract notes — straight
+          <Link to="/email-import">Import from Gmail</Link> (a button at the top of Documents) collects attachments — bills, statements, contract notes — straight
           from Gmail. Mail is only ever read: nothing is sent, deleted, moved or marked as read.
         </p>
         <h4>Connecting</h4>
@@ -1049,6 +1053,42 @@ const SECTIONS: Section[] = [
           deductible only if the money goes to producing income. Keep investment and private draws in separate splits —
           once a loan mixes both, every repayment is shared between them.
         </p>
+        <h4>Drawing equity</h4>
+        <ol>
+          <li>
+            On the property's page, under <strong>Usable equity</strong>, press <strong>Draw equity</strong>.
+          </li>
+          <li>Enter how much, when, what it's for, and a few words ("Deposit on 12 Next St").</li>
+          <li>
+            Choose <strong>A new split</strong> (keeps purposes apart — usually best) or <strong>A redraw or increase on a
+            loan</strong>, and which loan.
+          </li>
+          <li>
+            Press <strong>Check it</strong>. It says what will happen and anything to watch for: more than the usable-equity
+            estimate, a loan that would become mixed-purpose, private use, or a split-loan arrangement the ATO looks at.
+          </li>
+          <li>
+            Press <strong>Draw it</strong> once the lender has approved it. The new split (or the redraw) is recorded with what
+            its money is for, and its page opens.
+          </li>
+        </ol>
+        <p>
+          It records the borrowing in Financial Vault only — it doesn't contact the lender. A Portfolio Plan's equity draw has
+          a <strong>Record it as drawn</strong> button that does the same, and then shows the loan it became.
+        </p>
+        <h4>Redraws and repayments</h4>
+        <p>
+          Repayments come off every use of a loan in proportion, so a loan's deductible share only changes when more is
+          borrowed. When you add a use for a redraw on a loan that's been partly repaid, enter the <strong>balance just
+          before</strong> it: the earlier uses are scaled down to that balance, then the redraw is added (TR 2000/2). Over a
+          year, the share is weighted by the balance and the days, the way interest builds up.
+        </p>
+        <p>
+          A loan's page warns when it's <strong>mixed purpose</strong>, and when an interest-only investment split sits beside a
+          private split being paid down — if the investment interest is being added to its balance so more goes to the
+          private loan, the ATO treats the extra interest as not deductible (TD 2012/1, after Hart's case). Worth checking
+          with your accountant either way.
+        </p>
         <h4>Why is this claimed?</h4>
         <p>
           The small book icon next to each use and each year's interest opens the reason for the claim, the rule behind it (a
@@ -1484,6 +1524,11 @@ const SECTIONS: Section[] = [
           Only what you tick goes in. The summaries (assets and liabilities, tax, income, loan interest) are spreadsheets
           built fresh from your records at that moment, and every pack includes an index listing each document in it. Tax
           references (ATO rulings and guides) are never included.
+        </p>
+        <p>
+          Each pack opens with <strong>00 Cover.html</strong>: the Financial Vault logo, whose pack it is, the financial year,
+          and a list of what's in it. It opens in any web browser. Anything printed from Financial Vault also carries the logo
+          and the date at the top.
         </p>
         <h4>Fact Find</h4>
         <p>

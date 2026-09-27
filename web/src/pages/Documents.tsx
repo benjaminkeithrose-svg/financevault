@@ -7,10 +7,12 @@ import { HelpLink } from "../components/HelpLink.js";
 import { IconClose, IconSearch } from "../components/icons.js";
 import { ReferenceDownload } from "../components/ReferenceDownload.js";
 import { ReferenceList } from "../components/ReferenceList.js";
+import { useFeatures } from "../features.js";
 
 const STATUSES = ["", "PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"];
 
 export function Documents() {
+  const features = useFeatures();
   const [params, setParams] = useSearchParams();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [q, setQ] = useState(params.get("q") || "");
@@ -35,11 +37,23 @@ export function Documents() {
           <h2>Documents <HelpLink topic="documents" /></h2>
           <p>Every document is a first-class record — link it wherever it's relevant, never duplicate it.</p>
         </div>
-        {!searching && (
-          <button className="btn secondary" onClick={() => setSearching(true)}>
-            <IconSearch /> Search documents
-          </button>
-        )}
+        <div className="toolbar" style={{ flexWrap: "wrap" }}>
+          {!searching && (
+            <button className="btn secondary" onClick={() => setSearching(true)}>
+              <IconSearch /> Search documents
+            </button>
+          )}
+          {features.on("bulk-import") && (
+            <Link className="btn secondary" to="/bulk-import">
+              Import a folder
+            </Link>
+          )}
+          {features.on("gmail") && (
+            <Link className="btn secondary" to="/email-import">
+              Import from Gmail
+            </Link>
+          )}
+        </div>
       </div>
 
       {searching && (

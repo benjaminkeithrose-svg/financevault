@@ -32,7 +32,7 @@ portfolioPlansRouter.get(
           include: {
             refinances: { orderBy: { yearNumber: "asc" } },
             commercialProperty: true,
-            equityDraws: { include: { sourceCommercialProperty: true }, orderBy: { yearNumber: "asc" } },
+            equityDraws: { include: { sourceCommercialProperty: true, liability: { select: { id: true, name: true } } }, orderBy: { yearNumber: "asc" } },
           },
           orderBy: { acquisitionYearNumber: "asc" },
         },

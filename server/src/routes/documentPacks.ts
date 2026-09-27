@@ -469,6 +469,48 @@ documentPacksRouter.get(
   })
 );
 
+/** What each generated report is called, in the order they appear in the pack. */
+const GENERATED_FILES = [
+  { key: "ASSETS_LIABILITIES", label: "Assets & liabilities statement (assets_and_liabilities_statement.csv)" },
+  { key: "TAX_SUMMARY", label: "Tax summary (tax_summary.csv)" },
+  { key: "INCOME_SUMMARY", label: "Income summary (income_summary.csv)" },
+  { key: "FACT_FIND", label: "Fact find (fact_find.csv)" },
+  { key: "INTEREST_SCHEDULE", label: "Loan interest schedule (loan_interest_schedule.csv)" },
+];
+
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+
+/** The pack's cover page: the Financial Vault mark, whose pack it is, and what's in it. Opens in any browser. */
+export function packCover(p: { entityName: string; fyLabel: string | null; documents: Array<{ name: string; type: string; date: string }>; reports: string[]; now?: Date }) {
+  const prepared = (p.now ?? new Date()).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric", timeZone: "Australia/Sydney" });
+  const mark =
+    '<svg width="56" height="56" viewBox="0 0 140 140" aria-label="Financial Vault"><rect width="140" height="140" fill="#1E1B4B"/>' +
+    '<circle cx="70" cy="56" r="26" fill="#7C3AED"/><path d="M56 66 L84 66 L94 116 L46 116 Z" fill="#7C3AED"/></svg>';
+  const docs = p.documents.length
+    ? `<table><thead><tr><th>Document</th><th>Type</th><th>Date</th></tr></thead><tbody>${p.documents
+        .map((d) => `<tr><td>${esc(d.name)}</td><td>${esc(d.type)}</td><td>${esc(d.date)}</td></tr>`)
+        .join("")}</tbody></table>`
+    : "<p>No documents.</p>";
+  return `<!doctype html>
+<html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document Pack — ${esc(p.entityName)}</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;max-width:760px;margin:32px auto;padding:0 16px;color:#1c2130;line-height:1.5}
+header{display:flex;align-items:center;gap:14px;border-bottom:2px solid #1E1B4B;padding-bottom:12px;margin-bottom:20px}
+header strong{font-size:22px}header span{display:block;color:#555;font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #ddd}
+th{font-size:12px;text-transform:uppercase;color:#555}.note{color:#555;font-size:13px}
+</style></head><body>
+<header>${mark}<div><strong>Document Pack — ${esc(p.entityName)}</strong><span>${p.fyLabel ? `Financial year ${esc(p.fyLabel)} · ` : ""}Prepared ${esc(prepared)} with Financial Vault</span></div></header>
+<h2>Documents (${p.documents.length})</h2>
+<p class="note">In the <em>documents</em> folder. The same list is in document_index.csv.</p>
+${docs}
+${p.reports.length ? `<h2>Reports</h2><ul>${p.reports.map((r) => `<li>${esc(r)}</li>`).join("")}</ul>` : ""}
+<p class="note">Prepared by the owner from their own records. Identity documents are only included when chosen.</p>
+</body></html>
+`;
+}
+
 documentPacksRouter.post(
   "/generate",
   asyncHandler(async (req, res) => {
@@ -526,6 +568,16 @@ documentPacksRouter.post(
       indexRows.push([bytes ? doc.originalFilename : `${doc.originalFilename} (file missing)`, doc.documentType ?? "", entity.name, doc.documentDate?.toISOString().slice(0, 10) ?? "", fy ?? "", doc.source]);
     }
     archive.append(toCsv(indexRows), { name: "document_index.csv" });
+    const fyLabel = financialYearId ? (await prisma.financialYear.findUnique({ where: { id: financialYearId } }))?.label ?? null : null;
+    archive.append(
+      packCover({
+        entityName: entity.name,
+        fyLabel,
+        documents: indexRows.slice(1).map((r) => ({ name: r[0], type: r[1], date: r[3] })),
+        reports: GENERATED_FILES.filter((g) => generated.includes(g.key)).map((g) => g.label),
+      }),
+      { name: "00 Cover.html" }
+    );
 
     if (generated.includes("ASSETS_LIABILITIES")) {
       archive.append(await assetsLiabilitiesCsv(entityId), { name: "assets_and_liabilities_statement.csv" });

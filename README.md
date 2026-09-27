@@ -430,6 +430,26 @@ isn't safe to sync live, only the documents folder is.
   put there before. What's missing expects a current logbook and the
   year's odometer readings for any vehicle with a logbook (kind `RECORD`).
 
+### Drawing equity, redraws and the quick wins (1.4.0)
+
+- `services/debtAllocation.ts`: `purposeSplit` applies TR 2000/2 — uses in
+  date order, and a use with `balanceBefore` (a redraw on a partly repaid
+  loan) first scales the earlier uses down to that balance in proportion.
+  `yearSplit` weights a year's deductible share by balance × days between
+  redraws; the interest schedule uses it and notes when it applied.
+- `services/equityDraw.ts`, `POST /api/debt-allocation/equity-draw`
+  (`confirm: false` previews, `true` draws): a new split under the base
+  loan's facility (named after it if it had none; lender, rate and owners
+  copied; the purpose recorded) or a redraw on a loan secured by the
+  property (`balanceBefore` recorded, balance increased). Warnings: over
+  usable equity, becoming mixed-purpose, private use, and `splitLoanFlags`
+  (an interest-only fully deductible split beside a private one being
+  repaid — TD 2012/1). `GET …/loans/:id` returns `flags`.
+- `PlanEquityDraw.liabilityId`/`drawnDate`: a plan draw recorded as drawn.
+- Asset tree rows show What's missing counts (matched by page address);
+  import buttons moved to Documents; `PrintHeader` puts the logo and date on
+  printouts; `packCover` adds `00 Cover.html` to every Document Pack.
+
 ### The official reference library (1.3.0)
 
 - `services/referenceDownload.ts`, Documents → Tax references → *Download

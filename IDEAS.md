@@ -50,6 +50,14 @@ splits, usable equity, Loan Interest report, Accountant Pack schedule).
 
 **Stage 3** — connect Portfolio Plan equity draws to real loans.
 
+**Status:** stages 2 and 3 built in 1.4.0 — Draw equity (new split or
+redraw, with a preview of warnings), redraws apportioned by TR 2000/2 with
+the balance before each redraw, a year's share weighted by balance and days,
+mixed-purpose and TD 2012/1 split-loan flags, and plan draws recorded as
+drawn. Not yet: loan statement CSV import (needs a sample statement from
+each lender), and the recoupment exception (TR 2000/2 paragraph 17 — sale
+proceeds repaid against one use).
+
 **Waiting on from the user:** TR 2000/2, TR 95/25, TD 2012/1 and the ATO
 "Interest expenses" page (as PDFs); current loan statements showing splits;
 settlement statements; details of the planned equity draw and lender's max
@@ -456,7 +464,7 @@ those features are built (batches 3 and 4).
 
 ## 13. Expected insurance and documents — what's missing, as a checklist
 
-**Status:** built in batch 5 (menu → What's missing, the box on each page, and the dashboard). Required items use the warning colour, not red (PREFERENCES.md keeps red for delete and errors). Not yet: flags in the asset tree.
+**Status:** built in batch 5 (menu → What's missing, the box on each page, and the dashboard). Required items use the warning colour, not red (PREFERENCES.md keeps red for delete and errors). Flags in the asset tree added in 1.4.0.
 
 **Why:** the app has places for insurance and documents but doesn't say what
 *should* be there. It should predict what's normal for each person and asset,
@@ -499,7 +507,7 @@ PDF, or take to the broker or accountant. Items tick off as they're added.
 
 ## 14. Shorter side menu — without adding clicks
 
-**Status:** A, B and C built in batch 5 (26 menu items, including the new What's missing). D not done.
+**Status:** A, B and C built in batch 5; D (import buttons on Documents) in 1.4.0.
 
 **Done already:** Asset tree and Visualization merged into one entry
 ("Asset tree & diagram") with tabs; the menu opens the last-used tab.
@@ -518,7 +526,7 @@ Suggested: A, B and C; D optional.
 
 ## 15. Rebranding pass
 
-**Status:** built in batch 5 — nine colours, dark mode, three logos to pick from, larger logo on the dashboard and lock screen, contrast checked in every colour, light and dark. Not yet: the logo on reports and Document Packs, launcher icons, a pick-your-own accent colour. Name kept as Financial Vault.
+**Status:** built in batch 5 — nine colours, dark mode, three logos to pick from, larger logo on the dashboard and lock screen, contrast checked in every colour, light and dark. The logo on printed pages and a Document Pack cover page added in 1.4.0. Not yet: launcher icons, a pick-your-own accent colour. Name kept as Financial Vault.
 
 **Why:** make the app look finished and its own — a stronger logo, more
 colour choice.

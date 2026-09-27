@@ -2512,3 +2512,28 @@ code.path {
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
+
+/* The logo and date at the top of anything printed. */
+.print-header {
+  display: none;
+}
+@media print {
+  .print-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #999;
+    font-size: 16px;
+  }
+  .print-header span {
+    margin-left: auto;
+    font-size: 12px;
+    color: #555;
+  }
+  .trail-bar,
+  .side-nav {
+    display: none !important;
+  }
+}

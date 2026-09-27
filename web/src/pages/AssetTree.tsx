@@ -1,5 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { createContext, useContext } from "react";
+import { useFeatures } from "../features.js";
 import { api, AssetTreeData, TreeNode } from "../api/client.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { StructureTabs } from "../components/StructureTabs.js";
@@ -45,7 +47,12 @@ function saveOpen(open: Set<string>) {
   }
 }
 
+/** What's missing for each page, by its address: shown as a flag on its row. */
+const MissingContext = createContext<Map<string, { open: number; required: number }>>(new Map());
+
 export function AssetTree() {
+  const features = useFeatures();
+  const [missing, setMissing] = useState<Map<string, { open: number; required: number }>>(new Map());
   const [data, setData] = useState<AssetTreeData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState<Set<string>>(() => readOpen() ?? new Set());
@@ -64,6 +71,22 @@ export function AssetTree() {
   useEffect(() => {
     if (data) saveOpen(open);
   }, [open, data]);
+
+  const expectedOn = features.on("expected");
+  useEffect(() => {
+    if (!expectedOn) return setMissing(new Map());
+    api.expected
+      .get({})
+      .then((r) => {
+        const m = new Map<string, { open: number; required: number }>();
+        for (const g of r.groups) {
+          const open = g.items.filter((i) => !i.met && !i.dismissed);
+          if (open.length) m.set(g.route, { open: open.length, required: open.filter((i) => i.level === "RED").length });
+        }
+        setMissing(m);
+      })
+      .catch(() => setMissing(new Map()));
+  }, [expectedOn]);
 
   if (error) return <LoadFailed message={error} backTo="/" backLabel="Back to the dashboard" />;
   if (!data) return <p className="empty-state">Loading the tree…</p>;
@@ -110,6 +133,7 @@ export function AssetTree() {
   }
 
   return (
+    <MissingContext.Provider value={missing}>
     <div>
       <StructureTabs current="/tree" />
       <div className="page-header">
@@ -238,6 +262,7 @@ export function AssetTree() {
         asset's.
       </p>
     </div>
+    </MissingContext.Provider>
   );
 }
 
@@ -320,6 +345,7 @@ function Row({
   emptyNote?: string;
   children?: ReactNode;
 }) {
+  const missing = useContext(MissingContext).get(route ?? "");
   return (
     <li className={`tree-node level-${Math.min(level, 4)}`}>
       <div className="tree-row">
@@ -339,7 +365,7 @@ function Row({
           <div className="tree-label">
             {route ? <Link to={route}>{label}</Link> : <span>{label}</span>}
           </div>
-          {(sublabel || (badges && badges.length > 0) || (!hasChildren && emptyNote)) && (
+          {(sublabel || (badges && badges.length > 0) || (!hasChildren && emptyNote) || missing) && (
             <div className="tree-sub">
               {sublabel}
               {!hasChildren && emptyNote ? <span>{sublabel ? " · " : ""}{emptyNote}</span> : null}
@@ -348,6 +374,11 @@ function Row({
                   {b}
                 </span>
               ))}
+              {missing && (
+                <Link to="/missing" className={missing.required ? "tree-badge warn" : "tree-badge"}>
+                  {missing.open} missing{missing.required ? ` (${missing.required} required)` : ""}
+                </Link>
+              )}
             </div>
           )}
         </div>

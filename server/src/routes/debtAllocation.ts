@@ -4,6 +4,7 @@ import { prisma } from "../db.js";
 import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
 import { interestSchedule, LOAN_USES, purposeSplit, usableEquity } from "../services/debtAllocation.js";
+import { loanFlags, makeDraw, previewDraw } from "../services/equityDraw.js";
 
 /**
  * Debt allocation, stage 1: what each loan's money was used for, the
@@ -41,7 +42,14 @@ debtAllocationRouter.get(
       where: { targetId: { in: [...purposes.map((p) => p.id), ...interestYears.map((y) => y.id)] } },
       select: { targetId: true },
     });
-    res.json({ purposes, interestYears, split: purposeSplit(purposes), uses: LOAN_USES, reasonsFor: reasons.map((r) => r.targetId) });
+    res.json({
+      purposes,
+      interestYears,
+      split: purposeSplit(purposes),
+      uses: LOAN_USES,
+      reasonsFor: reasons.map((r) => r.targetId),
+      flags: await loanFlags(req.params.id),
+    });
   })
 );
 
@@ -52,6 +60,7 @@ const purposeInput = z.object({
   deductible: z.boolean(),
   assetId: z.string().nullable().optional(),
   description: z.string().min(1),
+  balanceBefore: z.number().min(0).nullable().optional(),
   documentId: z.string().nullable().optional(),
   notes: z.string().nullable().optional(),
 });
@@ -160,5 +169,35 @@ debtAllocationRouter.get(
     });
     const owing = loans.reduce((s, l) => s + (l.currentBalance ?? 0), 0);
     res.json({ loans, equity: usableEquity(asset.currentValue, asset.lenderMaxLvr, owing) });
+  })
+);
+
+// Drawing equity from a property: preview first (what will happen, what to
+// watch for), then confirm. See services/equityDraw.ts.
+const drawInput = z.object({
+  assetId: z.string(),
+  amount: z.number().positive(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}/),
+  use: z.enum(LOAN_USES),
+  deductible: z.boolean(),
+  purposeAssetId: z.string().nullable().optional(),
+  description: z.string().trim().min(1, "Say what the money is for"),
+  mode: z.enum(["NEW_SPLIT", "EXISTING_LOAN"]),
+  loanId: z.string().nullable().optional(),
+  name: z.string().nullable().optional(),
+  planEquityDrawId: z.string().nullable().optional(),
+  confirm: z.boolean().optional(),
+});
+
+debtAllocationRouter.post(
+  "/equity-draw",
+  asyncHandler(async (req, res) => {
+    const { confirm, date, ...rest } = drawInput.parse(req.body);
+    const input = { ...rest, date: new Date(`${date.slice(0, 10)}T00:00:00Z`) };
+    if (!confirm) {
+      res.json(await previewDraw(input));
+      return;
+    }
+    res.status(201).json(await makeDraw(input));
   })
 );

@@ -81,6 +81,8 @@ function getTitle(pathname: string): string {
 function getParent(pathname: string): string | null {
   if (pathname === "/") return null;
   const segments = pathname.split("/").filter(Boolean);
+  // Importing is reached from the Documents page.
+  if (segments.length === 1 && ["bulk-import", "email-import"].includes(segments[0])) return "/documents";
   if (segments.length <= 1) return "/";
   if (segments[0] === "commercial-properties") return "/properties";
   // A vehicle's business use schedule belongs to the vehicle; a reminder to the calendar.

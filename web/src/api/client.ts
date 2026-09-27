@@ -379,6 +379,8 @@ export interface LoanPurpose {
   assetId: string | null;
   asset?: { id: string; name: string } | null;
   description: string;
+  /** A redraw or increase: what was owed just before it. */
+  balanceBefore?: number | null;
   documentId: string | null;
   document?: { id: string; originalFilename: string } | null;
   notes: string | null;
@@ -409,6 +411,18 @@ export interface LoanAllocation {
   uses: LoanUse[];
   /** Claims (uses and interest years) that already have a reason recorded. */
   reasonsFor: string[];
+  /** Mixed purpose, or a split-loan arrangement worth a word with the accountant. */
+  flags: string[];
+}
+
+export interface EquityDrawPreview {
+  mode: "NEW_SPLIT" | "EXISTING_LOAN";
+  loanName: string;
+  facility: string | null;
+  resultShare: number | null;
+  usableEquity: number | null;
+  securedLoans: Array<{ id: string; name: string; currentBalance: number | null; facility: string | null }>;
+  warnings: string[];
 }
 
 export interface InterestScheduleRow {
@@ -1927,6 +1941,9 @@ export interface PlanEquityDraw {
   interestRate?: number | null;
   sourceCommercialPropertyId?: string | null;
   sourceCommercialProperty?: CommercialProperty | null;
+  /** Once drawn: the real loan it became, and when. */
+  liability?: { id: string; name: string } | null;
+  drawnDate?: string | null;
   notes?: string | null;
   createdAt: string;
 }
@@ -2109,6 +2126,10 @@ export const api = {
     removeInterestYear: (id: string) => request<void>(`/debt-allocation/interest-years/${id}`, { method: "DELETE" }),
     schedule: (fy: string) => request<{ fy: string; rows: InterestScheduleRow[]; years: string[] }>(`/debt-allocation/schedule?fy=${fy}`),
     usableEquity: (assetId: string) => request<UsableEquity>(`/debt-allocation/usable-equity/${assetId}`),
+    previewDraw: (data: Record<string, unknown>) =>
+      request<EquityDrawPreview>("/debt-allocation/equity-draw", { method: "POST", body: JSON.stringify({ ...data, confirm: false }) }),
+    draw: (data: Record<string, unknown>) =>
+      request<{ loanId: string; warnings: string[] }>("/debt-allocation/equity-draw", { method: "POST", body: JSON.stringify({ ...data, confirm: true }) }),
   },
   claimNotes: {
     get: (targetType: ClaimTargetType, targetId: string) =>

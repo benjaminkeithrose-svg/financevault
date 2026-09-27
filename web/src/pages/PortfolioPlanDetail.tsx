@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { api, CommercialProperty, PlanProperty, PlanPropertyProjection, PortfolioPlan, PortfolioPlanProjection } from "../api/client.js";
+import { api, CommercialProperty, PlanProperty, PlanPropertyProjection, PortfolioPlan, PortfolioPlanProjection, Property } from "../api/client.js";
+import { DrawEquityForm } from "../components/DrawEquityForm.js";
 import { formatCurrency, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { IconBin } from "../components/icons.js";
@@ -47,6 +48,8 @@ export function PortfolioPlanDetail() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [projection, setProjection] = useState<PortfolioPlanProjection | null>(null);
   const [commercialProperties, setCommercialProperties] = useState<CommercialProperty[]>([]);
+  const [residential, setResidential] = useState<Property[]>([]);
+  const [recordingDraw, setRecordingDraw] = useState<string | null>(null);
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
@@ -78,6 +81,7 @@ export function PortfolioPlanDetail() {
   useEffect(load, [id]);
   useEffect(() => {
     api.commercialProperties.list().then(setCommercialProperties);
+    api.properties.list().then(setResidential).catch(() => setResidential([]));
   }, []);
 
   if (!plan) {
@@ -400,6 +404,15 @@ export function PortfolioPlanDetail() {
                                 {formatCurrency(d.amount * (d.interestRate ?? plan.interestRate))}/yr cost
                               </div>
                             </div>
+                            {d.liability ? (
+                              <span className="cap-explain" style={{ margin: 0 }}>
+                                Drawn — <Link to={`/liabilities/${d.liability.id}`}>{d.liability.name}</Link>
+                              </span>
+                            ) : (
+                              <button className="btn secondary" onClick={() => setRecordingDraw(recordingDraw === d.id ? null : d.id)}>
+                                Record it as drawn
+                              </button>
+                            )}
                             <button className="btn secondary" onClick={() => removeEquityDraw(d.id)}>
                               Remove
                             </button>
@@ -407,6 +420,26 @@ export function PortfolioPlanDetail() {
                         ))}
                       </ul>
                     )}
+                    {(pp.equityDraws || [])
+                      .filter((d) => d.id === recordingDraw)
+                      .map((d) => {
+                        // The property it's drawn from: the plan's source first, then every property owned.
+                        const all = [
+                          ...commercialProperties.filter((cp) => !cp.asset?.disposalDate).map((cp) => ({ assetId: cp.assetId, name: cp.name, id: cp.id })),
+                          ...residential.filter((r) => !r.asset?.disposalDate).map((r) => ({ assetId: r.assetId, name: r.asset?.name ?? r.address, id: r.id })),
+                        ];
+                        const ordered = [...all.filter((x) => x.id === d.sourceCommercialPropertyId), ...all.filter((x) => x.id !== d.sourceCommercialPropertyId)];
+                        return (
+                          <DrawEquityForm
+                            key={d.id}
+                            properties={ordered}
+                            planEquityDrawId={d.id}
+                            defaults={{ amount: d.amount, description: `Equity for ${pp.name}`, use: "PROPERTY" }}
+                            onDone={(loanId) => navigate(`/liabilities/${loanId}`)}
+                            onCancel={() => setRecordingDraw(null)}
+                          />
+                        );
+                      })}
                     {drawFormFor === pp.id ? (
                       <div style={{ marginTop: 8 }}>
                         <label>Source property (optional — leave blank for an unspecified source)</label>

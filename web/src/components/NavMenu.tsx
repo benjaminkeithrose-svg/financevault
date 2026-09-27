@@ -30,9 +30,8 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
     label: "Documents",
     items: [
       { to: "/inbox", label: "To review" },
-      { to: "/documents", label: "Documents" },
-      { to: "/bulk-import", label: "Import a folder", feature: "bulk-import" },
-      { to: "/email-import", label: "Import from Gmail", feature: "gmail" },
+      // Importing a folder or from Gmail are buttons on the Documents page.
+      { to: "/documents", label: "Documents", also: ["/bulk-import", "/email-import"] },
     ],
   },
   // Professional advisers are a section at the foot of People & entities.

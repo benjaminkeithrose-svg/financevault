@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { api, UsableEquity } from "../api/client.js";
 import { formatCurrency } from "../utils.js";
+import { useNavigate } from "react-router-dom";
+import { DrawEquityForm } from "./DrawEquityForm.js";
 import { HelpLink } from "./HelpLink.js";
 
 /**
@@ -13,6 +15,8 @@ export function UsableEquityCard({ assetId }: { assetId: string }) {
   const [data, setData] = useState<UsableEquity | null>(null);
   const [editing, setEditing] = useState(false);
   const [maxLvr, setMaxLvr] = useState("");
+  const [drawing, setDrawing] = useState(false);
+  const navigate = useNavigate();
 
   const load = () => api.debtAllocation.usableEquity(assetId).then(setData).catch(() => setData(null));
   useEffect(() => {
@@ -30,9 +34,23 @@ export function UsableEquityCard({ assetId }: { assetId: string }) {
   const e = data.equity;
   return (
     <div className="card">
-      <h3 style={{ marginTop: 0 }}>
-        Usable equity <HelpLink topic="loan-purposes" />
-      </h3>
+      <div className="toolbar" style={{ justifyContent: "space-between" }}>
+        <h3 style={{ margin: 0 }}>
+          Usable equity <HelpLink topic="loan-purposes" />
+        </h3>
+        {!drawing && (
+          <button className="btn secondary" onClick={() => setDrawing(true)}>
+            Draw equity
+          </button>
+        )}
+      </div>
+      {drawing && (
+        <DrawEquityForm
+          assetId={assetId}
+          onDone={(loanId) => navigate(`/liabilities/${loanId}`)}
+          onCancel={() => setDrawing(false)}
+        />
+      )}
       <p style={{ fontSize: 22, margin: "4px 0" }}>
         <strong>{formatCurrency(e.usable)}</strong>
       </p>

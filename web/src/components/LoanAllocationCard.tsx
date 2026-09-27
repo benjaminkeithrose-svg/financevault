@@ -12,17 +12,17 @@ import { WhyClaimed } from "./WhyClaimed.js";
  * counts, not what the loan is secured against.
  */
 
-const USE_LABEL: Record<LoanUse, string> = {
+export const USE_LABEL: Record<LoanUse, string> = {
   PROPERTY: "Rental or investment property",
   SHARES: "Shares or other investments",
   BUSINESS: "Business",
   PRIVATE: "Private (home, car, holidays…)",
   OTHER: "Other",
 };
-const DEDUCTIBLE_BY_DEFAULT: Record<LoanUse, boolean> = { PROPERTY: true, SHARES: true, BUSINESS: true, PRIVATE: false, OTHER: false };
+export const DEDUCTIBLE_BY_DEFAULT: Record<LoanUse, boolean> = { PROPERTY: true, SHARES: true, BUSINESS: true, PRIVATE: false, OTHER: false };
 
 const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
-const emptyPurpose = { date: "", amount: "", use: "PROPERTY" as LoanUse, deductible: true, assetId: "", description: "", documentId: "" };
+const emptyPurpose = { date: "", amount: "", use: "PROPERTY" as LoanUse, deductible: true, assetId: "", description: "", documentId: "", balanceBefore: "" };
 
 export function LoanAllocationCard({ liabilityId }: { liabilityId: string }) {
   const [data, setData] = useState<LoanAllocation | null>(null);
@@ -60,6 +60,7 @@ export function LoanAllocationCard({ liabilityId }: { liabilityId: string }) {
         assetId: form.assetId || null,
         description: form.description.trim(),
         documentId: form.documentId || null,
+        balanceBefore: form.balanceBefore === "" ? null : Number(form.balanceBefore),
       });
       setForm(emptyPurpose);
       setAdding(false);
@@ -120,6 +121,11 @@ export function LoanAllocationCard({ liabilityId }: { liabilityId: string }) {
           </span>
         </div>
       )}
+      {data.flags.map((f) => (
+        <div key={f} className="message-box warning">
+          {f}
+        </div>
+      ))}
 
       {data.purposes.length === 0 ? (
         <p className="empty-state">No uses recorded yet.</p>
@@ -138,6 +144,7 @@ export function LoanAllocationCard({ liabilityId }: { liabilityId: string }) {
                 <div className="cap-explain">
                   {USE_LABEL[p.use]} · {p.deductible ? "interest deductible" : "not deductible"}
                   {p.date ? ` · ${formatDate(p.date)}` : ""}
+                  {p.balanceBefore != null ? ` · redraw, balance before ${formatCurrency(p.balanceBefore)}` : ""}
                   {p.document ? (
                     <>
                       {" "}
@@ -208,6 +215,18 @@ export function LoanAllocationCard({ liabilityId }: { liabilityId: string }) {
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
+          <label htmlFor="purpose-balance-before">Balance just before (only for a redraw or increase on a loan already partly repaid)</label>
+          <input
+            id="purpose-balance-before"
+            type="number"
+            value={form.balanceBefore}
+            onChange={(e) => setForm({ ...form, balanceBefore: e.target.value })}
+            placeholder="Leave empty for the original borrowing"
+          />
+          <p className="cap-explain" style={{ marginTop: 4 }}>
+            Repayments come off every earlier use in proportion, so the uses before are scaled down to this balance before the
+            new money is added (TR 2000/2).
+          </p>
           <label>Evidence</label>
           <select value={form.documentId} onChange={(e) => setForm({ ...form, documentId: e.target.value })}>
             {docOptions}

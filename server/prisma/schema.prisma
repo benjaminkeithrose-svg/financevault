@@ -575,6 +575,7 @@ model Liability {
   holdingTrust               Entity?              @relation("HoldingTrust", fields: [holdingTrustEntityId], references: [id])
   purposes                   LoanPurpose[]
   interestYears              LoanInterestYear[]
+  planDraws                  PlanEquityDraw[]
 
   @@index([entityId])
   @@index([securityAssetId])
@@ -949,6 +950,11 @@ model PlanEquityDraw {
 
   sourceCommercialPropertyId String?
   sourceCommercialProperty   CommercialProperty? @relation(fields: [sourceCommercialPropertyId], references: [id])
+
+  // Once it's actually drawn: the real loan (split) it became, and when.
+  liabilityId String?
+  liability   Liability? @relation(fields: [liabilityId], references: [id], onDelete: SetNull)
+  drawnDate   DateTime?
 
   notes     String?
   createdAt DateTime @default(now())
@@ -1725,6 +1731,10 @@ model LoanPurpose {
   assetId     String? // what it bought or paid for, where recorded
   asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: SetNull)
   description String
+  // A redraw or increase on a loan already partly repaid: the balance just
+  // before it. Earlier uses are scaled to it in proportion (TR 2000/2
+  // paragraph 16) before this one is added.
+  balanceBefore Float?
   documentId  String? // evidence: settlement statement, loan statement…
   document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
   notes       String?
