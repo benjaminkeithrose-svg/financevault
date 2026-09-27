@@ -894,6 +894,11 @@ const SECTIONS: Section[] = [
           The business share is business kilometres ÷ total kilometres. A logbook is good for the year it's kept and the
           next four; What's missing flags the year it runs out.
         </p>
+        <p>
+          <strong>No logbook this year?</strong> You're not stuck: open the year's schedule and enter{" "}
+          <strong>Business use this year (%)</strong> yourself. The schedule and the work deductions carry on with that
+          figure, and just note that the ATO expects a logbook to back it — worth a word with your accountant.
+        </p>
         <h4>Each year's schedule</h4>
         <ol>
           <li>Press the year's <strong>schedule</strong> button on the vehicle's page.</li>

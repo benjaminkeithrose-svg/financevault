@@ -101,7 +101,7 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
         entity: { select: { id: true, name: true, entityType: true } },
         ownerships: true,
         logbooks: { select: { id: true, startDate: true }, orderBy: { startDate: "desc" } },
-        vehicleYears: { where: { fyLabel: fy }, select: { openingOdometer: true, closingOdometer: true } },
+        vehicleYears: { where: { fyLabel: fy }, select: { openingOdometer: true, closingOdometer: true, businessPercent: true } },
       },
     }),
     prisma.person.findMany({ orderBy: { name: "asc" } }),
@@ -341,16 +341,19 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
       if (slip) items.push(slip);
       // Used for work or business (it has a logbook): a logbook that covers
       // the year, and the year's odometer readings.
-      if (a.logbooks.length > 0) {
+      if (a.logbooks.length > 0 || a.vehicleYears[0]?.businessPercent != null) {
         const fyStart = Number(fy.slice(0, 4));
         const current = a.logbooks.find((l) => {
           const kept = Number(financialYearLabelForDate(l.startDate).slice(0, 4));
           return kept <= fyStart && fyStart - kept < 5;
         });
         const schedule = { label: "Business use schedule", route: `/assets/${a.id}/business-use/${fy}` };
+        // A business share entered for the year keeps things moving without a
+        // logbook, so a missing one is then only worth checking.
+        const ownShare = a.vehicleYears[0]?.businessPercent != null;
         items.push(
           item(
-            { key: `rec:logbook:${target}:${fy}`, kind: "RECORD", label: "A logbook that covers the year", level: "RED", why: "A logbook is good for the year it's kept and the four after. Without a current one, the business share of the car's costs can't be claimed.", fyLabel: fy, addAs: "LOGBOOK" },
+            { key: `rec:logbook:${target}:${fy}`, kind: "RECORD", label: "A logbook that covers the year", level: ownShare ? "AMBER" : "RED", why: ownShare ? "You've entered this year's business share yourself. A logbook (good for the year it's kept and the four after) is what the ATO expects to back it." : "A logbook is good for the year it's kept and the four after. Without a current one — or a business share entered for the year — the business share of the car's costs isn't known.", fyLabel: fy, addAs: "LOGBOOK" },
             current ? schedule : null
           )
         );

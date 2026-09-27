@@ -3,6 +3,9 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.2.1 — 27 September 2026
+- Business use of a car no longer needs a logbook to keep going: enter the year's business share yourself on its schedule, and the claim and work deductions use it. The schedule notes that the ATO expects a logbook to back it, and What's missing lists a logbook as worth checking rather than required.
+
 ## 1.2.0 — 27 September 2026
 - A Calendar of its own (in the menu, under Dashboard), apart from your work calendar: To do, Day, Week, Month and Year views of renewals, rego, services, leases, loans, SMSF dates and your own reminders.
 - Every date is a task: it stays — overdue, if its date passes — until you tick it off. Ticking off an insurance renewal, rego or service can move its date on a year at the same time.

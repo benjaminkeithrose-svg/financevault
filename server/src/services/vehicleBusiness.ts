@@ -174,11 +174,19 @@ export async function businessUseSchedule(assetId: string, fy: string) {
   const warnings: string[] = [];
   const notes: string[] = [];
   if (treatment !== "SUPER_FUND") {
-    if (!logbook) {
+    if (!logbook && year?.businessPercent != null) {
+      // No logbook this year, but a business share entered: use it and keep
+      // going — just say what the ATO expects, so it's a known choice.
+      notes.push(
+        treatment === "LOGBOOK"
+          ? `No logbook covers this year, so the ${year.businessPercent.toFixed(1)}% you entered is used. The ATO expects a logbook to back this method — without one, the claim is normally limited to 5,000 km at the cents-per-km rate. Worth a word with your accountant.`
+          : `No logbook covers this year, so the ${year.businessPercent.toFixed(1)}% you entered is used. Without a logbook, fringe benefits tax on private use is normally worked out by the statutory formula (20% of the car's cost) — worth a word with your accountant.`
+      );
+    } else if (!logbook) {
       warnings.push(
         treatment === "LOGBOOK"
-          ? "No logbook covers this year. Keep one for 12 continuous weeks that are typical of the year — without it, the most that can be claimed is 5,000 km at the cents-per-km rate."
-          : "No logbook covers this year, so fringe benefits tax on private use falls back to the statutory formula (20% of the car's cost)."
+          ? "No logbook covers this year. Enter the business share for the year below, or add a logbook on the vehicle's page (12 continuous weeks that are typical of the year)."
+          : "No logbook covers this year. Enter the business share for the year below, or add a logbook on the vehicle's page — without one, fringe benefits tax on private use falls back to the statutory formula (20% of the car's cost)."
       );
     } else {
       const days = Math.round((logbook.endDate.getTime() - logbook.startDate.getTime()) / DAY) + 1;
@@ -187,7 +195,7 @@ export async function businessUseSchedule(assetId: string, fy: string) {
       if (fyStartYear(fy) === lastFy) notes.push("This is the last year this logbook can be used. Keep a new one next year.");
     }
     if (year?.openingOdometer == null || year?.closingOdometer == null) {
-      warnings.push("Record the odometer at the start and end of the year — it's needed every year a logbook is relied on.");
+      notes.push("Worth recording the odometer at the start and end of the year — it's expected every year a logbook's business share is used.");
     }
     if (year?.businessPercent != null && logbookPercent != null && Math.abs(year.businessPercent - logbookPercent) >= 0.5) {
       notes.push(

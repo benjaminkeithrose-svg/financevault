@@ -111,30 +111,30 @@ export function BusinessUseCard({ assetId }: { assetId: string }) {
           </p>
           <div className="grid grid-2">
             <div>
-              <label>First day</label>
-              <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
+              <label htmlFor="lb-start">First day</label>
+              <input id="lb-start" type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
             </div>
             <div>
-              <label>Last day</label>
-              <input type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
+              <label htmlFor="lb-end">Last day</label>
+              <input id="lb-end" type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
             </div>
             <div>
-              <label>Odometer at the start</label>
-              <input type="number" inputMode="numeric" value={form.startOdometer} onChange={(e) => setForm({ ...form, startOdometer: e.target.value })} />
+              <label htmlFor="lb-odo-start">Odometer at the start</label>
+              <input id="lb-odo-start" type="number" inputMode="numeric" value={form.startOdometer} onChange={(e) => setForm({ ...form, startOdometer: e.target.value })} />
             </div>
             <div>
-              <label>Odometer at the end</label>
-              <input type="number" inputMode="numeric" value={form.endOdometer} onChange={(e) => setForm({ ...form, endOdometer: e.target.value })} />
+              <label htmlFor="lb-odo-end">Odometer at the end</label>
+              <input id="lb-odo-end" type="number" inputMode="numeric" value={form.endOdometer} onChange={(e) => setForm({ ...form, endOdometer: e.target.value })} />
             </div>
             {!(form.startOdometer && form.endOdometer) && (
               <div>
-                <label>Total kilometres (if no odometer readings)</label>
-                <input type="number" inputMode="numeric" value={form.totalKm} onChange={(e) => setForm({ ...form, totalKm: e.target.value })} />
+                <label htmlFor="lb-total">Total kilometres (if no odometer readings)</label>
+                <input id="lb-total" type="number" inputMode="numeric" value={form.totalKm} onChange={(e) => setForm({ ...form, totalKm: e.target.value })} />
               </div>
             )}
             <div>
-              <label>Business kilometres</label>
-              <input type="number" inputMode="numeric" value={form.businessKm} onChange={(e) => setForm({ ...form, businessKm: e.target.value })} />
+              <label htmlFor="lb-business">Business kilometres</label>
+              <input id="lb-business" type="number" inputMode="numeric" value={form.businessKm} onChange={(e) => setForm({ ...form, businessKm: e.target.value })} />
             </div>
           </div>
           {share !== null && Number.isFinite(share) && (
@@ -142,10 +142,10 @@ export function BusinessUseCard({ assetId }: { assetId: string }) {
               Business use: <strong>{pct(share)}</strong> of {total?.toLocaleString("en-AU")} km.
             </p>
           )}
-          <label>The logbook (a scan or photo, optional)</label>
-          <input ref={fileRef} type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-          <label>Notes</label>
-          <input value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Kept in the glovebox book" />
+          <label htmlFor="lb-file">The logbook (a scan or photo, optional)</label>
+          <input id="lb-file" ref={fileRef} type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+          <label htmlFor="lb-notes">Notes</label>
+          <input id="lb-notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Kept in the glovebox book" />
           {error && <div className="message-box warning">{error}</div>}
           <div className="toolbar" style={{ marginTop: 8 }}>
             <button className="btn" disabled={saving} onClick={add}>
@@ -156,7 +156,12 @@ export function BusinessUseCard({ assetId }: { assetId: string }) {
       )}
 
       {superFund ? null : logbooks.length === 0 ? (
-        !showForm && <p className="empty-state">No logbook recorded. Used for work or a business? Add its logbook here.</p>
+        !showForm && (
+          <p className="empty-state">
+            No logbook recorded. Used for work or a business? Add its logbook here — or open a year's schedule and enter the
+            business share yourself.
+          </p>
+        )
       ) : (
         <ul className="plain-list" style={{ marginTop: 8 }}>
           {logbooks.map((l) => (
@@ -183,7 +188,7 @@ export function BusinessUseCard({ assetId }: { assetId: string }) {
         </ul>
       )}
 
-      {!superFund && logbooks.length > 0 && (
+      {!superFund && (
         <div className="toolbar" style={{ marginTop: 8, flexWrap: "wrap" }}>
           {years.map((fy) => (
             <Link key={fy} className="btn secondary" to={`/assets/${assetId}/business-use/${fy}`}>

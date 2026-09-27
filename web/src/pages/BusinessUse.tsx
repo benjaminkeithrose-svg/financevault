@@ -91,8 +91,9 @@ export function BusinessUse() {
   if (!s) return <div className="empty-state">{error ?? "Loading…"}</div>;
   const field = (k: string, label: string, hint?: string) => (
     <div key={k}>
-      <label>{label}</label>
+      <label htmlFor={`bu-${k}`}>{label}</label>
       <input
+        id={`bu-${k}`}
         type="number"
         inputMode="decimal"
         value={form[k] ?? ""}
@@ -188,7 +189,7 @@ export function BusinessUse() {
                   <td>Business use</td>
                   <td>
                     <strong>{pct(s.businessPercent)}</strong>
-                    {s.year?.businessPercent != null ? " (entered for this year)" : s.logbook ? " (from the logbook)" : ""}
+                    {s.year?.businessPercent != null ? " (entered for this year)" : s.logbook ? " (from the logbook)" : " — enter it under This year's figures"}
                   </td>
                 </tr>
               </tbody>
@@ -276,14 +277,18 @@ export function BusinessUse() {
             <h3 style={{ marginTop: 0 }}>This year's figures</h3>
             <p className="cap-explain">From the receipts, statements and the loan's interest statement. Add those under Documents on the vehicle's page.</p>
             <div className="grid grid-2">
+              {field(
+                "businessPercent",
+                s.logbook ? "Business use this year, if not the logbook's (%)" : "Business use this year (%)",
+                s.logbook?.percent != null ? s.logbook.percent.toFixed(1) : "e.g. 60"
+              )}
               {field("openingOdometer", "Odometer at 1 July (or when bought)")}
               {field("closingOdometer", "Odometer at 30 June (or when sold)")}
               {FIELDS.map((f) => field(f.key, f.label))}
               {field("declineInValue", "Decline in value — your accountant's figure", s.workedDecline ? `Worked out: ${s.workedDecline.amount}` : "Enter the purchase price and date on the vehicle")}
-              {field("businessPercent", "Business use this year, if not the logbook's (%)", s.logbook?.percent != null ? s.logbook.percent.toFixed(1) : "")}
             </div>
-            <label>Notes</label>
-            <input value={form.notes ?? ""} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+            <label htmlFor="bu-notes">Notes</label>
+            <input id="bu-notes" value={form.notes ?? ""} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
             {error && <div className="message-box warning">{error}</div>}
             <div className="toolbar" style={{ marginTop: 8 }}>
               <button className="btn" disabled={saving} onClick={save}>

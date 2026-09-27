@@ -123,9 +123,30 @@ describe("through the app", () => {
     const s = (await agent.get(`/api/vehicle-business/${car.id}/schedule?fy=2025-26`)).body;
     expect(s.logbook.percent).toBe(25);
     expect(s.warnings.join(" ")).toMatch(/31 days/);
-    expect(s.warnings.join(" ")).toMatch(/odometer/);
+    expect(s.notes.join(" ")).toMatch(/odometer/);
     const bad = await agent.post(`/api/vehicle-business/${car.id}/logbooks`).send({ startDate: "2025-08-01", endDate: "2025-10-31", totalKm: 100, businessKm: 500 });
     expect(bad.status).toBe(400);
+  });
+
+  it("keeps going without a logbook when the year's business share is entered", async () => {
+    const created = await send("post", "/people", { name: "No Book Nigel" });
+    const person = (await agent.get(`/api/people/${created.id}`)).body;
+    const car = await send("post", "/assets", { name: "Nigel's Ute", assetType: "VEHICLE", vehicleType: "CAR", entityId: person.entityId });
+    let s = (await agent.get(`/api/vehicle-business/${car.id}/schedule?fy=2025-26`)).body;
+    expect(s.logbook).toBeNull();
+    expect(s.warnings.join(" ")).toMatch(/Enter the business share/);
+
+    s = await send("put", `/vehicle-business/${car.id}/years/2025-26`, { businessPercent: 60, fuel: 5_000 });
+    expect(s.businessPercent).toBe(60);
+    expect(s.claim).toBe(3_000);
+    expect(s.warnings).toEqual([]);
+    expect(s.notes.join(" ")).toMatch(/60.0% you entered is used/);
+    const d = await send("post", `/vehicle-business/${car.id}/schedule/2025-26/work-deduction`, {}, 201);
+    expect(d.amount).toBe(3_000);
+
+    // What's missing still mentions a logbook, but only as worth checking.
+    const items = (await agent.get(`/api/expected?fy=2025-26&target=${encodeURIComponent(`asset:${car.id}`)}`)).body.groups[0].items as Array<{ addAs: string; level: string; met: boolean }>;
+    expect(items.find((i) => i.addAs === "LOGBOOK")).toMatchObject({ level: "AMBER", met: false });
   });
 
   it("treats a company's car as actual costs with fringe benefits tax on private use", async () => {
