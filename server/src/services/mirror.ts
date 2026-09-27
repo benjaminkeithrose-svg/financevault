@@ -130,6 +130,9 @@ export async function planCopies(): Promise<Placement[]> {
   const personById = new Map(people.map((p) => [p.id, p]));
   const loanById = new Map(loans.map((l) => [l.id, l]));
   const identityIds = new Set(identity.map((i) => i.id));
+  const reminderIdsWithTarget = new Set(
+    (await prisma.reminder.findMany({ where: { targetId: { not: null } }, select: { id: true } })).map((r) => r.id)
+  );
 
   /** A person's own things are under their name; a trust's or company's under its name. */
   const owner = (entityId: string) => safeName(personByEntity.get(entityId)?.name ?? entityName.get(entityId) ?? "Unknown owner");
@@ -201,6 +204,10 @@ export async function planCopies(): Promise<Placement[]> {
         const base = t ? assetPath(t.commercialProperty.assetId) : null;
         return base && t ? [...base, "Tenancies", safeName(t.tenantName)] : null;
       }
+      case "REMINDER":
+        // Filed under what the reminder is about (linked there as well);
+        // one about nothing in particular goes in its own folder.
+        return reminderIdsWithTarget.has(targetId) ? null : ["Reminders"];
       case "PERSON":
         return personPath(targetId);
       case "ENTITY":

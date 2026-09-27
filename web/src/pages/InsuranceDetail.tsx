@@ -8,6 +8,7 @@ import { LoadFailed } from "../components/LoadFailed.js";
 import { coversLink, EMPTY_POLICY, InsurancePanel, PolicyFields, PolicyForm, policyKindLabel, policyPayload, premiumText, RenewalBadge } from "../components/InsurancePanel.js";
 import { formatCurrency } from "../utils.js";
 import { useTrailTitle } from "../trail.js";
+import { RemindersCard } from "../components/RemindersCard.js";
 
 /** One insurance policy: what it covers, the numbers, and its schedule and certificates. */
 export function InsuranceDetail() {
@@ -150,6 +151,7 @@ export function InsuranceDetail() {
         )}
       </div>
 
+      <RemindersCard targetType="INSURANCE_POLICY" targetId={policy.id} name="this policy" />
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Policy schedule and certificates</h3>
         <DocumentLinker targetType="INSURANCE_POLICY" targetId={policy.id} onChange={load} />

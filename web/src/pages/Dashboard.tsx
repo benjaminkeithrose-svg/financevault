@@ -4,6 +4,7 @@ import { api, DashboardSummary, Entity } from "../api/client.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
 import { WorthDoing } from "../components/WorthDoing.js";
 import { FeatureGate } from "../components/FeatureGate.js";
+import { ComingUp } from "../components/ComingUp.js";
 
 export function Dashboard() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -46,6 +47,7 @@ export function Dashboard() {
       </div>
 
       {!entityId && <WorthDoing summary={summary} onChange={load} />}
+      {!entityId && <ComingUp />}
 
       <div className="grid grid-4">
         <div className="stat-tile">

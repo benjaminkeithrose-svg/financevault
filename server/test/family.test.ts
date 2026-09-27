@@ -178,7 +178,7 @@ describe("sub-assets", () => {
 describe("expiry calendar", () => {
   it("writes a valid calendar file with all-day events and a reminder", () => {
     const ics = toIcs(
-      [{ id: "x1", date: "2027-03-04", category: "ID", title: "Passport expires — Sam, Jr; test", detail: null, route: "/" }],
+      [{ id: "x1", date: "2027-03-04", category: "ID", title: "Passport expires — Sam, Jr; test", detail: "Last amount $1,820", route: "/" }],
       new Date("2026-01-01T00:00:00Z")
     );
     expect(ics).toContain("BEGIN:VCALENDAR\r\n");
@@ -186,6 +186,9 @@ describe("expiry calendar", () => {
     expect(ics).toContain("DTEND;VALUE=DATE:20270305");
     expect(ics).toContain("SUMMARY:Passport expires — Sam\\, Jr\\; test");
     expect(ics).toContain("TRIGGER:-P14D");
+    // Only what's due and when: amounts and notes stay in the app.
+    expect(ics).not.toContain("1\\,820");
+    expect(ics).not.toContain("Last amount");
   });
 
   it("serves the calendar file", async () => {

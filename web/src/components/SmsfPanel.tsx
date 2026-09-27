@@ -127,7 +127,7 @@ function SmsfSummary({ view, onYear }: { view: SmsfOverview; onYear: (y: string)
               </li>
             ))}
           </ul>
-          <p className="cap-explain">These are in the expiry calendar too, and in its calendar file.</p>
+          <p className="cap-explain">These are in the Calendar too, and in its calendar file.</p>
         </>
       )}
     </div>

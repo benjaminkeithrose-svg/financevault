@@ -17,6 +17,7 @@ import { IncomeCard } from "../components/IncomeCard.js";
 import { PaygPanel } from "../components/PaygPanel.js";
 import { FeatureGate } from "../components/FeatureGate.js";
 import { useTrailTitle } from "../trail.js";
+import { RemindersCard } from "../components/RemindersCard.js";
 
 const RELATIONSHIP_TYPES = [
   "SETTLOR",
@@ -494,6 +495,7 @@ export function PersonDetail() {
         )}
       </div>
 
+      <RemindersCard targetType="PERSON" targetId={person.id} name={person.name} />
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="PERSON" targetId={person.id} />

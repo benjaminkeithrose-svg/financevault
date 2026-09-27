@@ -3,7 +3,6 @@ import { StructureTabs } from "../components/StructureTabs.js";
 import { useNavigate } from "react-router-dom";
 import { api, Graph, GraphNode } from "../api/client.js";
 import { formatCurrency, humanize, liabilityTypeLabel } from "../utils.js";
-import { ExpiryCalendar } from "../components/ExpiryCalendar.js";
 import { IconFit, IconMinus, IconPlus } from "../components/icons.js";
 
 const LEVEL_BY_TYPE: Record<GraphNode["type"], number> = {
@@ -129,7 +128,6 @@ export function Visualization() {
         <div className="placeholder-page">
           <p>Nothing to show yet. Add a person, an entity, and something the entity owns, and it'll appear here.</p>
         </div>
-        <ExpiryCalendar />
       </div>
     );
   }
@@ -272,7 +270,6 @@ export function Visualization() {
         </div>
       </div>
 
-      <ExpiryCalendar />
     </div>
   );
 }

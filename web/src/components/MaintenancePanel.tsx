@@ -21,7 +21,7 @@ const EMPTY = { date: "", kind: "SERVICE", description: "", cost: "", provider: 
 /**
  * Service, repair and running-cost history for an item: when it was done,
  * by whom, what it cost, and when it's next due (which also shows in the
- * expiry calendar). Invoices attach to each entry.
+ * Calendar). Invoices attach to each entry.
  */
 export function MaintenancePanel({
   assetId,

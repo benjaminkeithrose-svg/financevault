@@ -397,6 +397,7 @@ model Document {
   loanPurposes     LoanPurpose[]
   loanInterestYears LoanInterestYear[]
   workDeductions   WorkDeduction[]
+  vehicleLogbooks  VehicleLogbook[]
   incomeStatements IncomeStatement[]
   claimNotesCiting ClaimNote[]
   transactions     Transaction[]
@@ -497,6 +498,8 @@ model Asset {
   securedLoans       Liability[]
   loanPurposes       LoanPurpose[]
   insurancePolicies  InsurancePolicy[]
+  logbooks           VehicleLogbook[]
+  vehicleYears       VehicleYear[]
 
   @@index([entityId])
   @@index([assetType])
@@ -1828,4 +1831,84 @@ model ReferenceCheck {
   latestYear  Int? // yearly guides: the newest year found
   documentId  String? // the newest saved copy
   url         String? // the address that was checked (next year's, for guides)
+}
+
+// Business use of a vehicle (the logbook method). A logbook kept for at
+// least 12 continuous weeks sets the business-use percentage for the year
+// it's kept and the four years after (ATO: "Logbook method").
+model VehicleLogbook {
+  id            String    @id @default(cuid())
+  assetId       String
+  asset         Asset     @relation(fields: [assetId], references: [id])
+  startDate     DateTime
+  endDate       DateTime
+  startOdometer Float?
+  endOdometer   Float?
+  totalKm       Float
+  businessKm    Float
+  documentId    String?
+  document      Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  notes         String?
+  createdAt     DateTime  @default(now())
+
+  @@index([assetId])
+}
+
+// A vehicle's financial year: odometer readings and running costs, for the
+// business-use schedule.
+model VehicleYear {
+  id              String   @id @default(cuid())
+  assetId         String
+  asset           Asset    @relation(fields: [assetId], references: [id])
+  fyLabel         String
+  openingOdometer Float?
+  closingOdometer Float?
+  fuel            Float? // fuel and oil, or charging
+  registration    Float? // rego and CTP
+  insurance       Float?
+  repairs         Float? // servicing, repairs and tyres
+  interest        Float? // interest on the car loan
+  leasePayments   Float?
+  other           Float?
+  // Overrides: the accountant's decline in value, or a business share that
+  // changed from the logbook's this year.
+  declineInValue  Float?
+  businessPercent Float?
+  notes           String?
+  updatedAt       DateTime @updatedAt
+
+  @@unique([assetId, fyLabel])
+}
+
+// The person's own reminders in the calendar, done like tasks: they stay
+// until marked complete. Linked to what they're about (an asset, property,
+// person, policy...) the same way documents are, and files can be attached
+// (document links with targetType REMINDER).
+model Reminder {
+  id           String    @id @default(cuid())
+  title        String
+  notes        String?
+  dueDate      DateTime
+  repeat       String    @default("NONE") // NONE | WEEKLY | MONTHLY | QUARTERLY | YEARLY
+  targetType   String? // ASSET | PROPERTY | COMMERCIAL_PROPERTY | PERSON | ENTITY | LIABILITY | INSURANCE_POLICY | ACCOUNT | INVESTMENT_ACCOUNT
+  targetId     String?
+  completedAt  DateTime?
+  completeNote String?
+  // Set when this one was made by completing the one before (a repeat).
+  previousId   String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([dueDate])
+  @@index([targetType, targetId])
+}
+
+// Dates the app works out itself (a policy renewal, rego, a service due)
+// marked done in the calendar. Keyed by the date as well, so next year's
+// renewal is a new task.
+model CalendarCompletion {
+  id          String   @id @default(cuid())
+  eventKey    String   @unique // e.g. policy-<id>@2026-12-15
+  completedAt DateTime @default(now())
+  note        String?
 }

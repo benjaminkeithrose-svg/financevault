@@ -4,6 +4,10 @@ import { asyncHandler } from "../middleware/errorHandler.js";
 import { smsfCalendarDates } from "../services/smsf.js";
 import { policyKindLabel } from "./tree.js";
 import { ESTATE_KINDS } from "./estate.js";
+import { z } from "zod";
+import { HttpError } from "../middleware/errorHandler.js";
+import { logAudit } from "../services/audit.js";
+import { describeTargets, targetOf } from "../services/reminders.js";
 
 /**
  * Everything with an expiry or renewal date, in one list: ID documents and
@@ -15,7 +19,19 @@ import { ESTATE_KINDS } from "./estate.js";
  */
 export const calendarRouter = Router();
 
-export type CalendarCategory = "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF" | "INSURANCE" | "ESTATE" | "REFERENCE";
+export type CalendarCategory =
+  | "ID"
+  | "RENEWAL"
+  | "VEHICLE"
+  | "WARRANTY"
+  | "SERVICE"
+  | "LEASE"
+  | "LOAN"
+  | "SMSF"
+  | "INSURANCE"
+  | "ESTATE"
+  | "REFERENCE"
+  | "REMINDER";
 
 export interface CalendarEvent {
   id: string;
@@ -25,6 +41,25 @@ export interface CalendarEvent {
   detail: string | null;
   route: string;
 }
+
+/**
+ * In the app's calendar every date is a task: it stays (overdue, if it comes
+ * to that) until it's marked complete. `key` identifies this occurrence —
+ * the same policy renewing next year is a new task.
+ */
+export interface CalendarTask extends CalendarEvent {
+  key: string;
+  done: boolean;
+  doneAt: string | null;
+  doneNote: string | null;
+  /** The person's own reminder (opened on its own page), rather than a date the app works out. */
+  reminderId: string | null;
+  repeat: string | null;
+  /** Completing it can also move the date on a year (a renewal, rego, service). */
+  canRollForward: boolean;
+}
+
+const ROLLABLE = ["policy-", "rego-", "doc-", "service-"];
 
 const ID_LABELS: Record<string, string> = {
   PRIVATE_HEALTH: "Private health insurance",
@@ -231,6 +266,128 @@ export async function collectEvents(from: Date, to: Date): Promise<CalendarEvent
   return events.sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title));
 }
 
+/**
+ * The calendar's tasks between two dates: the dates the app works out, with
+ * those marked done, and the person's own reminders — plus anything still
+ * open from up to a year before, so nothing drops off undone.
+ */
+export async function calendarTasks(from: Date, to: Date): Promise<CalendarTask[]> {
+  const lookBack = new Date(Math.min(from.getTime(), Date.now() - 366 * 86_400_000));
+  const auto = await collectEvents(lookBack, to);
+  const completions = new Map((await prisma.calendarCompletion.findMany()).map((c) => [c.eventKey, c]));
+  const tasks: CalendarTask[] = [];
+  for (const e of auto) {
+    const key = `${e.id}@${e.date}`;
+    const c = completions.get(key);
+    // Before the range asked for, only what's still to do.
+    if (new Date(`${e.date}T00:00:00Z`) < from && c) continue;
+    tasks.push({
+      ...e,
+      key,
+      done: !!c,
+      doneAt: c ? c.completedAt.toISOString() : null,
+      doneNote: c?.note ?? null,
+      reminderId: null,
+      repeat: null,
+      canRollForward: ROLLABLE.some((p) => e.id.startsWith(p)),
+    });
+  }
+  const reminders = await prisma.reminder.findMany({
+    where: { OR: [{ dueDate: { gte: from, lte: to } }, { dueDate: { lt: from }, completedAt: null }] },
+    orderBy: { dueDate: "asc" },
+  });
+  const targets = await describeTargets(reminders);
+  for (const r of reminders) {
+    const target = targetOf(targets, r);
+    tasks.push({
+      id: `reminder-${r.id}`,
+      key: `reminder-${r.id}`,
+      date: day(r.dueDate),
+      category: "REMINDER",
+      title: target ? `${r.title} — ${target.name}` : r.title,
+      detail: r.notes,
+      route: `/reminders/${r.id}`,
+      done: !!r.completedAt,
+      doneAt: r.completedAt ? r.completedAt.toISOString() : null,
+      doneNote: r.completeNote,
+      reminderId: r.id,
+      repeat: r.repeat === "NONE" ? null : r.repeat,
+      canRollForward: false,
+    });
+  }
+  return tasks.sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title));
+}
+
+calendarRouter.get(
+  "/tasks",
+  asyncHandler(async (req, res) => {
+    const { from, to } = rangeFromQuery(req.query as Record<string, unknown>);
+    res.json(await calendarTasks(from, to));
+  })
+);
+
+const completeInput = z.object({
+  key: z.string().regex(/^[A-Za-z0-9_:.-]+@\d{4}-\d{2}-\d{2}$/, "Not a calendar date"),
+  note: z.string().nullable().optional(),
+  rollForward: z.boolean().optional(),
+});
+
+function nextYear(d: Date): Date {
+  const n = new Date(d);
+  n.setUTCFullYear(n.getUTCFullYear() + 1);
+  return n;
+}
+
+/**
+ * Marks one of the app's own dates done. With rollForward, the date it came
+ * from moves on a year too (renewed the policy, paid the rego, had the
+ * service), so next year's is already in the calendar.
+ */
+calendarRouter.post(
+  "/complete",
+  asyncHandler(async (req, res) => {
+    const { key, note, rollForward } = completeInput.parse(req.body);
+    const [eventId, date] = key.split("@");
+    await prisma.calendarCompletion.upsert({
+      where: { eventKey: key },
+      create: { eventKey: key, note: note?.trim() || null },
+      update: { note: note?.trim() || null, completedAt: new Date() },
+    });
+    let moved: string | null = null;
+    if (rollForward) {
+      const at = new Date(`${date}T00:00:00Z`);
+      const id = eventId.replace(/^(policy|rego|doc|service)-/, "");
+      if (eventId.startsWith("policy-")) {
+        const p = await prisma.insurancePolicy.findUnique({ where: { id } });
+        if (p?.renewalDate && day(p.renewalDate) === date) moved = day((await prisma.insurancePolicy.update({ where: { id }, data: { renewalDate: nextYear(at) } })).renewalDate!);
+      } else if (eventId.startsWith("rego-")) {
+        const a = await prisma.asset.findUnique({ where: { id } });
+        if (a?.registrationExpiry && day(a.registrationExpiry) === date) moved = day((await prisma.asset.update({ where: { id }, data: { registrationExpiry: nextYear(at) } })).registrationExpiry!);
+      } else if (eventId.startsWith("doc-")) {
+        const d = await prisma.document.findUnique({ where: { id } });
+        if (d?.renewalDate && day(d.renewalDate) === date) moved = day((await prisma.document.update({ where: { id }, data: { renewalDate: nextYear(at) } })).renewalDate!);
+      } else if (eventId.startsWith("service-")) {
+        const m = await prisma.maintenanceRecord.findUnique({ where: { id } });
+        if (m?.nextDueDate && day(m.nextDueDate) === date) moved = day((await prisma.maintenanceRecord.update({ where: { id }, data: { nextDueDate: nextYear(at) } })).nextDueDate!);
+      } else {
+        throw new HttpError(400, "This date can't be moved on from the calendar — change it on its own page.");
+      }
+    }
+    await logAudit("CALENDAR_DONE", { data: { key, moved } });
+    res.json({ key, done: true, movedTo: moved });
+  })
+);
+
+calendarRouter.post(
+  "/reopen",
+  asyncHandler(async (req, res) => {
+    const { key } = completeInput.pick({ key: true }).parse(req.body);
+    await prisma.calendarCompletion.deleteMany({ where: { eventKey: key } });
+    await logAudit("CALENDAR_REOPENED", { data: { key } });
+    res.json({ key, done: false });
+  })
+);
+
 function rangeFromQuery(query: Record<string, unknown>) {
   const from = query.from ? new Date(String(query.from)) : new Date(Date.now() - 31 * 86_400_000);
   const to = query.to ? new Date(String(query.to)) : new Date(Date.now() + 2 * 365 * 86_400_000);
@@ -287,7 +444,9 @@ export function toIcs(events: CalendarEvent[], now = new Date()): string {
       `DTSTART;VALUE=DATE:${start}`,
       `DTEND;VALUE=DATE:${day(next).replace(/-/g, "")}`,
       `SUMMARY:${escapeIcs(e.title)}`,
-      ...(e.detail ? [`DESCRIPTION:${escapeIcs(e.detail)}`] : []),
+      // No description: the details (amounts, premiums, plates, notes) stay
+      // in the app — the file leaves this computer once it's in an online
+      // calendar.
       "BEGIN:VALARM",
       "ACTION:DISPLAY",
       "TRIGGER:-P14D",
@@ -305,7 +464,7 @@ calendarRouter.get(
   asyncHandler(async (_req, res) => {
     // Everything from today on: past dates don't belong in someone's calendar.
     const today = new Date(`${day(new Date())}T00:00:00Z`);
-    const events = await collectEvents(today, new Date(today.getTime() + 3 * 365 * 86_400_000));
+    const events = (await calendarTasks(today, new Date(today.getTime() + 3 * 365 * 86_400_000))).filter((t) => !t.done && t.date >= day(today));
     res.setHeader("Content-Type", "text/calendar; charset=utf-8");
     res.setHeader("Content-Disposition", 'attachment; filename="financial-vault-expiries.ics"');
     res.send(toIcs(events));

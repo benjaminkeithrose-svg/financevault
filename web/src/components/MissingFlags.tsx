@@ -54,6 +54,13 @@ export function MissingFlags({ target }: { target: string }) {
                 </Link>
               </div>
             )}
+            {i.kind === "RECORD" && i.addAs === "ODOMETER" && (
+              <div className="missing-actions">
+                <Link className="btn secondary" to={addLink(group, i)}>
+                  Open it
+                </Link>
+              </div>
+            )}
           </li>
         ))}
       </ul>

@@ -23,6 +23,7 @@ export function addLink(group: ExpectationGroup, item: Expectation): string {
   if (item.kind === "INSURANCE") {
     return item.addAs === "PRIVATE_HEALTH" ? group.route : `${group.route}?addPolicy=${item.addAs}`;
   }
+  if (item.kind === "RECORD" && item.addAs === "ODOMETER" && item.fyLabel) return `${group.route}/business-use/${item.fyLabel}`;
   return group.route;
 }
 
@@ -167,7 +168,7 @@ export function Missing() {
                   {!i.met && !i.dismissed && asideFor !== i.key && (
                     <>
                       <Link className="btn secondary" to={addLink(g, i)}>
-                        {i.kind === "INSURANCE" ? "Add policy" : "Add document"}
+                        {i.kind === "INSURANCE" ? "Add policy" : i.kind === "RECORD" ? "Open it" : "Add document"}
                       </Link>
                       <button
                         className="link-button"

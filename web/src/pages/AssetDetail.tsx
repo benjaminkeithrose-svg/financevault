@@ -5,6 +5,7 @@ import { api, Asset, Entity } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { SoldPanel } from "../components/SoldPanel.js";
 import { InsurancePanel } from "../components/InsurancePanel.js";
+import { BusinessUseCard } from "../components/BusinessUseCard.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { assetListRoute, assetTypeLabel, describeVehicle, formatCurrency, humanize, itemCategoryLabel, ITEM_CATEGORIES, monthlyEquivalent, vehicleTypeLabel } from "../utils.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
@@ -14,6 +15,7 @@ import { DeleteSection } from "../components/DeleteSection.js";
 import { useBackTo } from "../hooks/useBackTo.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { useTrailTitle } from "../trail.js";
+import { RemindersCard } from "../components/RemindersCard.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -273,6 +275,10 @@ export function AssetDetail() {
 
       {!isItem && <AssetOwnershipPanel asset={asset} entities={entities} onChange={load} />}
 
+      {!isItem && isVehicle && ["CAR", "MOTORCYCLE", "CAMPERVAN", "OTHER"].includes(asset.vehicleType ?? "CAR") && (
+        <BusinessUseCard assetId={asset.id} />
+      )}
+
       {!isItem && isVehicle && <MissingFlags target={`asset:${asset.id}`} />}
       {!isItem && asset.assetType !== "SUPERANNUATION" && (
         <InsurancePanel
@@ -281,6 +287,8 @@ export function AssetDetail() {
           defaultHolderId={asset.entityId}
         />
       )}
+
+      {!isItem && <RemindersCard targetType="ASSET" targetId={asset.id} name={asset.name} />}
 
       <div className="card">
         <h3>Documents</h3>

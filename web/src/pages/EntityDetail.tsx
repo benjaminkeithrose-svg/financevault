@@ -11,6 +11,7 @@ import { SmsfPanel } from "../components/SmsfPanel.js";
 import { FeatureGate } from "../components/FeatureGate.js";
 import { UnitholdersPanel } from "../components/UnitholdersPanel.js";
 import { useTrailTitle } from "../trail.js";
+import { RemindersCard } from "../components/RemindersCard.js";
 
 const ASSET_TYPE_ICONS: Record<string, string> = {
   PROPERTY: "🏠",
@@ -435,6 +436,7 @@ export function EntityDetail() {
         )}
       </div>
       {!entity.personalFor && <MissingFlags target={`entity:${entity.id}`} />}
+      {!entity.personalFor && <RemindersCard targetType="ENTITY" targetId={entity.id} name={entity.name} />}
       {!entity.personalFor && (
         <DeleteSection
           title="Delete this entity"

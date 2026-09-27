@@ -21,6 +21,7 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
     label: "",
     items: [
       { to: "/", label: "Dashboard" },
+      { to: "/calendar", label: "Calendar" },
       // One entry for both views; tabs on the page switch between them.
       { to: "/tree", label: "Asset tree & diagram" },
     ],

@@ -15,6 +15,7 @@ import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { useTrailTitle } from "../trail.js";
+import { RemindersCard } from "../components/RemindersCard.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -1142,6 +1143,7 @@ export function CommercialPropertyDetail() {
       <MissingFlags target={`asset:${property.assetId}`} />
       <InsurancePanel assetId={property.assetId} defaultKind="BUILDING" defaultHolderId={property.asset?.entityId} />
 
+      <RemindersCard targetType="COMMERCIAL_PROPERTY" targetId={property.id} name={property.name} />
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="COMMERCIAL_PROPERTY" targetId={property.id} />

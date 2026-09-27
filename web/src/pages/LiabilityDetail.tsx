@@ -10,6 +10,7 @@ import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { useTrailTitle } from "../trail.js";
+import { RemindersCard } from "../components/RemindersCard.js";
 
 const VEHICLE_LINKABLE = ["VEHICLE_LOAN", "PERSONAL_LOAN"];
 
@@ -277,6 +278,7 @@ export function LiabilityDetail() {
 
       {!isCard && <LoanAllocationCard liabilityId={liability.id} />}
 
+      <RemindersCard targetType="LIABILITY" targetId={liability.id} name={liability.name} />
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="LIABILITY" targetId={liability.id} />

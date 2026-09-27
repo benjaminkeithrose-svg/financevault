@@ -3,6 +3,14 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.2.0 — 27 September 2026
+- A Calendar of its own (in the menu, under Dashboard), apart from your work calendar: To do, Day, Week, Month and Year views of renewals, rego, services, leases, loans, SMSF dates and your own reminders.
+- Every date is a task: it stays — overdue, if its date passes — until you tick it off. Ticking off an insurance renewal, rego or service can move its date on a year at the same time.
+- Your own reminders, once or repeating, with a form or file attached. Add them from the Calendar, or with "Add calendar reminder" on a vehicle, property, person, trust, loan or policy's page. Mark one complete with a note of what was done; a repeating one comes back on its next date.
+- "Coming up" on the Dashboard: what's overdue and the next two months.
+- Business use of a car: keep its logbook on the vehicle's page, enter each year's odometer readings and costs, and print the year's business use schedule for your accountant. It follows who owns the car — a person's claim can go straight into their work deductions; a company or trust's shows the fringe benefits tax figures.
+- The calendar file for Google, Apple or Outlook now carries only what's due and when — amounts, rego plates and notes stay in the app.
+
 ## 1.1.3 — 27 September 2026
 - The back arrow now goes back up the path you came down — from a policy's document to the policy, then to the Toyota Prado — instead of to wherever the page normally sits. The path is shown under the top bar; tap any step to jump back to it.
 - Each residential property says how it's used: our home (PPOR), rental or investment, or holiday home. Your home is no longer asked for landlord insurance or rental paperwork.

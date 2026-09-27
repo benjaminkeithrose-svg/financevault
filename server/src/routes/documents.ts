@@ -247,6 +247,7 @@ const linkInput = z.object({
     "MAINTENANCE",
     "INSURANCE_POLICY",
     "ESTATE_DOCUMENT",
+    "REMINDER",
   ]),
   targetId: z.string(),
   label: z.string().optional().nullable(),
@@ -259,6 +260,22 @@ documentsRouter.post(
     const link = await prisma.documentLink.create({
       data: { documentId: req.params.id, ...parsed },
     });
+    // A file attached to a reminder also files under what the reminder is
+    // about (the vehicle, property, person…), so it's on that page and in
+    // its folder of readable copies too.
+    if (parsed.targetType === "REMINDER") {
+      const reminder = await prisma.reminder.findUnique({ where: { id: parsed.targetId } });
+      if (reminder?.targetType && reminder.targetId) {
+        const already = await prisma.documentLink.findFirst({
+          where: { documentId: req.params.id, targetType: reminder.targetType, targetId: reminder.targetId },
+        });
+        if (!already) {
+          await prisma.documentLink.create({
+            data: { documentId: req.params.id, targetType: reminder.targetType, targetId: reminder.targetId, label: reminder.title.slice(0, 120) },
+          });
+        }
+      }
+    }
     await logAudit("DOCUMENT_LINK_ADDED", { targetType: "Document", targetId: req.params.id, documentId: req.params.id });
     res.status(201).json(link);
   })

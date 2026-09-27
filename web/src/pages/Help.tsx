@@ -373,7 +373,7 @@ const SECTIONS: Section[] = [
         <p>
           When a broker asks for ID, <Link to="/packs">Document Packs</Link> has an <strong>ID documents</strong> option
           (ticked in the Broker Pack) that adds the scans for the people connected to that entity. Expiry dates appear
-          in the expiry calendar.
+          in the Calendar.
         </p>
       </>
     ),
@@ -396,7 +396,7 @@ const SECTIONS: Section[] = [
           and shown with only its last three digits; <strong>Show</strong> reveals it and is recorded in the audit log.
         </p>
         <p>
-          Renewal dates go into the expiry calendar, and each policy appears in the asset tree under what it covers.
+          Renewal dates go into the Calendar, and each policy appears in the asset tree under what it covers.
         </p>
       </>
     ),
@@ -415,7 +415,7 @@ const SECTIONS: Section[] = [
         <p>
           <strong>Lapsing nominations.</strong> A lapsing binding death benefit nomination usually stops being binding
           three years after it's signed. Leave <strong>Lapses on</strong> blank and it's set to three years after the
-          signing date; that date goes into the expiry calendar so it can be re-signed in time. Check your fund's rules —
+          signing date; that date goes into the Calendar so it can be re-signed in time. Check your fund's rules —
           some differ, and non-lapsing nominations don't run out.
         </p>
         <p>
@@ -872,6 +872,66 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "vehicle-business",
+    title: "Business use of a car (logbook)",
+    keywords: "logbook log book business use work car vehicle percentage odometer decline in value depreciation car limit fbt fringe benefits company trust sole trader d1 work-related car expenses schedule",
+    body: (
+      <>
+        <p>
+          A car used partly for work or a business can claim that share of its costs. On the vehicle's page,{" "}
+          <strong>Business use</strong> keeps the logbook and gives a schedule for each financial year for your accountant.
+          Boats, jet skis, caravans and trailers don't have it.
+        </p>
+        <h4>The logbook</h4>
+        <ol>
+          <li>Keep a logbook for at least 12 weeks in a row that are typical of the year: each trip's date, the odometer at the start and end, the kilometres and why.</li>
+          <li>
+            On the vehicle's page, press <strong>Add a logbook</strong>. Enter the first and last day, the odometer at the
+            start and end, and the business kilometres. Attach a scan or photo of the logbook.
+          </li>
+        </ol>
+        <p>
+          The business share is business kilometres ÷ total kilometres. A logbook is good for the year it's kept and the
+          next four; What's missing flags the year it runs out.
+        </p>
+        <h4>Each year's schedule</h4>
+        <ol>
+          <li>Press the year's <strong>schedule</strong> button on the vehicle's page.</li>
+          <li>
+            Under <strong>This year's figures</strong>, enter the odometer at 1 July and 30 June and the year's costs: fuel,
+            rego and CTP, insurance, servicing and tyres, loan interest and so on. Press <strong>Save</strong>.
+          </li>
+          <li>Press <strong>Print</strong> for your accountant.</li>
+        </ol>
+        <p>
+          Decline in value (depreciation) is worked out from the purchase price and date on the vehicle — diminishing value
+          over 8 years, on no more than the car limit for the year it was bought ($69,674 for 2025-26). If your accountant
+          gives you a different figure, enter theirs.
+        </p>
+        <h4>Who owns it decides how it's claimed</h4>
+        <ul>
+          <li>
+            <strong>A person or partnership</strong>: the business share of all the costs. For a person's car, the button{" "}
+            <strong>Put $… in …'s work deductions</strong> adds it to their work deductions for the year (as a logbook car
+            claim), ready for their tax return.
+          </li>
+          <li>
+            <strong>A company or trust</strong>: it claims the actual costs. Private use by a director, employee or working
+            beneficiary is a fringe benefit — the schedule shows the private share and a rough comparison of the two ways
+            fringe benefits tax is worked out. With a logbook and odometer readings, only the private share is taxed.
+          </li>
+          <li>
+            <strong>A super fund</strong>: its assets can't be used by members or their relatives, so there's nothing to split.
+          </li>
+        </ul>
+        <p>
+          Keep the logbook and receipts for five years after the return is lodged. General guidance from the ATO's rules —
+          your accountant makes the final call.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "borrowing",
     title: "Applying for a loan: your borrowing summary",
     keywords: "mortgage application broker lender serviceability borrowing capacity commitments debts limits",
@@ -1277,30 +1337,51 @@ const SECTIONS: Section[] = [
   },
   {
     id: "calendar",
-    title: "Expiry calendar",
-    keywords: "calendar expiry expiries renewal reminder ics google apple outlook due dates",
+    title: "Calendar and reminders",
+    keywords: "calendar reminder reminders task tasks to do complete done overdue repeat yearly monthly service expiry expiries renewal ics google apple outlook due dates",
     body: (
       <>
         <p>
-          The bottom of the <Link to="/visualization">Diagram</Link> tab lists everything that expires or falls due,
-          month by month: ID and health cover, insurance and other document renewals, vehicle rego, warranties, services
-          due, lease expiries and rent reviews, and fixed-rate loan periods. Tap one to open it.
+          <Link to="/calendar">Calendar</Link> (in the menu, under Dashboard) is a calendar for money matters only, apart from
+          your work calendar. It shows everything that falls due — ID and health cover, insurance and other renewals, vehicle
+          rego, warranties, services, leases and rent reviews, fixed-rate loan periods and SMSF dates — and your own
+          reminders. <strong>Coming up</strong> on the Dashboard shows the next two months.
         </p>
-        <h4>Putting the dates in your own calendar</h4>
+        <h4>Every date is a task</h4>
+        <p>
+          Each one stays until you tick it off — if its date passes, it moves to <strong>Overdue — still to do</strong> at
+          the top rather than disappearing. Tick the box next to it when it's done. For an insurance renewal, rego or a
+          service, it asks whether to move the date on a year as well, so next year's is already in the calendar. Ticked
+          by mistake? Tick <strong>Show what's done</strong> and untick it.
+        </p>
+        <h4>Views</h4>
+        <p>
+          <strong>To do</strong> lists the next 12 months; <strong>Day</strong>, <strong>Week</strong>,{" "}
+          <strong>Month</strong> and <strong>Year</strong> are the usual calendar views. Use ‹ and › to move, and{" "}
+          <strong>Today</strong> to come back. Tap a day in the month or week to see just that day; tap a month in the year to
+          open it.
+        </p>
+        <h4>Your own reminders</h4>
         <ol>
           <li>
-            Click <strong>Add to my calendar</strong>. A file called <code>financial-vault-expiries.ics</code> downloads.
+            Press <strong>Add reminder</strong> at the top of the Calendar — or <strong>Add calendar reminder</strong> on a
+            vehicle, property, person, trust, loan or insurance policy's page, so it's about that one.
           </li>
-          <li>
-            Open the file. Apple Calendar and Outlook offer to add the events. For Google Calendar, go to{" "}
-            <code>calendar.google.com</code>, click the gear icon, choose <strong>Import &amp; export</strong>, select the
-            file and click <strong>Import</strong>.
-          </li>
+          <li>Say what needs doing, when it's due, and whether it repeats (every week, month, 3 months or year).</li>
+          <li>Add the form or file that goes with it, if there is one. It's also filed under what the reminder is about.</li>
         </ol>
         <p>
-          Each date comes with a reminder two weeks before. Importing again later updates the same events rather than
-          doubling them up. The file holds only what's due and when — never numbers or amounts — but it does leave this
-          computer once it's in an online calendar.
+          When it's done, open the reminder, note what was done (and add the receipt or completed form), and press{" "}
+          <strong>Mark complete</strong>. A repeating reminder puts the next one in the calendar straight away.
+        </p>
+        <h4>Copying the dates to another calendar</h4>
+        <p>
+          If you'd also like them in Google, Apple or Outlook, press <strong>Copy to my other calendar (file)</strong>.
+          Open the downloaded file: Apple Calendar and Outlook offer to add the events; for Google Calendar, go to{" "}
+          <code>calendar.google.com</code>, the gear icon, <strong>Import &amp; export</strong>, and import the file. Each
+          date comes with a reminder two weeks before, and importing again updates the same events. The file holds only
+          what's due and when — never amounts, notes or numbers — but it does leave this computer once it's in an online
+          calendar. Ticking things off happens here, not there.
         </p>
       </>
     ),
@@ -1518,7 +1599,7 @@ const SECTIONS: Section[] = [
           <li>
             <strong>Trustee, auditor and deadlines.</strong> Record individual trustees or the trustee company, the auditor,
             who lodges the return and the latest year lodged. The annual return, auditor appointment, strategy review,
-            ASIC company review and pension dates go into the expiry calendar.
+            ASIC company review and pension dates go into the Calendar.
           </li>
           <li>
             <strong>Balances over $3 million.</strong> From 1 July 2026, Division 296 adds 15% tax on the share of a

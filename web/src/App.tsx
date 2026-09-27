@@ -23,6 +23,9 @@ import { Banking } from "./pages/Banking.js";
 import { AccountDetail } from "./pages/AccountDetail.js";
 import { Assets } from "./pages/Assets.js";
 import { AssetDetail } from "./pages/AssetDetail.js";
+import { BusinessUse } from "./pages/BusinessUse.js";
+import { Calendar } from "./pages/Calendar.js";
+import { ReminderDetail } from "./pages/ReminderDetail.js";
 import { NetWorth } from "./pages/NetWorth.js";
 import { Borrowing } from "./pages/Borrowing.js";
 import { AccountantChecklist } from "./pages/AccountantChecklist.js";
@@ -111,6 +114,9 @@ export default function App() {
           <Route path="/super" element={gate("super", <Assets key="super" list="SUPER" />)} />
           <Route path="/vehicles" element={gate("vehicles", <Assets key="vehicles" list="VEHICLE" />)} />
           <Route path="/assets/:id" element={<AssetDetail />} />
+          <Route path="/assets/:id/business-use/:fy" element={<BusinessUse />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/reminders/:id" element={<ReminderDetail />} />
           <Route path="/insurance" element={gate("insurance", <Insurance />)} />
           <Route path="/insurance/:id" element={gate("insurance", <InsuranceDetail />)} />
           <Route path="/advisers" element={<PeopleAndEntities />} />

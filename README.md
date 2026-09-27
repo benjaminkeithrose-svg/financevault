@@ -45,7 +45,7 @@ the reset-passcode script clears them along with the other encrypted
 fields. The Broker Pack's **ID documents** chip bundles the scans for the
 people connected to an entity.
 
-### Items, servicing and the expiry calendar
+### Items, servicing and the calendar
 
 Any asset can hold **items** (sub-assets) — an air conditioner in a
 rental, a washing machine at home, an outboard on a boat — each with make,
@@ -55,11 +55,13 @@ cost to own is its price plus everything spent since. Items are part of
 their parent's value and never counted in totals; an asset with items under
 it can't be deleted.
 
-The **expiry calendar** at the bottom of Visualization gathers ID and cover
+The **Calendar** (`/calendar`, `pages/Calendar.tsx`) gathers ID and cover
 expiries, document renewal dates, rego, warranties, services due, lease
-expiries and rent reviews, and fixed-rate and loan-term ends. **Add to my
-calendar** downloads an `.ics` file (all-day events, a reminder two weeks
-before, stable ids so re-importing updates rather than duplicates).
+expiries and rent reviews, fixed-rate and loan-term ends, SMSF dates and
+the person's own reminders — see "Calendar and reminders" below. The
+`.ics` download has all-day events, a reminder two weeks before, and
+stable ids so re-importing updates rather than duplicates; it carries
+titles and dates only, never the details.
 
 ### Working in the app
 
@@ -394,6 +396,39 @@ isn't safe to sync live, only the documents folder is.
   isn't known. Registration is met by a future rego expiry or a registration
   document dated in the last 396 days (`currentDoc`). New document types:
   Safety Inspection Report, Boat Registration, Trailer Registration.
+
+### Calendar and reminders, and business use of a car (1.2.0)
+
+- **Every date is a task** (`routes/calendar.ts` `calendarTasks`, `GET
+  /api/calendar/tasks`): the dates the app works out come with a `key`
+  (`<event id>@<date>`), and `CalendarCompletion` records the ones marked
+  done — so next year's renewal is a new task. Anything still open from up
+  to a year back is returned as overdue. `POST /api/calendar/complete`
+  with `rollForward` also moves a policy renewal, rego expiry, document
+  renewal or service due date on a year.
+- **Reminders** (`Reminder`, `routes/reminders.ts`): title, due date,
+  repeat (weekly, monthly, quarterly, yearly — month-ends kept), notes,
+  and an optional target (asset, property, commercial property, person,
+  entity, loan, policy, account). Completing a repeating one creates the
+  next (`previousId`); reopening removes that next one if untouched. Files
+  attach as document links of type `REMINDER`, and are also linked to the
+  reminder's target so they file under it (readable copies too;
+  unattached ones go in `Reminders`). `RemindersCard` puts "Add calendar
+  reminder" on the detail pages; `ComingUp` is the Dashboard's next two
+  months.
+- **Business use of a vehicle** (`services/vehicleBusiness.ts`,
+  `routes/vehicleBusiness.ts`, `/assets/:id/business-use/:fy`):
+  `VehicleLogbook` (12 continuous weeks, good for the year kept and four
+  more) and `VehicleYear` (odometer readings, running costs, overrides).
+  Treatment follows the owner's entity type: a person or partnership —
+  logbook method, business share of all costs; a company or trust — actual
+  costs, with the private share and statutory-formula figures for FBT; a
+  super fund — none. Decline in value: diminishing value at 25% (8-year
+  life), first year pro rata by days held, cost capped at the car limit for
+  the year bought (cars and campervans). A person's claim can be put into
+  their work deductions (category CAR, method LOGBOOK), replacing the one
+  put there before. What's missing expects a current logbook and the
+  year's odometer readings for any vehicle with a logbook (kind `RECORD`).
 
 ### Readable copies of documents
 

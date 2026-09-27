@@ -35,6 +35,7 @@ const TITLES: Record<string, string> = {
   "/credit-cards": "Loans & Cards",
   "/liabilities": "Loans & Cards",
   "/missing": "What's missing",
+  "/calendar": "Calendar",
   "/portfolio-plans": "Portfolio Plan",
   "/borrowing": "Borrowing",
   "/accountant-checklist": "Ask your accountant",
@@ -63,10 +64,12 @@ const DETAIL_TITLES: Record<string, string> = {
   assets: "Asset",
   "bulk-import": "Bulk Import",
   "portfolio-plans": "Portfolio Plan",
+  reminders: "Reminder",
 };
 
 function getTitle(pathname: string): string {
   if (TITLES[pathname]) return TITLES[pathname];
+  if (/^\/assets\/[^/]+\/business-use/.test(pathname)) return "Business Use";
   const segment = pathname.split("/").filter(Boolean)[0];
   return DETAIL_TITLES[segment] || "Financial Vault";
 }
@@ -80,6 +83,9 @@ function getParent(pathname: string): string | null {
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length <= 1) return "/";
   if (segments[0] === "commercial-properties") return "/properties";
+  // A vehicle's business use schedule belongs to the vehicle; a reminder to the calendar.
+  if (segments[0] === "assets" && segments.length > 2) return `/assets/${segments[1]}`;
+  if (segments[0] === "reminders") return "/calendar";
   return `/${segments[0]}`;
 }
 

@@ -206,7 +206,7 @@ assetsRouter.delete(
       include: {
         property: true,
         commercialProperty: true,
-        _count: { select: { securedLoans: true, children: true } },
+        _count: { select: { securedLoans: true, children: true, logbooks: true, vehicleYears: true } },
       },
     });
     if (!asset) {
@@ -220,6 +220,8 @@ assetsRouter.delete(
     refuseIfInUse(asset.assetType === "VEHICLE" ? "vehicle" : "asset", [
       { count: asset._count.securedLoans, one: "loan linked to it", many: "loans linked to it" },
       { count: asset._count.children, one: "item under it", many: "items under it" },
+      { count: asset._count.logbooks, one: "logbook", many: "logbooks" },
+      { count: asset._count.vehicleYears, one: "year of business-use records", many: "years of business-use records" },
     ]);
     const maintenance = await prisma.maintenanceRecord.findMany({ where: { assetId: asset.id }, select: { id: true } });
     await deleteWithLinks(

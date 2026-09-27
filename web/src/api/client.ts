@@ -172,10 +172,96 @@ export interface EstateDocument {
 export interface CalendarEvent {
   id: string;
   date: string;
-  category: "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF" | "INSURANCE" | "ESTATE" | "REFERENCE";
+  category: "ID" | "RENEWAL" | "VEHICLE" | "WARRANTY" | "SERVICE" | "LEASE" | "LOAN" | "SMSF" | "INSURANCE" | "ESTATE" | "REFERENCE" | "REMINDER";
   title: string;
   detail: string | null;
   route: string;
+}
+
+/** A date in the calendar, done like a task: open until marked complete. */
+export interface CalendarTask extends CalendarEvent {
+  key: string;
+  done: boolean;
+  doneAt: string | null;
+  doneNote: string | null;
+  reminderId: string | null;
+  repeat: string | null;
+  canRollForward: boolean;
+}
+
+export interface Reminder {
+  id: string;
+  title: string;
+  notes: string | null;
+  dueDate: string;
+  repeat: "NONE" | "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY";
+  targetType: string | null;
+  targetId: string | null;
+  completedAt: string | null;
+  completeNote: string | null;
+  target: { name: string; route: string } | null;
+  fileCount: number;
+}
+
+export interface VehicleLogbook {
+  id: string;
+  assetId: string;
+  startDate: string;
+  endDate: string;
+  startOdometer: number | null;
+  endOdometer: number | null;
+  totalKm: number;
+  businessKm: number;
+  documentId: string | null;
+  document: { id: string; originalFilename: string } | null;
+  notes: string | null;
+}
+
+export interface VehicleYearRecord {
+  fyLabel: string;
+  openingOdometer: number | null;
+  closingOdometer: number | null;
+  fuel: number | null;
+  registration: number | null;
+  insurance: number | null;
+  repairs: number | null;
+  interest: number | null;
+  leasePayments: number | null;
+  other: number | null;
+  declineInValue: number | null;
+  businessPercent: number | null;
+  notes: string | null;
+}
+
+export interface BusinessUseSchedule {
+  asset: { id: string; name: string; vehicleType: string | null; registration: string | null; make: string | null; model: string | null; year: number | null };
+  fy: string;
+  period: { start: string; end: string };
+  owner: { id: string; name: string; entityType: string; personId: string | null; personName: string | null };
+  treatment: "LOGBOOK" | "COMPANY_TRUST" | "SUPER_FUND";
+  treatmentTitle: string;
+  treatmentExplain: string;
+  logbook: null | {
+    id: string;
+    startDate: string;
+    endDate: string;
+    totalKm: number;
+    businessKm: number;
+    percent: number | null;
+    validUntilFy: string;
+    document: { id: string; originalFilename: string } | null;
+  };
+  year: VehicleYearRecord | null;
+  km: number | null;
+  businessKm: number | null;
+  businessPercent: number | null;
+  workedDecline: { amount: number; base: number; capped: boolean } | null;
+  costs: Array<{ key: string; label: string; amount: number }>;
+  totalCosts: number;
+  claim: number;
+  fbt: null | { privatePercent: number; operatingCostTaxable: number; statutoryBase: number; statutoryTaxable: number };
+  warnings: string[];
+  notes: string[];
 }
 
 export interface MaintenanceRecord {
@@ -492,7 +578,7 @@ export interface CarOption {
 
 export interface Expectation {
   key: string;
-  kind: "INSURANCE" | "DOCUMENT";
+  kind: "INSURANCE" | "DOCUMENT" | "RECORD";
   label: string;
   level: "RED" | "AMBER";
   why: string;
@@ -2286,8 +2372,35 @@ export const api = {
       request<unknown>(`/smsf/pensions/${id}/payments`, { method: "POST", body: JSON.stringify(data) }),
     removePensionPayment: (id: string) => request<void>(`/smsf/pension-payments/${id}`, { method: "DELETE" }),
   },
+  vehicleBusiness: {
+    logbooks: (assetId: string) => request<VehicleLogbook[]>(`/vehicle-business/${assetId}/logbooks`),
+    addLogbook: (assetId: string, data: Record<string, unknown>) =>
+      request<VehicleLogbook>(`/vehicle-business/${assetId}/logbooks`, { method: "POST", body: JSON.stringify(data) }),
+    updateLogbook: (id: string, data: Record<string, unknown>) =>
+      request<VehicleLogbook>(`/vehicle-business/logbooks/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    removeLogbook: (id: string) => request<void>(`/vehicle-business/logbooks/${id}`, { method: "DELETE" }),
+    schedule: (assetId: string, fy: string) => request<BusinessUseSchedule>(`/vehicle-business/${assetId}/schedule?fy=${fy}`),
+    saveYear: (assetId: string, fy: string, data: Record<string, unknown>) =>
+      request<BusinessUseSchedule>(`/vehicle-business/${assetId}/years/${fy}`, { method: "PUT", body: JSON.stringify(data) }),
+    toWorkDeductions: (assetId: string, fy: string) =>
+      request<WorkDeduction>(`/vehicle-business/${assetId}/schedule/${fy}/work-deduction`, { method: "POST" }),
+  },
+  reminders: {
+    list: (params?: Record<string, string>) => request<Reminder[]>(`/reminders${params ? `?${new URLSearchParams(params)}` : ""}`),
+    get: (id: string) => request<Reminder>(`/reminders/${id}`),
+    create: (data: Record<string, unknown>) => request<Reminder>("/reminders", { method: "POST", body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) => request<Reminder>(`/reminders/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    complete: (id: string, note?: string | null) =>
+      request<{ reminder: Reminder; next: Reminder | null }>(`/reminders/${id}/complete`, { method: "POST", body: JSON.stringify({ note: note ?? null }) }),
+    reopen: (id: string) => request<Reminder>(`/reminders/${id}/reopen`, { method: "POST" }),
+    remove: (id: string) => request<void>(`/reminders/${id}`, { method: "DELETE" }),
+  },
   calendar: {
     list: () => request<CalendarEvent[]>("/calendar"),
+    tasks: (from: string, to: string) => request<CalendarTask[]>(`/calendar/tasks?from=${from}&to=${to}`),
+    complete: (key: string, opts: { note?: string | null; rollForward?: boolean } = {}) =>
+      request<{ key: string; done: boolean; movedTo: string | null }>("/calendar/complete", { method: "POST", body: JSON.stringify({ key, ...opts }) }),
+    reopen: (key: string) => request<{ key: string; done: boolean }>("/calendar/reopen", { method: "POST", body: JSON.stringify({ key }) }),
     icsUrl: `${BASE}/calendar/expiries.ics`,
   },
   assets: {

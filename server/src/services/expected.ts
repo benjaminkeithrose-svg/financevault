@@ -22,7 +22,7 @@ export type Level = "RED" | "AMBER";
 export interface Expectation {
   /** Stable id, used to set it aside: "ins:…" or "doc:…" (yearly ones end in the FY). */
   key: string;
-  kind: "INSURANCE" | "DOCUMENT";
+  kind: "INSURANCE" | "DOCUMENT" | "RECORD";
   label: string;
   level: Level;
   why: string;
@@ -95,7 +95,14 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
   const [assets, people, entities, policies, identities, loans, documents, dismissals] = await Promise.all([
     prisma.asset.findMany({
       where: { disposalDate: null, parentAssetId: null },
-      include: { property: true, commercialProperty: true, entity: { select: { id: true, name: true, entityType: true } }, ownerships: true },
+      include: {
+        property: true,
+        commercialProperty: true,
+        entity: { select: { id: true, name: true, entityType: true } },
+        ownerships: true,
+        logbooks: { select: { id: true, startDate: true }, orderBy: { startDate: "desc" } },
+        vehicleYears: { where: { fyLabel: fy }, select: { openingOdometer: true, closingOdometer: true } },
+      },
     }),
     prisma.person.findMany({ orderBy: { name: "asc" } }),
     prisma.entity.findMany({ orderBy: { name: "asc" }, include: { personalFor: { select: { id: true } } } }),
@@ -332,6 +339,29 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
       items.push(insurance(target, ["MOTOR"], "Comprehensive or third party property insurance", "RED", "Not required by law, but CTP only covers injuries to people — without this, damage to your car or someone else's car or property isn't covered.", a.id, null));
       const slip = pinkSlip("");
       if (slip) items.push(slip);
+      // Used for work or business (it has a logbook): a logbook that covers
+      // the year, and the year's odometer readings.
+      if (a.logbooks.length > 0) {
+        const fyStart = Number(fy.slice(0, 4));
+        const current = a.logbooks.find((l) => {
+          const kept = Number(financialYearLabelForDate(l.startDate).slice(0, 4));
+          return kept <= fyStart && fyStart - kept < 5;
+        });
+        const schedule = { label: "Business use schedule", route: `/assets/${a.id}/business-use/${fy}` };
+        items.push(
+          item(
+            { key: `rec:logbook:${target}:${fy}`, kind: "RECORD", label: "A logbook that covers the year", level: "RED", why: "A logbook is good for the year it's kept and the four after. Without a current one, the business share of the car's costs can't be claimed.", fyLabel: fy, addAs: "LOGBOOK" },
+            current ? schedule : null
+          )
+        );
+        const y = a.vehicleYears[0];
+        items.push(
+          item(
+            { key: `rec:odometer:${target}:${fy}`, kind: "RECORD", label: "Odometer at the start and end of the year", level: "AMBER", why: "Needed every year the logbook's business share is used.", fyLabel: fy, addAs: "ODOMETER" },
+            y && y.openingOdometer != null && y.closingOdometer != null ? schedule : null
+          )
+        );
+      }
     } else if (WATERCRAFT.includes(type)) {
       items.push(currentDoc(target, ["Boat Registration"], type === "JET_SKI" ? "Jet ski registration" : "Boat registration", "RED", "In NSW a boat must be registered if it has an engine of 4kW or more or is 5.5m or longer, and every jet ski must be. Record the expiry on the boat, or add the registration.", targets, owners, registered));
       items.push(currentDoc(target, ["Trailer Registration"], "Trailer registration", "RED", "The trailer it's towed on is registered separately, like any other trailer. No trailer (kept on a mooring or in a marina)? Set this aside.", targets, owners));

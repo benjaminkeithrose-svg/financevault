@@ -13,6 +13,7 @@ import { formatCurrency, formatDate, humanize, PROPERTY_USES, propertyUse } from
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { useTrailTitle } from "../trail.js";
+import { RemindersCard } from "../components/RemindersCard.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -239,6 +240,7 @@ export function PropertyDetail() {
       <MissingFlags target={`asset:${property.assetId}`} />
       <InsurancePanel assetId={property.assetId} defaultKind="BUILDING_AND_CONTENTS" defaultHolderId={property.asset?.entityId} />
 
+      <RemindersCard targetType="PROPERTY" targetId={property.id} name={property.asset?.name ?? property.address} />
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="PROPERTY" targetId={property.id} />
