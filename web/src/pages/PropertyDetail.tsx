@@ -9,9 +9,10 @@ import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
 import { UsableEquityCard } from "../components/UsableEquityCard.js";
 import { PropertyCostsCard } from "../components/PropertyCostsCard.js";
-import { formatCurrency, formatDate, humanize } from "../utils.js";
+import { formatCurrency, formatDate, humanize, PROPERTY_USES, propertyUse } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
+import { useTrailTitle } from "../trail.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -21,6 +22,7 @@ function toDateInput(value?: string | null): string {
 export function PropertyDetail() {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<Property | null>(null);
+  useTrailTitle(property?.asset?.name ?? property?.address);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [form, setForm] = useState<Record<string, string>>({});
@@ -78,7 +80,14 @@ export function PropertyDetail() {
     }
   }
 
+  async function setUse(use: string) {
+    if (!id) return;
+    await api.properties.update(id, { use });
+    load();
+  }
+
   const summary = property.summary || {};
+  const use = propertyUse(property);
   const liabilities: Liability[] = property.liabilities || [];
 
   return (
@@ -89,6 +98,20 @@ export function PropertyDetail() {
           <p>{property.address}</p>
         </div>
       </div>
+
+      {!property.asset?.disposalDate && (
+        <div className="card property-use">
+          <h3 style={{ marginTop: 0 }}>How it's used</h3>
+          <div className="segmented" role="group" aria-label="How it's used">
+            {PROPERTY_USES.map((u) => (
+              <button key={u.value} type="button" className={use.value === u.value ? "selected" : ""} aria-pressed={use.value === u.value} onClick={() => setUse(u.value)}>
+                {u.label}
+              </button>
+            ))}
+          </div>
+          <p className="cap-explain">{use.explain}</p>
+        </div>
+      )}
 
       <div className="grid grid-2">
         <div className="card">

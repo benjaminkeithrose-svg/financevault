@@ -182,6 +182,18 @@ export const DEBT_LISTS = {
 
 export type DebtList = keyof typeof DEBT_LISTS;
 
+/** How a residential property is used — decides its insurance, paperwork, land tax and whether it's in the profit report. */
+export const PROPERTY_USES = [
+  { value: "HOME", label: "Our home (PPOR)", short: "Home (PPOR)", explain: "Where you live — your principal place of residence. No landlord insurance or rental paperwork; exempt from land tax." },
+  { value: "INVESTMENT", label: "Rental or investment", short: "Rental", explain: "Rented out, or held to rent. Landlord insurance and the year's rental paperwork are expected." },
+  { value: "HOLIDAY", label: "Holiday home, not rented", short: "Holiday home", explain: "For your own use, not rented out. Building and contents cover expected; no rental paperwork." },
+] as const;
+
+export function propertyUse(p: { use?: string | null; asset?: { mainResidence?: string | null } | null }): (typeof PROPERTY_USES)[number] {
+  const value = p.use ?? (p.asset?.mainResidence === "FULL" ? "HOME" : "INVESTMENT");
+  return PROPERTY_USES.find((u) => u.value === value) ?? PROPERTY_USES[1];
+}
+
 export function debtListFor(liabilityType: string): DebtList {
   const found = (Object.keys(DEBT_LISTS) as DebtList[]).find((k) =>
     (DEBT_LISTS[k].types as readonly string[]).includes(liabilityType)

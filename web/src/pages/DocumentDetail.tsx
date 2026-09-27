@@ -4,6 +4,7 @@ import { api, AuditLogEntry, Document, Entity, TaxCategory } from "../api/client
 import { formatDate, humanize } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
+import { useTrailTitle } from "../trail.js";
 
 const REVIEW_STATUSES = ["PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"];
 const TAX_RELEVANCE = ["UNKNOWN", "NOT_RELEVANT", "POSSIBLE", "CONFIRMED"];
@@ -18,6 +19,7 @@ const TAX_REFERENCE = "Tax Reference";
 export function DocumentDetail() {
   const { id } = useParams<{ id: string }>();
   const [doc, setDoc] = useState<Document | null>(null);
+  useTrailTitle(doc ? (doc.documentType && doc.documentType !== "Tax Reference" ? doc.documentType : doc.originalFilename) : null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [taxCategories, setTaxCategories] = useState<TaxCategory[]>([]);

@@ -593,6 +593,10 @@ model Property {
   tenantInfo       String?
   propertyManager  String?
   weeklyRent       Float? // current rent, used for rent cover on an SMSF's LRBA loan
+  // How it's used: HOME (principal place of residence) | INVESTMENT (rented,
+  // or for rent) | HOLIDAY (holiday home, not rented). Null = investment.
+  // HOME keeps the asset's mainResidence at FULL for land tax and CGT.
+  use              String?
   // Running costs a year, for the after-tax profit figures. Insurance comes
   // from the policies recorded against the property.
   councilRates     Float?

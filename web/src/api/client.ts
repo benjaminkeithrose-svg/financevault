@@ -1179,6 +1179,7 @@ export interface Property {
   tenantInfo?: string | null;
   propertyManager?: string | null;
   weeklyRent?: number | null;
+  use?: "HOME" | "INVESTMENT" | "HOLIDAY" | null;
   councilRates?: number | null;
   waterRates?: number | null;
   strataFees?: number | null;

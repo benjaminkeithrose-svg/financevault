@@ -151,7 +151,8 @@ export async function accountantChecklist(today = new Date()): Promise<Checklist
 
   // --- Property ------------------------------------------------------------------
   for (const a of assets) {
-    if (a.mainResidence === "FULL") continue;
+    // Rental deductions only matter for a property that's rented.
+    if (a.mainResidence === "FULL" || a.property?.use === "HOME" || a.property?.use === "HOLIDAY") continue;
     if (a.depreciationPerYear === null && a.capitalWorksPerYear === null) {
       items.push({
         id: `depreciation-${a.id}`,

@@ -7,11 +7,13 @@ import { HelpLink } from "../components/HelpLink.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { coversLink, EMPTY_POLICY, InsurancePanel, PolicyFields, PolicyForm, policyKindLabel, policyPayload, premiumText, RenewalBadge } from "../components/InsurancePanel.js";
 import { formatCurrency } from "../utils.js";
+import { useTrailTitle } from "../trail.js";
 
 /** One insurance policy: what it covers, the numbers, and its schedule and certificates. */
 export function InsuranceDetail() {
   const { id } = useParams<{ id: string }>();
   const [policy, setPolicy] = useState<InsurancePolicy | null>(null);
+  useTrailTitle(policy ? [policyKindLabel(policy.kind), policy.insurer].filter(Boolean).join(" – ") : null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [editing, setEditing] = useState(false);

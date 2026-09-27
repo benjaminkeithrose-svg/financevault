@@ -4,6 +4,7 @@ import { api, CarOption, Person } from "../api/client.js";
 import { financialYearLabelForToday, formatCurrency } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { useBackTo } from "../hooks/useBackTo.js";
+import { useTrailTitle } from "../trail.js";
 
 /**
  * Car allowance vs novated lease vs an electric car on a novated lease, for
@@ -13,6 +14,7 @@ import { useBackTo } from "../hooks/useBackTo.js";
 export function CarCompare() {
   const { id } = useParams<{ id: string }>();
   const [person, setPerson] = useState<Person | null>(null);
+  useTrailTitle(person ? `Car options – ${person.name}` : null);
   const [form, setForm] = useState({
     leasePayments: "12000",
     runningCosts: "6000",

@@ -16,6 +16,7 @@ import { PersonalDetailsPanel } from "../components/PersonalDetailsPanel.js";
 import { IncomeCard } from "../components/IncomeCard.js";
 import { PaygPanel } from "../components/PaygPanel.js";
 import { FeatureGate } from "../components/FeatureGate.js";
+import { useTrailTitle } from "../trail.js";
 
 const RELATIONSHIP_TYPES = [
   "SETTLOR",
@@ -213,6 +214,7 @@ function PayPeriodRow({ period, onChange }: { period: PayPeriod; onChange: () =>
 export function PersonDetail() {
   const { id } = useParams<{ id: string }>();
   const [person, setPerson] = useState<Person | null>(null);
+  useTrailTitle(person?.name);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [relType, setRelType] = useState("TRUSTEE");

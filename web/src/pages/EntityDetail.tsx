@@ -10,6 +10,7 @@ import { DeleteSection } from "../components/DeleteSection.js";
 import { SmsfPanel } from "../components/SmsfPanel.js";
 import { FeatureGate } from "../components/FeatureGate.js";
 import { UnitholdersPanel } from "../components/UnitholdersPanel.js";
+import { useTrailTitle } from "../trail.js";
 
 const ASSET_TYPE_ICONS: Record<string, string> = {
   PROPERTY: "🏠",
@@ -65,6 +66,7 @@ function ownShare(
 export function EntityDetail() {
   const { id } = useParams<{ id: string }>();
   const [entity, setEntity] = useState<Entity | null>(null);
+  useTrailTitle(entity?.name);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [allEntities, setAllEntities] = useState<Entity[]>([]);
   const [relType, setRelType] = useState("CORPORATE_TRUSTEE_OF");

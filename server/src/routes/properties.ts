@@ -74,6 +74,7 @@ const createInput = z.object({
   tenantInfo: z.string().optional().nullable(),
   propertyManager: z.string().optional().nullable(),
   weeklyRent: z.number().nonnegative().optional().nullable(),
+  use: z.enum(["HOME", "INVESTMENT", "HOLIDAY"]).optional().nullable(),
   councilRates: z.number().nonnegative().optional().nullable(),
   waterRates: z.number().nonnegative().optional().nullable(),
   strataFees: z.number().nonnegative().optional().nullable(),
@@ -99,6 +100,8 @@ propertiesRouter.post(
           acquisitionDate: parsed.purchaseDate ? new Date(parsed.purchaseDate) : undefined,
           acquisitionCost: parsed.purchasePrice ?? undefined,
           currentValue: parsed.currentValue ?? undefined,
+          // The family home: exempt from land tax, main residence for CGT.
+          mainResidence: parsed.use === "HOME" ? "FULL" : undefined,
         },
       });
       if (owners) {
@@ -119,6 +122,7 @@ propertiesRouter.post(
           tenantInfo: parsed.tenantInfo,
           propertyManager: parsed.propertyManager,
           weeklyRent: parsed.weeklyRent,
+          use: parsed.use,
           councilRates: parsed.councilRates,
           waterRates: parsed.waterRates,
           strataFees: parsed.strataFees,
@@ -147,10 +151,22 @@ propertiesRouter.put(
       return;
     }
 
+    // Moving in or out changes whether it's the main residence (not once sold — that's the sale's record).
+    const asset = await prisma.asset.findUnique({ where: { id: property.assetId }, select: { mainResidence: true, disposalDate: true } });
+    const mainResidence =
+      parsed.use === undefined || asset?.disposalDate
+        ? undefined
+        : parsed.use === "HOME"
+          ? "FULL"
+          : asset?.mainResidence === "FULL"
+            ? "NONE"
+            : undefined;
+
     const updated = await prisma.$transaction(async (tx) => {
       await tx.asset.update({
         where: { id: property.assetId },
         data: {
+          mainResidence,
           name: parsed.name,
           acquisitionDate: parsed.purchaseDate !== undefined ? (parsed.purchaseDate ? new Date(parsed.purchaseDate) : null) : undefined,
           acquisitionCost: parsed.purchasePrice,
@@ -170,6 +186,7 @@ propertiesRouter.put(
           tenantInfo: parsed.tenantInfo,
           propertyManager: parsed.propertyManager,
           weeklyRent: parsed.weeklyRent,
+          use: parsed.use,
           councilRates: parsed.councilRates,
           waterRates: parsed.waterRates,
           strataFees: parsed.strataFees,

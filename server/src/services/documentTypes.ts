@@ -69,6 +69,17 @@ export const DOCUMENT_TYPES: DocumentTypeDef[] = [
 
   // Personal
   { name: "Motor Vehicle Insurance", category: "Personal", keywords: ["motor vehicle insurance", "car insurance", "comprehensive insurance"] },
+  {
+    name: "Safety Inspection Report",
+    category: "Personal",
+    keywords: ["safety inspection report", "pink slip", "esafety check", "roadworthy certificate", "blue slip", "authorised inspection"],
+  },
+  {
+    name: "Boat Registration",
+    category: "Personal",
+    keywords: ["vessel registration", "boat registration", "recreational vessel", "personal watercraft", "maritime"],
+  },
+  { name: "Trailer Registration", category: "Personal", keywords: ["trailer registration", "caravan registration", "box trailer", "boat trailer"] },
   { name: "Vehicle Registration", category: "Personal", keywords: ["registration renewal", "vehicle registration"] },
   { name: "Utilities", category: "Personal", keywords: ["electricity", "gas bill", "utility bill"] },
   { name: "Home Insurance", category: "Personal", keywords: ["home and contents", "home insurance", "building insurance"] },

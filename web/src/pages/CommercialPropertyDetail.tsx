@@ -14,6 +14,7 @@ import { formatCurrency, formatDate, humanize, confirmThenDelete } from "../util
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { HelpLink } from "../components/HelpLink.js";
+import { useTrailTitle } from "../trail.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -53,6 +54,7 @@ const emptyRentReview = { reviewDate: "", reviewMechanism: "CPI", previousRent: 
 export function CommercialPropertyDetail() {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<CommercialProperty | null>(null);
+  useTrailTitle(property?.name);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [financialYears, setFinancialYears] = useState<FinancialYear[]>([]);

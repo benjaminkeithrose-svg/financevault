@@ -114,6 +114,54 @@ h1, h2, h3, h4 {
   white-space: nowrap;
 }
 
+/* The path you came down, under the header: each step goes straight back up to it. */
+.trail-bar {
+  position: sticky;
+  top: 56px;
+  z-index: 19;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+
+.trail-bar ol {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0 16px;
+  min-height: 40px;
+  font-size: 14px;
+}
+
+.trail-bar li {
+  display: inline-flex;
+  align-items: center;
+  max-width: 220px;
+}
+
+.trail-bar li + li::before {
+  content: "›";
+  margin: 0 6px 0 2px;
+  color: var(--text-muted);
+}
+
+.trail-bar .link-button {
+  min-height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trail-bar li[aria-current] {
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .app-header-spacer {
   flex: 1;
 }
@@ -2175,4 +2223,9 @@ code.path {
 #updates,
 #readable-copies {
   scroll-margin-top: 64px;
+}
+
+/* A property's use: three choices that wrap on a phone. */
+.property-use .segmented {
+  flex-wrap: wrap;
 }

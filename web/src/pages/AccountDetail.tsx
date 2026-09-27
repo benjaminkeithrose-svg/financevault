@@ -8,6 +8,7 @@ import { formatCurrency, formatDate, humanize, confirmThenDelete } from "../util
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
 import { useDraft } from "../hooks/useDraft.js";
+import { useTrailTitle } from "../trail.js";
 
 const ACCOUNT_TYPES = ["TRANSACTION", "SAVINGS", "OFFSET", "CREDIT_CARD", "OTHER"];
 const STATUSES = ["UNREVIEWED", "CATEGORISED", "MATCHED", "RECONCILED", "NEEDS_REVIEW"];
@@ -17,6 +18,7 @@ const emptyTxn = { date: "", description: "", amount: "", counterparty: "", taxC
 export function AccountDetail() {
   const { id } = useParams<{ id: string }>();
   const [account, setAccount] = useState<Account | null>(null);
+  useTrailTitle(account ? `${account.institution} ${account.accountName}` : null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [taxCategories, setTaxCategories] = useState<TaxCategory[]>([]);
   const [form, setForm, draft] = useDraft(`transactions:${id}:new`, emptyTxn);

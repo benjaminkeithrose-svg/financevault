@@ -170,6 +170,34 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
       docLink(findDoc([type, ...also], targets, owners, yearly))
     );
 
+  /**
+   * Paperwork that has to be current rather than for a financial year — a
+   * registration, a safety inspection: met by one dated (or added) in the
+   * last 13 months, or by what's recorded on the asset (`alreadyMet`).
+   */
+  const yearAgo = new Date(today.getTime() - 396 * 86_400_000);
+  const currentDoc = (
+    target: string,
+    types: string[],
+    label: string,
+    level: Level,
+    why: string,
+    targets: Array<[string, string]>,
+    owners: string[],
+    alreadyMet: { label: string; route: string } | null = null
+  ) => {
+    const found = documents.find(
+      (d) =>
+        types.includes(d.documentType!) &&
+        (d.documentDate ?? d.uploadDate) >= yearAgo &&
+        d.links.some((l) => targets.some(([t, id]) => l.targetType === t && l.targetId === id))
+    );
+    return item(
+      { key: `doc:${types[0]}:${target}:current`, kind: "DOCUMENT", label, level, why, fyLabel: null, addAs: types[0] },
+      alreadyMet ?? docLink(found)
+    );
+  };
+
   const groups: ExpectationGroup[] = [];
 
   // Land tax is only expected where there's some to pay.
@@ -188,7 +216,10 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
   for (const a of assets.filter((x) => x.property)) {
     const p = a.property!;
     const target = `asset:${a.id}`;
-    const home = a.mainResidence === "FULL";
+    // How it's used: the family home, a rental, or a holiday home nobody rents.
+    const use = p.use ?? (a.mainResidence === "FULL" ? "HOME" : "INVESTMENT");
+    const home = use === "HOME";
+    const holiday = use === "HOLIDAY";
     const strata = (p.strataFees ?? 0) > 0;
     const smsf = FUNDS.includes(a.entity.entityType);
     const mortgaged = loans.some((l) => l.securityPropertyId === p.id);
@@ -203,14 +234,14 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
     if (smsf && !strata) {
       items.push(insurance(target, ["BUILDING", "BUILDING_AND_CONTENTS", "LANDLORD"], "Building insurance, in the fund's (trustee's) name", "RED", "An SMSF property needs building cover in the trustee's name — the fund's auditor checks it, and the lender requires it on an LRBA loan.", a.id, null));
     }
-    if (home) {
+    if (home || holiday) {
       if (strata) {
         items.push(insurance(target, ["CONTENTS", "BUILDING_AND_CONTENTS"], "Contents insurance", "AMBER", "The strata policy covers the building; your belongings aren't covered by it.", a.id, null));
       } else {
         items.push(
           insurance(target, ["BUILDING", "BUILDING_AND_CONTENTS"], "Building insurance", "RED", mortgaged ? "Your lender requires building cover while the loan is secured on the home." : "The building is usually the largest thing the family owns — uninsured, a fire or storm is a total loss.", a.id, null)
         );
-        items.push(insurance(target, ["CONTENTS", "BUILDING_AND_CONTENTS"], "Contents insurance", "AMBER", "Normal for a home you live in.", a.id, null));
+        items.push(insurance(target, ["CONTENTS", "BUILDING_AND_CONTENTS"], "Contents insurance", "AMBER", holiday ? "Normal for a holiday home — check the policy covers it while nobody's staying there." : "Normal for a home you live in.", a.id, null));
       }
     } else if (!smsf) {
       items.push(insurance(target, ["LANDLORD", "LANDLORD_CONTENTS"], strata ? "Landlord insurance (contents and rent default)" : "Landlord insurance", "RED", "Covers lost rent, tenant damage and liability — ordinary home insurance doesn't cover a tenanted property.", a.id, null));
@@ -222,15 +253,17 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
       items.push(doc(target, "Strata Certificate of Currency", ["Insurance"], "Strata insurance certificate of currency", "AMBER", "Proof the strata scheme's building policy is current — lenders ask for it, and it's the building cover you rely on.", true, targets, owners));
     }
 
+    // Land tax applies to anything but the home (a holiday home too).
+    const lt = landTax.get(a.id);
+    if (!home && lt?.amount && lt.amount > 0) {
+      items.push(doc(target, "Land Tax", [], "Land tax assessment", "RED", `Land tax of about $${Math.round(lt.amount).toLocaleString("en-AU")} a year applies — the assessment shows the amount${holiday ? "" : " to claim"}.`, true, targets, owners));
+    }
+
     // Yearly paperwork for a rental — what the accountant needs.
-    if (!home) {
+    if (use === "INVESTMENT") {
       items.push(doc(target, "Rental Statement", [], "End-of-year rental statement", "RED", "The rent received and the agent's fees for the year — the starting point of the rental schedule in the tax return.", true, targets, owners));
       items.push(doc(target, "Council Rates", [], "Council rates notice", "AMBER", "Deductible for a rental; the accountant needs the amount paid in the year.", true, targets, owners));
       items.push(doc(target, "Water Rates", [], "Water rates notices", "AMBER", "Deductible for a rental unless the tenant pays them.", true, targets, owners));
-      const lt = landTax.get(a.id);
-      if (lt?.amount && lt.amount > 0) {
-        items.push(doc(target, "Land Tax", [], "Land tax assessment", "RED", `Land tax of about $${Math.round(lt.amount).toLocaleString("en-AU")} a year applies — the assessment shows the amount to claim.`, true, targets, owners));
-      }
       items.push(doc(target, "Insurance", ["Home Insurance"], "Insurance schedule or renewal", "AMBER", "The premium is deductible; the schedule shows it and the period covered.", true, targets, owners));
       if (mortgaged) {
         items.push(doc(target, "Loan Statement", [], "Loan interest statement", "RED", "Interest is usually the largest deduction on a rental — the statement for the year shows it.", true, targets, owners));
@@ -261,18 +294,55 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
     groups.push({ target, kind: "COMMERCIAL_PROPERTY", name: c.name, route: `/commercial-properties/${c.id}`, items });
   }
 
-  // ---- Vehicles, boats, caravans ------------------------------------------
+  // ---- Vehicles, boats, caravans, trailers ---------------------------------
+  // NSW: road vehicles need a CTP green slip and registration; boats with an
+  // engine of 4kW or more, 5.5m or longer, or jet skis need registering, and
+  // a boat trailer is registered separately; light vehicles, trailers and
+  // caravans over 5 years old need a yearly safety inspection (pink slip) to
+  // renew their rego. Trailers and caravans don't need a green slip.
   for (const a of assets.filter((x) => x.assetType === "VEHICLE")) {
     const target = `asset:${a.id}`;
     const type = a.vehicleType ?? "OTHER";
+    const targets: Array<[string, string]> = [["ASSET", a.id]];
+    const owners = [a.entityId];
     const items: Expectation[] = [];
+    const age = a.year ? today.getUTCFullYear() - a.year : null;
+    const registered =
+      a.registrationExpiry && a.registrationExpiry > today
+        ? { label: `Registered until ${a.registrationExpiry.toISOString().slice(0, 10).split("-").reverse().join("/")}`, route: `/assets/${a.id}` }
+        : null;
+    const pinkSlip = (what: string) =>
+      age === null || age > 5
+        ? currentDoc(
+            target,
+            ["Safety Inspection Report"],
+            `Safety inspection report (pink slip)${what}`,
+            "AMBER",
+            age === null
+              ? "Once a vehicle, trailer or caravan is over 5 years old, NSW needs a safety inspection each year to renew the rego. Record the year it was made to know for sure."
+              : `It's about ${age} years old — over 5 years, NSW needs a safety inspection (pink slip) each year to renew the rego.`,
+            targets,
+            owners
+          )
+        : null;
+
     if (ROAD_VEHICLES.includes(type)) {
-      items.push(insurance(target, ["CTP"], "CTP green slip", "RED", "Compulsory third party insurance — in NSW a green slip is needed before the vehicle can be registered. (In most other states it's part of the rego.)", a.id, null));
-      items.push(insurance(target, ["MOTOR"], "Comprehensive or third party property", "AMBER", "CTP only covers injuries to people. Damage to your car or someone else's isn't covered without this.", a.id, null));
+      items.push(currentDoc(target, ["Vehicle Registration"], "Registration", "RED", "It can't be driven on the road unregistered. Record the rego expiry on the vehicle, or add the registration certificate or renewal.", targets, owners, registered));
+      items.push(insurance(target, ["CTP"], "CTP green slip", "RED", "Compulsory third party insurance — in NSW a green slip is needed before the vehicle can be registered.", a.id, null));
+      items.push(insurance(target, ["MOTOR"], "Comprehensive or third party property insurance", "RED", "Not required by law, but CTP only covers injuries to people — without this, damage to your car or someone else's car or property isn't covered.", a.id, null));
+      const slip = pinkSlip("");
+      if (slip) items.push(slip);
     } else if (WATERCRAFT.includes(type)) {
-      items.push(insurance(target, ["BOAT"], "Boat insurance", "AMBER", "Covers the boat and your liability on the water — many marinas require it.", a.id, null));
+      items.push(currentDoc(target, ["Boat Registration"], type === "JET_SKI" ? "Jet ski registration" : "Boat registration", "RED", "In NSW a boat must be registered if it has an engine of 4kW or more or is 5.5m or longer, and every jet ski must be. Record the expiry on the boat, or add the registration.", targets, owners, registered));
+      items.push(currentDoc(target, ["Trailer Registration"], "Trailer registration", "RED", "The trailer it's towed on is registered separately, like any other trailer. No trailer (kept on a mooring or in a marina)? Set this aside.", targets, owners));
+      items.push(insurance(target, ["BOAT"], type === "JET_SKI" ? "Jet ski insurance, covering the trailer" : "Boat insurance, covering the trailer", "RED", "Covers the boat, your liability on the water and usually the trailer — check the trailer is named on the policy. Many marinas require it.", a.id, null));
+      const slip = pinkSlip(" for the trailer");
+      if (slip) items.push(slip);
     } else if (TOWED.includes(type)) {
+      items.push(currentDoc(target, ["Trailer Registration", "Vehicle Registration"], "Registration", "RED", "It can't be towed on the road unregistered. (Trailers and caravans don't need a green slip.) Record the expiry, or add the registration.", targets, owners, registered));
       items.push(insurance(target, ["CARAVAN", "MOTOR"], type === "TRAILER" ? "Trailer insurance" : "Caravan insurance", "AMBER", "The towing car's policy usually covers only liability while it's hitched — not damage to the van or trailer, or theft.", a.id, null));
+      const slip = pinkSlip("");
+      if (slip) items.push(slip);
     }
     if (items.length) groups.push({ target, kind: "VEHICLE", name: a.name, route: `/assets/${a.id}`, items });
   }

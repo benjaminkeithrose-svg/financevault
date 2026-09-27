@@ -168,6 +168,28 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "getting-around",
+    title: "Getting around: back up the path you came down",
+    keywords: "back arrow breadcrumb path trail navigate up tree parent home menu",
+    body: (
+      <>
+        <p>
+          The <strong>back arrow</strong> at the top goes back <strong>up the path you came down</strong>, one level at a time
+          — not simply to the last page you looked at. Go from the Toyota Prado to its insurance policy and then to the policy
+          schedule, and the back arrow takes you to the policy, then to the Prado.
+        </p>
+        <p>
+          Under the top bar, the path is shown in full — for example <strong>Vehicles &amp; Boats › Toyota Prado › Car
+          insurance – NRMA › Insurance</strong>. Tap any step to jump straight back to it.
+        </p>
+        <p>
+          The menu, the home button and search start a new path. The path is kept while the window is open; the next time you
+          start Financial Vault, the back arrow starts from where each page normally sits.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "worth-doing",
     title: "“Worth doing” on the dashboard",
     keywords: "checklist getting started reminders backup reminder stale values out of date valuation nudges monthly snapshot",
@@ -746,6 +768,14 @@ const SECTIONS: Section[] = [
           secured against one when you add it under Loans, and the property shows its equity and LVR.
         </p>
         <p>
+          Each residential property says <strong>how it's used</strong>, chosen when you add it and changed at the top of its
+          page: <strong>Our home (PPOR)</strong> — your principal place of residence, <strong>Rental or investment</strong>, or
+          a <strong>Holiday home, not rented</strong>. It decides what's expected on What's missing (no landlord insurance or
+          rental paperwork for your home), and your home and a holiday home are left out of the property profit report and
+          the accountant checklist. Moving out and renting it? Change it to Rental — the main residence exemption record for
+          capital gains changes with it.
+        </p>
+        <p>
           <strong>Commercial</strong> properties also track tenancies and leases (rent, reviews, expiry), outgoings,
           capital works, occupancy and yearly snapshots. From those it works out NOI, yield, WALE, LVR, cash flow after
           the loan and debt cover. A loan with no repayment amount entered is counted as interest-only, and the page says
@@ -812,6 +842,32 @@ const SECTIONS: Section[] = [
           the loan). Vehicle and boat loans have their own line in Net Worth, and they appear in the borrowing summary.
         </p>
         <p>A vehicle can't be deleted while a loan is linked to it — delete or unlink the loan first.</p>
+        <h4>What each one needs</h4>
+        <p>
+          <Link to="/missing">What's missing</Link> lists the usual paperwork for each vehicle (NSW rules):
+        </p>
+        <ul>
+          <li>
+            <strong>Cars, utes, motorcycles and campervans</strong> — registration, a CTP green slip, and comprehensive or
+            third party property insurance.
+          </li>
+          <li>
+            <strong>Boats and jet skis</strong> — the boat's registration (needed for an engine of 4kW or more, a boat 5.5m or
+            longer, and every jet ski), the trailer's own registration, and boat insurance that covers the trailer.
+          </li>
+          <li>
+            <strong>Caravans and trailers</strong> — registration, and insurance worth checking.
+          </li>
+          <li>
+            <strong>A safety inspection report (pink slip)</strong> each year for a vehicle, trailer or caravan over 5 years
+            old. Enter the vehicle's year so newer ones aren't asked for one.
+          </li>
+        </ul>
+        <p>
+          Registration ticks itself off when the rego expiry on the vehicle is in the future, or when a registration paper
+          dated in the last year is added under Documents on its page. Pink slips and registration papers are recognised when
+          uploaded. The green slip is added as a CTP policy, with the vehicle's insurance.
+        </p>
       </>
     ),
   },
@@ -1064,7 +1120,7 @@ const SECTIONS: Section[] = [
   {
     id: "whats-missing",
     title: "What's missing: insurance and paperwork",
-    keywords: "missing expected insurance documents checklist landlord building contents ctp green slip strata certificate of currency private health life tpd income protection rental statement council rates land tax interest statement depreciation trust deed distribution minutes super statement set aside not needed print",
+    keywords: "missing expected insurance documents checklist landlord building contents ctp green slip pink slip roadworthy rego registration boat trailer comprehensive third party ppor home holiday strata certificate of currency private health life tpd income protection rental statement council rates land tax interest statement depreciation trust deed distribution minutes super statement set aside not needed print",
     body: (
       <>
         <p>

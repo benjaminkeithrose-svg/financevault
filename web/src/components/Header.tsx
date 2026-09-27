@@ -8,6 +8,7 @@ import { useBackOverride } from "../hooks/useBackTo.js";
 import { lockApp } from "./LockGate.js";
 import { KeyholeMark } from "./KeyholeMark.js";
 import { ThemePicker } from "./ThemePicker.js";
+import { arrive, startNewTrail, trailParent, useTrail } from "../trail.js";
 
 const TITLES: Record<string, string> = {
   "/": "Dashboard",
@@ -98,14 +99,29 @@ export function Header() {
   // "/assets/" and "/assets" are the same page.
   const pathname = location.pathname.length > 1 ? location.pathname.replace(/\/+$/, "") : location.pathname;
   const backOverride = useBackOverride();
-  const parent = backOverride ?? getParent(pathname);
   const title = getTitle(pathname);
+
+  // The path you came down (Dashboard › Toyota Prado › its policy › a document):
+  // back goes up it one level at a time. Without one, back goes to the list
+  // the page belongs to.
+  useEffect(() => {
+    arrive(pathname, title);
+  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  const trail = useTrail();
+  const parent = trailParent(pathname) ?? backOverride ?? getParent(pathname);
 
   return (
     <>
       <header className="app-header">
         {pathname !== "/" && (
-          <button className="icon-btn" aria-label="Home" onClick={() => navigate("/")}>
+          <button
+            className="icon-btn"
+            aria-label="Home"
+            onClick={() => {
+              startNewTrail();
+              navigate("/");
+            }}
+          >
             <IconHome />
           </button>
         )}
@@ -133,6 +149,26 @@ export function Header() {
         </button>
       </header>
 
+      {trail.length > 1 && trail[trail.length - 1].path === pathname && (
+        <nav className="trail-bar" aria-label="The path you came down">
+          <ol>
+            {trail.map((c, i) =>
+              i === trail.length - 1 ? (
+                <li key={c.path} aria-current="page">
+                  {c.title}
+                </li>
+              ) : (
+                <li key={c.path}>
+                  <button className="link-button" onClick={() => navigate(c.path)}>
+                    {c.title}
+                  </button>
+                </li>
+              )
+            )}
+          </ol>
+        </nav>
+      )}
+
       {searchOpen && (
         <div className="overlay">
           <div className="overlay-header">
@@ -146,7 +182,8 @@ export function Header() {
               onChange={(e) => setQuery(e.target.value)}
             />
           </div>
-          <div className="overlay-body">
+          {/* A search result starts a new path from where it lands. */}
+          <div className="overlay-body" onClickCapture={(e) => (e.target as HTMLElement).closest("a") && startNewTrail()}>
             <SearchResults q={query} />
           </div>
         </div>

@@ -14,6 +14,7 @@ import { formatCurrency, formatCurrencyExact, formatDate, humanize, confirmThenD
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { HelpLink } from "../components/HelpLink.js";
+import { useTrailTitle } from "../trail.js";
 
 const ASSET_CLASSES = ["SHARE", "ETF", "MANAGED_FUND", "CRYPTO", "SUPER", "BOND", "OTHER"] as const;
 
@@ -44,6 +45,7 @@ const emptyDividend = {
 export function InvestmentAccountDetail() {
   const { id } = useParams<{ id: string }>();
   const [account, setAccount] = useState<InvestmentAccount | null>(null);
+  useTrailTitle(account?.institution);
   const [securities, setSecurities] = useState<Security[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
   useEffect(() => {

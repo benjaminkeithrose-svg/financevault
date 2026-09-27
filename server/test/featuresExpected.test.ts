@@ -92,7 +92,7 @@ describe("through the app", () => {
     const car = await post("/assets", { name: "Family car", assetType: "VEHICLE", vehicleType: "CAR", entityId: owner.entityId, currentValue: 30_000 });
     const g = await group(`asset:${car.id}`);
     expect(find(g, "CTP")).toMatchObject({ level: "RED", label: "CTP green slip" });
-    expect(find(g, "MOTOR").level).toBe("AMBER");
+    expect(find(g, "MOTOR").level).toBe("RED");
     await post("/insurance", { kind: "CTP", insurer: "NRMA", assetId: car.id, entityId: owner.entityId });
     expect(find(await group(`asset:${car.id}`), "CTP").met).toBe(true);
 
@@ -120,5 +120,51 @@ describe("through the app", () => {
     await agent.put("/api/settings").send({ featuresOff: ["expected"] }).expect(200);
     expect((await agent.get("/api/dashboard")).body.missing).toBeNull();
     await agent.put("/api/settings").send({ featuresOff: [] }).expect(200);
+  });
+
+  it("follows how a property is used — home, rental or holiday home", async () => {
+    const owner = await person({ name: "Pat Uses", grossSalary: 80_000 });
+    const home = await post("/properties", { name: "1 Home St", address: "1 Home St, Sydney NSW", state: "NSW", entityId: owner.entityId, currentValue: 1_200_000, use: "HOME" });
+    expect((await agent.get(`/api/assets/${home.assetId}`)).body.mainResidence).toBe("FULL");
+    let g = await group(`asset:${home.assetId}`);
+    expect(g.items.map((i) => i.addAs)).not.toContain("LANDLORD");
+    expect(g.items.map((i) => i.addAs)).not.toContain("Rental Statement");
+
+    const shack = await post("/properties", { name: "Beach shack", address: "2 Sand Rd, Kiama NSW", state: "NSW", entityId: owner.entityId, currentValue: 700_000, use: "HOLIDAY" });
+    g = await group(`asset:${shack.assetId}`);
+    expect(g.items.map((i) => i.addAs)).toEqual(expect.arrayContaining(["BUILDING", "CONTENTS"]));
+    expect(g.items.map((i) => i.addAs)).not.toContain("LANDLORD");
+    expect(g.items.map((i) => i.addAs)).not.toContain("Rental Statement");
+
+    // Moving out and renting it: landlord cover and rental paperwork appear; it's no longer the main residence.
+    await agent.put(`/api/properties/${home.id}`).send({ use: "INVESTMENT" }).expect(200);
+    expect((await agent.get(`/api/assets/${home.assetId}`)).body.mainResidence).toBe("NONE");
+    g = await group(`asset:${home.assetId}`);
+    expect(g.items.map((i) => i.addAs)).toEqual(expect.arrayContaining(["LANDLORD", "Rental Statement"]));
+  });
+
+  it("expects registration, trailer rego, insurance and pink slips for boats and older vehicles", async () => {
+    const owner = await person({ name: "Sam Skipper", grossSalary: 70_000 });
+    const boat = await post("/assets", { name: "Half cabin", assetType: "VEHICLE", vehicleType: "BOAT", entityId: owner.entityId, year: 2012 });
+    let g = await group(`asset:${boat.id}`);
+    expect(find(g, "Boat Registration")).toMatchObject({ level: "RED", met: false });
+    expect(find(g, "Trailer Registration").level).toBe("RED");
+    expect(find(g, "BOAT")).toMatchObject({ level: "RED", label: "Boat insurance, covering the trailer" });
+    expect(find(g, "Safety Inspection Report").label).toMatch(/pink slip\) for the trailer/);
+
+    // A trailer rego document linked to the boat, dated this year, ticks it off.
+    const rego = (await agent.post("/api/documents/upload").attach("file", Buffer.from("Boat trailer registration certificate"), { filename: "trailer-rego.txt", contentType: "text/plain" })).body.document;
+    await agent.put(`/api/documents/${rego.id}`).send({ documentType: "Trailer Registration", documentDate: new Date().toISOString() }).expect(200);
+    await post(`/documents/${rego.id}/links`, { targetType: "ASSET", targetId: boat.id });
+    g = await group(`asset:${boat.id}`);
+    expect(find(g, "Trailer Registration").met).toBe(true);
+
+    // A newer car with its rego expiry recorded: registered, and no pink slip needed yet.
+    const nextYear = new Date(Date.now() + 200 * 86_400_000).toISOString();
+    const car = await post("/assets", { name: "Prado", assetType: "VEHICLE", vehicleType: "CAR", entityId: owner.entityId, year: new Date().getFullYear() - 1, registrationExpiry: nextYear });
+    g = await group(`asset:${car.id}`);
+    expect(find(g, "Vehicle Registration").met).toBe(true);
+    expect(g.items.map((i) => i.addAs)).not.toContain("Safety Inspection Report");
+    expect(find(g, "CTP").level).toBe("RED");
   });
 });

@@ -3,6 +3,12 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.1.3 — 27 September 2026
+- The back arrow now goes back up the path you came down — from a policy's document to the policy, then to the Toyota Prado — instead of to wherever the page normally sits. The path is shown under the top bar; tap any step to jump back to it.
+- Each residential property says how it's used: our home (PPOR), rental or investment, or holiday home. Your home is no longer asked for landlord insurance or rental paperwork.
+- What's missing now expects registration, a CTP green slip and comprehensive or third party insurance for every car; registration, trailer registration and boat insurance covering the trailer for boats; and a pink slip each year once a vehicle, trailer or caravan is over 5 years old.
+- Pink slips, boat registrations and trailer registrations are recognised when uploaded.
+
 ## 1.1.2 — 27 September 2026
 - Fixes the first start on a new computer stopping with "'tsc' is not recognized": the tools that build the app are now always installed.
 - Finds your earlier Financial Vault records in more places (Documents, OneDrive, Desktop, Downloads, and a folder up from where the new version was unzipped), and isn't put off by an empty start left by a start that went wrong.

@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { lastStructureView, STRUCTURE_ROUTES } from "./StructureTabs.js";
 import { FeatureId, useFeatures } from "../features.js";
+import { startNewTrail } from "../trail.js";
 
 interface NavItem {
   to: string;
@@ -99,7 +100,11 @@ export function NavMenuList({ onNavigate }: { onNavigate: () => void }) {
                   isActive || (s.to === "/tree" && STRUCTURE_ROUTES.includes(pathname)) || s.also?.includes(pathname) ? " active" : ""
                 }`
               }
-              onClick={onNavigate}
+              onClick={() => {
+                // The menu starts a new path down the tree.
+                startNewTrail();
+                onNavigate();
+              }}
             >
               {s.label}
             </NavLink>

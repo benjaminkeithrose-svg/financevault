@@ -32,10 +32,11 @@ export function PropertyCostsCard({ property, asset, onChange }: { property: Pro
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Record<string, string>>({});
   const residential = property !== null;
-  const isHome = asset.mainResidence === "FULL";
+  // Set with "How it's used" at the top of the property's page.
+  const isHome = property?.use ? property.use === "HOME" : asset.mainResidence === "FULL";
 
   useEffect(() => {
-    const f: Record<string, string> = { home: isHome ? "yes" : "no" };
+    const f: Record<string, string> = {};
     for (const c of COSTS) f[c.key] = str(property?.[c.key]);
     for (const a of ASSET_FIELDS) f[a.key] = str(asset[a.key]);
     f.ownershipReason = asset.ownershipReason ?? "";
@@ -51,7 +52,6 @@ export function PropertyCostsCard({ property, asset, onChange }: { property: Pro
     const assetData: Record<string, unknown> = {};
     for (const a of ASSET_FIELDS) assetData[a.key] = num(form[a.key]);
     assetData.ownershipReason = form.ownershipReason?.trim() || null;
-    if (residential && !asset.disposalDate) assetData.mainResidence = form.home === "yes" ? "FULL" : "NONE";
     await api.assets.update(asset.id, assetData);
     setEditing(false);
     onChange();
@@ -105,11 +105,6 @@ export function PropertyCostsCard({ property, asset, onChange }: { property: Pro
         <div className="sub-form">
           {residential && (
             <>
-              <label>Is this your home?</label>
-              <select value={form.home} onChange={(e) => setForm({ ...form, home: e.target.value })}>
-                <option value="no">No — it's an investment</option>
-                <option value="yes">Yes — we live in it</option>
-              </select>
               <div className="grid grid-2">
                 {COSTS.map((c) => (
                   <div key={c.key}>

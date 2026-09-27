@@ -166,7 +166,8 @@ export async function propertyProfit(): Promise<{ rows: PropertyProfitRow[]; tax
 
   const rows: PropertyProfitRow[] = [];
   for (const p of properties) {
-    if (p.asset.mainResidence === "FULL") continue; // the home isn't an investment
+    // The home, and a holiday home nobody rents, aren't investments.
+    if (p.asset.mainResidence === "FULL" || p.use === "HOME" || p.use === "HOLIDAY") continue;
     const rent = (p.weeklyRent ?? 0) * 52;
     const insurance = insuranceFor(p.assetId);
     const management = rent * ((p.managementPercent ?? 0) / 100);

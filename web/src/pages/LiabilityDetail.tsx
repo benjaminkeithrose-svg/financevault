@@ -9,6 +9,7 @@ import { useBackTo } from "../hooks/useBackTo.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
+import { useTrailTitle } from "../trail.js";
 
 const VEHICLE_LINKABLE = ["VEHICLE_LOAN", "PERSONAL_LOAN"];
 
@@ -20,6 +21,7 @@ function toDateInput(value?: string | null): string {
 export function LiabilityDetail() {
   const { id } = useParams<{ id: string }>();
   const [liability, setLiability] = useState<Liability | null>(null);
+  useTrailTitle(liability?.name);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);

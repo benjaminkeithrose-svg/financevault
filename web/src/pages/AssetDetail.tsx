@@ -13,6 +13,7 @@ import { EMPTY_VEHICLE_FIELDS, VehicleFields, vehicleFieldsPayload } from "../co
 import { DeleteSection } from "../components/DeleteSection.js";
 import { useBackTo } from "../hooks/useBackTo.js";
 import { LoadFailed } from "../components/LoadFailed.js";
+import { useTrailTitle } from "../trail.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -24,6 +25,7 @@ const STANDALONE_TYPES = ["VEHICLE", "SUPERANNUATION", "EQUIPMENT", "COLLECTIBLE
 export function AssetDetail() {
   const { id } = useParams<{ id: string }>();
   const [asset, setAsset] = useState<Asset | null>(null);
+  useTrailTitle(asset?.name);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [form, setForm] = useState<Record<string, string>>({});

@@ -369,6 +369,32 @@ isn't safe to sync live, only the documents folder is.
   dark or match-the-computer, and three logo designs (keyhole, vault door,
   monogram) used in the header, lock screen and browser tab.
 
+### The path back up, how a property is used, and vehicle paperwork (1.1.3)
+
+- **Path back up** (`web/src/trail.ts`): the header records each page as it
+  opens (`arrive`), per browser tab in `sessionStorage`. Opening a page
+  already on the path shortens it to that page; the menu, home button and
+  search start a new one (`startNewTrail`). The back arrow goes to the
+  previous step (`trailParent`), falling back to the page's usual parent.
+  Detail pages name their step once loaded (`useTrailTitle`), and the path
+  shows as a bar under the header.
+- **How a property is used** (`Property.use`: `HOME`, `INVESTMENT`,
+  `HOLIDAY`): set on create and at the top of the property page. `HOME` sets
+  the asset's `mainResidence` to FULL; changing away from it sets NONE. The
+  migration marks existing FULL main residences as HOME. Home and holiday
+  homes skip landlord insurance, rental paperwork, the property profit report
+  and the accountant checklist; land tax is expected for anything that isn't
+  the home.
+- **Vehicle paperwork** in `services/expected.ts`: cars, motorcycles and
+  campervans need registration, CTP and comprehensive or third party
+  property insurance (all Required); boats and jet skis need boat
+  registration, trailer registration and boat insurance covering the trailer;
+  caravans and trailers need registration. A pink slip (Safety Inspection
+  Report) is Worth checking when the vehicle is over 5 years old or its year
+  isn't known. Registration is met by a future rego expiry or a registration
+  document dated in the last 396 days (`currentDoc`). New document types:
+  Safety Inspection Report, Boat Registration, Trailer Registration.
+
 ### Readable copies of documents
 
 - `services/mirror.ts`, Settings → *Readable copies of your documents*: every

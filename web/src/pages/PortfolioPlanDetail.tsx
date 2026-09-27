@@ -4,6 +4,7 @@ import { api, CommercialProperty, PlanProperty, PlanPropertyProjection, Portfoli
 import { formatCurrency, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { IconBin } from "../components/icons.js";
+import { useTrailTitle } from "../trail.js";
 
 function pct(v: number | null | undefined, digits = 1): string {
   if (v === null || v === undefined) return "—";
@@ -42,6 +43,7 @@ export function PortfolioPlanDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [plan, setPlan] = useState<PortfolioPlan | null>(null);
+  useTrailTitle(plan?.name);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [projection, setProjection] = useState<PortfolioPlanProjection | null>(null);
   const [commercialProperties, setCommercialProperties] = useState<CommercialProperty[]>([]);

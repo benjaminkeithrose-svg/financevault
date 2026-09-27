@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api, Entity, Property } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
 import { SoldList } from "../components/SoldList.js";
-import { formatCurrency } from "../utils.js";
+import { formatCurrency, PROPERTY_USES, propertyUse } from "../utils.js";
 import { CommercialProperties } from "./CommercialProperties.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
@@ -13,7 +13,7 @@ import { useFeatures } from "../features.js";
 function ResidentialProperties() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
-  const [form, setForm, draft] = useDraft("properties:new", { name: "", entityId: "", address: "", state: "", purchaseDate: "", purchasePrice: "" });
+  const [form, setForm, draft] = useDraft("properties:new", { name: "", entityId: "", address: "", state: "", purchaseDate: "", purchasePrice: "", use: "" });
   const owners = useOwners("properties:new");
   const formDraft = withOwners(draft, owners);
   const [showForm, setShowForm] = useState(draft.restored);
@@ -28,7 +28,7 @@ function ResidentialProperties() {
   }, []);
 
   async function create() {
-    if (!form.name.trim() || !form.entityId || !form.address.trim() || owners.problem(form.entityId)) return;
+    if (!form.name.trim() || !form.entityId || !form.address.trim() || !form.use || owners.problem(form.entityId)) return;
     await api.properties.create({
       name: form.name,
       entityId: form.entityId,
@@ -37,6 +37,7 @@ function ResidentialProperties() {
       state: form.state || null,
       purchaseDate: form.purchaseDate ? new Date(form.purchaseDate).toISOString() : null,
       purchasePrice: form.purchasePrice ? Number(form.purchasePrice) : null,
+      use: form.use,
     });
     draft.clear();
     owners.draft.clear();
@@ -63,6 +64,16 @@ function ResidentialProperties() {
             onPrimary={(entityId) => setForm({ ...form, entityId })}
             owners={owners}
           />
+          <label>How it's used</label>
+          <select value={form.use} onChange={(e) => setForm({ ...form, use: e.target.value })}>
+            <option value="">— Choose —</option>
+            {PROPERTY_USES.map((u) => (
+              <option key={u.value} value={u.value}>
+                {u.label}
+              </option>
+            ))}
+          </select>
+          {form.use && <p className="cap-explain">{PROPERTY_USES.find((u) => u.value === form.use)?.explain}</p>}
           <label>Address</label>
           <input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
           <div className="grid grid-2">
@@ -94,7 +105,7 @@ function ResidentialProperties() {
               key={p.id}
               to={`/properties/${p.id}`}
               title={p.asset?.name}
-              subtitle={`${p.address} · ${p.entity?.name}`}
+              subtitle={`${propertyUse(p).short} · ${p.address} · ${p.entity?.name}`}
               right={<strong>{formatCurrency(p.asset?.currentValue)}</strong>}
             />
           ))}
