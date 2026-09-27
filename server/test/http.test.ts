@@ -135,6 +135,16 @@ describe("serving uploaded files", () => {
     const res = await agent.get(`/api/documents/${doc.id}/file`);
     expect(res.headers["content-disposition"]).toMatch(/^attachment/);
   });
+
+  it("opens a file whose name isn't plain ASCII (an em dash, an accent)", async () => {
+    const doc = await makeDoc("Café receipt — saved 2026-09-27.txt", "text/plain", "Flat white $5");
+    const res = await agent.get(`/api/documents/${doc.id}/file`);
+    expect(res.status).toBe(200);
+    expect(res.text).toBe("Flat white $5");
+    expect(res.headers["content-disposition"]).toBe(
+      `attachment; filename="Caf_ receipt _ saved 2026-09-27.txt"; filename*=UTF-8''Caf%C3%A9%20receipt%20%E2%80%94%20saved%202026-09-27.txt`
+    );
+  });
 });
 
 describe("locking", () => {

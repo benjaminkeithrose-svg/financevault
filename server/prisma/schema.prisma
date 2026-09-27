@@ -388,6 +388,11 @@ model Document {
   sourceUrl        String?
   retrievedAt      DateTime?
   supersededAt     DateTime?
+  // Official references: the date the publisher says the page was last
+  // updated ("Last updated 11 May 2026"), and where it sits in the library's
+  // folders ("ATO/Rulings", "ATO/Occupation guides/A–D").
+  sourceUpdatedAt  DateTime?
+  referenceFolder  String?
   withdrawnNote    String?
 
   createdAt DateTime @default(now())

@@ -114,7 +114,12 @@ documentsRouter.get(
       if ((e as { status?: number }).status) throw e;
       throw new HttpError(404, "The file for this document is missing from the documents folder.");
     }
-    const safeName = doc.originalFilename.replace(/["\\\r\n]/g, "_");
+    // Headers can only carry plain ASCII: a name like "Café — receipt.pdf"
+    // goes as an ASCII stand-in plus the real name encoded (RFC 6266), or
+    // the file couldn't be opened at all.
+    const asciiName = doc.originalFilename.replace(/["\\\r\n]/g, "_").replace(/[^\x20-\x7e]/g, "_");
+    const encodedName = encodeURIComponent(doc.originalFilename).replace(/['()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
+    const names = `filename="${asciiName}"; filename*=UTF-8''${encodedName}`;
     res.setHeader("Content-Type", doc.mimeType);
 
     // Uploaded files are served from the app's own origin, so an HTML or SVG
@@ -123,11 +128,11 @@ documentsRouter.get(
     // framed by the app's own preview); anything else is downloaded instead,
     // with a sandbox policy in case a browser opens it anyway.
     if (INLINE_SAFE_TYPES.has(doc.mimeType.toLowerCase())) {
-      res.setHeader("Content-Disposition", `inline; filename="${safeName}"`);
+      res.setHeader("Content-Disposition", `inline; ${names}`);
       res.setHeader("X-Frame-Options", "SAMEORIGIN");
       res.setHeader("Content-Security-Policy", "frame-ancestors 'self'");
     } else {
-      res.setHeader("Content-Disposition", `attachment; filename="${safeName}"`);
+      res.setHeader("Content-Disposition", `attachment; ${names}`);
       res.setHeader("Content-Security-Policy", "sandbox; frame-ancestors 'none'");
     }
     res.setHeader("Content-Length", bytes.length);

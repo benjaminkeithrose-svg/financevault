@@ -430,17 +430,28 @@ isn't safe to sync live, only the documents folder is.
   put there before. What's missing expects a current logbook and the
   year's odometer readings for any vehicle with a logbook (kind `RECORD`).
 
-### Downloading the official documents (1.2.2)
+### The official reference library (1.3.0)
 
 - `services/referenceDownload.ts`, Documents → Tax references → *Download
-  every official document into a folder (for Claude)*: fetches every
-  link-pack source (text for pages, the PDF itself for PDFs, plus each
-  page's "Print whole section" PDF when it has one) and crawls the ATO
-  occupation guides from their index (same section only, three levels,
-  400 pages at most) into `<data folder>/Reference downloads/<date>/`, with
-  `index.json` (files, what each covers, failures) and a ZIP beside it.
-  Runs in the background (`POST /api/reference-library/download`, polled
-  with GET); `GET …/download/zip` serves the ZIP. Nothing enters the vault.
+  and check for updates* (background job: `POST /api/reference-library/download`,
+  polled with GET): runs the link-pack check (`checkForNewVersions` — a
+  changed page is judged on its text, and the copy kept is the page's
+  "Print whole section" PDF when it has one), then crawls the ATO
+  occupation guides from their index (same section, three levels, 400
+  pages at most) and files each guide as one Tax reference (its
+  whole-section PDF, or its pages' text joined), change-checked by hash
+  in `ReferenceCheck` (`occupation:<slug>`).
+- `Document.sourceUpdatedAt` is the publisher's "Last updated" date read
+  from the page; `Document.referenceFolder` its shelf ("ATO/Rulings",
+  "ATO/Occupation guides/A–D", "Revenue NSW"). Library copies loaded from
+  `reference/sources` get the source's title, address and shelf.
+- `writeLibraryFolders` writes every current Tax reference into
+  `<data folder>/Reference downloads/<shelf>/` with `_Index.csv` (publisher's
+  date, updated this financial year, copy saved, last checked, source).
+  The readable copies mirror shelves Tax references the same way.
+- The ZIP of those folders (`GET …/download/zip`) is behind the feature
+  switch `reference-zip`, off by default: `parseFeaturesOff(null)` includes
+  it and the migration adds it to saved lists.
 
 ### Readable copies of documents
 

@@ -115,6 +115,7 @@ export async function planCopies(): Promise<Placement[]> {
           uploadDate: true,
           entityId: true,
           supersededAt: true,
+          referenceFolder: true,
           reviewStatus: true,
           financialYear: { select: { label: true } },
           links: { select: { targetType: true, targetId: true } },
@@ -240,7 +241,9 @@ export async function planCopies(): Promise<Placement[]> {
     const docFy = d.financialYear?.label ?? (date ? financialYearLabelForDate(date) : null);
 
     if (reference) {
-      dirs.push({ dir: d.supersededAt ? ["Tax references", "Replaced copies"] : ["Tax references"], fy: null });
+      // Arranged like the library: Tax references / ATO / Rulings, … / Occupation guides / A–D.
+      const shelf = d.referenceFolder ? d.referenceFolder.split("/").map(safeName) : [];
+      dirs.push({ dir: d.supersededAt ? ["Tax references", "Replaced copies", ...shelf] : ["Tax references", ...shelf], fy: null });
     } else {
       for (const l of d.links) {
         const dir = linkPath(l.targetType, l.targetId);

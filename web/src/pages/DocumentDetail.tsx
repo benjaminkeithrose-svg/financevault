@@ -108,6 +108,7 @@ export function DocumentDetail() {
 
   const isImage = doc.mimeType.startsWith("image/");
   const isPdf = doc.mimeType === "application/pdf";
+  const isText = doc.mimeType === "text/plain";
 
   return (
     <div>
@@ -319,7 +320,8 @@ export function DocumentDetail() {
         <div className="preview-pane">
           {isPdf && <iframe src={api.documents.fileUrl(doc.id)} title="Document preview" />}
           {isImage && <img src={api.documents.fileUrl(doc.id)} alt={doc.originalFilename} />}
-          {!isPdf && !isImage && <div className="empty-state">No inline preview for this file type.</div>}
+          {isText && <TextPreview id={doc.id} />}
+          {!isPdf && !isImage && !isText && <div className="empty-state">No inline preview for this file type.</div>}
         </div>
       </div>
       <div className="grid grid-2">
@@ -344,4 +346,18 @@ export function DocumentDetail() {
       </div>
     </div>
   );
+}
+
+/** A text document (a saved web page, an occupation guide) shown in full. */
+function TextPreview({ id }: { id: string }) {
+  const [text, setText] = useState<string | null>(null);
+  useEffect(() => {
+    fetch(api.documents.fileUrl(id))
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject()))
+      .then((b) => setText(new TextDecoder("utf-8").decode(b)))
+      .catch(() => setText(""));
+  }, [id]);
+  if (text === null) return <div className="empty-state">Loading…</div>;
+  if (!text) return <div className="empty-state">This file couldn't be shown.</div>;
+  return <pre className="text-preview">{text}</pre>;
 }

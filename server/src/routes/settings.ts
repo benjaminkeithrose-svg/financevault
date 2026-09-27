@@ -17,9 +17,13 @@ async function getOrCreateSettings() {
 }
 
 /** Features switched off, as a list (stored as JSON). */
+/** Features that start switched off until someone turns them on ("Save the ZIP for Claude"). */
+export const OFF_UNTIL_SWITCHED_ON = ["reference-zip"];
+
 export function parseFeaturesOff(raw: string | null | undefined): string[] {
+  if (raw === null || raw === undefined) return [...OFF_UNTIL_SWITCHED_ON];
   try {
-    const list = JSON.parse(raw ?? "[]");
+    const list = JSON.parse(raw);
     return Array.isArray(list) ? list.filter((x): x is string => typeof x === "string") : [];
   } catch {
     return [];
@@ -76,3 +80,9 @@ settingsRouter.put(
     await respond(res);
   })
 );
+
+/** Whether a feature is switched on in Settings → Features. */
+export async function featureOn(id: string): Promise<boolean> {
+  const settings = await prisma.settings.findUnique({ where: { id: 1 }, select: { featuresOff: true } });
+  return !parseFeaturesOff(settings?.featuresOff).includes(id);
+}

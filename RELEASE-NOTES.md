@@ -3,6 +3,12 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.3.0 — 27 September 2026
+- The official documents are now a library: Documents → Tax references is shelved by publisher and kind (ATO › Rulings, ATO › Occupation guides › A–D, Revenue NSW…), each showing when the publisher last updated it and "Updated this year" when that's since 1 July. Open any of them to read it in full — web pages saved as text now show on the page too.
+- One button, "Download and check for updates", fetches every source and every ATO occupation guide (one document per guide), keeps changed ones as new copies and the old ones as replaced, and writes the current copies into folders in Documents → Financial Vault Data → Reference downloads, with an index of their dates.
+- "Save the ZIP for Claude" is now a switch in Settings → Features, off to start with.
+- Fixes documents with a dash or an accent in their name (every copy saved by "Check for new versions", or an uploaded "Café receipt.pdf") failing to open or download.
+
 ## 1.2.2 — 27 September 2026
 - Download every official document into a folder, for Claude: on Documents → Tax references, one button fetches every source in the reference list and every ATO occupation guide into a dated folder, with a ZIP to upload. It runs on your computer, which the ATO lets in.
 - Checks for new versions now ask for pages the way the Edge window does, as some government sites turn other requests away.

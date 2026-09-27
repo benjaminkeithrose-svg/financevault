@@ -98,7 +98,54 @@ export function searchUrl(link: LinkEntry): string {
   return `https://duckduckgo.com/?q=${encodeURIComponent(`site:${site} "${link.title.split(" — ")[0]}"`)}`;
 }
 
-const isPdf = (r: FetchResult) => r.contentType.includes("pdf") || r.body.subarray(0, 5).toString("latin1") === "%PDF-";
+const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+/** The publisher's own "Last updated 11 May 2026" (or "Last modified"), if the page says. */
+export function publisherUpdated(text: string | null | undefined): Date | null {
+  if (!text) return null;
+  const m = text.match(/\blast\s+(?:updated|modified|reviewed)\s*:?\s*(\d{1,2})\s+([a-z]+)\s+(\d{4})/i);
+  if (!m) return null;
+  const month = MONTHS.findIndex((x) => x.startsWith(m[2].toLowerCase().slice(0, 3)));
+  if (month < 0) return null;
+  const d = new Date(Date.UTC(Number(m[3]), month, Number(m[1])));
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/** Where a source sits in the library's folders. */
+export function referenceFolderFor(link: Pick<LinkEntry, "publisher" | "kind">, group?: string): string {
+  const clean = (s: string) => s.replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim();
+  if (link.publisher !== "ATO") return clean(link.publisher) || "Other";
+  switch (link.kind) {
+    case "ruling":
+      return "ATO/Rulings";
+    case "yearly-guide":
+    case "print-section":
+      return "ATO/Guides";
+    case "rates-page":
+      return "ATO/Rates and thresholds";
+    case "occupation-guide":
+      return `ATO/Occupation guides/${clean(group ?? "") || "Other"}`;
+    default:
+      return "ATO/Topics";
+  }
+}
+
+/** The "Print whole section" link on an ATO page (the whole section as one PDF), if it has one. */
+export function findPrintLink(html: string, base: string): string | null {
+  for (const m of html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
+    if (/print\s+(the\s+)?whole\s+section/i.test(m[2].replace(/<[^>]+>/g, " "))) return new URL(m[1].replace(/&amp;/g, "&"), base).toString();
+  }
+  // Built by the page's script rather than a plain link: the section's print
+  // address close to the words "Print whole section".
+  const at = html.search(/print\s+(the\s+)?whole\s+section/i);
+  if (at >= 0) {
+    const near = html.slice(Math.max(0, at - 600), at + 600).match(/\/api\/public\/content\/0-[0-9a-f-]{36}[^"'\s<>\\]*/i);
+    if (near) return new URL(near[0].replace(/&amp;/g, "&"), base).toString();
+  }
+  return null;
+}
+
+export const isPdf = (r: FetchResult) => r.contentType.includes("pdf") || r.body.subarray(0, 5).toString("latin1") === "%PDF-";
 
 /** What a copy is stored as: the PDF itself, or the page's text. */
 function copyOf(r: FetchResult): { buffer: Buffer; ext: string; mime: string; text: string | null } {
@@ -107,8 +154,21 @@ function copyOf(r: FetchResult): { buffer: Buffer; ext: string; mime: string; te
   return { buffer: Buffer.from(text, "utf8"), ext: ".txt", mime: "text/plain", text };
 }
 
-async function saveCopy(link: LinkEntry, r: FetchResult, url: string, today: Date, title = link.title) {
-  const copy = copyOf(r);
+export interface CopyOptions {
+  /** The whole section as a PDF, stored in place of the page's text. */
+  pdf?: Buffer | null;
+  /** Text to store in place of the fetched page (an occupation guide's pages, joined). */
+  text?: string | null;
+  folder?: string;
+}
+
+export async function saveCopy(link: LinkEntry, r: FetchResult | null, url: string, today: Date, title = link.title, opts: CopyOptions = {}) {
+  const copy = opts.pdf
+    ? { buffer: opts.pdf, ext: ".pdf", mime: "application/pdf", text: null as string | null }
+    : opts.text != null
+      ? { buffer: Buffer.from(opts.text, "utf8"), ext: ".txt", mime: "text/plain", text: opts.text }
+      : copyOf(r!);
+  const pageText = opts.text ?? (r && !isPdf(r) ? htmlToText(r.body.toString("utf8")) : null);
   const date = today.toISOString().slice(0, 10);
   const safe = title.replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").slice(0, 90).trim();
   const result = await ingestDocument({
@@ -134,6 +194,8 @@ async function saveCopy(link: LinkEntry, r: FetchResult, url: string, today: Dat
       sourceUrl: url,
       retrievedAt: today,
       supersededAt: null,
+      sourceUpdatedAt: publisherUpdated(pageText) ?? publisherUpdated(doc.ocrText),
+      referenceFolder: opts.folder ?? referenceFolderFor(link),
       notes: doc.notes ?? `${link.title} (${link.publisher}), saved from ${url} on ${date}.`,
     },
   });
@@ -142,7 +204,34 @@ async function saveCopy(link: LinkEntry, r: FetchResult, url: string, today: Dat
     where: { referenceLinkId: link.id, id: { not: doc.id }, supersededAt: null },
     data: { supersededAt: today },
   });
-  return { documentId: doc.id, duplicate: result.duplicate, hash: sha256(copy.buffer), text: copy.text };
+  return { documentId: doc.id, duplicate: result.duplicate, hash: sha256(copy.text != null ? Buffer.from(copy.text, "utf8") : copy.buffer), text: copy.text };
+}
+
+/** Library copies loaded from the reference folder get their place in the folders. */
+export async function fileLibraryFolders(links: LinkEntry[]): Promise<void> {
+  for (const l of links) {
+    await prisma.document.updateMany({ where: { referenceLinkId: l.id, referenceFolder: null }, data: { referenceFolder: referenceFolderFor(l) } });
+    // Copies loaded from the program's own reference folder carry the file's
+    // short name ("tr-2000-2.pdf"): give them the source's title and address.
+    const title = l.title.replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").slice(0, 90).trim();
+    const named = await prisma.document.findMany({
+      where: { referenceLinkId: l.id, NOT: { originalFilename: { startsWith: title } } },
+      select: { id: true, originalFilename: true, sourceUrl: true },
+    });
+    for (const d of named) {
+      const ext = d.originalFilename.match(/\.[a-z0-9]+$/i)?.[0] ?? "";
+      await prisma.document.update({ where: { id: d.id }, data: { originalFilename: `${title}${ext}`, sourceUrl: d.sourceUrl ?? l.download ?? l.url } });
+    }
+  }
+  // And the publisher's "Last updated" date, where the saved text shows it.
+  const undated = await prisma.document.findMany({
+    where: { documentType: TAX_REFERENCE_TYPE, sourceUpdatedAt: null, ocrText: { not: null } },
+    select: { id: true, ocrText: true },
+  });
+  for (const d of undated) {
+    const when = publisherUpdated(d.ocrText);
+    if (when) await prisma.document.update({ where: { id: d.id }, data: { sourceUpdatedAt: when } });
+  }
 }
 
 /**
@@ -235,11 +324,22 @@ export async function checkLink(link: LinkEntry, fetcher: Fetcher, today = new D
       return record({ ...base, status: "WITHDRAWN", url, documentId: saved.documentId, contentHash: saved.hash, message: withdrawn }, today);
     }
 
+    // Changes are judged on the page's words (a print PDF is made fresh each
+    // time, so its bytes always differ); the copy kept is the whole section
+    // as a PDF when the page offers one.
     const hash = sha256(copy.buffer);
     if (previous?.contentHash === hash) {
       return record({ ...base, status: "CURRENT", url, message: "No change since the last check." }, today);
     }
-    const saved = await saveCopy(link, r, url, today);
+    let pdf: Buffer | null = null;
+    if (!isPdf(r)) {
+      const print = findPrintLink(r.body.toString("utf8"), url);
+      if (print) {
+        const p = await fetcher(print).catch(() => null);
+        if (p?.status === 200 && isPdf(p)) pdf = p.body;
+      }
+    }
+    const saved = await saveCopy(link, r, url, today, link.title, { pdf });
     if (saved.duplicate) {
       return record({ ...base, status: "CURRENT", url, documentId: saved.documentId, contentHash: hash, message: "Same as the saved copy." }, today);
     }
@@ -261,14 +361,19 @@ export async function checkLink(link: LinkEntry, fetcher: Fetcher, today = new D
 }
 
 /** Checks every source that has a document behind it (not the index pages), a few at a time. */
-export async function checkForNewVersions(fetcher: Fetcher = httpFetch, today = new Date(), root = REFERENCE_ROOT) {
+export async function checkForNewVersions(fetcher: Fetcher = httpFetch, today = new Date(), root = REFERENCE_ROOT, onProgress?: (title: string) => void) {
   await linkLibraryCopies(root);
-  const links = (await readLinkPack(root)).filter((l) => l.kind !== "index");
+  const all = await readLinkPack(root);
+  await fileLibraryFolders(all);
+  const links = all.filter((l) => l.kind !== "index");
   const results: CheckResult[] = [];
   const queue = [...links];
   await Promise.all(
     Array.from({ length: 4 }, async () => {
-      for (let link = queue.shift(); link; link = queue.shift()) results.push(await checkLink(link, fetcher, today));
+      for (let link = queue.shift(); link; link = queue.shift()) {
+        onProgress?.(link.title);
+        results.push(await checkLink(link, fetcher, today));
+      }
     })
   );
   const count = (s: CheckStatus) => results.filter((r) => r.status === s).length;

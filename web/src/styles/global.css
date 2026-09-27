@@ -2477,3 +2477,38 @@ code.path {
   overflow-y: auto;
   padding-left: 18px;
 }
+
+/* The reference library, shelved like its folders. */
+.reference-download {
+  margin: 12px 0;
+}
+.reference-shelf h3 {
+  margin: 20px 0 8px;
+}
+.reference-badge {
+  white-space: nowrap;
+}
+.reference-badge.this-year {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+.reference-badge.warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+/* A text document shown in full on its page. */
+.text-preview {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 16px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}

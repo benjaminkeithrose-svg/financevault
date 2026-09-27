@@ -268,12 +268,12 @@ export interface ReferenceDownloadStatus {
   running: { startedAt: string; done: number; current: string; error?: string } | null;
   last: null | {
     folder: string;
-    zip: string;
+    zip: string | null;
     savedAt: string;
-    files: number;
+    documents: number;
+    changed: number;
     sources: number;
-    occupationPages: number;
-    occupationSections: number;
+    occupationGuides: number;
     failed: Array<{ title: string; url: string; reason: string }>;
   };
 }
@@ -747,6 +747,9 @@ export interface Document {
   sourceUrl?: string | null;
   retrievedAt?: string | null;
   supersededAt?: string | null;
+  /** The publisher's own "Last updated" date, and the library folder it sits in. */
+  sourceUpdatedAt?: string | null;
+  referenceFolder?: string | null;
   withdrawnNote?: string | null;
   createdAt: string;
   updatedAt: string;

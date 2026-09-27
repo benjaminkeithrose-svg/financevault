@@ -24,6 +24,11 @@ export const FEATURES = [
   { id: "structure", name: "Who should own it?", blurb: "The same purchase under each kind of owner." },
   { id: "portfolio-plan", name: "Portfolio Plan", blurb: "Plans for future purchases, refinances and equity draws." },
   { id: "packs", name: "Document Packs", blurb: "Bundles of documents for a broker or accountant." },
+  {
+    id: "reference-zip",
+    name: "Save the ZIP for Claude",
+    blurb: "After downloading the official documents, a ZIP of them to upload to Claude. Starts off; only needed when you're building the app with Claude.",
+  },
 ] as const;
 
 export type FeatureId = (typeof FEATURES)[number]["id"];

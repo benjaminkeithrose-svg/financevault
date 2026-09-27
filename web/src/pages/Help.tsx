@@ -498,15 +498,17 @@ const SECTIONS: Section[] = [
           Every 31 July a single reminder goes in the calendar to check they're still current, after the new financial year's
           guides come out. Search still finds them, and the <strong>Why is this claimed?</strong> icon can point to one.
         </p>
-        <h4>Checking for new versions</h4>
+        <h4>Downloading and checking for updates</h4>
         <p>
-          On the Tax references list, <strong>Check for new versions</strong> goes to each official source (ATO, Revenue NSW,
-          APRA, ASIC). It's the only time the library goes online, only when you press it, and it sends nothing about you.
+          On the Tax references list, <strong>Download and check for updates</strong> goes to each official source (ATO,
+          Revenue NSW, APRA, ASIC) and to every ATO occupation guide. It's the only time the library goes online, only when you
+          press it, and it sends nothing about you. It can take 10 minutes or more; the page shows how it's going.
         </p>
         <ul>
           <li>
-            <strong>Newer copy saved</strong> — the page changed. The new copy is saved and dated; the older one is kept and
-            marked "replaced", so a claim that relied on it still shows what it relied on.
+            <strong>New or changed</strong> — the page changed. The new copy is saved and dated (the whole section as one PDF
+            where the page offers "Print whole section"); the older one is kept and marked "replaced", so a claim that relied on
+            it still shows what it relied on.
           </li>
           <li>
             <strong>New year's guide</strong> — next year's guide (rental properties, capital gains…) is out and saved.
@@ -518,37 +520,48 @@ const SECTIONS: Section[] = [
           <li>
             <strong>Moved</strong> — the page has gone; <strong>Search for it</strong> looks for its new address.
           </li>
+          <li>
+            <strong>Couldn't be downloaded</strong> — listed with its link. Try again later, or open it, print it to PDF and
+            upload it.
+          </li>
         </ul>
+        <h4>The library</h4>
+        <p>
+          The Tax references list is shelved like the folders: ATO › Rulings, ATO › Guides, ATO › Rates and thresholds, ATO ›
+          Occupation guides › A–D and so on, then Revenue NSW, APRA and ASIC. Each one shows the date the publisher last updated
+          it (read from the page's "Last updated") and <strong>Updated this year</strong> when that's since 1 July. Open one to
+          read it in full. Replaced copies are at the bottom.
+        </p>
+        <p>
+          The current copy of each is also in <strong>Documents → Financial Vault Data → Reference downloads</strong>, in the
+          same folders, with <code>_Index.csv</code> listing every document and its dates. The readable copies folder (for
+          OneDrive) has them under Tax references, arranged the same way.
+        </p>
+        <h4>Sending them to Claude</h4>
+        <p>Only needed while the app is being built with Claude. The ZIP is switched off to start with:</p>
+        <ol>
+          <li>
+            Open <Link to="/settings">Settings</Link>, then <strong>Features</strong>.
+          </li>
+          <li>
+            Switch on <strong>Save the ZIP for Claude</strong>.
+          </li>
+          <li>
+            Go back to <Link to="/documents?reference=only">Documents → Tax references</Link>.
+          </li>
+          <li>
+            Press <strong>Save the ZIP for Claude</strong> (next to Download and check for updates). The ZIP saves to your
+            Downloads folder.
+          </li>
+          <li>Upload that ZIP into the conversation with Claude.</li>
+        </ol>
         <p>
           <strong>Figures the app uses</strong>, under the same card, lists the rates and thresholds Financial Vault calculates
           with — tax rates, super caps, cents per kilometre, land tax thresholds and more — with each one's source and when that
           was last checked. When a newer copy of a source is saved, its figures are marked <strong>Review</strong>; a new version
           of Financial Vault brings the updated figures. The dashboard reminds you each new financial year.
         </p>
-        <h4>Downloading everything for Claude</h4>
-        <p>
-          The ATO doesn't let cloud computers read its site, so Claude can't fetch the official documents itself. Financial
-          Vault can, from your computer:
-        </p>
-        <ol>
-          <li>
-            Go to <Link to="/documents?reference=only">Documents → Tax references</Link>, and open{" "}
-            <strong>Download every official document into a folder (for Claude)</strong>.
-          </li>
-          <li>
-            Press <strong>Download everything</strong>. It fetches every source in the reference list and every ATO
-            occupation guide (following the guides' index down to each one, with its "print whole section" PDF where there is
-            one). It can take 10 minutes or more; the page shows how it's going.
-          </li>
-          <li>
-            Press <strong>Save the ZIP for Claude</strong>, then upload that ZIP into the conversation with Claude. The same
-            files are in Documents → Financial Vault Data → Reference downloads, in a folder named by the date.
-          </li>
-        </ol>
-        <p>
-          Anything that couldn't be downloaded is listed with its link — open it, print it to PDF and upload it with the ZIP.
-          Nothing is added to your records, and only public pages are asked for.
-        </p>
+
       </>
     ),
   },

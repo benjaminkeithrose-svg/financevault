@@ -6,6 +6,7 @@ import { formatCurrency, formatDate, humanize } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { IconClose, IconSearch } from "../components/icons.js";
 import { ReferenceDownload } from "../components/ReferenceDownload.js";
+import { ReferenceList } from "../components/ReferenceList.js";
 
 const STATUSES = ["", "PENDING_CLASSIFICATION", "NEEDS_CONFIRMATION", "MISSING_INFORMATION", "CONFIRMED", "ARCHIVED"];
 
@@ -80,7 +81,9 @@ export function Documents() {
 
       {referencesOnly && <ReferenceLibraryCard onLoaded={() => setReloadKey((k) => k + 1)} />}
 
-      {documents.length === 0 ? (
+      {referencesOnly && !q ? (
+        <ReferenceList documents={documents} />
+      ) : documents.length === 0 ? (
         <p className="empty-state">No documents match.</p>
       ) : (
         <ul className="item-card-list">
@@ -114,7 +117,6 @@ function ReferenceLibraryCard({ onLoaded }: { onLoaded: () => void }) {
   const [status, setStatus] = useState<ReferenceLibraryStatus | null>(null);
   const [checks, setChecks] = useState<ReferenceChecks | null>(null);
   const [loading, setLoading] = useState(false);
-  const [checking, setChecking] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const refresh = () => {
@@ -140,40 +142,9 @@ function ReferenceLibraryCard({ onLoaded }: { onLoaded: () => void }) {
     }
   }
 
-  async function check() {
-    if (
-      !window.confirm(
-        "This goes online to fetch the public pages of the ATO, Revenue NSW, APRA and ASIC — the only time the library does. Nothing about you is sent. It takes a minute or two. Go ahead?"
-      )
-    )
-      return;
-    setChecking(true);
-    setMessage(null);
-    try {
-      const r = await api.referenceLibrary.check();
-      const parts = [
-        r.newYear && `${r.newYear} new year's guide${r.newYear === 1 ? "" : "s"}`,
-        r.updated && `${r.updated} newer cop${r.updated === 1 ? "y" : "ies"} saved`,
-        r.withdrawn && `${r.withdrawn} withdrawn`,
-        r.broken && `${r.broken} moved`,
-        r.failed && `${r.failed} couldn't be reached`,
-        r.current && `${r.current} unchanged`,
-      ].filter(Boolean);
-      setMessage(`Checked ${r.checked} sources: ${parts.join(", ")}.`);
-      refresh();
-      onLoaded();
-    } catch (e) {
-      setMessage((e as Error).message);
-    } finally {
-      setChecking(false);
-    }
-  }
-
   if (!status) return null;
   const loaded = status.items.filter((i) => i.documentId).length;
   const attention = (checks?.items ?? []).filter((i) => i.status && ["WITHDRAWN", "BROKEN", "NEW_YEAR", "UPDATED"].includes(i.status));
-  // Sites that couldn't be reached are one line, not a row each.
-  const notReached = (checks?.items ?? []).filter((i) => i.status === "FAILED");
   const order = ["WITHDRAWN", "BROKEN", "NEW_YEAR", "UPDATED"];
   attention.sort((a, b) => order.indexOf(a.status!) - order.indexOf(b.status!));
   return (
@@ -184,21 +155,23 @@ function ReferenceLibraryCard({ onLoaded }: { onLoaded: () => void }) {
         </h3>
         <div className="toolbar" style={{ flexWrap: "wrap" }}>
           {status.available && loaded < status.items.length && (
-            <button className="btn" onClick={load} disabled={loading || checking}>
+            <button className="btn" onClick={load} disabled={loading}>
               {loading ? "Loading… (can take a minute)" : "Load the reference library"}
-            </button>
-          )}
-          {status.available && (
-            <button className={loaded < status.items.length ? "btn secondary" : "btn"} onClick={check} disabled={loading || checking}>
-              {checking ? "Checking… (a minute or two)" : "Check for new versions"}
             </button>
           )}
         </div>
       </div>
+      <ReferenceDownload
+        primary={!status.available || loaded >= status.items.length}
+        onDone={() => {
+          refresh();
+          onLoaded();
+        }}
+      />
       <p className="cap-explain">
         {status.available
           ? `${loaded} of ${status.items.length} official documents are in Financial Vault. They're kept out of every document pack and aren't tied to anyone. ${
-              checks?.lastCheckedAt ? `Last checked for new versions on ${formatDate(checks.lastCheckedAt)}.` : "Not yet checked for new versions — worth doing each July."
+              checks?.lastCheckedAt ? `Last checked for updates on ${formatDate(checks.lastCheckedAt)}.` : "Not yet checked for updates — worth doing each July."
             }`
           : "The reference folder isn't next to the program, so there's nothing to load."}
       </p>
@@ -234,24 +207,6 @@ function ReferenceLibraryCard({ onLoaded }: { onLoaded: () => void }) {
           ))}
         </ul>
       )}
-      {notReached.length > 0 && (
-        <details className="profit-details">
-          <summary>
-            {notReached.length} source{notReached.length === 1 ? "" : "s"} couldn't be reached — try again later
-          </summary>
-          <p className="cap-explain">
-            Their saved copies are still here and still used. A site can be busy, or turn away checks from some networks.
-          </p>
-          <ul>
-            {notReached.map((i) => (
-              <li key={i.linkId}>
-                {i.title} <span className="cap-explain" style={{ display: "inline" }}>— {i.message}</span>
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
-      <ReferenceDownload />
       <FiguresList />
     </div>
   );
