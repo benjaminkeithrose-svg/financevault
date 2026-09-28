@@ -5,6 +5,7 @@ import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
 import { checkOwners, ownersInput } from "../services/ownership.js";
 import { assess, workingAssessment } from "../services/assessment.js";
+import { addItem, CHECK_STATUSES, dueDiligence, ensureCheck, removeItem, saveCheck } from "../services/dueDiligence.js";
 
 /**
  * Properties I'm considering: a property you're looking at buying is a
@@ -249,5 +250,69 @@ consideringRouter.put(
     else await prismaAll.propertyAssessment.create({ data: { ...data, assetId: asset.id } });
     await logAudit("ASSESSMENT_CHANGED", { targetType: "Asset", targetId: asset.id });
     res.json(await assess(asset.id));
+  })
+);
+
+// Due diligence: the checks, open issues and development ideas.
+consideringRouter.get(
+  "/:assetId/checks",
+  asyncHandler(async (req, res) => {
+    res.json(await dueDiligence(req.params.assetId));
+  })
+);
+
+const checkKey = z.string().regex(/^[a-z0-9.:-]{1,60}$/);
+const checkInput = z.object({
+  status: z.enum(CHECK_STATUSES).optional(),
+  findings: z.string().max(5000).nullable().optional(),
+  cost: z.number().nonnegative().max(1e9).nullable().optional(),
+  who: z.string().max(200).nullable().optional(),
+  dueDate: z.string().datetime().nullable().optional(),
+  checked: z.boolean().optional(),
+  problem: z.boolean().optional(),
+  resolved: z.boolean().optional(),
+  resolution: z.string().max(2000).nullable().optional(),
+  label: z.string().trim().min(1).max(200).optional(),
+});
+
+consideringRouter.put(
+  "/:assetId/checks/:key",
+  asyncHandler(async (req, res) => {
+    const key = checkKey.parse(req.params.key);
+    await saveCheck(req.params.assetId, key, checkInput.parse(req.body));
+    await logAudit("DUE_DILIGENCE_CHANGED", { targetType: "Asset", targetId: req.params.assetId, data: { key } });
+    res.json(await dueDiligence(req.params.assetId));
+  })
+);
+
+consideringRouter.post(
+  "/:assetId/checks/:key/ensure",
+  asyncHandler(async (req, res) => {
+    const row = await ensureCheck(req.params.assetId, checkKey.parse(req.params.key));
+    res.json({ id: row.id });
+  })
+);
+
+consideringRouter.post(
+  "/:assetId/checks",
+  asyncHandler(async (req, res) => {
+    const p = z
+      .object({
+        kind: z.enum(["CHECK", "ISSUE", "DEVELOPMENT"]),
+        label: z.string().trim().min(1).max(200),
+        group: z.string().trim().max(80).nullable().optional(),
+        cost: z.number().nonnegative().max(1e9).nullable().optional(),
+      })
+      .parse(req.body);
+    await addItem(req.params.assetId, p.kind, p.label, p.group, p.cost);
+    res.status(201).json(await dueDiligence(req.params.assetId));
+  })
+);
+
+consideringRouter.delete(
+  "/:assetId/checks/:key",
+  asyncHandler(async (req, res) => {
+    await removeItem(req.params.assetId, checkKey.parse(req.params.key));
+    res.json(await dueDiligence(req.params.assetId));
   })
 );

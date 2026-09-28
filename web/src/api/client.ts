@@ -976,6 +976,52 @@ export interface Assessment {
   notes: string[];
 }
 
+export interface DueDiligenceCheckView {
+  key: string;
+  kind: "CHECK" | "ISSUE" | "DEVELOPMENT";
+  group: string | null;
+  label: string;
+  why: string | null;
+  own: boolean;
+  id: string | null;
+  status: "NOT_STARTED" | "IN_PROGRESS" | "DONE" | "NA";
+  findings: string | null;
+  cost: number | null;
+  who: string | null;
+  dueDate: string | null;
+  checked: boolean;
+  problem: boolean;
+  resolvedAt: string | null;
+  resolution: string | null;
+  evidence: number;
+  approved?: boolean;
+}
+
+export interface DueDiligence {
+  kind: "RESIDENTIAL" | "COMMERCIAL";
+  propertyKind: string | null;
+  titleType: string | null;
+  groups: Array<{ name: string; checks: DueDiligenceCheckView[]; done: number; total: number }>;
+  openIssues: DueDiligenceCheckView[];
+  resolvedIssues: DueDiligenceCheckView[];
+  openIssueCosts: number;
+  development: DueDiligenceCheckView[];
+  totals: { done: number; total: number };
+}
+
+export type CheckUpdate = Partial<{
+  status: DueDiligenceCheckView["status"];
+  findings: string | null;
+  cost: number | null;
+  who: string | null;
+  dueDate: string | null;
+  checked: boolean;
+  problem: boolean;
+  resolved: boolean;
+  resolution: string | null;
+  label: string;
+}>;
+
 export interface ConsideredProperty {
   assetId: string;
   id: string;
@@ -2635,6 +2681,15 @@ export const api = {
     assessment: (assetId: string) => request<Assessment>(`/considering/${assetId}/assessment`),
     saveAssessment: (assetId: string, data: AssessmentInputs) =>
       request<Assessment>(`/considering/${assetId}/assessment`, { method: "PUT", body: JSON.stringify(data) }),
+    checks: (assetId: string) => request<DueDiligence>(`/considering/${assetId}/checks`),
+    saveCheck: (assetId: string, key: string, data: CheckUpdate) =>
+      request<DueDiligence>(`/considering/${assetId}/checks/${encodeURIComponent(key)}`, { method: "PUT", body: JSON.stringify(data) }),
+    ensureCheck: (assetId: string, key: string) =>
+      request<{ id: string }>(`/considering/${assetId}/checks/${encodeURIComponent(key)}/ensure`, { method: "POST", body: "{}" }),
+    addCheck: (assetId: string, data: { kind: "CHECK" | "ISSUE" | "DEVELOPMENT"; label: string; group?: string | null; cost?: number | null }) =>
+      request<DueDiligence>(`/considering/${assetId}/checks`, { method: "POST", body: JSON.stringify(data) }),
+    removeCheck: (assetId: string, key: string) =>
+      request<DueDiligence>(`/considering/${assetId}/checks/${encodeURIComponent(key)}`, { method: "DELETE" }),
     bought: (assetId: string, price?: number | null) =>
       request<{ status: string }>(`/considering/${assetId}/bought`, { method: "POST", body: JSON.stringify({ price }) }),
   },

@@ -6,6 +6,7 @@ import { borrowingInputs, savedAssumptions } from "./borrowingInputs.js";
 import { NSW_DUTY_RATES_YEAR, nswTransferDuty } from "./nswDuty.js";
 import { judgeBorrowing, planBorrowers } from "./planBorrowing.js";
 import { loadOwnersTax, propertyProfit } from "./propertyProfit.js";
+import { openIssueCostsFor } from "./dueDiligence.js";
 
 /**
  * The quick assessment of a property you're considering: is it worth a
@@ -46,10 +47,7 @@ export interface AssessmentColumn {
 const LABELS: Record<ColumnKey, string> = { expected: "Expected", conservative: "Conservative", bad: "Bad case" };
 
 /** Costs of open issues found in due diligence (added in cash needed). */
-export async function openIssueCosts(assetId: string): Promise<number> {
-  void assetId;
-  return 0;
-}
+const openIssueCosts = openIssueCostsFor;
 
 export async function workingAssessment(assetId: string): Promise<PropertyAssessment | null> {
   return prismaAll.propertyAssessment.findFirst({ where: { assetId, frozenAt: null } });

@@ -3,6 +3,11 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.15.0 — 28 September 2026
+- Due diligence on each property you're considering: the full list of checks, picked by the kind of property and its title (strata checks for a strata unit, community title checks for a community scheme; for commercial, legal and planning, building, leases and tenants, environmental and safety). Nothing is compulsory — mark what doesn't fit as Not applicable. Each check can hold what was found, an estimated cost, who's handling it, a due date (in the calendar), whether it's been checked, and documents as evidence. Add your own checks too.
+- Open issues: tick Problem found on a check (or add an issue on its own) and it's listed at the top with its cost, which is counted in the assessment's cash needed. Resolved issues are kept, greyed, with how they were resolved.
+- Development ideas (granny flat, subdivision) as notes, shown as Not approved until the approval document is linked.
+
 ## 1.14.0 — 28 September 2026
 - Quick assessment on each property you're considering: three columns — Expected (from the property's own rent and running costs), Conservative and Bad case (with their own rent, weeks empty, running costs and interest rate) — showing the yields, cash a year before and after tax, cash a week and the return on the cash put in. Below it: the cash needed (deposit, stamp duty, other costs), the loan and LVR, and "Can we borrow it?". Only what you enter is used — nothing is guessed.
 - Commercial: the advertised yield beside the yield the leases and outgoings really support.

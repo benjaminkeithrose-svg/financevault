@@ -517,6 +517,7 @@ model Asset {
   property           Property?
   commercialProperty CommercialProperty?
   assessments        PropertyAssessment[]
+  dueDiligence       DueDiligenceCheck[]
   ownerships         AssetOwnership[]
   securedLoans       Liability[]
   loanPurposes       LoanPurpose[]
@@ -2112,4 +2113,38 @@ model PropertyAssessment {
   updatedAt DateTime @updatedAt
 
   @@index([assetId])
+}
+
+// Due diligence on a property you're considering: the state of each check
+// (the checks themselves are a fixed list in services/dueDiligence.ts,
+// picked by the kind of property and its title), plus checks you add, issues
+// not tied to a check, and development ideas. Evidence is linked as
+// documents (DocumentLink target DD_CHECK); a due date is a calendar reminder.
+model DueDiligenceCheck {
+  id      String @id @default(cuid())
+  assetId String
+  asset   Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  // A built-in check's key, or own:/issue:/dev: plus a random part.
+  key     String
+  kind    String @default("CHECK") // CHECK | ISSUE | DEVELOPMENT
+  group   String? // your own checks: which group
+  label   String? // your own checks, issues and development ideas
+
+  status     String    @default("NOT_STARTED") // NOT_STARTED | IN_PROGRESS | DONE | NA
+  findings   String?
+  cost       Float? // estimated cost of a problem found
+  who        String? // who's handling it
+  dueDate    DateTime?
+  reminderId String?
+  // Checked (e.g. by an inspector or you), rather than just what the agent said.
+  checked    Boolean   @default(false)
+  // A problem found: open until resolved (kept, greyed, once resolved).
+  problem    Boolean   @default(false)
+  resolvedAt DateTime?
+  resolution String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([assetId, key])
 }

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { isTaxReference, nextReferenceCheck, TAX_REFERENCE_TYPE } from "../services/taxReference.js";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { prisma } from "../db.js";
+import { prisma, prismaAll } from "../db.js";
 import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { readDocumentFile } from "../services/documentFiles.js";
 import { logAudit } from "../services/audit.js";
@@ -253,6 +253,7 @@ const linkInput = z.object({
     "INSURANCE_POLICY",
     "ESTATE_DOCUMENT",
     "REMINDER",
+    "DD_CHECK",
   ]),
   targetId: z.string(),
   label: z.string().optional().nullable(),
@@ -279,6 +280,18 @@ documentsRouter.post(
             data: { documentId: req.params.id, targetType: reminder.targetType, targetId: reminder.targetId, label: reminder.title.slice(0, 120) },
           });
         }
+      }
+    }
+    // Evidence for a due diligence check also files under the property it's about.
+    if (parsed.targetType === "DD_CHECK") {
+      const check = await prismaAll.dueDiligenceCheck.findUnique({ where: { id: parsed.targetId }, include: { asset: { include: { property: true, commercialProperty: true } } } });
+      const target = check?.asset.property
+        ? { targetType: "PROPERTY", targetId: check.asset.property.id }
+        : check?.asset.commercialProperty
+          ? { targetType: "COMMERCIAL_PROPERTY", targetId: check.asset.commercialProperty.id }
+          : null;
+      if (target && !(await prisma.documentLink.findFirst({ where: { documentId: req.params.id, ...target } }))) {
+        await prisma.documentLink.create({ data: { documentId: req.params.id, ...target, label: "Due diligence" } });
       }
     }
     await logAudit("DOCUMENT_LINK_ADDED", { targetType: "Document", targetId: req.params.id, documentId: req.params.id });

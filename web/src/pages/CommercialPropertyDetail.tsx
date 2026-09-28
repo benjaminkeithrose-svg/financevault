@@ -20,6 +20,7 @@ import { useTrailTitle } from "../trail.js";
 import { RemindersCard } from "../components/RemindersCard.js";
 import { ConsideringBar } from "../components/ConsideringBar.js";
 import { AssessmentCard } from "../components/AssessmentCard.js";
+import { DueDiligenceCards } from "../components/DueDiligenceCards.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -298,6 +299,8 @@ export function CommercialPropertyDetail() {
 
       {considering && property.asset && <ConsideringBar asset={property.asset} onChange={load} />}
       {considering && <AssessmentCard assetId={property.assetId} reloadKey={property} />}
+      {/* Problems found change the cash needed, so the page (and the assessment) reload. */}
+      {considering && <DueDiligenceCards assetId={property.assetId} onChange={load} />}
 
       {m && !considering && (
         <>

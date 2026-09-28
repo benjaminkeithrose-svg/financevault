@@ -914,7 +914,7 @@ const SECTIONS: Section[] = [
   {
     id: "considering",
     title: "Properties I'm considering",
-    keywords: "considering buying prospective pipeline looking investigating offer contract settlement passed on reject opportunity asking price due diligence",
+    keywords: "considering buying prospective pipeline looking investigating offer contract settlement passed on reject opportunity asking price due diligence checks inspection strata report open issues problem found development granny flat subdivision",
     body: (
       <>
         <p>
@@ -947,6 +947,21 @@ const SECTIONS: Section[] = [
           <strong>Can we borrow it?</strong>, worked out as the borrowing page does with this property's rent counted. Nothing
           is guessed: a figure appears once what it needs is entered. For a commercial property it also shows the advertised
           yield beside the yield the leases and outgoings really support. The Acquisition Model uses the same sums.
+        </p>
+        <p>
+          <strong>Due diligence</strong>: the checks worth doing before buying, grouped (title and planning, building, hazards
+          and insurance, strata, rent and running costs, contract — or, for commercial, legal and planning, building, leases and
+          tenants, environmental and safety). They're picked by the kind of property and its title, so strata checks only show
+          for a strata unit; set those under Overview. Nothing is compulsory — mark what doesn't fit <strong>Not
+          applicable</strong>. Open a check to note what was found, an estimated cost, who's handling it, a due date (it goes in
+          the calendar), whether it's been <strong>checked</strong> rather than just what the agent said, and link the report,
+          photos or certificate as evidence (they're filed under the property too). <strong>Add a check</strong> adds your own.
+        </p>
+        <p>
+          Tick <strong>Problem found</strong> and it appears in <strong>Open issues</strong> at the top, with its cost counted in
+          the assessment's cash needed. You can also add an issue that isn't tied to a check. Mark one resolved (with how) and
+          it's kept, greyed, below. <strong>Development ideas</strong> — a granny flat, a subdivision — are notes only, shown as{" "}
+          <strong>Not approved</strong> until the approval document is linked and ticked as the approval.
         </p>
         <p>
           Until it's bought it isn't yours, so it's left out of <strong>every</strong> total, report and checklist — net worth,
