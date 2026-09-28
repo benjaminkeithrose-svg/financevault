@@ -75,29 +75,37 @@ jobs:
 
       - name: Check an automatic update (from a pretend release)
         shell: pwsh
+        timeout-minutes: 15
         run: |
           $setup = Get-ChildItem "desktop/dist" -Filter "Financial Vault Setup *.exe" | Select-Object -First 1
-          $srv = Start-Process node -ArgumentList "desktop/test-release-server.mjs", "`"$($setup.FullName)`"", "4199" -PassThru -NoNewWindow
-          Start-Sleep -Seconds 3
-          $env:FV_UPDATE_FEED = "http://127.0.0.1:4199/releases/latest"
-          $env:FV_SMOKE_UPDATE = "1"
-          ./desktop/smoke-test.ps1 -Name update -Passcode "smoke test passcode"
-          # The downloaded Setup runs silently, then starts the program again by itself.
-          # (It's the same version really, so the program then says the update didn't finish.)
-          $last = "$env:RUNNER_TEMP\fv-data\last-update.json"
-          $deadline = (Get-Date).AddMinutes(5)
-          do {
-            Start-Sleep -Seconds 5
-            $done = (Test-Path $last) -and ((Get-Content $last -Raw | ConvertFrom-Json).to -eq "99.0.0")
-          } until ($done -or (Get-Date) -gt $deadline)
-          Get-Content "$env:RUNNER_TEMP\fv-data\Logs\launcher.log" -Tail 25
-          if (-not $done) { throw "The program didn't start again after the update's Setup ran" }
-          Get-Content $last
-          if (Test-Path "$env:RUNNER_TEMP\fv-data\Updates\install-setup.request.json") { throw "The update request wasn't tidied away" }
-          Stop-Process -Name "Financial Vault" -Force -ErrorAction SilentlyContinue
-          Stop-Process -Id $srv.Id -Force -ErrorAction SilentlyContinue
-          Start-Sleep -Seconds 3
-          Write-Host "Downloaded, checked, backed up, installed silently and started again."
+          # Its own hidden window and log files, so it can't hold this step open.
+          $srv = Start-Process node -ArgumentList "desktop/test-release-server.mjs", "`"$($setup.FullName)`"", "4199" -PassThru -WindowStyle Hidden `
+            -RedirectStandardOutput "$env:RUNNER_TEMP\release-server.log" -RedirectStandardError "$env:RUNNER_TEMP\release-server.err"
+          try {
+            Start-Sleep -Seconds 3
+            $env:FV_UPDATE_FEED = "http://127.0.0.1:4199/releases/latest"
+            $env:FV_SMOKE_UPDATE = "1"
+            $before = Get-Date
+            ./desktop/smoke-test.ps1 -Name update -Passcode "smoke test passcode"
+            # The downloaded Setup runs silently, reinstalls, then starts the program again by itself.
+            # (Windows starts it as the signed-in user, so it opens on the usual data folder, not this test's.)
+            $deadline = (Get-Date).AddMinutes(5)
+            do {
+              Start-Sleep -Seconds 5
+              $again = Get-Process -Name "Financial Vault" -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -gt $before }
+              $reinstalled = (Get-Item $env:FV_EXE -ErrorAction SilentlyContinue).LastWriteTime -gt $before
+            } until (($again -and $reinstalled) -or (Get-Date) -gt $deadline)
+            Get-Process | Where-Object { $_.ProcessName -like "*Financial*" } | Format-Table ProcessName, Id, StartTime
+            Write-Host "Program file written at $((Get-Item $env:FV_EXE).LastWriteTime); check started at $before"
+            if (-not $reinstalled) { throw "The update's Setup didn't reinstall the program" }
+            if (-not $again) { throw "The program didn't start again after the update's Setup ran" }
+            Write-Host "Downloaded, checked, backed up, installed silently and started again."
+          } finally {
+            Stop-Process -Name "Financial Vault" -Force -ErrorAction SilentlyContinue
+            Stop-Process -Id $srv.Id -Force -ErrorAction SilentlyContinue
+            Get-Content "$env:RUNNER_TEMP\release-server.err" -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 3
+          }
 
       - name: Uninstall, and check the records stay
         shell: pwsh
