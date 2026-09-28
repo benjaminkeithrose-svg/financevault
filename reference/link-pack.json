@@ -96,6 +96,34 @@
       "verified": true
     },
     {
+      "id": "tr-2026-1",
+      "title": "TR 2026/1 — rental property income and deductions for individuals (holiday homes, short-term rentals)",
+      "publisher": "ATO",
+      "kind": "ruling",
+      "url": "https://www.ato.gov.au/law/view/document?DocID=TXR/TR20261/NAT/ATO/00001",
+      "note": "When rent is income, what can be claimed, splitting costs for part-private use, and when a holiday home's costs are denied as a leisure facility. Named in the Rental properties guide 2026.",
+      "changes": "rarely",
+      "usedBy": [
+        4,
+        8
+      ],
+      "verified": false
+    },
+    {
+      "id": "pcg-2026-3",
+      "title": "PCG 2026/3 — section 26-50 and holiday homes you also rent out",
+      "publisher": "ATO",
+      "kind": "ruling",
+      "url": "https://www.ato.gov.au/law/view/document?DocID=COG/PCG20263/NAT/ATO/00001",
+      "note": "The ATO's compliance approach to denying a holiday home's ownership costs when it isn't mainly rented. Named in the Rental properties guide 2026.",
+      "changes": "rarely",
+      "usedBy": [
+        4,
+        8
+      ],
+      "verified": false
+    },
+    {
       "id": "rental-properties-guide",
       "title": "Rental properties guide (yearly)",
       "publisher": "ATO",

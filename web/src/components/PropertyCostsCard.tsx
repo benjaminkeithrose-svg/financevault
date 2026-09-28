@@ -34,6 +34,7 @@ export function PropertyCostsCard({ property, asset, onChange }: { property: Pro
   const residential = property !== null;
   // Set with "How it's used" at the top of the property's page.
   const isHome = property?.use ? property.use === "HOME" : asset.mainResidence === "FULL";
+  const partRented = property?.use === "HOME_PART_RENTED" || property?.use === "HOLIDAY_RENTED";
 
   useEffect(() => {
     const f: Record<string, string> = {};
@@ -77,6 +78,9 @@ export function PropertyCostsCard({ property, asset, onChange }: { property: Pro
       {!editing && (
         <>
           {residential && isHome && <p className="cap-explain">Your home — left out of the profit report and exempt from land tax.</p>}
+          {residential && partRented && (
+            <p className="cap-explain">Part rented — the profit report claims the rented share of these costs (set under How it's used).</p>
+          )}
           {asset.ownershipReason && (
             <p style={{ margin: "8px 0" }}>
               <strong>Why it's owned this way:</strong> {asset.ownershipReason}

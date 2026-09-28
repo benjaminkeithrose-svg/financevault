@@ -25,6 +25,10 @@ The official sources Financial Vault's tax and lending features rely on. The sam
 - **PCG 2026/2 — apportioning rental property deductions (part-private use)** (ATO, changes rarely) — used by ideas 2, 4, 8
   https://www.ato.gov.au/law/view/document?DocID=COG/PCG20262/NAT/ATO/00001
   Note: Published 20 May 2026. Methods the ATO accepts for splitting deductions when a property is partly rented and partly private.
+- **TR 2026/1 — rental property income and deductions for individuals (holiday homes, short-term rentals)** (ATO, changes rarely) — used by ideas 4, 8 ⚠
+  https://www.ato.gov.au/law/view/document?DocID=TXR/TR20261/NAT/ATO/00001
+- **PCG 2026/3 — section 26-50 and holiday homes you also rent out** (ATO, changes rarely) — used by ideas 4, 8 ⚠
+  https://www.ato.gov.au/law/view/document?DocID=COG/PCG20263/NAT/ATO/00001
 - **Rental properties guide (yearly)** (ATO, changes yearly) — used by ideas 4, 8, 13
   https://www.ato.gov.au/forms-and-instructions/rental-properties-2026
   Direct download (PDF or printable page): https://www.ato.gov.au/api/public/content/d1dd11d5fc1a460f9b4b6faf74e79b4a?v=c79af85b

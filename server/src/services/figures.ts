@@ -5,6 +5,7 @@ import { LATEST_RATES_YEAR, MEDICARE_LEVY, MEDICARE_LOW_INCOME_THRESHOLD, ratesF
 import { NSW_GENERAL_THRESHOLD, NSW_PREMIUM_THRESHOLD } from "./landTax.js";
 import { STATUTORY_RATE } from "./carCompare.js";
 import { LARGE_SUPER_BALANCE_THRESHOLD, rulesFor } from "./superRules.js";
+import { carLimit } from "./vehicleBusiness.js";
 import { CAR_KM_CAP, carRateFor, IMMEDIATE_DEDUCTION_LIMIT, wfhRateFor } from "./workDeductions.js";
 
 /**
@@ -16,7 +17,7 @@ import { CAR_KM_CAP, carRateFor, IMMEDIATE_DEDUCTION_LIMIT, wfhRateFor } from ".
  */
 
 /** When the figures below were last checked against their sources. */
-export const FIGURES_CHECKED_ON = "2026-09-26";
+export const FIGURES_CHECKED_ON = "2026-09-28";
 
 const money = (n: number) => `$${n.toLocaleString("en-AU")}`;
 const pct = (n: number) => `${Math.round(n * 1000) / 10}%`;
@@ -50,6 +51,10 @@ export function figureList() {
       source: "wfh-fixed-rate",
     },
     { id: "immediate-deduction", label: "Immediate deduction for work items", value: `${money(IMMEDIATE_DEDUCTION_LIMIT)} or less`, source: "work-related-deductions" },
+    { id: "car-limit", label: "Car limit, 2025-26", value: money(carLimit("2025-26")), source: "depreciating-assets-guide" },
+    { id: "capital-works", label: "Building write-off (capital works), residential", value: "2.5% a year (construction after 15 September 1987)", source: "rental-properties-guide" },
+    { id: "borrowing-expenses", label: "Borrowing expenses spread over 5 years", value: "over $100", source: "rental-properties-guide" },
+    { id: "instant-write-off", label: "Small business instant asset write-off, 2025-26", value: "under $20,000 an asset (turnover under $10m)", source: "depreciating-assets-guide" },
     { id: "fbt-statutory", label: "Car fringe benefits, statutory formula", value: pct(STATUTORY_RATE), source: "fbt-cars" },
     { id: "nsw-land-tax", label: "NSW land tax thresholds, 2026", value: `${money(NSW_GENERAL_THRESHOLD)} general · ${money(NSW_PREMIUM_THRESHOLD)} premium`, source: "nsw-land-tax-rates" },
     { id: "nsw-duty", label: "NSW transfer duty bands, 2026-27", value: "Revenue NSW table (duty on purchases in Portfolio Plan)", source: "nsw-transfer-duty" },

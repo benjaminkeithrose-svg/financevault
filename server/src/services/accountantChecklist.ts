@@ -151,8 +151,57 @@ export async function accountantChecklist(today = new Date()): Promise<Checklist
 
   // --- Property ------------------------------------------------------------------
   for (const a of assets) {
-    // Rental deductions only matter for a property that's rented.
-    if (a.mainResidence === "FULL" || a.property?.use === "HOME" || a.property?.use === "HOLIDAY") continue;
+    // Rental deductions only matter for a property that's rented (all or part of the time).
+    const use = a.property ? (a.property.use ?? (a.mainResidence === "FULL" ? "HOME" : "INVESTMENT")) : "COMMERCIAL";
+    if (use === "HOME" || use === "HOLIDAY") continue;
+    const link = a.property ? `/properties/${a.property.id}` : a.commercialProperty ? `/commercial-properties/${a.commercialProperty.id}` : null;
+    if (use === "HOLIDAY_RENTED") {
+      const mainly = a.property!.mainlyRented;
+      items.push({
+        id: `holiday-home-${a.id}`,
+        title: mainly === false ? `${a.name}: holiday home not mainly rented` : `${a.name}: holiday home also rented out`,
+        why:
+          mainly === false
+            ? "It's recorded as not mainly used to earn rent."
+            : mainly === true
+              ? "It's recorded as mainly rented. The ATO looks at whether you keep peak times (school holidays, Christmas, Easter) for yourselves."
+              : "It's a holiday home you also rent out, and whether it's mainly rented isn't recorded.",
+        rule:
+          "A holiday home you also rent out can only claim its ownership costs — interest, rates, land tax, insurance, repairs — if it's mainly used (or held for use) to earn rent. That's judged on how it's actually used, especially at peak times, not on days alone. Costs of renting it (booking and cleaning fees, management) can always be claimed, and every claim is split for the days you use it. Costs that can't be claimed may be added to its cost base.",
+        risk: "ATO_TARGETED",
+        source: { label: "TR 2026/1 and PCG 2026/3 (holiday homes)", referenceCode: "TR 2026/1" },
+        action:
+          mainly === false
+            ? "Claim only the costs of renting it, split for your own use, and keep the others for the cost base."
+            : "Keep a record of the days booked, the days you and family stayed, and when it was blocked out — and show the accountant.",
+        link,
+        facts: ["When it's blocked out for your own use each year", "How it's advertised and managed", "Days rented, and occupancy in peak periods"],
+      });
+    }
+    if ((use === "HOLIDAY_RENTED" || use === "HOME_PART_RENTED") && a.property!.rentedShare === null) {
+      items.push({
+        id: `rented-share-${a.id}`,
+        title: `${a.name}: what share is rented?`,
+        why: "It's partly rented and partly private, and the rented share isn't recorded.",
+        rule: "When a property is partly rented and partly private, its costs are split on a fair and reasonable basis — by the days it's rented, the floor area rented, or both. The ATO sets out the methods it accepts.",
+        risk: "SETTLED",
+        source: { label: "PCG 2026/2 (apportioning rental property deductions)", referenceCode: "PCG 2026/2" },
+        action: "Work out the share with the accountant and enter it under How it's used.",
+        link,
+      });
+    }
+    if (use === "HOME_PART_RENTED") {
+      items.push({
+        id: `part-rented-home-${a.id}`,
+        title: `${a.name}: part of your home rented`,
+        why: "A room or granny flat in your home is rented out.",
+        rule: "Rent from part of your home is income, and the costs of that part can be claimed. But the main residence exemption is reduced for the rented part when the home is sold — and if it was first rented after 20 August 1996, the gain may be worked out from its market value when renting started.",
+        risk: "SETTLED",
+        source: { label: "ATO guide to capital gains tax — renting out part of your home" },
+        action: "Note the date renting started, and get a valuation then if the accountant suggests one.",
+        link,
+      });
+    }
     if (a.depreciationPerYear === null && a.capitalWorksPerYear === null) {
       items.push({
         id: `depreciation-${a.id}`,
@@ -162,7 +211,7 @@ export async function accountantChecklist(today = new Date()): Promise<Checklist
         risk: "SETTLED",
         source: { label: "ATO rental expenses — capital works and depreciating assets" },
         action: "Get a quantity surveyor's depreciation schedule (its fee is deductible) and enter the yearly figures on the property.",
-        link: a.property ? `/properties/${a.property.id}` : a.commercialProperty ? `/commercial-properties/${a.commercialProperty.id}` : null,
+        link,
       });
     }
     const held = today.getTime() - (a.acquisitionDate?.getTime() ?? 0);
@@ -179,6 +228,55 @@ export async function accountantChecklist(today = new Date()): Promise<Checklist
         source: { label: "ATO guide to capital gains tax" },
         action: `If selling, signing the contract on or after ${eligible.toISOString().slice(0, 10)} halves the taxable gain.`,
         link: null,
+      });
+    }
+  }
+
+  // --- Selling property ------------------------------------------------------------
+  // From 1 January 2025, a buyer withholds 15% of the price unless the seller
+  // gives them an ATO clearance certificate — for every property, the home too.
+  // Sold this financial year or last (last year's return may not be done yet).
+  const lastYearStart = new Date(`${Number(fy.slice(0, 4)) - 1}-07-01T00:00:00Z`);
+  const sold = await prisma.asset.findMany({
+    where: { assetType: { in: ["PROPERTY", "COMMERCIAL_PROPERTY"] }, disposalDate: { gte: lastYearStart } },
+    include: { property: { select: { id: true } }, commercialProperty: { select: { id: true } } },
+  });
+  for (const a of sold) {
+    items.push({
+      id: `clearance-${a.id}`,
+      title: `${a.name}: was 15% withheld from the sale?`,
+      why: `Sold ${a.disposalDate!.toISOString().slice(0, 10)}.`,
+      rule: "Since 1 January 2025 a buyer must hold back 15% of the price of any property — your home included — unless the seller gave them an ATO clearance certificate before settlement. An Australian resident who didn't gets it back through their tax return.",
+      risk: "SETTLED",
+      source: { label: "ATO rental properties guide 2026 — foreign resident capital gains withholding" },
+      action: "Check the settlement statement. If an amount was withheld, give it to the accountant to claim back.",
+      link: a.property ? `/properties/${a.property.id}` : a.commercialProperty ? `/commercial-properties/${a.commercialProperty.id}` : null,
+    });
+  }
+
+  // --- Business equipment --------------------------------------------------------------
+  // The $20,000 instant asset write-off, extended to 2025-26 for small businesses.
+  if (fy <= "2026-27") {
+    const bought = await prisma.asset.findMany({
+      where: {
+        disposalDate: null,
+        assetType: { in: ["VEHICLE", "EQUIPMENT", "OTHER"] },
+        acquisitionDate: { gte: new Date("2025-07-01T00:00:00Z"), lt: new Date("2026-07-01T00:00:00Z") },
+        acquisitionCost: { gt: 0, lt: 20_000 },
+        entity: { entityType: { in: ["COMPANY", "TRUST", "UNIT_TRUST", "PARTNERSHIP"] } },
+      },
+      include: { entity: { select: { name: true } } },
+    });
+    for (const a of bought) {
+      items.push({
+        id: `instant-write-off-${a.id}`,
+        title: `${a.name}: instant asset write-off?`,
+        why: `Bought by ${a.entity.name} in 2025-26 for ${money(a.acquisitionCost!)}.`,
+        rule: "A small business (turnover under $10 million) can deduct the business-use share of an asset costing less than $20,000 straight away, if it was first used or installed ready for use between 1 July 2025 and 30 June 2026. The limit is per asset.",
+        risk: "SETTLED",
+        source: { label: "ATO guide to depreciating assets 2026 — $20,000 instant asset write-off" },
+        action: "Ask whether the business can write it off in the 2025-26 return.",
+        link: `/assets/${a.id}`,
       });
     }
   }

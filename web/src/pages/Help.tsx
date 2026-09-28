@@ -776,13 +776,19 @@ const SECTIONS: Section[] = [
   {
     id: "selling",
     title: "Selling something",
-    keywords: "sold sell sale disposal capital gain main residence exemption cost base selling costs improvements stamp duty capital works building write-off depreciation",
+    keywords: "sold sell sale disposal clearance certificate withholding 15% capital gain main residence exemption cost base selling costs improvements stamp duty capital works building write-off depreciation",
     body: (
       <>
         <p>
           On a property, vehicle or other asset's page, <strong>Sold it?</strong> → <strong>Mark as sold</strong>. Enter
           the sale date and price, and the selling costs (agent, legal, advertising). For a property, also enter the
           buying costs (stamp duty, legal) and what was spent on improvements, and whether it was your main residence.
+        </p>
+        <p>
+          <strong>Selling a property? Get a clearance certificate first.</strong> Since 1 January 2025 the buyer must hold back
+          15% of the price of any property — your home included — unless you give them an ATO clearance certificate before
+          settlement. Apply for it online at the ATO (it's free and usually quick). If an amount was held back, it's claimed
+          back in your tax return; the accountant checklist reminds you after a sale.
         </p>
         <p>
           A sold asset stays on record — with its documents, loans and history — under <strong>Sold</strong> in its list
@@ -812,7 +818,7 @@ const SECTIONS: Section[] = [
   {
     id: "properties",
     title: "Properties",
-    keywords: "residential commercial tenancy lease rent outgoings capex lvr yield wale noi",
+    keywords: "residential commercial tenancy lease rent outgoings capex lvr yield wale noi home ppor holiday home rented airbnb short-stay granny flat room lodger part rented rented share mainly rented tr 2026/1 pcg 2026/2",
     body: (
       <>
         <p>
@@ -825,11 +831,25 @@ const SECTIONS: Section[] = [
         </p>
         <p>
           Each residential property says <strong>how it's used</strong>, chosen when you add it and changed at the top of its
-          page: <strong>Our home (PPOR)</strong> — your principal place of residence, <strong>Rental or investment</strong>, or
-          a <strong>Holiday home, not rented</strong>. It decides what's expected on What's missing (no landlord insurance or
-          rental paperwork for your home), and your home and a holiday home are left out of the property profit report and
-          the accountant checklist. Moving out and renting it? Change it to Rental — the main residence exemption record for
-          capital gains changes with it.
+          page: <strong>Our home (PPOR)</strong> — your principal place of residence, <strong>Our home, part rented</strong>{" "}
+          (a room or granny flat let), <strong>Rental or investment</strong>, a <strong>Holiday home, not rented</strong>, or a{" "}
+          <strong>Holiday home, also rented</strong>. It decides what's expected on What's missing (no landlord insurance or
+          rental paperwork for your home), and your home and a holiday home nobody rents are left out of the property profit
+          report and the accountant checklist. Moving out and renting it? Change it to Rental — the main residence exemption
+          record for capital gains changes with it.
+        </p>
+        <p>
+          <strong>Part rented, part private.</strong> For a home with a room or granny flat let, or a holiday home you also rent
+          out, enter the <strong>rented share of its costs</strong> under How it's used — usually by the days rented (for a
+          holiday home) or the floor area rented (for a room or flat). The profit report then claims only that share; management
+          fees are claimed in full. The ATO's accepted methods are in PCG 2026/2.
+        </p>
+        <p>
+          <strong>Holiday homes also rented out</strong> have a stricter rule since the ATO's ruling TR 2026/1: their interest,
+          rates, land tax, insurance and repairs can only be claimed if the home is <strong>mainly used to earn rent</strong>.
+          That's judged on how it's really used — keeping school holidays, Christmas or Easter for yourselves usually means it
+          isn't. Answer "Is it mainly used to earn rent?" on its page: if not, only the costs of renting it (booking and cleaning
+          fees, management) are claimed, and the rest can go towards its cost base when it's sold.
         </p>
         <p>
           <strong>Commercial</strong> properties also track tenancies and leases (rent, reviews, expiry), outgoings,

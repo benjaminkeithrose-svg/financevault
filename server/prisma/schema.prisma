@@ -605,9 +605,18 @@ model Property {
   propertyManager   String?
   weeklyRent        Float? // current rent, used for rent cover on an SMSF's LRBA loan
   // How it's used: HOME (principal place of residence) | INVESTMENT (rented,
-  // or for rent) | HOLIDAY (holiday home, not rented). Null = investment.
-  // HOME keeps the asset's mainResidence at FULL for land tax and CGT.
+  // or for rent) | HOLIDAY (holiday home, not rented) | HOLIDAY_RENTED
+  // (holiday home also rented out) | HOME_PART_RENTED (the home, with a room
+  // or granny flat rented). Null = investment. HOME and HOME_PART_RENTED keep
+  // the asset's mainResidence at FULL for land tax.
   use               String?
+  // Part rented, part private (HOLIDAY_RENTED, HOME_PART_RENTED): the share
+  // of the property's costs that relates to renting (0-100), worked out the
+  // way PCG 2026/2 accepts — by days, floor area, or both.
+  rentedShare       Float?
+  // HOLIDAY_RENTED: whether it's mainly used (or held for use) to earn rent.
+  // If not, its ownership and use costs aren't deductible (s 26-50, TR 2026/1).
+  mainlyRented      Boolean?
   // Running costs a year, for the after-tax profit figures. Insurance comes
   // from the policies recorded against the property.
   councilRates      Float?

@@ -1,6 +1,6 @@
 # Source documents: received and still needed
 
-Generated from link-pack.json and sources/index.json. 42 of 46 documents saved (index pages don't need saving).
+Generated from link-pack.json and sources/index.json. 42 of 48 documents saved (index pages don't need saving).
 
 ## Still needed
 
@@ -8,13 +8,17 @@ Open each link on your own computer, save it as a PDF (for web pages use the pag
 
 1. **PCG 2026/2 — apportioning rental property deductions (part-private use)**
    https://www.ato.gov.au/law/view/document?DocID=COG/PCG20262/NAT/ATO/00001
-2. **Medicare levy**
+2. **TR 2026/1 — rental property income and deductions for individuals (holiday homes, short-term rentals)**
+   https://www.ato.gov.au/law/view/document?DocID=TXR/TR20261/NAT/ATO/00001
+3. **PCG 2026/3 — section 26-50 and holiday homes you also rent out**
+   https://www.ato.gov.au/law/view/document?DocID=COG/PCG20263/NAT/ATO/00001
+4. **Medicare levy**
    https://www.ato.gov.au/individuals-and-families/medicare-and-private-health-insurance/medicare-levy
-3. **Occupation guides — 'print whole section' (all guides in one)** - Not needed: its 'print whole section' copy is only the list of guides. Each guide is downloaded by the app, and the checklists read from them ship in reference/occupation-guides.json.
+5. **Occupation guides — 'print whole section' (all guides in one)** - Not needed: its 'print whole section' copy is only the list of guides. Each guide is downloaded by the app, and the checklists read from them ship in reference/occupation-guides.json.
    https://www.ato.gov.au/api/public/content/0-23394288-dde4-4157-950f-33536a6bb202
-4. **FBT on cars, other vehicles, parking and tolls**
+6. **FBT on cars, other vehicles, parking and tolls**
    https://www.ato.gov.au/businesses-and-organisations/hiring-and-paying-your-workers/fringe-benefits-tax/types-of-fringe-benefits/fbt-on-cars-other-vehicles-parking-and-tolls
-5. **ASIC RG 209 — responsible lending conduct** - Only the web landing page was received. The guide itself is the PDF behind its 'Download' button, hosted on download.asic.gov.au.
+7. **ASIC RG 209 — responsible lending conduct** - Only the web landing page was received. The guide itself is the PDF behind its 'Download' button, hosted on download.asic.gov.au.
    https://www.asic.gov.au/regulatory-resources/find-a-document/regulatory-guides/rg-209-credit-licensing-responsible-lending-conduct
 
 ## Received

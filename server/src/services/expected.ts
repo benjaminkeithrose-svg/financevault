@@ -223,10 +223,12 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
   for (const a of assets.filter((x) => x.property)) {
     const p = a.property!;
     const target = `asset:${a.id}`;
-    // How it's used: the family home, a rental, or a holiday home nobody rents.
+    // How it's used: the family home (perhaps with a room let), a rental, or a
+    // holiday home (perhaps rented out when you're not there).
     const use = p.use ?? (a.mainResidence === "FULL" ? "HOME" : "INVESTMENT");
-    const home = use === "HOME";
-    const holiday = use === "HOLIDAY";
+    const home = use === "HOME" || use === "HOME_PART_RENTED";
+    const holiday = use === "HOLIDAY" || use === "HOLIDAY_RENTED";
+    const rented = use === "INVESTMENT" || use === "HOLIDAY_RENTED" || use === "HOME_PART_RENTED";
     const strata = (p.strataFees ?? 0) > 0;
     const smsf = FUNDS.includes(a.entity.entityType);
     const mortgaged = loans.some((l) => l.securityPropertyId === p.id);
@@ -250,6 +252,9 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
         );
         items.push(insurance(target, ["CONTENTS", "BUILDING_AND_CONTENTS"], "Contents insurance", "AMBER", holiday ? "Normal for a holiday home — check the policy covers it while nobody's staying there." : "Normal for a home you live in.", a.id, null));
       }
+      if (use === "HOLIDAY_RENTED") {
+        items.push(insurance(target, ["LANDLORD", "LANDLORD_CONTENTS"], "Holiday rental (short-stay) or landlord cover", "AMBER", "Ordinary home and contents policies often don't cover paying guests — check the policy, or add short-stay cover.", a.id, null));
+      }
     } else if (!smsf) {
       items.push(insurance(target, ["LANDLORD", "LANDLORD_CONTENTS"], strata ? "Landlord insurance (contents and rent default)" : "Landlord insurance", "RED", "Covers lost rent, tenant damage and liability — ordinary home insurance doesn't cover a tenanted property.", a.id, null));
       if (!strata) {
@@ -263,12 +268,28 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
     // Land tax applies to anything but the home (a holiday home too).
     const lt = landTax.get(a.id);
     if (!home && lt?.amount && lt.amount > 0) {
-      items.push(doc(target, "Land Tax", [], "Land tax assessment", "RED", `Land tax of about $${Math.round(lt.amount).toLocaleString("en-AU")} a year applies — the assessment shows the amount${holiday ? "" : " to claim"}.`, true, targets, owners));
+      items.push(doc(target, "Land Tax", [], "Land tax assessment", "RED", `Land tax of about $${Math.round(lt.amount).toLocaleString("en-AU")} a year applies — the assessment shows the amount${use === "HOLIDAY" ? "" : " to claim"}.`, true, targets, owners));
     }
 
     // Yearly paperwork for a rental — what the accountant needs.
-    if (use === "INVESTMENT") {
-      items.push(doc(target, "Rental Statement", [], "End-of-year rental statement", "RED", "The rent received and the agent's fees for the year — the starting point of the rental schedule in the tax return.", true, targets, owners));
+    if (rented) {
+      items.push(
+        doc(
+          target,
+          "Rental Statement",
+          [],
+          use === "INVESTMENT" ? "End-of-year rental statement" : "Rent received for the year",
+          "RED",
+          use === "HOLIDAY_RENTED"
+            ? "The booking platform's or agent's yearly statement — and a note of the days you, family or friends stayed, to split the costs."
+            : use === "HOME_PART_RENTED"
+              ? "What the lodger or granny-flat tenant paid in the year, and the rented share of the home (by floor area) to split the costs."
+              : "The rent received and the agent's fees for the year — the starting point of the rental schedule in the tax return.",
+          true,
+          targets,
+          owners
+        )
+      );
       items.push(doc(target, "Council Rates", [], "Council rates notice", "AMBER", "Deductible for a rental; the accountant needs the amount paid in the year.", true, targets, owners));
       items.push(doc(target, "Water Rates", [], "Water rates notices", "AMBER", "Deductible for a rental unless the tenant pays them.", true, targets, owners));
       items.push(doc(target, "Insurance", ["Home Insurance"], "Insurance schedule or renewal", "AMBER", "The premium is deductible; the schedule shows it and the period covered.", true, targets, owners));

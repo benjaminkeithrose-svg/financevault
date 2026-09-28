@@ -488,6 +488,10 @@ export interface PropertyProfitRow {
   cashBeforeTax: number;
   depreciation: number;
   capitalWorks: number;
+  use: string | null;
+  /** The share of its costs that relates to renting (0-1). */
+  rentedShare: number;
+  deductions: number;
   taxResult: number;
   owners: Array<{ entityId: string; entityName: string; share: number; taxResult: number; taxEffect: number | null; note: string | null }>;
   cashAfterTax: number | null;
@@ -1328,7 +1332,11 @@ export interface Property {
   tenantInfo?: string | null;
   propertyManager?: string | null;
   weeklyRent?: number | null;
-  use?: "HOME" | "INVESTMENT" | "HOLIDAY" | null;
+  use?: "HOME" | "INVESTMENT" | "HOLIDAY" | "HOLIDAY_RENTED" | "HOME_PART_RENTED" | null;
+  /** Part rented, part private: the share of its costs that relates to renting (0-100). */
+  rentedShare?: number | null;
+  /** A holiday home also rented: whether it's mainly used to earn rent. */
+  mainlyRented?: boolean | null;
   councilRates?: number | null;
   waterRates?: number | null;
   strataFees?: number | null;

@@ -185,8 +185,22 @@ export type DebtList = keyof typeof DEBT_LISTS;
 /** How a residential property is used — decides its insurance, paperwork, land tax and whether it's in the profit report. */
 export const PROPERTY_USES = [
   { value: "HOME", label: "Our home (PPOR)", short: "Home (PPOR)", explain: "Where you live — your principal place of residence. No landlord insurance or rental paperwork; exempt from land tax." },
+  {
+    value: "HOME_PART_RENTED",
+    label: "Our home, part rented",
+    short: "Home, part rented",
+    explain:
+      "Where you live, with a room or granny flat rented out. The rented share of its costs can be claimed. It stays exempt from land tax, but the main residence exemption shrinks for the rented part when it's sold.",
+  },
   { value: "INVESTMENT", label: "Rental or investment", short: "Rental", explain: "Rented out, or held to rent. Landlord insurance and the year's rental paperwork are expected." },
   { value: "HOLIDAY", label: "Holiday home, not rented", short: "Holiday home", explain: "For your own use, not rented out. Building and contents cover expected; no rental paperwork." },
+  {
+    value: "HOLIDAY_RENTED",
+    label: "Holiday home, also rented",
+    short: "Holiday rental",
+    explain:
+      "You holiday there and rent it out at other times. Its costs are split by the rented share — and its interest, rates, land tax and repairs count only if it's mainly used to earn rent (ATO ruling TR 2026/1).",
+  },
 ] as const;
 
 export function propertyUse(p: { use?: string | null; asset?: { mainResidence?: string | null } | null }): (typeof PROPERTY_USES)[number] {

@@ -15,6 +15,12 @@ import { shareOf } from "./ownership.js";
  * − depreciation and building write-off (not cash) = the tax result
  * each owner's tax on their share of that result → cash after tax
  *
+ * A property that's part private — a holiday home also rented out, or the
+ * home with a room or granny flat let — is included, with its costs claimed
+ * only for the rented share (PCG 2026/2). A holiday home that isn't mainly
+ * used to earn rent can't claim its ownership costs at all (s 26-50,
+ * TR 2026/1); the costs of renting it (management fees) still count.
+ *
  * Interest is the deductible interest from the debt allocation where the
  * loans' uses are recorded against this property (the latest year with
  * interest entered), otherwise estimated from loans secured on it. An
@@ -50,6 +56,11 @@ export interface PropertyProfitRow {
   cashBeforeTax: number;
   depreciation: number;
   capitalWorks: number;
+  /** How it's used (residential), and the share of its costs that relates to renting (0-1). */
+  use: string | null;
+  rentedShare: number;
+  /** What's claimed against the rent: all the costs for a rental, less for a part-private one. */
+  deductions: number;
   taxResult: number;
   owners: OwnerTax[];
   cashAfterTax: number | null;
@@ -141,18 +152,25 @@ export async function propertyProfit(): Promise<{ rows: PropertyProfitRow[]; tax
   };
 
   const finish = (
-    base: Omit<PropertyProfitRow, "netIncome" | "cashBeforeTax" | "taxResult" | "owners" | "cashAfterTax" | "grossYield" | "netYield" | "afterTaxYield">,
+    base: Omit<
+      PropertyProfitRow,
+      "netIncome" | "cashBeforeTax" | "taxResult" | "owners" | "cashAfterTax" | "grossYield" | "netYield" | "afterTaxYield" | "deductions" | "use" | "rentedShare"
+    > & { deductions?: number; use?: string | null; rentedShare?: number },
     record: Parameters<typeof ownersTax>[0]
   ): PropertyProfitRow => {
     const netIncome = base.rent - base.runningCosts - (base.landTax.amount ?? 0);
     const cashBeforeTax = netIncome - base.interest;
-    const taxResult = cashBeforeTax - base.depreciation - base.capitalWorks;
+    const deductions = base.deductions ?? base.runningCosts + (base.landTax.amount ?? 0) + base.interest + base.depreciation + base.capitalWorks;
+    const taxResult = base.rent - deductions;
     const owners = ownersTax(record, taxResult);
     const allKnown = owners.every((o) => o.taxEffect !== null);
     const cashAfterTax = allKnown ? cashBeforeTax - owners.reduce((s, o) => s + (o.taxEffect ?? 0), 0) : null;
     const v = base.value;
     return {
       ...base,
+      use: base.use ?? null,
+      rentedShare: base.rentedShare ?? 1,
+      deductions,
       netIncome,
       cashBeforeTax,
       taxResult,
@@ -167,7 +185,9 @@ export async function propertyProfit(): Promise<{ rows: PropertyProfitRow[]; tax
   const rows: PropertyProfitRow[] = [];
   for (const p of properties) {
     // The home, and a holiday home nobody rents, aren't investments.
-    if (p.asset.mainResidence === "FULL" || p.use === "HOME" || p.use === "HOLIDAY") continue;
+    const use = p.use ?? (p.asset.mainResidence === "FULL" ? "HOME" : "INVESTMENT");
+    if (use === "HOME" || use === "HOLIDAY") continue;
+    const partPrivate = use === "HOLIDAY_RENTED" || use === "HOME_PART_RENTED";
     const rent = (p.weeklyRent ?? 0) * 52;
     const insurance = insuranceFor(p.assetId);
     const management = rent * ((p.managementPercent ?? 0) / 100);
@@ -184,11 +204,42 @@ export async function propertyProfit(): Promise<{ rows: PropertyProfitRow[]; tax
     if (!p.weeklyRent) notes.push("No weekly rent recorded on the property.");
     if (costBreakdown.length === 0) notes.push("No running costs recorded — enter them under Running costs on the property page.");
     const { interest, basis } = interestFor(p.assetId, p.liabilities);
+
+    // Part private: only the rented share of its costs is claimed; the costs
+    // of renting it (management fees) are claimed in full. A holiday home not
+    // mainly rented claims none of its ownership costs.
+    const share = partPrivate ? Math.min(1, Math.max(0, (p.rentedShare ?? 100) / 100)) : 1;
+    const depreciation = p.asset.depreciationPerYear ?? 0;
+    const capitalWorks = p.asset.capitalWorksPerYear ?? 0;
+    const other = p.otherCostsPerYear ?? 0;
+    const ownershipCosts = costBreakdown.reduce((s, c) => s + c.amount, 0) - management - other + (landTax.get(p.assetId)!.amount ?? 0) + interest;
+    const denied = use === "HOLIDAY_RENTED" && p.mainlyRented === false;
+    const deductions = management + (denied ? 0 : share * ownershipCosts) + share * (other + depreciation + capitalWorks);
+    if (partPrivate) {
+      if (p.rentedShare === null) {
+        notes.push("The rented share isn't entered, so the tax figures count all its costs — more than can be claimed. Enter it under How it's used on the property's page.");
+      } else {
+        notes.push(`${Math.round(share * 100)}% of its costs are claimed — the rented share; the rest is private (PCG 2026/2). Management fees are claimed in full.`);
+      }
+    }
+    if (use === "HOLIDAY_RENTED") {
+      if (denied) {
+        notes.push(
+          "Not mainly used to earn rent, so its interest, rates, land tax, insurance and repairs can't be claimed (section 26-50, TR 2026/1) — only the costs of renting it. Those it can't claim may be added to its cost base for when it's sold."
+        );
+      } else if (p.mainlyRented === null) {
+        notes.push("Whether it's mainly used to earn rent decides if its interest, rates and repairs can be claimed at all (TR 2026/1). Answer it under How it's used.");
+      }
+    }
+    if (use === "HOME_PART_RENTED") notes.push("Renting out part of your home reduces the main residence exemption when it's sold — keep a note of the rented share and the dates.");
     rows.push(
       finish(
         {
           assetId: p.assetId,
           kind: "PROPERTY",
+          use,
+          rentedShare: share,
+          deductions,
           recordId: p.id,
           name: p.asset.name,
           value: p.asset.currentValue,
@@ -199,8 +250,8 @@ export async function propertyProfit(): Promise<{ rows: PropertyProfitRow[]; tax
           interest,
           interestBasis: basis,
           interestYear: basis === "DEBT_ALLOCATION" ? interestYear : null,
-          depreciation: p.asset.depreciationPerYear ?? 0,
-          capitalWorks: p.asset.capitalWorksPerYear ?? 0,
+          depreciation,
+          capitalWorks,
           notes,
         },
         p.asset

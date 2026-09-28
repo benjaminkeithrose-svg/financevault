@@ -111,6 +111,9 @@ export function PropertyDetail() {
             ))}
           </div>
           <p className="cap-explain">{use.explain}</p>
+          {(use.value === "HOLIDAY_RENTED" || use.value === "HOME_PART_RENTED") && id && (
+            <PartPrivateSettings propertyId={id} property={property} holiday={use.value === "HOLIDAY_RENTED"} onChange={load} />
+          )}
         </div>
       )}
 
@@ -254,6 +257,97 @@ export function PropertyDetail() {
         action={() => api.properties.remove(property.id)}
         redirectTo="/properties"
       />
+    </div>
+  );
+}
+
+/**
+ * A property that's part rented, part private: the share of its costs that
+ * relates to renting (PCG 2026/2), and for a holiday home whether it's
+ * mainly used to earn rent (TR 2026/1) — which decides if its ownership
+ * costs can be claimed at all.
+ */
+function PartPrivateSettings({
+  propertyId,
+  property,
+  holiday,
+  onChange,
+}: {
+  propertyId: string;
+  property: Property;
+  holiday: boolean;
+  onChange: () => void;
+}) {
+  const [share, setShare] = useState(property.rentedShare != null ? String(property.rentedShare) : "");
+  const [saved, setSaved] = useState(false);
+  useEffect(() => setShare(property.rentedShare != null ? String(property.rentedShare) : ""), [property.rentedShare]);
+
+  async function saveShare() {
+    const value = share === "" ? null : Math.min(100, Math.max(0, Number(share)));
+    if (value === (property.rentedShare ?? null)) return;
+    await api.properties.update(propertyId, { rentedShare: value });
+    setSaved(true);
+    onChange();
+  }
+  async function setMainly(value: boolean | null) {
+    await api.properties.update(propertyId, { mainlyRented: value });
+    onChange();
+  }
+  const mainly = property.mainlyRented ?? null;
+
+  return (
+    <div className="sub-form" style={{ marginTop: 12 }}>
+      <label htmlFor="rented-share">Rented share of its costs (%)</label>
+      <div className="toolbar" style={{ flexWrap: "wrap" }}>
+        <input
+          id="rented-share"
+          type="number"
+          inputMode="decimal"
+          min={0}
+          max={100}
+          value={share}
+          onChange={(e) => {
+            setShare(e.target.value);
+            setSaved(false);
+          }}
+          onBlur={saveShare}
+          style={{ maxWidth: 120 }}
+        />
+        <button className="btn secondary" onClick={saveShare}>
+          Save
+        </button>
+        {saved && <span className="cap-explain">Saved.</span>}
+      </div>
+      <p className="cap-explain">
+        {holiday
+          ? "Usually the days it was rented or genuinely available to rent, out of the year, less the days you, family or friends stayed."
+          : "Usually the floor area rented (with a share of shared areas), and for part of the year if it wasn't rented all year."}{" "}
+        The ATO's accepted methods are in PCG 2026/2 — your accountant can confirm the figure.
+      </p>
+
+      {holiday && (
+        <>
+          <label>Is it mainly used to earn rent?</label>
+          <div className="segmented" role="group" aria-label="Is it mainly used to earn rent?">
+            {(
+              [
+                [true, "Yes"],
+                [false, "No"],
+                [null, "Not sure"],
+              ] as const
+            ).map(([value, label]) => (
+              <button key={label} type="button" className={mainly === value ? "selected" : ""} aria-pressed={mainly === value} onClick={() => setMainly(value)}>
+                {label}
+              </button>
+            ))}
+          </div>
+          <p className="cap-explain">
+            The ATO looks at how it's really used, especially at peak times — school holidays, Christmas and Easter. Keeping those for
+            yourselves usually means it isn't mainly rented, and then its interest, rates, land tax, insurance and repairs can't be claimed
+            (only the costs of renting it, like booking and cleaning fees). Days alone don't decide it.
+          </p>
+        </>
+      )}
     </div>
   );
 }

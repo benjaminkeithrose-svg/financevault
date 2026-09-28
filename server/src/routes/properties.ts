@@ -74,7 +74,9 @@ const createInput = z.object({
   tenantInfo: z.string().optional().nullable(),
   propertyManager: z.string().optional().nullable(),
   weeklyRent: z.number().nonnegative().optional().nullable(),
-  use: z.enum(["HOME", "INVESTMENT", "HOLIDAY"]).optional().nullable(),
+  use: z.enum(["HOME", "INVESTMENT", "HOLIDAY", "HOLIDAY_RENTED", "HOME_PART_RENTED"]).optional().nullable(),
+  rentedShare: z.number().min(0).max(100).optional().nullable(),
+  mainlyRented: z.boolean().optional().nullable(),
   councilRates: z.number().nonnegative().optional().nullable(),
   waterRates: z.number().nonnegative().optional().nullable(),
   strataFees: z.number().nonnegative().optional().nullable(),
@@ -101,7 +103,7 @@ propertiesRouter.post(
           acquisitionCost: parsed.purchasePrice ?? undefined,
           currentValue: parsed.currentValue ?? undefined,
           // The family home: exempt from land tax, main residence for CGT.
-          mainResidence: parsed.use === "HOME" ? "FULL" : undefined,
+          mainResidence: parsed.use === "HOME" || parsed.use === "HOME_PART_RENTED" ? "FULL" : undefined,
         },
       });
       if (owners) {
@@ -123,6 +125,8 @@ propertiesRouter.post(
           propertyManager: parsed.propertyManager,
           weeklyRent: parsed.weeklyRent,
           use: parsed.use,
+          rentedShare: parsed.rentedShare,
+          mainlyRented: parsed.mainlyRented,
           councilRates: parsed.councilRates,
           waterRates: parsed.waterRates,
           strataFees: parsed.strataFees,
@@ -156,7 +160,7 @@ propertiesRouter.put(
     const mainResidence =
       parsed.use === undefined || asset?.disposalDate
         ? undefined
-        : parsed.use === "HOME"
+        : parsed.use === "HOME" || parsed.use === "HOME_PART_RENTED"
           ? "FULL"
           : asset?.mainResidence === "FULL"
             ? "NONE"
@@ -187,6 +191,8 @@ propertiesRouter.put(
           propertyManager: parsed.propertyManager,
           weeklyRent: parsed.weeklyRent,
           use: parsed.use,
+          rentedShare: parsed.rentedShare,
+          mainlyRented: parsed.mainlyRented,
           councilRates: parsed.councilRates,
           waterRates: parsed.waterRates,
           strataFees: parsed.strataFees,

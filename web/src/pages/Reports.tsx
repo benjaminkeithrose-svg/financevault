@@ -170,6 +170,15 @@ function PropertyProfit() {
                     <td>− Depreciation and building write-off (not cash, but deductible)</td>
                     <td>{formatCurrency(r.depreciation + r.capitalWorks)}</td>
                   </tr>
+                  {r.taxResult - (r.cashBeforeTax - r.depreciation - r.capitalWorks) > 0.5 && (
+                    <tr>
+                      <td>
+                        + Costs that can't be claimed
+                        <div className="cap-explain">The private share — it's partly used by you (see the notes below).</div>
+                      </td>
+                      <td>{formatCurrency(r.taxResult - (r.cashBeforeTax - r.depreciation - r.capitalWorks))}</td>
+                    </tr>
+                  )}
                   <tr>
                     <td>
                       <strong>Tax result</strong> {r.taxResult < 0 ? "(a loss)" : ""}

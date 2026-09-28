@@ -81,6 +81,13 @@ export function SoldPanel({ asset, onChange }: { asset: Asset; onChange: () => v
           for things entered by mistake.
         </p>
       )}
+      {!sold && (isProperty || asset.assetType === "COMMERCIAL_PROPERTY") && (
+        <p className="cap-explain">
+          <strong>Selling?</strong> Apply to the ATO for a clearance certificate (free, online) and give it to the buyer before
+          settlement. Without it the buyer must hold back 15% of the price — for every property, your home too. If that happened,
+          it's claimed back in your tax return.
+        </p>
+      )}
 
       {editing && (
         <div className="sub-form">
@@ -121,13 +128,13 @@ export function SoldPanel({ asset, onChange }: { asset: Asset; onChange: () => v
                 <select value={form.mainResidence} onChange={(e) => setForm({ ...form, mainResidence: e.target.value })}>
                   <option value="NONE">No</option>
                   <option value="FULL">Yes — the whole time we owned it</option>
-                  <option value="PARTIAL">For part of the time</option>
+                  <option value="PARTIAL">For part of the time, or part of it was rented</option>
                 </select>
               </div>
             )}
             {isProperty && form.mainResidence === "PARTIAL" && (
               <div>
-                <label>Share of the time it was your home (%)</label>
+                <label>Share that was your home (%)</label>
                 <input
                   type="number"
                   min="0"
@@ -135,6 +142,7 @@ export function SoldPanel({ asset, onChange }: { asset: Asset; onChange: () => v
                   value={form.mainResidencePercent}
                   onChange={(e) => setForm({ ...form, mainResidencePercent: e.target.value })}
                 />
+                <p className="cap-explain">The share of the time it was your home, less any part that was rented out. Your accountant works out the exact figure.</p>
               </div>
             )}
           </div>
