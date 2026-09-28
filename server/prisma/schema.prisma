@@ -419,6 +419,7 @@ model Document {
   @@index([reviewStatus])
   @@index([financialYearId])
   @@index([entityId])
+  loanReadings          LoanReading[]
 }
 
 // Generic polymorphic link so one document can be attached to many records
@@ -546,6 +547,7 @@ model Liability {
   lender                       String?
   originalAmount               Float?
   currentBalance               Float?
+  balanceAsAt                  DateTime? // the date currentBalance is for (from a statement, or when it was typed in)
   interestRate                 Float?
   loanType                     String? // fixed/variable
   fixedPeriodEnds              DateTime?
@@ -573,6 +575,7 @@ model Liability {
   establishmentFees            Float?
   valuationFees                Float?
   notes                        String?
+  readings                     LoanReading[]
   createdAt                    DateTime  @default(now())
   updatedAt                    DateTime  @updatedAt
 
@@ -1795,6 +1798,27 @@ model LoanPurpose {
 
 // The interest a loan charged in a financial year, from the lender's annual
 // interest statement — the figure the deductible share is applied to.
+// A loan's figures at a point in time — from a statement, a CSV, a rate
+// the person recorded, or a change made on the loan's page — so its rate and
+// balance can be shown over the years.
+model LoanReading {
+  id                 String    @id @default(cuid())
+  liabilityId        String
+  liability          Liability @relation(fields: [liabilityId], references: [id], onDelete: Cascade)
+  asAt               DateTime
+  interestRate       Float? // percent a year
+  balance            Float?
+  repayment          Float?
+  repaymentFrequency String?
+  source             String // STATEMENT | CSV | RATE_CHANGE | RECORDED | EDITED
+  documentId         String?
+  document           Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  note               String?
+  createdAt          DateTime  @default(now())
+
+  @@index([liabilityId, asAt])
+}
+
 model LoanInterestYear {
   id              String    @id @default(cuid())
   liabilityId     String

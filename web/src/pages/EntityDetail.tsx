@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { DocStatusBadge } from "../components/DocStatusBadge.js";
 import { MissingFlags } from "../components/MissingFlags.js";
 import { Link, useParams } from "react-router-dom";
 import { api, Entity } from "../api/client.js";
@@ -426,7 +427,7 @@ export function EntityDetail() {
                   </td>
                   <td>{d.documentType || "—"}</td>
                   <td>
-                    <span className={`badge status-${d.reviewStatus}`}>{humanize(d.reviewStatus)}</span>
+                    <DocStatusBadge documentId={d.id} status={d.reviewStatus} />
                   </td>
                   <td>{formatDate(d.uploadDate)}</td>
                 </tr>

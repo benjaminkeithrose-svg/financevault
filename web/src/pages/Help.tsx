@@ -482,7 +482,16 @@ const SECTIONS: Section[] = [
         </p>
         <p>
           Nothing is filed automatically. Each new document waits in To review until you <strong>Confirm</strong> it.
-          Open a document to correct anything first, then <strong>Confirm classification</strong>.
+          Wherever a document shows <strong>Needs confirmation ›</strong>, tap it: the document opens with{" "}
+          <strong>Is this right?</strong> at the top, showing what the app read. <strong>Confirm and go back</strong> returns you
+          to where you were; <strong>Confirm, then the next one</strong> moves on to the next document waiting. To correct
+          something first, use <strong>Change something first</strong>.
+        </p>
+        <p>
+          <strong>A statement or form the app didn't read well?</strong> On the document's page, under Extracted text, use{" "}
+          <strong>Share its layout (no figures)</strong>. It shows the document's wording with every figure, date, name,
+          email and address blanked out. Read it through, then save it as a file and send it in your chat with Claude —
+          the next version reads that kind of document better. The app never sends it anywhere itself.
         </p>
         <p>
           Documents can be linked to the things they're about — a rates notice to a property, a payslip to a person, a
@@ -892,7 +901,7 @@ const SECTIONS: Section[] = [
   {
     id: "loans-assets",
     title: "Loans, other liabilities and other assets",
-    keywords: "mortgage credit card personal loan car vehicle super superannuation equipment ownership share add a loan financing property documents contract",
+    keywords: "mortgage credit card personal loan car vehicle super superannuation equipment ownership share add a loan financing property documents contract statement read import csv rate history graph interest year balance",
     body: (
       <>
         <p>
@@ -901,6 +910,21 @@ const SECTIONS: Section[] = [
           so its LVR can be shown), <Link to="/vehicle-loans">Vehicle &amp; boat loans</Link>,{" "}
           <Link to="/credit-cards">Credit cards</Link>, and <Link to="/liabilities">Personal &amp; other debts</Link> for
           everything else. The links at the top of the page jump to each section.
+        </p>
+        <p>
+          <strong>Reading a statement.</strong> On a loan's page, <strong>Read a statement</strong> and choose one from your
+          lender — a PDF, a photo, or a CSV of the loan account's transactions. The app reads the balance and the date it's
+          for, the interest rate and any rate changes listed, the repayment, and the interest charged, and shows them next to
+          what's recorded. Tick what to take and <strong>Update the loan</strong>. A statement covering a whole financial
+          year (1 July to 30 June), or a year of CSV transactions, gives that year's interest — which the property profit
+          report and the accountant checklist use, with the statement kept as the proof. An older statement never winds
+          the loan's figures back: it only goes into the history. The statement is filed with the loan.
+        </p>
+        <p>
+          <strong>Rate and balance over time.</strong> Every statement read, every rate change it lists, and every time you
+          change the rate or balance on the loan's page is a point on the loan's graphs — the interest rate as it went up
+          and down, and what's owing. For years you have no statements for, <strong>Add a rate from before</strong> with the
+          date. A balance more than three months old gets a note to read the latest statement.
         </p>
         <p>
           <strong>Quicker from the property or vehicle itself:</strong> on its page, under <strong>Financing</strong> (or

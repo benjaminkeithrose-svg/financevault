@@ -676,6 +676,49 @@ export interface MirrorStatus {
   last: { at: string; folder: string; files: number; written: number; removed: number; problems: string[]; recordsBackup: string | null } | null;
 }
 
+export interface LoanReading {
+  id: string;
+  liabilityId: string;
+  asAt: string;
+  interestRate: number | null;
+  balance: number | null;
+  repayment: number | null;
+  repaymentFrequency: string | null;
+  /** STATEMENT | CSV | RATE_CHANGE | RECORDED | EDITED */
+  source: string;
+  documentId: string | null;
+  document?: { id: string; originalFilename: string } | null;
+  note: string | null;
+}
+
+export interface LoanHistory {
+  readings: LoanReading[];
+  current: { asAt: string; interestRate: number | null; balance: number | null; repayment: number | null; repaymentFrequency: string | null };
+  interestYears: Array<{ fyLabel: string; interestCharged: number; documentId: string | null }>;
+}
+
+export interface StatementFigures {
+  periodStart: string | null;
+  periodEnd: string | null;
+  asAt: string | null;
+  balance: number | null;
+  interestRate: number | null;
+  repayment: number | null;
+  repaymentFrequency: string | null;
+  interestCharged: number | null;
+  financialYear: { fyLabel: string; interest: number } | null;
+  rateChanges: Array<{ date: string; rate: number }>;
+  found: string[];
+}
+
+export interface StatementProposal {
+  kind: "STATEMENT" | "CSV";
+  statement?: StatementFigures;
+  csv?: { asAt: string | null; balance: number | null; interestByYear: Array<{ fyLabel: string; interest: number; complete: boolean }>; rows: number; found: string[] };
+  current: { balance: number | null; balanceAsAt: string | null; interestRate: number | null; repayment: number | null; repaymentFrequency: string | null };
+  recordedYears: Record<string, number>;
+}
+
 /** Automatic updates for the installed program, from the project's GitHub releases. */
 export interface OnlineUpdate {
   enabled: boolean;
@@ -1378,6 +1421,8 @@ export interface Liability {
   lender?: string | null;
   originalAmount?: number | null;
   currentBalance?: number | null;
+  /** The date currentBalance is for. */
+  balanceAsAt?: string | null;
   interestRate?: number | null;
   loanType?: string | null;
   fixedPeriodEnds?: string | null;
@@ -2375,6 +2420,8 @@ export const api = {
       request<DocumentLink>(`/documents/${id}/links`, { method: "POST", body: JSON.stringify(data) }),
     removeLink: (id: string, linkId: string) =>
       request<void>(`/documents/${id}/links/${linkId}`, { method: "DELETE" }),
+    /** Its layout with every figure, date, name and address blanked out — to share for teaching the readers. */
+    layout: (id: string) => request<{ text: string; filename: string }>(`/documents/${id}/layout`),
     byTarget: (targetType: string, targetId: string) =>
       request<Array<DocumentLink & { document: Document }>>(
         `/documents/by-target?targetType=${targetType}&targetId=${targetId}`
@@ -2419,6 +2466,17 @@ export const api = {
     update: (id: string, data: Record<string, unknown>) =>
       request<Liability>(`/liabilities/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     remove: (id: string) => request<void>(`/liabilities/${id}`, { method: "DELETE" }),
+    history: (id: string) => request<LoanHistory>(`/liabilities/${id}/readings`),
+    addReading: (id: string, data: { asAt: string; interestRate?: number | null; balance?: number | null; note?: string | null }) =>
+      request<LoanReading>(`/liabilities/${id}/readings`, { method: "POST", body: JSON.stringify(data) }),
+    removeReading: (readingId: string) => request<void>(`/liabilities/readings/${readingId}`, { method: "DELETE" }),
+    readStatement: (id: string, documentId: string) =>
+      request<StatementProposal>(`/liabilities/${id}/statements/read`, { method: "POST", body: JSON.stringify({ documentId }) }),
+    applyStatement: (id: string, data: Record<string, unknown>) =>
+      request<{ changed: string[]; olderThanRecorded: boolean; recordedAsAt: string | null }>(`/liabilities/${id}/statements/apply`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
     addOwnership: (liabilityId: string, data: Record<string, unknown>) =>
       request<unknown>(`/liabilities/${liabilityId}/ownerships`, { method: "POST", body: JSON.stringify(data) }),
     removeOwnership: (ownershipId: string) => request<void>(`/liabilities/ownerships/${ownershipId}`, { method: "DELETE" }),

@@ -481,6 +481,39 @@ isn't safe to sync live, only the documents folder is.
   builds the Setup on Windows, installs it silently, runs a first start and
   an upgrade with it, and uninstalls, checking the records stay.
 
+### Loan statements, rate history, layout samples (1.10.0)
+
+- `services/loanStatement.ts`: `readLoanStatement(text)` finds the period,
+  balance (and its as-at date), rate, listed rate changes, repayment and
+  frequency, interest charged, and a financial year's interest (an explicit
+  "interest … 2024/25 / financial year" line, or a period of exactly 1 July
+  to 30 June) from label-then-value lines; `readLoanCsv(text)` sums
+  interest debits by financial year (a year is "complete" with its July and
+  June charges) and takes the latest balance column. Heuristic: proposes,
+  never writes. Tests in `test/loanStatement.test.ts` use each bank's
+  wording.
+- `LoanReading` (asAt, rate, balance, repayment, source STATEMENT | CSV |
+  RATE_CHANGE | RECORDED | EDITED, document) and `Liability.balanceAsAt`.
+  Creating a loan with figures, or changing its rate or balance, records
+  an EDITED reading. `routes/loanReadings.ts`: `GET/POST
+  /liabilities/:id/readings`, `DELETE /liabilities/readings/:id`,
+  `POST /liabilities/:id/statements/read {documentId}` (reads `ocrText`, or
+  the file for a CSV) and `/statements/apply` — the loan's fields change
+  only if the statement is at least as recent as `balanceAsAt`; the
+  reading, rate changes and `LoanInterestYear` (with the document) are
+  saved either way, and the document is linked to the loan.
+- `components/LoanHistoryCard.tsx`: Read a statement (upload → link →
+  read → review with ticks → apply), step chart of the rate and a line of
+  the balance over time (SVG, theme colours), interest by year, past rates.
+- `GET /documents/:id/layout` (`services/layoutSample.ts`): the text with
+  emails, known names (people, entities, property addresses, account
+  names; single name words except common statement words), titled names
+  and street addresses replaced, and every digit turned to 0 — shown to
+  the person to check, copy or save; never sent by the app.
+- `components/DocStatusBadge.tsx`: a review status that still needs doing
+  links to `/documents/:id?review=1`; the document page shows "Is this
+  right?" first, with Confirm and go back / Confirm, then the next one.
+
 ### Portfolio Plan: owned properties, graphs, cash in hand, what-ifs (1.9.0)
 
 - The projection moved to `services/planProjection.ts` (`projectPlan`,

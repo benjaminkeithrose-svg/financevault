@@ -2679,3 +2679,21 @@ code.path {
 .chart-key.mark.draw-for { background: var(--text); border-color: var(--text); }
 .chart-key.mark.draw-from { background: var(--surface); border-color: var(--text); }
 .chart-key.held-owned { height: 6px; background: var(--text-muted); opacity: 0.45; }
+
+/* A status badge that's also a button (DocStatusBadge): a finger-sized target around a small badge. */
+.badge-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  text-decoration: none;
+}
+.badge-link:hover .badge,
+.badge-link:focus-visible .badge {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+/* "Is this right?" on a document, and a statement's figures to take: the one thing to do next. */
+.review-box {
+  border-left: 4px solid var(--accent);
+}

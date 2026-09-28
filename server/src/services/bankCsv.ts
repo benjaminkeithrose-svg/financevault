@@ -46,7 +46,7 @@ const AMOUNT_HINTS = ["amount", "value"];
 const DEBIT_HINTS = ["debit", "withdrawal", "money out", "paid out"];
 const CREDIT_HINTS = ["credit", "deposit", "money in", "paid in"];
 
-function readRows(text: string): string[][] {
+export function readRows(text: string): string[][] {
   return parse(text, {
     skip_empty_lines: true,
     relax_column_count: true,

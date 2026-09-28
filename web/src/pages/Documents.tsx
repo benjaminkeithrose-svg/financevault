@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { DocStatusBadge } from "../components/DocStatusBadge.js";
 import { Link, useSearchParams } from "react-router-dom";
 import { api, Document, ReferenceChecks, ReferenceFigures, ReferenceLibraryStatus } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
@@ -113,7 +114,7 @@ export function Documents() {
                     }${d.referenceCheckBy && !d.supersededAt ? ` · check by ${formatDate(d.referenceCheckBy)}` : ""}`
                   : `${d.documentType || "Unclassified"} · ${d.entity?.name || "No entity"} · ${formatDate(d.documentDate || d.uploadDate)}${d.amount ? ` · ${formatCurrency(d.amount)}` : ""}`
               }
-              right={<span className={`badge status-${d.reviewStatus}`}>{humanize(d.reviewStatus)}</span>}
+              right={<DocStatusBadge documentId={d.id} status={d.reviewStatus} />}
             />
           ))}
         </ul>

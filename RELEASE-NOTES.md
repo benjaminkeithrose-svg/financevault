@@ -3,6 +3,13 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.10.0 — 28 September 2026
+- Read a loan statement: on a loan's page, "Read a statement" and choose a PDF, a photo or a CSV from your lender. The app finds the balance and its date, the interest rate and any rate changes, the repayment and the interest charged, and shows them next to what's recorded. Tick what to take. A whole financial year's statement gives that year's interest for tax, with the statement kept as the proof. An older statement never winds the loan back.
+- Each loan's interest rate and balance over the years, as graphs. Every statement, rate change and edit adds a point; "Add a rate from before" fills in years you have no papers for.
+- A loan's balance now shows the date it's for, with a note when it's more than three months old.
+- "Needs confirmation" is now a button: it opens the document with "Is this right?" at the top — "Confirm and go back", or "Confirm, then the next one".
+- "Share its layout (no figures)" on a document: its wording with every figure, date, name and address blanked out, to send in your chat with Claude so the app learns to read that lender's statements or that form better.
+
 ## 1.9.1 — 28 September 2026
 - Add a loan straight from a property's page: under Financing, "Add a loan". It's recorded as secured on that property and owed by its owner, and once saved you can add its documents — the loan contract, statements — right there, filed with that loan. The same on commercial properties and vehicles (no more going to the Loans page).
 - Each loan on a property's page has "Its documents", to see and add that loan's documents without leaving the page.

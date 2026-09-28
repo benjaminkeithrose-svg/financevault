@@ -11,6 +11,7 @@ import { DeleteSection } from "../components/DeleteSection.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { useTrailTitle } from "../trail.js";
 import { RemindersCard } from "../components/RemindersCard.js";
+import { LoanHistoryCard } from "../components/LoanHistoryCard.js";
 
 const VEHICLE_LINKABLE = ["VEHICLE_LOAN", "PERSONAL_LOAN"];
 
@@ -113,6 +114,8 @@ export function LiabilityDetail() {
           </p>
         </div>
       </div>
+
+      {!isCard && <LoanHistoryCard liabilityId={liability.id} onChange={load} />}
 
       <div className="card">
         {(liability.securityProperty || liability.securityCommercialProperty) && (

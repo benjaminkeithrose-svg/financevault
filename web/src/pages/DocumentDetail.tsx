@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { api, AuditLogEntry, Document, Entity, TaxCategory } from "../api/client.js";
-import { formatDate, humanize } from "../utils.js";
+import { formatCurrency, formatDate, humanize } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
+import { LayoutShare } from "../components/LayoutShare.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { useTrailTitle } from "../trail.js";
 
@@ -26,6 +27,11 @@ export function DocumentDetail() {
   const [audit, setAudit] = useState<AuditLogEntry[]>([]);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<Record<string, string>>({});
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
+  // Arrived from a "Needs confirmation" button: after confirming, go straight back.
+  const fromBadge = params.get("review") === "1";
+  const [nextToCheck, setNextToCheck] = useState<string | null>(null);
 
   function load() {
     if (!id) return;
@@ -52,6 +58,13 @@ export function DocumentDetail() {
   }
 
   useEffect(load, [id]);
+  // The next document still waiting to be checked, for "Confirm, then the next one".
+  useEffect(() => {
+    if (!id) return;
+    Promise.all(["NEEDS_CONFIRMATION", "MISSING_INFORMATION", "PENDING_CLASSIFICATION"].map((reviewStatus) => api.documents.list({ reviewStatus })))
+      .then((lists) => setNextToCheck(lists.flat().find((d) => d.id !== id)?.id ?? null))
+      .catch(() => setNextToCheck(null));
+  }, [id]);
   useEffect(() => {
     api.entities.list().then(setEntities);
     api.taxCategories.list().then(setTaxCategories);
@@ -94,10 +107,12 @@ export function DocumentDetail() {
     }
   }
 
-  async function confirm() {
+  async function confirm(then?: "back" | "next") {
     if (!id) return;
     await api.documents.confirm(id);
-    load();
+    if (then === "next" && nextToCheck) navigate(`/documents/${nextToCheck}?review=1`, { replace: fromBadge });
+    else if (then === "back") navigate(-1);
+    else load();
   }
 
   async function toggleTextExtraction() {
@@ -122,9 +137,39 @@ export function DocumentDetail() {
         <span className={`badge status-${doc.reviewStatus}`}>{humanize(doc.reviewStatus)}</span>
       </div>
 
+      {doc.reviewStatus !== "CONFIRMED" && doc.reviewStatus !== "ARCHIVED" && (
+        <div className="card review-box">
+          <h3 style={{ marginTop: 0 }}>Is this right?</h3>
+          <p style={{ margin: "0 0 8px" }}>
+            {[
+              doc.documentType || "Type not worked out",
+              doc.entity?.name ? `for ${doc.entity.name}` : "no person or entity matched",
+              doc.amount !== null && doc.amount !== undefined ? formatCurrency(doc.amount) : null,
+              doc.documentDate ? formatDate(doc.documentDate) : null,
+              doc.financialYear?.label ? `${doc.financialYear.label} year` : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+          <div className="toolbar" style={{ flexWrap: "wrap" }}>
+            <button className="btn" onClick={() => confirm(fromBadge ? "back" : undefined)}>
+              {fromBadge ? "Confirm and go back" : "Confirm"}
+            </button>
+            {nextToCheck && (
+              <button className="btn secondary" onClick={() => confirm("next")}>
+                Confirm, then the next one
+              </button>
+            )}
+            <a className="btn secondary" href="#classification">
+              Change something first
+            </a>
+          </div>
+        </div>
+      )}
+
       <div className="doc-detail-grid">
         <div>
-          <div className="card">
+          <div className="card" id="classification">
             <h3 style={{ marginTop: 0 }}>Classification</h3>
             {doc.confidenceScore !== null && doc.confidenceScore !== undefined && (
               <>
@@ -264,7 +309,7 @@ export function DocumentDetail() {
                 {saving ? "Saving…" : "Save"}
               </button>
               {doc.reviewStatus !== "CONFIRMED" && (
-                <button className="btn secondary" onClick={confirm}>
+                <button className="btn secondary" onClick={() => confirm()}>
                   Confirm classification
                 </button>
               )}
@@ -288,6 +333,10 @@ export function DocumentDetail() {
                   <pre style={{ whiteSpace: "pre-wrap", fontSize: 13, color: "var(--text-muted)", maxHeight: 240, overflow: "auto" }}>
                     {doc.ocrText}
                   </pre>
+                  <LayoutShare
+                    documentId={doc.id}
+                    prompt="A statement or form the app didn't read well? Share its layout — the wording, with every figure and name blanked out — so the next version reads it better."
+                  />
                 </>
               ) : (
                 <p className="empty-state">

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { DocStatusBadge } from "../components/DocStatusBadge.js";
 import { api, Document } from "../api/client.js";
 import { ItemCard } from "../components/ItemCard.js";
-import { formatDate, humanize } from "../utils.js";
+import { formatDate } from "../utils.js";
 import { HelpLink } from "../components/HelpLink.js";
 
 export function Inbox() {
@@ -95,7 +96,7 @@ export function Inbox() {
               subtitle={`${d.documentType || "Unclassified"} · ${d.entity?.name || "No entity match"} · ${formatDate(d.uploadDate)}`}
               right={
                 <>
-                  <span className={`badge status-${d.reviewStatus}`}>{humanize(d.reviewStatus)}</span>
+                  <DocStatusBadge documentId={d.id} status={d.reviewStatus} />
                   <button
                     className="btn secondary"
                     onClick={(e) => {

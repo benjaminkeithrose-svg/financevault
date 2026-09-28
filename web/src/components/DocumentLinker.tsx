@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { DocStatusBadge } from "./DocStatusBadge.js";
 import { recordsChanged } from "../features.js";
 import { Link } from "react-router-dom";
 import { api, Document, DocumentLink } from "../api/client.js";
-import { formatDate, humanize, confirmThenDelete } from "../utils.js";
+import { formatDate, confirmThenDelete } from "../utils.js";
 
 export function DocumentLinker({
   targetType,
@@ -95,7 +96,7 @@ export function DocumentLinker({
                 </td>
                 <td>{l.document.documentType || "—"}</td>
                 <td>
-                  <span className={`badge status-${l.document.reviewStatus}`}>{humanize(l.document.reviewStatus)}</span>
+                  <DocStatusBadge documentId={l.document.id} status={l.document.reviewStatus} />
                 </td>
                 <td>{formatDate(l.document.documentDate || l.document.uploadDate)}</td>
                 <td>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { DocStatusBadge } from "../components/DocStatusBadge.js";
 import { Link } from "react-router-dom";
 import { api, DashboardSummary, Entity } from "../api/client.js";
 import { formatCurrency, formatDate, humanize } from "../utils.js";
@@ -240,7 +241,7 @@ export function Dashboard() {
                   <td>{d.documentType || "—"}</td>
                   <td>{d.entity?.name || "—"}</td>
                   <td>
-                    <span className={`badge status-${d.reviewStatus}`}>{humanize(d.reviewStatus)}</span>
+                    <DocStatusBadge documentId={d.id} status={d.reviewStatus} />
                   </td>
                   <td>{formatDate(d.uploadDate)}</td>
                 </tr>

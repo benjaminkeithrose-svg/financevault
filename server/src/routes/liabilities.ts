@@ -73,6 +73,12 @@ const liabilityInput = z.object({
   notes: z.string().optional().nullable(),
 });
 
+/** A point in the loan's history when its rate or balance is typed in, so the graphs can show it later. */
+async function recordReading(liabilityId: string, interestRate: number | null | undefined, balance: number | null | undefined, source: string) {
+  if (interestRate == null && balance == null) return;
+  await prisma.loanReading.create({ data: { liabilityId, asAt: new Date(), interestRate: interestRate ?? null, balance: balance ?? null, source } });
+}
+
 function toData({ owners: _owners, ...parsed }: z.infer<typeof liabilityInput>) {
   return {
     ...parsed,
@@ -92,10 +98,12 @@ liabilitiesRouter.post(
     const liability = await prisma.liability.create({
       data: {
         ...toData(parsed),
+        balanceAsAt: parsed.currentBalance != null ? new Date() : null,
         ...(owners ? { ownerships: { create: owners.map((o) => ({ ownerEntityId: o.entityId, ownershipPercent: o.percent })) } } : {}),
       },
       include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } }, offsetAccounts: { select: { id: true, institution: true, accountName: true, currentBalance: true } } },
     });
+    await recordReading(liability.id, parsed.interestRate, parsed.currentBalance, "EDITED");
     await logAudit("LIABILITY_CREATED", { targetType: "Liability", targetId: liability.id });
     res.status(201).json(liability);
   })
@@ -105,11 +113,17 @@ liabilitiesRouter.put(
   "/:id",
   asyncHandler(async (req, res) => {
     const parsed = liabilityInput.partial().parse(req.body);
+    const before = await prisma.liability.findUnique({ where: { id: req.params.id } });
+    const balanceChanged = parsed.currentBalance !== undefined && parsed.currentBalance !== before?.currentBalance;
+    const rateChanged = parsed.interestRate !== undefined && parsed.interestRate !== before?.interestRate;
     const liability = await prisma.liability.update({
       where: { id: req.params.id },
-      data: toData(parsed as z.infer<typeof liabilityInput>),
+      data: { ...toData(parsed as z.infer<typeof liabilityInput>), ...(balanceChanged ? { balanceAsAt: new Date() } : {}) },
       include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } }, offsetAccounts: { select: { id: true, institution: true, accountName: true, currentBalance: true } } },
     });
+    if (balanceChanged || rateChanged) {
+      await recordReading(liability.id, rateChanged ? parsed.interestRate : null, balanceChanged ? parsed.currentBalance : null, "EDITED");
+    }
     await logAudit("LIABILITY_CHANGED", { targetType: "Liability", targetId: liability.id, data: parsed });
     res.json(liability);
   })
