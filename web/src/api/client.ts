@@ -1037,6 +1037,20 @@ export interface PurchaseStepView {
 
 export type EstimateField = "price" | "buyingCosts" | "rent" | "runningCosts" | "cashYear";
 
+export type PackType = "broker" | "accountant" | "solicitor" | "due-diligence";
+
+export interface ProfessionalPack {
+  type: PackType;
+  title: string;
+  address: string;
+  route: string;
+  prepared: string;
+  disclaimer: string;
+  sections: Array<{ title: string; rows?: Array<[string, string]>; lines?: string[] }>;
+  questions: string;
+  documents: Array<{ id: string; name: string; type: string | null; date: string | null }>;
+}
+
 export interface EstimateVsActual {
   frozenAt: string;
   estimates: Record<EstimateField, number | null>;
@@ -2727,6 +2741,11 @@ export const api = {
       request<EstimateVsActual>(`/considering/${assetId}/estimate`, { method: "PUT", body: JSON.stringify({ field, value }) }),
     correctPassedOnReason: (assetId: string, reason: string | null) =>
       request<{ ok: boolean }>(`/considering/${assetId}/passed-on-reason`, { method: "PUT", body: JSON.stringify({ reason }) }),
+    pack: (assetId: string, type: PackType) => request<ProfessionalPack>(`/considering/${assetId}/packs/${type}`),
+    savePackQuestions: (assetId: string, type: PackType, questions: string) =>
+      request<{ questions: string }>(`/considering/${assetId}/packs/${type}/questions`, { method: "PUT", body: JSON.stringify({ questions }) }),
+    packZipUrl: (assetId: string, type: PackType, documentIds: string[]) =>
+      `${BASE}/considering/${assetId}/packs/${type}/zip?docs=${documentIds.map(encodeURIComponent).join(",")}`,
     bought: (assetId: string, price?: number | null) =>
       request<{ status: string }>(`/considering/${assetId}/bought`, { method: "POST", body: JSON.stringify({ price }) }),
   },

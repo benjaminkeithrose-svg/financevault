@@ -416,7 +416,7 @@ export async function factFindCsv(entityId: string): Promise<string> {
   return toCsv(rows);
 }
 
-function toCsv(rows: string[][]): string {
+export function toCsv(rows: string[][]): string {
   return rows
     .map((row) =>
       row
@@ -478,14 +478,17 @@ const GENERATED_FILES = [
   { key: "INTEREST_SCHEDULE", label: "Loan interest schedule (loan_interest_schedule.csv)" },
 ];
 
-const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+export const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+
+/** The Financial Vault mark, for the top of a pack's first page. */
+export const VAULT_MARK =
+  '<svg width="56" height="56" viewBox="0 0 140 140" aria-label="Financial Vault"><rect width="140" height="140" fill="#1E1B4B"/>' +
+  '<circle cx="70" cy="56" r="26" fill="#7C3AED"/><path d="M56 66 L84 66 L94 116 L46 116 Z" fill="#7C3AED"/></svg>';
 
 /** The pack's cover page: the Financial Vault mark, whose pack it is, and what's in it. Opens in any browser. */
 export function packCover(p: { entityName: string; fyLabel: string | null; documents: Array<{ name: string; type: string; date: string }>; reports: string[]; now?: Date }) {
   const prepared = (p.now ?? new Date()).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric", timeZone: "Australia/Sydney" });
-  const mark =
-    '<svg width="56" height="56" viewBox="0 0 140 140" aria-label="Financial Vault"><rect width="140" height="140" fill="#1E1B4B"/>' +
-    '<circle cx="70" cy="56" r="26" fill="#7C3AED"/><path d="M56 66 L84 66 L94 116 L46 116 Z" fill="#7C3AED"/></svg>';
+  const mark = VAULT_MARK;
   const docs = p.documents.length
     ? `<table><thead><tr><th>Document</th><th>Type</th><th>Date</th></tr></thead><tbody>${p.documents
         .map((d) => `<tr><td>${esc(d.name)}</td><td>${esc(d.type)}</td><td>${esc(d.date)}</td></tr>`)

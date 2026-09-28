@@ -13,6 +13,7 @@ import { PersonDetail } from "./pages/PersonDetail.js";
 import { Search } from "./pages/Search.js";
 import { Settings } from "./pages/Settings.js";
 import { Considering } from "./pages/Considering.js";
+import { ProfessionalPack } from "./pages/ProfessionalPack.js";
 import { Properties } from "./pages/Properties.js";
 import { PropertyDetail } from "./pages/PropertyDetail.js";
 import { CommercialPropertyDetail } from "./pages/CommercialPropertyDetail.js";
@@ -104,6 +105,7 @@ export default function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/considering" element={<Considering />} />
+          <Route path="/considering/:assetId/pack/:type" element={<ProfessionalPack />} />
           <Route path="/properties/:id" element={<PropertyDetail />} />
           <Route path="/commercial-properties/acquisition-model" element={gate("commercial", <AcquisitionModel />)} />
           <Route path="/commercial-properties/:id" element={gate("commercial", <CommercialPropertyDetail />)} />

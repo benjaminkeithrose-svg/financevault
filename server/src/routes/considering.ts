@@ -7,6 +7,10 @@ import { checkOwners, ownersInput } from "../services/ownership.js";
 import { assess, workingAssessment } from "../services/assessment.js";
 import { addItem, CHECK_STATUSES, dueDiligence, ensureCheck, removeItem, saveCheck } from "../services/dueDiligence.js";
 import { pricePaid, purchaseSteps, saveStep } from "../services/purchaseSteps.js";
+import { PACK_TYPES, packData, packDocuments, packSummaryHtml, PackType, saveQuestions } from "../services/professionalPacks.js";
+import { readDocumentFile } from "../services/documentFiles.js";
+import { toCsv } from "./documentPacks.js";
+import { ZipArchive, ArchiverError } from "archiver";
 import { correctEstimate, correctPassedOnReason, ESTIMATES, EstimateField, estimateVsActual, freezeAssessment } from "../services/estimateVsActual.js";
 
 /**
@@ -394,5 +398,77 @@ consideringRouter.put(
     await correctPassedOnReason(req.params.assetId, reason || null);
     await logAudit("PASSED_ON_CORRECTED", { targetType: "Asset", targetId: req.params.assetId });
     res.json({ ok: true });
+  })
+);
+
+// Packs for the professionals: broker, accountant, solicitor or conveyancer,
+// and a due diligence summary. A printable page, and a ZIP of the same
+// summary with the documents you choose.
+const packType = (t: string): PackType => {
+  if (!(t in PACK_TYPES)) throw new HttpError(404, "No such pack.");
+  return t as PackType;
+};
+
+consideringRouter.get(
+  "/:assetId/packs/:type",
+  asyncHandler(async (req, res) => {
+    await considered(req.params.assetId);
+    res.json(await packData(req.params.assetId, packType(req.params.type)));
+  })
+);
+
+consideringRouter.put(
+  "/:assetId/packs/:type/questions",
+  asyncHandler(async (req, res) => {
+    const type = packType(req.params.type);
+    const { questions } = z.object({ questions: z.string().max(10_000) }).parse(req.body);
+    await considered(req.params.assetId);
+    await saveQuestions(req.params.assetId, type, questions);
+    res.json({ questions });
+  })
+);
+
+consideringRouter.get(
+  "/:assetId/packs/:type/zip",
+  asyncHandler(async (req, res) => {
+    const type = packType(req.params.type);
+    await considered(req.params.assetId);
+    const pack = await packData(req.params.assetId, type);
+    const wanted = new Set(String(req.query.docs ?? "").split(",").filter(Boolean));
+    // Only the property's own documents can go in, whatever is asked for.
+    const docs = (await packDocuments(req.params.assetId)).filter((d) => wanted.has(d.id));
+
+    const address = pack.title.split(" — ").slice(1).join(" — ");
+    const name = `${PACK_TYPES[type].title} ${address}`.replace(/[^a-z0-9]+/gi, "_").replace(/^_|_$/g, "");
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader("Content-Disposition", `attachment; filename="${name}.zip"`);
+    const archive = new ZipArchive({ zlib: { level: 9 } });
+    archive.on("error", (err: ArchiverError) => {
+      throw err;
+    });
+    archive.pipe(res);
+
+    const indexRows: string[][] = [["Document", "Type", "Date"]];
+    const included: Array<{ name: string; type: string | null; date: Date | null }> = [];
+    const used = new Set<string>();
+    for (const d of docs) {
+      let bytes: Buffer | null = null;
+      try {
+        bytes = await readDocumentFile(d.filePath);
+      } catch {
+        // A file missing from the documents folder is listed, not fatal.
+      }
+      // Two documents with the same file name mustn't overwrite each other.
+      let file = d.name;
+      for (let n = 2; used.has(file.toLowerCase()); n++) file = d.name.replace(/(\.[^.]*)?$/, (ext) => ` (${n})${ext}`);
+      used.add(file.toLowerCase());
+      if (bytes) archive.append(bytes, { name: `documents/${file}` });
+      indexRows.push([bytes ? file : `${file} (file missing)`, d.type ?? "", d.date?.toISOString().slice(0, 10) ?? ""]);
+      included.push({ name: bytes ? file : `${file} (file missing)`, type: d.type, date: d.date });
+    }
+    archive.append(packSummaryHtml(pack, included), { name: "00 Summary.html" });
+    archive.append(toCsv(indexRows), { name: "document_index.csv" });
+    await logAudit("PROFESSIONAL_PACK", { targetType: "Asset", targetId: req.params.assetId, data: { type, documents: docs.length } });
+    await archive.finalize();
   })
 );

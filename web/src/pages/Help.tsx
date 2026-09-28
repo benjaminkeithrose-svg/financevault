@@ -914,7 +914,7 @@ const SECTIONS: Section[] = [
   {
     id: "considering",
     title: "Properties I'm considering",
-    keywords: "considering buying prospective pipeline looking investigating offer contract settlement passed on reject opportunity asking price due diligence checks inspection strata report open issues problem found development granny flat subdivision",
+    keywords: "considering buying prospective pipeline looking investigating offer contract settlement passed on reject opportunity asking price due diligence checks inspection strata report open issues problem found development granny flat subdivision pack broker accountant solicitor conveyancer pdf print zip questions",
     body: (
       <>
         <p>
@@ -975,6 +975,18 @@ const SECTIONS: Section[] = [
           property's page, it's compared with what really happened — the price and buying costs you paid, then each year's
           rent, running costs and cash (from Profit year by year). <strong>Correct an estimate</strong> fixes a mistake; the
           original and the date you changed it stay shown. A property you passed on can have its reason corrected the same way.
+        </p>
+        <p>
+          <strong>Packs for professionals</strong>, at the top of its page: <strong>Broker</strong>,{" "}
+          <strong>Accountant</strong>, <strong>Solicitor or conveyancer</strong> and a <strong>Due diligence summary</strong>.
+          Each is a summary made from what's recorded — the broker's has the price, cash needed, loan, the three columns, the
+          equity in what the buyers already own and "Can we borrow it?"; the accountant's has who'd own it and why, and the tax
+          figures; the solicitor's has the contract and settlement steps, the title and contract checks and any leases; the
+          summary has every check and issue. Write your questions for them at the top (kept with the pack).{" "}
+          <strong>Print or save as PDF</strong> prints it — choose "Save as PDF" as the printer to make a file.{" "}
+          <strong>Download the pack (ZIP)</strong> gives the same summary as a page, plus the property's documents you tick.
+          Identity documents are never offered, and no TFN or account numbers are ever in a pack. It's an estimate to help you
+          prepare, not advice.
         </p>
         <p>
           A <strong>Portfolio Plan</strong>'s planned purchase can be linked to a property you're considering: the plan then

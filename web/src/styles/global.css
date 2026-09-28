@@ -870,6 +870,7 @@ label {
 
 @media print {
   .app-header,
+  .help-link,
   .no-print,
   .delete-section {
     display: none !important;
@@ -2923,4 +2924,43 @@ code.path {
 
 .next-step {
   margin: 8px 0;
+}
+
+/* Packs for professionals */
+.pack-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.pack-links span {
+  flex-basis: 100%;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.pack-rows th,
+.pack-rows td {
+  white-space: normal;
+}
+
+.pack-rows th {
+  width: 40%;
+  font-weight: 600;
+  text-transform: none;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.pack-lines {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.pack-lines li + li {
+  margin-top: 4px;
 }

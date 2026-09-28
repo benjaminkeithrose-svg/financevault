@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api, Asset, PurchaseStepView } from "../api/client.js";
 import { CONSIDER_STAGES, formatDate } from "../utils.js";
 import { HelpLink } from "./HelpLink.js";
+import { PACKS } from "../pages/ProfessionalPack.js";
 
 /**
  * At the top of a property you're considering: where it's up to, and the
@@ -138,6 +139,14 @@ export function ConsideringBar({ asset, onChange }: { asset: Asset; onChange: ()
           </div>
         </div>
       )}
+      <div className="pack-links">
+        <span>Packs for professionals:</span>
+        {PACKS.map((p) => (
+          <Link key={p.type} className="btn secondary" to={`/considering/${asset.id}/pack/${p.type}`}>
+            {p.label}
+          </Link>
+        ))}
+      </div>
       {error && <div className="message-box error">{error}</div>}
     </div>
   );

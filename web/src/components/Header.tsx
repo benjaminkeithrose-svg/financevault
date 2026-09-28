@@ -66,6 +66,7 @@ const DETAIL_TITLES: Record<string, string> = {
   "bulk-import": "Bulk Import",
   "portfolio-plans": "Portfolio Plan",
   reminders: "Reminder",
+  considering: "Pack",
 };
 
 function getTitle(pathname: string): string {
