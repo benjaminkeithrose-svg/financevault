@@ -3,6 +3,12 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.8.0 — 28 September 2026
+- The installed program now updates itself. Once a day it checks the project's GitHub page for a new version; when there is one, a note at the top says so. Click "Download and install": your records are backed up, and Financial Vault closes, installs the new version and opens again by itself.
+- The check only asks what the latest version is — nothing about you or your records is sent — and nothing is installed until you say so. The download is used only if it's exactly the file that version published, and only a newer version is ever installed.
+- Settings → Program and updates has "Check for updates now" and a switch for the daily check. Switch it off and Financial Vault never goes online by itself.
+- New versions are published on the project's releases page, so the Setup file can always be downloaded from there too.
+
 ## 1.7.1 — 28 September 2026
 - Portfolio Plan: equity for a planned purchase can now come from any property you own — your home, a rental, a holiday home or a commercial property. Before, only commercial properties were offered, so a home or rental couldn't be picked.
 - Picking the property shows its value, what's owed on it and roughly how much could be drawn — or, if its value isn't entered yet, says so and where to enter it. The draw can still be planned either way.

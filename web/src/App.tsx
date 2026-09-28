@@ -51,6 +51,7 @@ import { FeatureGate } from "./components/FeatureGate.js";
 import { FeatureId } from "./features.js";
 import { Missing } from "./pages/Missing.js";
 import { UpdateNotice } from "./components/UpdateNotice.js";
+import { UpdateAvailable } from "./components/AutomaticUpdates.js";
 import { PrintHeader } from "./components/PrintHeader.js";
 
 const gate = (feature: FeatureId, page: JSX.Element) => <FeatureGate feature={feature}>{page}</FeatureGate>;
@@ -86,6 +87,7 @@ export default function App() {
       <main className="main-content">
         <PrintHeader />
         <UpdateNotice />
+        <UpdateAvailable />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/visualization" element={<Visualization />} />

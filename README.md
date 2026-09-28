@@ -481,6 +481,36 @@ isn't safe to sync live, only the documents folder is.
   builds the Setup on Windows, installs it silently, runs a first start and
   an upgrade with it, and uninstalls, checking the records stay.
 
+### Automatic updates for the installed program (1.8.0)
+
+- Releases: when `package.json` has a new version, the Windows workflow
+  (after all its checks) publishes a GitHub release `v<version>` with
+  `Financial-Vault-Setup-<version>.exe` and `update.json` (version, file,
+  size, SHA-512, notes), made by `desktop/release-files.mjs`, using the
+  workflow's own token. No secrets to set up.
+- `server/src/services/onlineUpdate.ts`, installed program only: asks
+  `api.github.com/repos/<repo>/releases/latest` (a `User-Agent` header,
+  nothing else) once a day while `autoCheck` is on, and on "Check for
+  updates now"; offers a version only if it's newer, its `update.json`
+  names a Setup asset of the same size, and both download from this
+  project's `releases/download/` address. "Download and install" streams
+  the Setup into `<data>/Updates`, checks its size and SHA-512, backs the
+  records up (`VACUUM INTO`), writes `install-setup.request.json` and
+  exits with code 76. State is in `<data>/Updates/online-update.json`.
+- `desktop/main.cjs` on code 76 checks the request again (in the Updates
+  folder, newer than itself, size and SHA-512), runs the Setup detached
+  with `/S --updated --force-run` and quits; the Setup restarts the
+  program. On the next start, a request for a version other than the one
+  running means the Setup didn't finish: `last-update.json` says so.
+- Routes: `GET /api/app/online`, `POST /api/app/online/check`,
+  `PUT /api/app/online/settings`, `POST /api/app/online/later`,
+  `POST /api/app/online/install` (202; progress on `GET /online`).
+- The Windows workflow tries it end to end with
+  `desktop/test-release-server.mjs` (the built Setup offered as 99.0.0)
+  and `FV_SMOKE_UPDATE=1`: check, download, verify, back up, run the
+  Setup silently, and the program starting again by itself.
+- The folder version still updates from a ZIP; it never checks online.
+
 ### Occupation deduction checklists (1.5.0)
 
 - `services/occupationGuides.ts`: `parseGuide(text)` reads an ATO

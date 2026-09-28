@@ -5,6 +5,7 @@ import { ensurePersonalEntities } from "./services/personalEntity.js";
 import { relinkMovedDocuments } from "./services/paths.js";
 import { ensureMonthlySnapshot } from "./services/monthlySnapshot.js";
 import { runMirror } from "./services/mirror.js";
+import { startDailyCheck } from "./services/onlineUpdate.js";
 
 const PORT = Number(process.env.PORT) || 4000;
 
@@ -42,6 +43,10 @@ setInterval(() => void runMirror(), 15 * 60 * 1000).unref();
 const monthly = () => ensureMonthlySnapshot().catch((err) => console.error("Monthly net worth snapshot failed:", err));
 void monthly();
 setInterval(monthly, 6 * 60 * 60 * 1000).unref();
+
+// The installed program: once a day, is there a newer version on GitHub?
+// (Only asks; installing waits for "Download and install".)
+startDailyCheck();
 
 // Loopback only. Listening on every interface (the old default) made the
 // whole database readable by anyone on the same Wi-Fi. Both IPv4 and IPv6

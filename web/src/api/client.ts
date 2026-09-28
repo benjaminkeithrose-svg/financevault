@@ -676,6 +676,21 @@ export interface MirrorStatus {
   last: { at: string; folder: string; files: number; written: number; removed: number; problems: string[]; recordsBackup: string | null } | null;
 }
 
+/** Automatic updates for the installed program, from the project's GitHub releases. */
+export interface OnlineUpdate {
+  enabled: boolean;
+  autoCheck: boolean;
+  checkedAt: string | null;
+  error: string | null;
+  available: { version: string; notes: string | null; size: number; releaseUrl: string | null } | null;
+  /** A newer version, and "Later" hasn't been pressed for it. */
+  remind: boolean;
+  job:
+    | { state: "idle" | "checking" | "installing" }
+    | { state: "downloading"; received: number; total: number }
+    | { state: "failed"; error: string };
+}
+
 export interface AppInfo {
   version: string;
   dataFolder: string | null;
@@ -2230,6 +2245,11 @@ export const api = {
     },
     rollback: () => request<{ version: string; restarting: boolean }>("/app/rollback", { method: "POST" }),
     updateSeen: () => request<void>("/app/update-seen", { method: "POST" }),
+    online: () => request<OnlineUpdate>("/app/online"),
+    checkOnline: () => request<OnlineUpdate>("/app/online/check", { method: "POST" }),
+    setAutoCheck: (autoCheck: boolean) => request<OnlineUpdate>("/app/online/settings", { method: "PUT", body: JSON.stringify({ autoCheck }) }),
+    remindLater: (version: string) => request<OnlineUpdate>("/app/online/later", { method: "POST", body: JSON.stringify({ version }) }),
+    installOnline: () => request<OnlineUpdate>("/app/online/install", { method: "POST" }),
   },
   expected: {
     get: (params: { fy?: string; target?: string } = {}) => {

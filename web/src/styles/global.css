@@ -2602,3 +2602,17 @@ code.path {
   min-height: 0;
   display: list-item;
 }
+
+/* Download progress (automatic updates). */
+.progress {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--border);
+  overflow: hidden;
+  margin: 8px 0;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s;
+}

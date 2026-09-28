@@ -2,11 +2,15 @@ FINANCIAL VAULT — START HERE
 ============================
 
 Everything stays on this computer. Nothing is uploaded anywhere.
+(The installed program checks once a day whether there's a new version —
+see "Updates" below. That sends nothing about you or your records, and
+it can be switched off.)
 
 
 WINDOWS: INSTALL IT (THE EASY WAY, FROM VERSION 1.6.0)
 ------------------------------------------------------
-1. Download "Financial Vault Setup 1.6.0.exe".
+1. Download the Setup file ("Financial-Vault-Setup-<version>.exe") from
+   https://github.com/benjaminkeithrose-svg/financevault/releases/latest
    If your browser warns that it "isn't commonly downloaded", click the
    three dots next to the warning, choose "Keep", then "Keep anyway".
 2. Double-click the Setup file.
@@ -21,9 +25,15 @@ WINDOWS: INSTALL IT (THE EASY WAY, FROM VERSION 1.6.0)
 6. Use the "Financial Vault" icon on the desktop or in the Start menu
    from now on.
 
-To update later: download the new version's Setup file and double-click
-it. It installs over the old one; your records are backed up first and
-stay where they are.
+Updates (from version 1.8.0): once a day Financial Vault checks for a
+new version. When there is one, a note at the top of the app says so.
+1. Click "See what's new" (or go to Settings > Program and updates).
+2. Click "Download and install".
+3. Wait a minute or two. Your records are backed up first, Financial
+   Vault closes, installs the new version and opens again by itself.
+To stop the daily check, untick "Check for a new version once a day" in
+Settings > Program and updates; "Check for updates now" still works.
+You can also download a newer Setup file yourself and double-click it.
 
 Coming from the folder version: close its window first, then install.
 Your records are already in Documents > Financial Vault Data, and the

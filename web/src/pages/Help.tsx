@@ -65,14 +65,39 @@ const SECTIONS: Section[] = [
   {
     id: "updates",
     title: "Updating to a new version",
-    keywords: "update upgrade new version install download zip keep data previous version put back rollback what's new setup exe installed program windows uninstall",
+    keywords: "update upgrade new version install download zip keep data previous version put back rollback what's new setup exe installed program windows uninstall automatic check daily github release online later",
     body: (
       <>
         <p>
-          <strong>The installed program (Windows, from 1.6.0):</strong> download the new version's{" "}
-          <strong>Financial Vault Setup</strong> file and double-click it. It installs over the one you have, and Financial
-          Vault opens on the new version with a note saying what's new. Your records are backed up first (into the Backups
-          folder in your data folder) and stay where they are. If Windows says "Windows protected your PC", click{" "}
+          <strong>The installed program (Windows) updates itself, from 1.8.0.</strong> Once a day it checks the project's
+          GitHub page for a new version. When there is one, a note at the top of the app says so.
+        </p>
+        <ol>
+          <li>
+            Click <strong>See what's new</strong>, or go to <Link to="/settings#updates">Settings</Link> →{" "}
+            <strong>Program and updates</strong>.
+          </li>
+          <li>
+            Click <strong>Download and install</strong>.
+          </li>
+          <li>
+            Wait a minute or two. Your records are backed up first (into the Backups folder in your data folder), then Financial
+            Vault closes, installs the new version and opens again by itself, with a note saying what's new.
+          </li>
+        </ol>
+        <p>
+          The check only asks GitHub what the latest version is: nothing about you or your records is sent. The download is
+          only used if it's exactly the file that version published (its size and checksum are checked), and only a newer
+          version is ever installed. Untick <strong>Check for a new version once a day</strong> and Financial Vault never goes
+          online by itself; <strong>Check for updates now</strong> still works. "Later" on the note hides it until the next
+          version.
+        </p>
+        <p>
+          You can still update by hand: download a version's <strong>Financial Vault Setup</strong> file from the{" "}
+          <a href="https://github.com/benjaminkeithrose-svg/financevault/releases" target="_blank" rel="noreferrer">
+            releases page
+          </a>{" "}
+          and double-click it. It installs over the one you have. If Windows says "Windows protected your PC", click{" "}
           <strong>More info</strong>, then <strong>Run anyway</strong>.
         </p>
         <p>
@@ -1926,7 +1951,10 @@ const SECTIONS: Section[] = [
             a lost laptop's drive — can't be opened without Financial Vault and your passcode. Documents from before this
             version are encrypted in the background the first time you unlock.
           </li>
-          <li>Nothing is sent anywhere, except price lookups you've switched on and Gmail imports you run.</li>
+          <li>
+            Nothing is sent anywhere, except price lookups you've switched on, Gmail imports you run, and the installed
+            program's daily check for a new version (which sends nothing about you, and can be switched off).
+          </li>
         </ul>
         <h4>What isn't protected</h4>
         <p>

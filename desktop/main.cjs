@@ -16,14 +16,22 @@
 // version, so the app finds everything where it always has. Nothing here
 // goes online: links to websites open in the normal browser.
 //
+// 5. automatic updates: the app downloads a newer Setup from the project's
+//    GitHub releases and checks it (server/src/services/onlineUpdate.ts),
+//    then stops with INSTALL_CODE; this checks the file again, runs it
+//    silently and closes, and the Setup starts the new version.
+//
 //   FV_SMOKE_TEST=1   start, check the app answers and shows its first
 //                     screen, write the result to FV_SMOKE_RESULT, and quit.
+//   FV_SMOKE_UPDATE=1 also install an update from FV_UPDATE_FEED (a test
+//                     release) the way the app does.
 
 const { app, BrowserWindow, Menu, dialog, session, shell } = require("electron");
 const { spawn } = require("node:child_process");
 const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
+const crypto = require("node:crypto");
 const { pathToFileURL } = require("node:url");
 const zlib = require("node:zlib");
 
@@ -32,6 +40,7 @@ const PORT = Number(process.env.FV_PORT || 4000);
 const HOME = `http://localhost:${PORT}`;
 const SMOKE = process.env.FV_SMOKE_TEST === "1";
 const RESTART_CODE = 75;
+const INSTALL_CODE = 76;
 const ICON = path.join(PROGRAM_DIR, "launcher", "icons", process.platform === "win32" ? "financevault.ico" : "financevault.png");
 
 let win = null;
@@ -278,6 +287,88 @@ async function waitUntilUp(exited, seconds = 90) {
   return false;
 }
 
+// ---------------------------------------------------------------------------
+// Automatic updates: running the Setup the app downloaded.
+
+/** "1.10.2" > "1.9.9". */
+function isNewer(candidate, current) {
+  const parts = (v) => String(v).replace(/^v/, "").split(/[.-]/).map((p) => Number.parseInt(p, 10) || 0);
+  const a = parts(candidate);
+  const b = parts(current);
+  for (let i = 0; i < Math.max(a.length, b.length); i++) if ((a[i] ?? 0) !== (b[i] ?? 0)) return (a[i] ?? 0) > (b[i] ?? 0);
+  return false;
+}
+
+function sha512Of(file) {
+  return new Promise((resolve, reject) => {
+    const hash = crypto.createHash("sha512");
+    fs.createReadStream(file)
+      .on("data", (c) => hash.update(c))
+      .on("end", () => resolve(hash.digest("hex")))
+      .on("error", reject);
+  });
+}
+
+const installRequestFile = (l) => path.join(l.updates, "install-setup.request.json");
+
+/**
+ * The downloaded Setup, checked once more here — it must be in the Updates
+ * folder, newer than this version, and exactly the file the release named —
+ * then run silently. It closes this program, installs over it, and starts
+ * the new version, which backs the records up again before using them.
+ */
+async function runDownloadedSetup(l, version) {
+  let r;
+  try {
+    r = JSON.parse(fs.readFileSync(installRequestFile(l), "utf8"));
+  } catch {
+    throw new Error("the downloaded update's details are missing");
+  }
+  const file = path.resolve(String(r.file || ""));
+  const sameFolder = (a, b) => (process.platform === "win32" ? a.toLowerCase() === b.toLowerCase() : a === b);
+  if (!sameFolder(path.dirname(file), path.resolve(l.updates)) || !/^Financial Vault Setup [0-9.]+\.exe$/.test(path.basename(file))) {
+    throw new Error("the downloaded update isn't where it should be");
+  }
+  if (!isNewer(r.version, version)) throw new Error(`version ${r.version} isn't newer than this one`);
+  if (!fs.existsSync(file) || fs.statSync(file).size !== r.size || (await sha512Of(file)) !== r.sha512) {
+    throw new Error("the downloaded file didn't match its checksum");
+  }
+  status(`Installing version ${r.version}…`);
+  log(`Running ${path.basename(file)} to update from ${version} to ${r.version}.`);
+  // The new version starts normally — never in the installer's check mode.
+  const env = { ...process.env };
+  for (const k of Object.keys(env)) if (k.startsWith("FV_SMOKE") || k === "FV_UPDATE_FEED") delete env[k];
+  const child = spawn(file, ["/S", "--updated", "--force-run"], { detached: true, stdio: "ignore", env, windowsHide: true });
+  child.unref();
+  return r;
+}
+
+/**
+ * After an automatic update: this is the new version (done), or the Setup
+ * didn't finish and this is still the old one (said so in the app).
+ */
+function settleInstallRequest(l, version, writeJson) {
+  const file = installRequestFile(l);
+  if (!fs.existsSync(file)) return;
+  try {
+    const r = JSON.parse(fs.readFileSync(file, "utf8"));
+    if (r.version !== version && isNewer(r.version, version)) {
+      writeJson(l.lastUpdate, {
+        kind: "FAILED",
+        from: version,
+        to: r.version,
+        error: "its Setup didn't finish installing. Nothing was changed; you can try again from Settings",
+        at: new Date().toISOString(),
+        seen: false,
+      });
+      log(`The update to ${r.version} didn't finish; still on ${version}.`);
+    }
+  } catch {
+    /* unreadable: just tidy it away */
+  }
+  fs.rmSync(file, { force: true });
+}
+
 async function start() {
   // Nothing is fetched from the internet by the window itself.
   session.defaultSession.setSpellCheckerDictionaryDownloadURL("http://127.0.0.1:9/");
@@ -353,6 +444,7 @@ async function start() {
     }
     fs.writeFileSync(marker, version);
   }
+  settleInstallRequest(l, version, writeJson);
 
   for (;;) {
     status("Opening Financial Vault…");
@@ -362,12 +454,30 @@ async function start() {
     log(`Financial Vault is running at ${HOME}`);
     if (!win || win.isDestroyed()) return;
     await win.loadURL(HOME);
-    if (SMOKE) return smokeTest(l);
+    if (SMOKE) return smokeTest(l, version, exited);
     const code = await exited;
     if (quitting) return;
     if (code === RESTART_CODE) {
       log("Restarting the app…");
       continue;
+    }
+    if (code === INSTALL_CODE) {
+      try {
+        await runDownloadedSetup(l, version);
+      } catch (e) {
+        log(`Couldn't install the update: ${e.message}`);
+        fs.rmSync(installRequestFile(l), { force: true });
+        await dialog.showMessageBox(win, {
+          type: "warning",
+          title: "Financial Vault",
+          message: "The update couldn't be installed",
+          detail: `Because ${e.message}. Nothing was changed — Financial Vault opens as it was.`,
+        });
+        continue;
+      }
+      quitting = true;
+      app.quit();
+      return;
     }
     return problem(`Financial Vault stopped unexpectedly (code ${code}).`);
   }
@@ -377,7 +487,7 @@ async function start() {
 // The installer's own check (FV_SMOKE_TEST=1): the first screen shows, a
 // passcode can be set, and the records answer.
 
-async function smokeTest(l) {
+async function smokeTest(l, version, exited) {
   const result = { ok: false, dataFolder: l.root, steps: {} };
   try {
     await new Promise((r) => setTimeout(r, 3000));
@@ -429,6 +539,25 @@ async function smokeTest(l) {
       info.body?.installed === true &&
       result.steps.ocrData &&
       /INVOICE\s*4821/i.test(result.steps.ocrText);
+
+    // An automatic update from a test release, the way the app does it.
+    if (result.ok && process.env.FV_SMOKE_UPDATE === "1") {
+      result.ok = false;
+      const u = (result.steps.update = {});
+      const checked = await call("POST", "/app/online/check", {}, cookie);
+      u.available = checked.body?.available?.version ?? null;
+      u.checkError = checked.body?.error ?? null;
+      const started = await call("POST", "/app/online/install", {}, cookie);
+      u.started = started.status;
+      const code = await Promise.race([exited, new Promise((r) => setTimeout(() => r("timed out"), 240_000))]);
+      u.exitCode = code;
+      u.backups = fs.readdirSync(l.backups).filter((f) => f.startsWith("financevault-before-update-to-"));
+      if (code === INSTALL_CODE) {
+        const r = await runDownloadedSetup(l, version);
+        u.setupStarted = r.version;
+      }
+      result.ok = u.started === 202 && code === INSTALL_CODE && !!u.setupStarted && u.backups.length > 0;
+    }
   } catch (e) {
     result.error = String(e && e.stack ? e.stack : e);
   }

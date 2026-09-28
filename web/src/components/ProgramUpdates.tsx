@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { api, AppInfo } from "../api/client.js";
 import { waitForRestart } from "../appWindow.js";
 import { HelpLink } from "./HelpLink.js";
+import { AutomaticUpdates } from "./AutomaticUpdates.js";
 
 /** "## 1.1.0 — 12 October 2026" and "- line" bullets, as a heading and a list. */
 export function ReleaseNotes({ notes }: { notes: string }) {
@@ -126,11 +127,16 @@ export function ProgramUpdates() {
               />
             </>
           ) : info.installed ? (
-            <p style={{ color: "var(--text-muted)" }}>
-              To update, download the new version's <strong>Financial Vault Setup</strong> file and double-click it. It installs over
-              this one: your records are backed up first, and your records and documents stay where they are. Nothing is downloaded
-              by the app itself.
-            </p>
+            <>
+              <AutomaticUpdates />
+              <p className="cap-explain">
+                You can also download a version's <strong>Financial Vault Setup</strong> file yourself, from the project's{" "}
+                <a href="https://github.com/benjaminkeithrose-svg/financevault/releases" target="_blank" rel="noreferrer">
+                  releases page
+                </a>
+                , and double-click it. It installs over this one the same way.
+              </p>
+            </>
           ) : (
             <p className="cap-explain">
               Updates are installed when Financial Vault is started from its desktop icon or its Start Financial Vault file.
