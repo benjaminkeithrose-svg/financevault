@@ -4,6 +4,7 @@ import { prismaAll } from "../db.js";
 import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
 import { checkOwners, ownersInput } from "../services/ownership.js";
+import { assess, workingAssessment } from "../services/assessment.js";
 
 /**
  * Properties I'm considering: a property you're looking at buying is a
@@ -41,6 +42,12 @@ consideringRouter.get(
       include,
       orderBy: { createdAt: "desc" },
     });
+    // Each card shows the expected column's yield and cash flow once it can be worked out.
+    const expected = new Map<string, { grossYield: number | null; netYield: number | null; weeklyCash: number | null; afterTax: boolean } | null>();
+    for (const a of assets) {
+      const e = (await assess(a.id))?.columns[0].figures;
+      expected.set(a.id, e && (e.grossYield !== null || e.netYield !== null) ? { grossYield: e.grossYield, netYield: e.netYield, weeklyCash: e.weeklyCash, afterTax: e.cashAfterTax !== null } : null);
+    }
     res.json(
       assets.map((a) => {
         const residential = a.assetType === "PROPERTY";
@@ -64,6 +71,7 @@ consideringRouter.get(
           // Until the assessment is filled in: rent (as entered) over the asking price.
           grossYield: rent > 0 && a.askingPrice ? rent / a.askingPrice : null,
           yearlyRent: rent > 0 ? rent : null,
+          expected: expected.get(a.id) ?? null,
         };
       }),
     );
@@ -196,4 +204,50 @@ consideringRouter.post(
     await markBought(req.params.assetId, new Date(), price);
     res.json({ status: "OWNED" });
   }),
+);
+
+consideringRouter.get(
+  "/:assetId/assessment",
+  asyncHandler(async (req, res) => {
+    const result = await assess(req.params.assetId);
+    if (!result) throw new HttpError(404, "Property not found");
+    res.json(result);
+  })
+);
+
+const money = z.number().nonnegative().max(1e10).nullable().optional();
+const pct = z.number().min(0).max(100).nullable().optional();
+const weeks = z.number().min(0).max(52).nullable().optional();
+const assessmentInput = z.object({
+  price: money,
+  lvrPercent: pct,
+  stampDuty: money,
+  otherCosts: money,
+  repaymentType: z.enum(["IO", "PI"]).optional(),
+  loanTermYears: z.number().int().min(1).max(40).nullable().optional(),
+  advertisedYieldPercent: pct,
+  expectedVacancyWeeks: weeks,
+  expectedRatePercent: pct,
+  conservativeRent: money,
+  conservativeVacancyWeeks: weeks,
+  conservativeCosts: money,
+  conservativeRatePercent: pct,
+  badRent: money,
+  badVacancyWeeks: weeks,
+  badCosts: money,
+  badRatePercent: pct,
+});
+
+consideringRouter.put(
+  "/:assetId/assessment",
+  asyncHandler(async (req, res) => {
+    const data = assessmentInput.parse(req.body);
+    const asset = await prismaAll.asset.findUnique({ where: { id: req.params.assetId }, select: { id: true } });
+    if (!asset) throw new HttpError(404, "Property not found");
+    const working = await workingAssessment(asset.id);
+    if (working) await prismaAll.propertyAssessment.update({ where: { id: working.id }, data });
+    else await prismaAll.propertyAssessment.create({ data: { ...data, assetId: asset.id } });
+    await logAudit("ASSESSMENT_CHANGED", { targetType: "Asset", targetId: asset.id });
+    res.json(await assess(asset.id));
+  })
 );

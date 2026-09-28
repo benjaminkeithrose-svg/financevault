@@ -875,6 +875,107 @@ export interface DocumentLink {
   createdAt: string;
 }
 
+export interface AcquisitionInputs {
+  purchasePrice: number;
+  acquisitionCosts: number;
+  lvr: number;
+  rent: number;
+  occupancy: number;
+  fixedIncome: number;
+  expenses: number;
+  interestRate: number;
+  repaymentType: "IO" | "PI";
+  loanTermYears: number;
+}
+
+export interface AcquisitionFigures {
+  totalAcquisitionCost: number;
+  requiredEquity: number;
+  loan: number;
+  lvr: number;
+  grossIncome: number;
+  noi: number;
+  grossYield: number | null;
+  netYield: number | null;
+  capRate: number | null;
+  interestExpense: number;
+  annualDebtService: number;
+  cashFlowAfterFinancing: number;
+  equity: number;
+  dscr: number | null;
+  interestCoverage: number | null;
+  breakEvenOccupancy: number | null;
+}
+
+export interface AssessmentInputs {
+  price?: number | null;
+  lvrPercent?: number | null;
+  stampDuty?: number | null;
+  otherCosts?: number | null;
+  repaymentType?: "IO" | "PI";
+  loanTermYears?: number | null;
+  advertisedYieldPercent?: number | null;
+  expectedVacancyWeeks?: number | null;
+  expectedRatePercent?: number | null;
+  conservativeRent?: number | null;
+  conservativeVacancyWeeks?: number | null;
+  conservativeCosts?: number | null;
+  conservativeRatePercent?: number | null;
+  badRent?: number | null;
+  badVacancyWeeks?: number | null;
+  badCosts?: number | null;
+  badRatePercent?: number | null;
+}
+
+export interface AssessmentColumn {
+  key: "expected" | "conservative" | "bad";
+  label: string;
+  inputs: { rent: number | null; vacancyWeeks: number; costs: number | null; ratePercent: number | null };
+  figures: {
+    grossYield: number | null;
+    netYield: number | null;
+    netIncome: number | null;
+    interest: number | null;
+    repayments: number | null;
+    cashBeforeTax: number | null;
+    taxResult: number | null;
+    taxEffect: number | null;
+    cashAfterTax: number | null;
+    weeklyCash: number | null;
+    returnOnCash: number | null;
+    dscr: number | null;
+  };
+  missing: string[];
+  shown: boolean;
+}
+
+export interface Assessment {
+  assetId: string;
+  kind: "RESIDENTIAL" | "COMMERCIAL";
+  inputs: (AssessmentInputs & { frozenAt?: string | null }) | null;
+  price: number | null;
+  priceIsAsking: boolean;
+  purchase: {
+    deposit: number | null;
+    stampDuty: number | null;
+    dutyEstimated: boolean;
+    dutyRatesYear: string | null;
+    otherCosts: number;
+    openIssueCosts: number;
+    cashNeeded: number | null;
+    loan: number | null;
+    lvr: number | null;
+    repaymentType: "IO" | "PI";
+    loanTermYears: number;
+  };
+  expectedFrom: { rent: number | null; costs: number | null; costBreakdown: Array<{ label: string; amount: number }> };
+  columns: AssessmentColumn[];
+  borrowing: null | { people: string[]; capacity: [number, number]; status: string | null; reason: string | null; notes: string[] };
+  advertisedYield: number | null;
+  supportedYield: number | null;
+  notes: string[];
+}
+
 export interface ConsideredProperty {
   assetId: string;
   id: string;
@@ -2518,6 +2619,10 @@ export const api = {
 
   search: (q: string) => request<{ documents: Document[]; entities: Entity[] }>(`/search?q=${encodeURIComponent(q)}`),
 
+  acquisitionModel: {
+    compute: (inputs: AcquisitionInputs) => request<AcquisitionFigures>("/acquisition-model", { method: "POST", body: JSON.stringify(inputs) }),
+  },
+
   considering: {
     list: () => request<ConsideredProperty[]>("/considering"),
     add: (data: { kind: "RESIDENTIAL" | "COMMERCIAL"; address: string; askingPrice?: number | null; entityId: string; owners?: unknown }) =>
@@ -2527,6 +2632,9 @@ export const api = {
     passOn: (assetId: string, reason: string) =>
       request<{ status: string }>(`/considering/${assetId}/pass`, { method: "POST", body: JSON.stringify({ reason }) }),
     reconsider: (assetId: string) => request<{ status: string }>(`/considering/${assetId}/reconsider`, { method: "POST", body: "{}" }),
+    assessment: (assetId: string) => request<Assessment>(`/considering/${assetId}/assessment`),
+    saveAssessment: (assetId: string, data: AssessmentInputs) =>
+      request<Assessment>(`/considering/${assetId}/assessment`, { method: "PUT", body: JSON.stringify(data) }),
     bought: (assetId: string, price?: number | null) =>
       request<{ status: string }>(`/considering/${assetId}/bought`, { method: "POST", body: JSON.stringify({ price }) }),
   },

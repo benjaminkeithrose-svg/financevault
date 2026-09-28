@@ -18,6 +18,7 @@ import { useTrailTitle } from "../trail.js";
 import { RemindersCard } from "../components/RemindersCard.js";
 import { SecuredLoansCard } from "../components/SecuredLoansCard.js";
 import { ConsideringBar } from "../components/ConsideringBar.js";
+import { AssessmentCard } from "../components/AssessmentCard.js";
 
 const KINDS = [
   ["HOUSE", "House"],
@@ -132,6 +133,7 @@ export function PropertyDetail() {
       </div>
 
       {considering && property.asset && <ConsideringBar asset={property.asset} onChange={load} />}
+      {considering && <AssessmentCard assetId={property.assetId} reloadKey={property} />}
 
       {!property.asset?.disposalDate && (
         <div className="card property-use">

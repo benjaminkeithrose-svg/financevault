@@ -19,6 +19,7 @@ import { HelpLink } from "../components/HelpLink.js";
 import { useTrailTitle } from "../trail.js";
 import { RemindersCard } from "../components/RemindersCard.js";
 import { ConsideringBar } from "../components/ConsideringBar.js";
+import { AssessmentCard } from "../components/AssessmentCard.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -296,6 +297,7 @@ export function CommercialPropertyDetail() {
       </div>
 
       {considering && property.asset && <ConsideringBar asset={property.asset} onChange={load} />}
+      {considering && <AssessmentCard assetId={property.assetId} reloadKey={property} />}
 
       {m && !considering && (
         <>

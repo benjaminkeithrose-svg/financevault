@@ -1,4 +1,4 @@
-import { prisma } from "../db.js";
+import { prisma, prismaAll } from "../db.js";
 import { computeIncomeAndNoi } from "./commercialMetrics.js";
 import { interestSchedule } from "./debtAllocation.js";
 import { flatRateFor, LATEST_RATES_YEAR, taxChange } from "./incomeTax.js";
@@ -70,64 +70,17 @@ export interface PropertyProfitRow {
   notes: string[];
 }
 
-export async function propertyProfit(): Promise<{ rows: PropertyProfitRow[]; taxYear: string; interestYear: string | null }> {
-  const [properties, commercial, entities, people, policies] = await Promise.all([
-    prisma.property.findMany({
-      where: { asset: { disposalDate: null } },
-      include: { asset: { include: { ownerships: true } }, liabilities: true },
-    }),
-    prisma.commercialProperty.findMany({
-      where: { asset: { disposalDate: null } },
-      include: { asset: { include: { ownerships: true } }, tenancies: true, loans: true },
-    }),
+type OwnedRecord = { entityId: string; ownerships: Array<{ ownerEntityId: string; ownershipPercent: number; startDate?: Date | null; endDate?: Date | null }> };
+
+/** Each owner's tax on their share of a property's tax result (their other income from their page; a flat rate for a company or fund). */
+export async function loadOwnersTax() {
+  const [entities, people] = await Promise.all([
     prisma.entity.findMany({ select: { id: true, name: true, entityType: true } }),
     prisma.person.findMany({ select: { entityId: true, name: true, grossSalary: true, variableIncome: true } }),
-    prisma.insurancePolicy.findMany({ where: { assetId: { not: null } }, select: { assetId: true, premium: true, premiumFrequency: true, kind: true } }),
   ]);
   const entityById = new Map(entities.map((e) => [e.id, e]));
   const personByEntity = new Map(people.filter((p) => p.entityId).map((p) => [p.entityId!, p]));
-  const yearAgo = new Date();
-  yearAgo.setFullYear(yearAgo.getFullYear() - 1);
-  const outgoings = await prisma.outgoingRecord.findMany({ where: { date: { gte: yearAgo } } });
-
-  // Interest by property from the debt allocation, for the latest year with interest entered.
-  const latest = await prisma.loanInterestYear.findFirst({ orderBy: { fyLabel: "desc" }, select: { fyLabel: true } });
-  const interestYear = latest?.fyLabel ?? null;
-  const allocatedInterest = new Map<string, number>();
-  if (interestYear) {
-    for (const row of await interestSchedule(interestYear)) {
-      for (const u of row.byUse) if (u.assetId) allocatedInterest.set(u.assetId, (allocatedInterest.get(u.assetId) ?? 0) + u.interest);
-    }
-  }
-  const assetsWithUses = new Set(
-    (await prisma.loanPurpose.findMany({ where: { assetId: { not: null } }, select: { assetId: true } })).map((p) => p.assetId!)
-  );
-
-  const landTax = landTaxByAsset(
-    [
-      ...properties.map((p) => ({ ...p.asset, state: p.state, address: p.address })),
-      ...commercial.map((c) => ({ ...c.asset, state: c.state, address: c.address })),
-    ],
-    new Map(entities.map((e) => [e.id, e.entityType]))
-  );
-
-  const insuranceFor = (assetId: string) =>
-    policies
-      .filter((p) => p.assetId === assetId && p.premium)
-      .reduce((s, p) => s + p.premium! * (PREMIUM_PER_YEAR[p.premiumFrequency ?? "ANNUALLY"] ?? 1), 0);
-
-  const interestFor = (assetId: string, securedLoans: Array<{ currentBalance: number | null; interestRate: number | null }>) => {
-    if (assetsWithUses.has(assetId) && interestYear) {
-      return { interest: allocatedInterest.get(assetId) ?? 0, basis: "DEBT_ALLOCATION" as const };
-    }
-    const estimate = securedLoans.reduce((s, l) => s + (l.currentBalance ?? 0) * ((l.interestRate ?? 0) / 100), 0);
-    return { interest: estimate, basis: estimate ? ("ESTIMATE" as const) : ("NONE" as const) };
-  };
-
-  const ownersTax = (
-    record: { entityId: string; ownerships: Array<{ ownerEntityId: string; ownershipPercent: number; startDate?: Date | null; endDate?: Date | null }> },
-    taxResult: number
-  ): OwnerTax[] => {
+  return (record: OwnedRecord, taxResult: number): OwnerTax[] => {
     const ids = [...new Set([record.entityId, ...record.ownerships.map((o) => o.ownerEntityId)])];
     return ids
       .map((id) => ({ id, share: shareOf(record, id) }))
@@ -149,6 +102,75 @@ export async function propertyProfit(): Promise<{ rows: PropertyProfitRow[]; tax
         if (mine < 0) return { ...base, taxEffect: 0, note: `${flat.note} A loss is carried forward, not refunded.` };
         return { ...base, taxEffect: mine * flat.rate, note: flat.note };
       });
+  };
+}
+
+/**
+ * Every owned property's profit; or, given assetIds, just those — which may
+ * be properties being considered, worked out as if bought (with the owned
+ * ones still counted for land tax), whatever their intended use.
+ */
+export async function propertyProfit(opts: { assetIds?: string[] } = {}): Promise<{ rows: PropertyProfitRow[]; taxYear: string; interestYear: string | null }> {
+  const only = opts.assetIds;
+  const db = only ? prismaAll : prisma;
+  const [properties, commercial, entities, policies, ownersTax, ownedForLandTax] = await Promise.all([
+    db.property.findMany({
+      where: { asset: { disposalDate: null }, ...(only ? { assetId: { in: only } } : {}) },
+      include: { asset: { include: { ownerships: true } }, liabilities: true },
+    }),
+    db.commercialProperty.findMany({
+      where: { asset: { disposalDate: null }, ...(only ? { assetId: { in: only } } : {}) },
+      include: { asset: { include: { ownerships: true } }, tenancies: true, loans: true },
+    }),
+    prisma.entity.findMany({ select: { id: true, name: true, entityType: true } }),
+    prisma.insurancePolicy.findMany({ where: { assetId: { not: null } }, select: { assetId: true, premium: true, premiumFrequency: true, kind: true } }),
+    loadOwnersTax(),
+    // Land tax is on all the land an owner holds, so the owned properties count towards it too.
+    only
+      ? Promise.all([
+          prisma.property.findMany({ where: { asset: { disposalDate: null }, assetId: { notIn: only } }, include: { asset: { include: { ownerships: true } } } }),
+          prisma.commercialProperty.findMany({ where: { asset: { disposalDate: null }, assetId: { notIn: only } }, include: { asset: { include: { ownerships: true } } } }),
+        ])
+      : Promise.resolve([[], []] as const),
+  ]);
+  const yearAgo = new Date();
+  yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+  const outgoings = await prisma.outgoingRecord.findMany({ where: { date: { gte: yearAgo } } });
+
+  // Interest by property from the debt allocation, for the latest year with interest entered.
+  const latest = await prisma.loanInterestYear.findFirst({ orderBy: { fyLabel: "desc" }, select: { fyLabel: true } });
+  const interestYear = latest?.fyLabel ?? null;
+  const allocatedInterest = new Map<string, number>();
+  if (interestYear) {
+    for (const row of await interestSchedule(interestYear)) {
+      for (const u of row.byUse) if (u.assetId) allocatedInterest.set(u.assetId, (allocatedInterest.get(u.assetId) ?? 0) + u.interest);
+    }
+  }
+  const assetsWithUses = new Set(
+    (await prisma.loanPurpose.findMany({ where: { assetId: { not: null } }, select: { assetId: true } })).map((p) => p.assetId!)
+  );
+
+  const landTax = landTaxByAsset(
+    [
+      ...properties.map((p) => ({ ...p.asset, state: p.state, address: p.address })),
+      ...commercial.map((c) => ({ ...c.asset, state: c.state, address: c.address })),
+      ...ownedForLandTax[0].map((p) => ({ ...p.asset, state: p.state, address: p.address })),
+      ...ownedForLandTax[1].map((c) => ({ ...c.asset, state: c.state, address: c.address })),
+    ],
+    new Map(entities.map((e) => [e.id, e.entityType]))
+  );
+
+  const insuranceFor = (assetId: string) =>
+    policies
+      .filter((p) => p.assetId === assetId && p.premium)
+      .reduce((s, p) => s + p.premium! * (PREMIUM_PER_YEAR[p.premiumFrequency ?? "ANNUALLY"] ?? 1), 0);
+
+  const interestFor = (assetId: string, securedLoans: Array<{ currentBalance: number | null; interestRate: number | null }>) => {
+    if (assetsWithUses.has(assetId) && interestYear) {
+      return { interest: allocatedInterest.get(assetId) ?? 0, basis: "DEBT_ALLOCATION" as const };
+    }
+    const estimate = securedLoans.reduce((s, l) => s + (l.currentBalance ?? 0) * ((l.interestRate ?? 0) / 100), 0);
+    return { interest: estimate, basis: estimate ? ("ESTIMATE" as const) : ("NONE" as const) };
   };
 
   const finish = (
@@ -184,9 +206,9 @@ export async function propertyProfit(): Promise<{ rows: PropertyProfitRow[]; tax
 
   const rows: PropertyProfitRow[] = [];
   for (const p of properties) {
-    // The home, and a holiday home nobody rents, aren't investments.
+    // The home, and a holiday home nobody rents, aren't investments (unless asked for by name).
     const use = p.use ?? (p.asset.mainResidence === "FULL" ? "HOME" : "INVESTMENT");
-    if (use === "HOME" || use === "HOLIDAY") continue;
+    if (!only && (use === "HOME" || use === "HOLIDAY")) continue;
     const partPrivate = use === "HOLIDAY_RENTED" || use === "HOME_PART_RENTED";
     const rent = (p.weeklyRent ?? 0) * 52;
     const insurance = insuranceFor(p.assetId);

@@ -3,6 +3,13 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.14.0 — 28 September 2026
+- Quick assessment on each property you're considering: three columns — Expected (from the property's own rent and running costs), Conservative and Bad case (with their own rent, weeks empty, running costs and interest rate) — showing the yields, cash a year before and after tax, cash a week and the return on the cash put in. Below it: the cash needed (deposit, stamp duty, other costs), the loan and LVR, and "Can we borrow it?". Only what you enter is used — nothing is guessed.
+- Commercial: the advertised yield beside the yield the leases and outgoings really support.
+- The cards on Properties I'm considering now show the expected net yield and cash a week.
+- The Acquisition Model now uses the same sums as the assessment (the figures are the same as before).
+- On a phone, the stage buttons on a property you're considering wrap instead of running off the screen.
+
 ## 1.13.0 — 28 September 2026
 - Properties I'm considering (Planning in the menu): every property you're looking at buying, in columns by how far along it is — Looking, Investigating, Offer, Under contract, Settlement — and the ones you passed on, greyed, at the end. Residential and commercial together, with a switch to show one or the other.
 - Add one with just the address, asking price and who'd buy it. It opens as a normal property page showing only what applies before buying. Pass on one (it's kept with your reason) or mark it bought — then it's yours, counts in your totals and moves to Properties. Nothing is re-entered.

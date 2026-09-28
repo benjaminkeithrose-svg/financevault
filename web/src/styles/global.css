@@ -2805,3 +2805,32 @@ code.path {
   color: var(--text-muted);
   background: var(--surface-2);
 }
+
+/* Quick assessment: three columns side by side (scrolls sideways on a phone). */
+.assessment h4 {
+  margin: 16px 0 6px;
+}
+
+.assessment-table td:first-child {
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+
+.assessment-table td,
+.assessment-table th {
+  min-width: 120px;
+  vertical-align: top;
+}
+
+.assessment-table input {
+  width: 100%;
+  min-width: 100px;
+}
+
+.assessment-table .cap-explain {
+  margin: 2px 0 0;
+}
+
+.segmented.stage-steps {
+  flex-wrap: wrap;
+}

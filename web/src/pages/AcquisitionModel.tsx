@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api, CommercialProperty } from "../api/client.js";
+import { AcquisitionFigures, AcquisitionInputs, api, CommercialProperty } from "../api/client.js";
 import { formatCurrency } from "../utils.js";
 
 const emptyForm = {
@@ -36,63 +36,52 @@ function num(v: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-function computeOutputs(f: Form) {
-  const purchasePrice = num(f.purchasePrice);
-  const acquisitionCosts = num(f.stampDuty) + num(f.legalFees) + num(f.dueDiligence) + num(f.valuationFee) + num(f.otherAcquisitionCosts) + num(f.loanFees);
-  const totalAcquisitionCost = purchasePrice + acquisitionCosts;
-
-  const lvr = num(f.lvr);
-  const loan = purchasePrice * (lvr / 100);
-  const requiredEquity = totalAcquisitionCost - loan;
-
-  const occupancy = num(f.occupancyPercent) / 100;
-  const effectiveRent = num(f.currentRent) * occupancy;
-  const grossIncome = effectiveRent + num(f.otherIncome) + num(f.outgoingsRecovery);
-
-  const totalExpenses = num(f.rates) + num(f.insurance) + num(f.repairs) + num(f.management) + num(f.maintenance) + num(f.otherExpenses);
-  const noi = grossIncome - totalExpenses;
-
-  const grossYield = purchasePrice ? grossIncome / purchasePrice : null;
-  const netYield = purchasePrice ? noi / purchasePrice : null;
-  const capRate = netYield;
-
-  const interestRate = num(f.interestRate);
-  const interestExpense = loan * (interestRate / 100);
-
-  let annualDebtService = interestExpense;
-  if (f.repaymentType === "PI") {
-    const n = num(f.loanTermYears) * 12;
-    const r = interestRate / 100 / 12;
-    const monthlyPayment = n > 0 && r > 0 ? (loan * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : loan / (n || 1);
-    annualDebtService = monthlyPayment * 12;
-  }
-
-  const cashFlowAfterFinancing = noi - annualDebtService;
-  const dscr = annualDebtService ? noi / annualDebtService : null;
-  const interestCoverage = interestExpense ? noi / interestExpense : null;
-
-  const fixedIncome = num(f.otherIncome) + num(f.outgoingsRecovery);
-  const breakEvenOccupancy =
-    num(f.currentRent) > 0 ? (totalExpenses + annualDebtService - fixedIncome) / num(f.currentRent) : null;
-
+/** The form as the shared buying sums take it (server/src/services/acquisitionMath.ts). */
+function toInputs(f: Form): AcquisitionInputs {
   return {
-    totalAcquisitionCost,
-    requiredEquity,
-    loan,
-    lvr,
-    grossIncome,
-    noi,
-    grossYield,
-    netYield,
-    capRate,
-    interestExpense,
-    annualDebtService,
-    cashFlowAfterFinancing,
-    equity: requiredEquity,
-    dscr,
-    interestCoverage,
-    breakEvenOccupancy,
+    purchasePrice: num(f.purchasePrice),
+    acquisitionCosts: num(f.stampDuty) + num(f.legalFees) + num(f.dueDiligence) + num(f.valuationFee) + num(f.otherAcquisitionCosts) + num(f.loanFees),
+    lvr: num(f.lvr),
+    rent: num(f.currentRent),
+    occupancy: num(f.occupancyPercent) / 100,
+    fixedIncome: num(f.otherIncome) + num(f.outgoingsRecovery),
+    expenses: num(f.rates) + num(f.insurance) + num(f.repairs) + num(f.management) + num(f.maintenance) + num(f.otherExpenses),
+    interestRate: num(f.interestRate),
+    repaymentType: f.repaymentType,
+    loanTermYears: num(f.loanTermYears),
   };
+}
+
+const NO_FIGURES: AcquisitionFigures = {
+  totalAcquisitionCost: 0,
+  requiredEquity: 0,
+  loan: 0,
+  lvr: 0,
+  grossIncome: 0,
+  noi: 0,
+  grossYield: null,
+  netYield: null,
+  capRate: null,
+  interestExpense: 0,
+  annualDebtService: 0,
+  cashFlowAfterFinancing: 0,
+  equity: 0,
+  dscr: null,
+  interestCoverage: null,
+  breakEvenOccupancy: null,
+};
+
+/** Worked out by the same sums the assessment of a property you're considering uses. */
+function useFigures(f: Form): AcquisitionFigures {
+  const [out, setOut] = useState<AcquisitionFigures>(NO_FIGURES);
+  const key = JSON.stringify(toInputs(f));
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      api.acquisitionModel.compute(JSON.parse(key)).then(setOut).catch(() => {});
+    }, 200);
+    return () => window.clearTimeout(t);
+  }, [key]);
+  return out;
 }
 
 export function AcquisitionModel() {
@@ -122,7 +111,7 @@ export function AcquisitionModel() {
     setForm((f) => ({ ...f, [field]: value }));
   }
 
-  const out = computeOutputs(form);
+  const out = useFigures(form);
 
   return (
     <div>

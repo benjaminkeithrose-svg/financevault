@@ -937,6 +937,18 @@ const SECTIONS: Section[] = [
           your totals and moves to Properties.
         </p>
         <p>
+          <strong>Quick assessment</strong>, near the top of its page: is it worth a closer look, or a call to the broker? Enter
+          the price (the asking price is used until you do), how much you'd borrow, and the interest rate; the rent and running
+          costs come from the property itself. It shows three columns — <strong>Expected</strong>, and a{" "}
+          <strong>Conservative</strong> and <strong>Bad case</strong> with their own rent, weeks empty, running costs and rate —
+          each with the gross and net yield, the loan interest, cash a year before and after tax (the owner's own tax, as the
+          Property Profit report works it out), cash a week, and the return on the cash put in. Below: the cash needed (deposit,
+          stamp duty — estimated for NSW, typed in elsewhere — and other costs), the loan and LVR, and{" "}
+          <strong>Can we borrow it?</strong>, worked out as the borrowing page does with this property's rent counted. Nothing
+          is guessed: a figure appears once what it needs is entered. For a commercial property it also shows the advertised
+          yield beside the yield the leases and outgoings really support. The Acquisition Model uses the same sums.
+        </p>
+        <p>
           Until it's bought it isn't yours, so it's left out of <strong>every</strong> total, report and checklist — net worth,
           the dashboard, tax, borrowing, land tax, What's missing, the Asset tree and the rest. Its documents go in their own
           folder ("Properties I'm considering") in the readable copy.

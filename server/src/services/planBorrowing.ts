@@ -40,6 +40,30 @@ export async function planBorrowers(borrowerIds: string | null): Promise<string[
 
 const k = (n: number) => `$${Math.round(n).toLocaleString("en-AU")}`;
 
+/** New borrowing against what a lender might lend (careful to generous), and the 6× income limit. */
+export function judgeBorrowing(newBorrowing: number, est: ReturnType<typeof residentialEstimate>) {
+  const capacity: [number, number] = [Math.max(0, est.scenarios[0].maxNewLoan), Math.max(0, est.scenarios[1].maxNewLoan)];
+  let status: BorrowingStatus | null = null;
+  let reason: string | null = null;
+  if (newBorrowing > 0) {
+    if (newBorrowing > capacity[1]) {
+      status = "TOO_MUCH";
+      reason = `More than even the generous estimate (${k(capacity[1])}).`;
+    } else if (newBorrowing > capacity[0]) {
+      status = "SOME_LENDERS";
+      reason = `Between the careful (${k(capacity[0])}) and generous (${k(capacity[1])}) estimates — some lenders only.`;
+    } else {
+      status = "FINE";
+      reason = `Within the careful estimate (${k(capacity[0])}).`;
+    }
+    if (newBorrowing > est.dtiLimitLoan && status !== "TOO_MUCH") {
+      status = "SOME_LENDERS";
+      reason = `It takes your debts to 6× your income or more (past ${k(est.dtiLimitLoan)} more), which banks limit — some lenders only.`;
+    }
+  }
+  return { capacity, status, reason };
+}
+
 export async function planBorrowingCheck(planId: string) {
   const plan = await prisma.portfolioPlan.findUnique({
     where: { id: planId },
@@ -92,26 +116,7 @@ export async function planBorrowingCheck(planId: string) {
     const share = baseIncomes.length ? plannedRent / baseIncomes.length : 0;
     const incomes: IncomeInput[] = baseIncomes.map((i) => ({ ...i, rent: i.rent + share }));
     const est = residentialEstimate(incomes, [...baseDebts, ...plannedDebts], a);
-    const capacity: [number, number] = [Math.max(0, est.scenarios[0].maxNewLoan), Math.max(0, est.scenarios[1].maxNewLoan)];
-
-    let status: BorrowingStatus | null = null;
-    let reason: string | null = null;
-    if (newBorrowing > 0) {
-      if (newBorrowing > capacity[1]) {
-        status = "TOO_MUCH";
-        reason = `More than even the generous estimate (${k(capacity[1])}).`;
-      } else if (newBorrowing > capacity[0]) {
-        status = "SOME_LENDERS";
-        reason = `Between the careful (${k(capacity[0])}) and generous (${k(capacity[1])}) estimates — some lenders only.`;
-      } else {
-        status = "FINE";
-        reason = `Within the careful estimate (${k(capacity[0])}).`;
-      }
-      if (newBorrowing > est.dtiLimitLoan && status !== "TOO_MUCH") {
-        status = "SOME_LENDERS";
-        reason = `It takes your debts to 6× your income or more (past ${k(est.dtiLimitLoan)} more), which banks limit — some lenders only.`;
-      }
-    }
+    const { capacity, status, reason } = judgeBorrowing(newBorrowing, est);
     return { yearNumber, newBorrowing, parts, capacity, dtiLimit: est.dtiLimitLoan, status, reason };
   });
 
