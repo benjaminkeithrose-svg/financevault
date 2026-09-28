@@ -72,7 +72,7 @@ smsfRouter.get(
         smsfPensions: { include: { person: true, balances: true, payments: { orderBy: { date: "asc" } } }, orderBy: { startDate: "asc" } },
         accounts: true,
         liabilities: {
-          where: { liabilityType: "LRBA_LOAN" },
+          where: { liabilityType: "LRBA_LOAN", counted: true },
           include: {
             holdingTrust: { select: { id: true, name: true } },
             securityProperty: { include: { asset: true } },

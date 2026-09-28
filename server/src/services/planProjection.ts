@@ -1,5 +1,6 @@
-import { prisma } from "../db.js";
+import { prisma, prismaAll } from "../db.js";
 import { NSW_DUTY_RATES_YEAR, nswTransferDuty } from "./nswDuty.js";
+import { openIssueCostsFor } from "./dueDiligence.js";
 
 // ---------------------------------------------------------------------------
 // Portfolio Plan projection — always computed live from the plan's stored
@@ -66,6 +67,47 @@ function financialYearLabelForOffset(startLabel: string, yearNumber: number): st
 /** Residential uses whose own loan is part of the plan's cash (not a living cost). */
 const RENTED_USES = new Set(["INVESTMENT", "HOLIDAY_RENTED"]);
 
+/**
+ * A planned purchase linked to a property you're considering uses that
+ * property's own figures — its price, how much you'd borrow, its expected
+ * rent, stamp duty and buying costs (plus open issues) from its assessment —
+ * in place of the plan's guesses. Once bought, the link stays as it was.
+ */
+export async function withConsideredFigures<
+  T extends { assetId: string | null; purchasePrice: number; initialLvr: number; initialRent: number | null; transferDuty: number | null; otherBuyingCosts: number | null },
+>(properties: T[]): Promise<Array<T & { figuresFrom: string | null }>> {
+  const ids = properties.map((p) => p.assetId).filter((id): id is string => !!id);
+  const assets = ids.length
+    ? await prismaAll.asset.findMany({
+        where: { id: { in: ids }, status: "CONSIDERING" },
+        include: {
+          property: { select: { weeklyRent: true } },
+          commercialProperty: { select: { tenancies: { select: { rentPerAnnum: true } } } },
+          assessments: { where: { frozenAt: null }, take: 1 },
+        },
+      })
+    : [];
+  const byId = new Map(assets.map((a) => [a.id, a]));
+  return Promise.all(
+    properties.map(async (p) => {
+      const a = p.assetId ? byId.get(p.assetId) : undefined;
+      if (!a) return { ...p, figuresFrom: null };
+      const x = a.assessments[0];
+      const rent = a.property ? (a.property.weeklyRent ?? 0) * 52 : (a.commercialProperty?.tenancies ?? []).reduce((s, t) => s + (t.rentPerAnnum ?? 0), 0);
+      const issues = await openIssueCostsFor(a.id);
+      return {
+        ...p,
+        purchasePrice: x?.price ?? a.askingPrice ?? p.purchasePrice,
+        initialLvr: x?.lvrPercent != null ? x.lvrPercent / 100 : p.initialLvr,
+        initialRent: rent > 0 ? rent : p.initialRent,
+        transferDuty: x?.stampDuty ?? p.transferDuty,
+        otherBuyingCosts: x?.otherCosts != null || issues ? (x?.otherCosts ?? 0) + issues : p.otherBuyingCosts,
+        figuresFrom: a.name,
+      };
+    })
+  );
+}
+
 export type TimelineEvent = { yearNumber: number; type: "BUY" | "REFINANCE" | "DRAW_FROM" | "DRAW_FOR"; label: string };
 
 export async function projectPlan(planId: string) {
@@ -99,11 +141,12 @@ export async function projectPlan(planId: string) {
 
   const g = plan.rentalGrowthRate;
   const years = Array.from({ length: plan.projectionYears }, (_, i) => i + 1);
-  const allDraws = plan.properties.flatMap((p) => p.equityDraws.map((d) => ({ ...d, forName: p.name })));
+  const planned = await withConsideredFigures(plan.properties);
+  const allDraws = planned.flatMap((p) => p.equityDraws.map((d) => ({ ...d, forName: p.name })));
 
   // ---- Planned purchases -------------------------------------------------
   const propertyRows = await Promise.all(
-    plan.properties.map(async (property) => {
+    planned.map(async (property) => {
       const initialRent = property.initialRent ?? property.purchasePrice * plan.capRate;
       const valueIn = (y: number) => property.purchasePrice * Math.pow(1 + g, y - property.acquisitionYearNumber);
       const loanIn = (y: number) => {
@@ -205,6 +248,7 @@ export async function projectPlan(planId: string) {
         linked: Boolean(property.commercialPropertyId || property.assetId),
         commercialPropertyName: property.commercialProperty?.name ?? null,
         linkedAsset: property.asset ?? null,
+        figuresFrom: property.figuresFrom,
         hasFunding: property.equityDraws.length > 0,
         positivelyGearedFromYear: rows.find((r) => r.netCashflowAfterFunding >= 0)?.yearNumber ?? null,
         purchase: purchaseCosts(property),

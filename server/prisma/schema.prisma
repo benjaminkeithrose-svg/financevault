@@ -518,6 +518,7 @@ model Asset {
   commercialProperty CommercialProperty?
   assessments        PropertyAssessment[]
   dueDiligence       DueDiligenceCheck[]
+  purchaseSteps      PurchaseStep[]
   ownerships         AssetOwnership[]
   securedLoans       Liability[]
   loanPurposes       LoanPurpose[]
@@ -603,6 +604,9 @@ model Liability {
   purposes                   LoanPurpose[]
   interestYears              LoanInterestYear[]
   planDraws                  PlanEquityDraw[]
+  // A loan approved for a property you're considering: recorded, but not
+  // counted in any total until the property settles (then it's switched on).
+  counted Boolean @default(true)
 
   @@index([entityId])
   @@index([securityAssetId])
@@ -2142,6 +2146,26 @@ model DueDiligenceCheck {
   problem    Boolean   @default(false)
   resolvedAt DateTime?
   resolution String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([assetId, key])
+}
+
+// Buying a property you're considering, step by step (offer, contract,
+// settlement). Each step keeps the date it was ticked; some carry an amount
+// (the offer) or a date (cooling-off ends, settlement booked). Ticking
+// "Settled" makes the property yours.
+model PurchaseStep {
+  id      String    @id @default(cuid())
+  assetId String
+  asset   Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  key     String
+  doneAt  DateTime?
+  amount  Float?
+  date    DateTime?
+  note    String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

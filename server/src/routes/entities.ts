@@ -40,7 +40,7 @@ entitiesRouter.get(
       where: entityType ? { entityType: entityType as never } : undefined,
       orderBy: { name: "asc" },
       include: {
-        _count: { select: { documents: true, assets: { where: { status: "OWNED" } }, liabilities: true } },
+        _count: { select: { documents: true, assets: { where: { status: "OWNED" } }, liabilities: { where: { counted: true } } } },
         personalFor: { select: { id: true, name: true } },
         personRelationships: { include: { person: { select: { id: true, name: true } } } },
       },
@@ -61,7 +61,7 @@ entitiesRouter.get(
         documents: { orderBy: { uploadDate: "desc" }, take: 25 },
         personalFor: { select: { id: true, name: true } },
         assets: { where: { parentAssetId: null, status: "OWNED" }, include: { ownerships: true } },
-        liabilities: { include: { ownerships: true } },
+        liabilities: { where: { counted: true }, include: { ownerships: true } },
         accounts: true,
         properties: { where: { asset: { status: "OWNED" } }, include: { asset: true } },
         commercialProperties: { where: { asset: { status: "OWNED" } }, include: { asset: true } },

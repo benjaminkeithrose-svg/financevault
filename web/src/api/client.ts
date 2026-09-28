@@ -1022,6 +1022,19 @@ export type CheckUpdate = Partial<{
   label: string;
 }>;
 
+export interface PurchaseStepView {
+  key: string;
+  stage: "OFFER" | "CONTRACT" | "SETTLEMENT";
+  label: string;
+  hint?: string;
+  amountLabel: string | null;
+  dateLabel: string | null;
+  doneAt: string | null;
+  amount: number | null;
+  date: string | null;
+  note: string | null;
+}
+
 export interface ConsideredProperty {
   assetId: string;
   id: string;
@@ -2400,6 +2413,8 @@ export interface PlanPropertyProjection {
   linked: boolean;
   commercialPropertyName: string | null;
   linkedAsset?: { id: string; name: string } | null;
+  /** Linked to a property you're considering: its own figures are used. */
+  figuresFrom?: string | null;
   events: PlanTimelineEvent[];
   hasFunding: boolean;
   positivelyGearedFromYear: number | null;
@@ -2690,6 +2705,10 @@ export const api = {
       request<DueDiligence>(`/considering/${assetId}/checks`, { method: "POST", body: JSON.stringify(data) }),
     removeCheck: (assetId: string, key: string) =>
       request<DueDiligence>(`/considering/${assetId}/checks/${encodeURIComponent(key)}`, { method: "DELETE" }),
+    steps: (assetId: string) =>
+      request<{ stage: string; steps: PurchaseStepView[]; next: { key: string; label: string } | null }>(`/considering/${assetId}/steps`),
+    saveStep: (assetId: string, key: string, data: { done?: boolean; amount?: number | null; date?: string | null; note?: string | null }) =>
+      request<unknown>(`/considering/${assetId}/steps/${key}`, { method: "PUT", body: JSON.stringify(data) }),
     bought: (assetId: string, price?: number | null) =>
       request<{ status: string }>(`/considering/${assetId}/bought`, { method: "POST", body: JSON.stringify({ price }) }),
   },

@@ -3,6 +3,12 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.16.0 — 28 September 2026
+- Buying it, step by step: Offer (offer made, accepted), Under contract (exchanged, deposit paid, cooling-off ends, finance approved, building and pest cleared) and Settlement (date booked, final inspection, funds ready, settled). The next step shows first, and each step keeps the day it was ticked.
+- The loan, added under Financing once finance is approved, is recorded but not counted anywhere until settlement.
+- Ticking Settled makes the property yours — from the settlement date, at the contract price — and switches its loan on.
+- A Portfolio Plan's planned purchase can be linked to a property you're considering; the plan then uses that property's own price, borrowing, rent and buying costs.
+
 ## 1.15.0 — 28 September 2026
 - Due diligence on each property you're considering: the full list of checks, picked by the kind of property and its title (strata checks for a strata unit, community title checks for a community scheme; for commercial, legal and planning, building, leases and tenants, environmental and safety). Nothing is compulsory — mark what doesn't fit as Not applicable. Each check can hold what was found, an estimated cost, who's handling it, a due date (in the calendar), whether it's been checked, and documents as evidence. Add your own checks too.
 - Open issues: tick Problem found on a check (or add an issue on its own) and it's listed at the top with its cost, which is counted in the assessment's cash needed. Resolved issues are kept, greyed, with how they were resolved.

@@ -44,7 +44,8 @@ const base = new PrismaClient({
 });
 
 // Properties being considered (or passed on) aren't yours: every list of
-// assets or properties leaves them out, so no total, report, checklist or
+// assets or properties leaves them out (and loans approved for them, until
+// they settle), so no total, report, checklist or
 // tree can count them. Applied here once rather than at each of the many
 // queries. Looking one up by id still works (its own page), and the few
 // places that deal with them on purpose use prismaAll.
@@ -56,7 +57,10 @@ function ownedOnly(model: string | undefined, operation: string, args: unknown) 
       ? { status: "OWNED" }
       : model === "Property" || model === "CommercialProperty"
         ? { asset: { is: { status: "OWNED" } } }
-        : null;
+        : // A loan approved for a property still being bought counts from settlement.
+          model === "Liability"
+          ? { counted: true }
+          : null;
   if (!rule) return;
   const a = args as { where?: object };
   a.where = a.where ? { AND: [a.where, rule] } : rule;

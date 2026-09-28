@@ -933,8 +933,7 @@ const SECTIONS: Section[] = [
           Each one opens as a normal property page, showing only what applies before buying: the address, suburb, kind and
           title, the asking price and expected rent, running costs, leases (commercial), documents and reminders. Move it along
           with the buttons at the top. <strong>Pass on this one</strong> keeps it, with your reason, for reference;{" "}
-          <strong>Bring it back</strong> undoes that. <strong>We bought it</strong> makes it yours: from that day it counts in
-          your totals and moves to Properties.
+          <strong>Bring it back</strong> undoes that.
         </p>
         <p>
           <strong>Quick assessment</strong>, near the top of its page: is it worth a closer look, or a call to the broker? Enter
@@ -962,6 +961,18 @@ const SECTIONS: Section[] = [
           the assessment's cash needed. You can also add an issue that isn't tied to a check. Mark one resolved (with how) and
           it's kept, greyed, below. <strong>Development ideas</strong> — a granny flat, a subdivision — are notes only, shown as{" "}
           <strong>Not approved</strong> until the approval document is linked and ticked as the approval.
+        </p>
+        <p>
+          <strong>Buying it</strong>: at the top, the stage it's at and the <strong>next step</strong>. Offer: offer made (the
+          amount), offer accepted. Under contract: contracts exchanged (the price), deposit paid, cooling-off ends, finance
+          approved, building and pest cleared. Settlement: date booked, final inspection, funds ready, settled. Each step keeps
+          the day it was ticked. Once finance is approved, add the loan under <strong>Financing</strong> on its page — it's
+          recorded then but not counted anywhere until settlement. Ticking <strong>Settled</strong> makes the property yours,
+          from the settlement date at the price paid (the contract price unless you enter another), and switches its loan on.
+        </p>
+        <p>
+          A <strong>Portfolio Plan</strong>'s planned purchase can be linked to a property you're considering: the plan then
+          uses that property's own price, borrowing, rent, stamp duty and buying costs. The link stays once it's bought.
         </p>
         <p>
           Until it's bought it isn't yours, so it's left out of <strong>every</strong> total, report and checklist — net worth,

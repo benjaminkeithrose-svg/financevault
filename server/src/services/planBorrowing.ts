@@ -1,7 +1,7 @@
 import { prisma } from "../db.js";
 import { DebtInput, IncomeInput, residentialEstimate } from "./borrowing.js";
 import { borrowingInputs, savedAssumptions } from "./borrowingInputs.js";
-import { projectPlan } from "./planProjection.js";
+import { projectPlan, withConsideredFigures } from "./planProjection.js";
 
 /**
  * "Can you borrow it?" for a Portfolio Plan: each year's new borrowing (the
@@ -71,6 +71,8 @@ export async function planBorrowingCheck(planId: string) {
   });
   if (!plan) return null;
   const projection = (await projectPlan(planId))!;
+  // A planned purchase linked to a property you're considering borrows what its own assessment says.
+  const planned = await withConsideredFigures(plan.properties);
   const personIds = await planBorrowers(plan.borrowerIds);
   const { people, incomes: baseIncomes, debts: baseDebts } = await borrowingInputs(personIds);
   const saved = await savedAssumptions();
@@ -81,7 +83,7 @@ export async function planBorrowingCheck(planId: string) {
     // This year's new borrowing.
     const parts: string[] = [];
     let newBorrowing = 0;
-    for (const p of plan.properties) {
+    for (const p of planned) {
       if (p.acquisitionYearNumber === yearNumber) {
         const loan = p.purchasePrice * p.initialLvr;
         newBorrowing += loan;

@@ -137,6 +137,23 @@ export function PropertyDetail() {
       {considering && <AssessmentCard assetId={property.assetId} reloadKey={property} />}
       {/* Problems found change the cash needed, so the page (and the assessment) reload. */}
       {considering && <DueDiligenceCards assetId={property.assetId} onChange={load} />}
+      {/* Finance approved: the loan is recorded here, and counted once it settles. */}
+      {considering && ["CONTRACT", "SETTLEMENT"].includes(property.asset?.pipelineStage ?? "") && (
+        <div className="card">
+          <SecuredLoansCard
+            bare
+            title="Financing"
+            kind="residential"
+            securityId={property.id}
+            ownerEntityId={property.asset?.entityId ?? property.entityId}
+            name={property.asset?.name ?? property.address}
+            defaultType={["HOME", "HOME_PART_RENTED"].includes(use.value) ? "HOME_LOAN" : "INVESTMENT_LOAN"}
+            loans={liabilities}
+            onChange={load}
+          />
+          <p className="cap-explain">Recorded now, counted in your totals from settlement.</p>
+        </div>
+      )}
 
       {!property.asset?.disposalDate && (
         <div className="card property-use">

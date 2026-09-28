@@ -2920,3 +2920,7 @@ code.path {
 .check-list > li + li {
   border-top: 1px solid var(--border);
 }
+
+.next-step {
+  margin: 8px 0;
+}

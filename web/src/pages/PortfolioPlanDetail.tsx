@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { api, CommercialProperty, PlanBorrowingCheck, PlanProperty, PlanPropertyProjection, PortfolioPlan, PortfolioPlanProjection, Property } from "../api/client.js";
+import { api, CommercialProperty, ConsideredProperty, PlanBorrowingCheck, PlanProperty, PlanPropertyProjection, PortfolioPlan, PortfolioPlanProjection, Property } from "../api/client.js";
 import { DrawEquityForm } from "../components/DrawEquityForm.js";
 import { EquitySourceCheck } from "../components/EquitySourceCheck.js";
 import { CashChart, GrowthChart, PlanTimeline } from "../components/PlanCharts.js";
@@ -43,6 +43,7 @@ export function PortfolioPlanDetail() {
   const [projection, setProjection] = useState<PortfolioPlanProjection | null>(null);
   const [commercialProperties, setCommercialProperties] = useState<CommercialProperty[]>([]);
   const [residential, setResidential] = useState<Property[]>([]);
+  const [considered, setConsidered] = useState<ConsideredProperty[]>([]);
   const [recordingDraw, setRecordingDraw] = useState<string | null>(null);
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
@@ -92,6 +93,10 @@ export function PortfolioPlanDetail() {
   useEffect(() => {
     api.commercialProperties.list().then(setCommercialProperties);
     api.properties.list().then(setResidential).catch(() => setResidential([]));
+    api.considering
+      .list()
+      .then((l) => setConsidered(l.filter((c) => c.status === "CONSIDERING")))
+      .catch(() => setConsidered([]));
   }, []);
 
   if (!plan) {
@@ -493,17 +498,36 @@ export function PortfolioPlanDetail() {
                     onChange={load}
                   />
                   <div style={{ marginTop: 8 }}>
-                    <label style={{ marginTop: 0 }}>Once it's bought, the property in your records it became</label>
+                    <label style={{ marginTop: 0 }}>The property it is — one you're considering, or once bought, the one it became</label>
                     <select value={pp.assetId || ""} onChange={(e) => linkProperty(pp.id, e.target.value)} style={{ maxWidth: 320 }}>
-                      <option value="">— Not bought yet —</option>
-                      {owned
-                        .filter((o) => o.assetId === pp.assetId || !linkedAssetIds.has(o.assetId))
-                        .map((o) => (
-                          <option key={o.assetId} value={o.assetId}>
-                            {o.name}
-                          </option>
-                        ))}
+                      <option value="">— Not linked —</option>
+                      {considered.filter((c) => c.assetId === pp.assetId || !linkedAssetIds.has(c.assetId)).length > 0 && (
+                        <optgroup label="Properties I'm considering">
+                          {considered
+                            .filter((c) => c.assetId === pp.assetId || !linkedAssetIds.has(c.assetId))
+                            .map((c) => (
+                              <option key={c.assetId} value={c.assetId}>
+                                {c.address}
+                              </option>
+                            ))}
+                        </optgroup>
+                      )}
+                      <optgroup label="Bought">
+                        {owned
+                          .filter((o) => o.assetId === pp.assetId || !linkedAssetIds.has(o.assetId))
+                          .map((o) => (
+                            <option key={o.assetId} value={o.assetId}>
+                              {o.name}
+                            </option>
+                          ))}
+                      </optgroup>
                     </select>
+                    {projection?.properties.find((p) => p.planPropertyId === pp.id)?.figuresFrom && (
+                      <p className="cap-explain">
+                        Using the price, borrowing, rent and buying costs from {projection.properties.find((p) => p.planPropertyId === pp.id)?.figuresFrom}'s
+                        own assessment.
+                      </p>
+                    )}
                   </div>
                   <div style={{ marginTop: 12 }}>
                     <strong style={{ fontSize: 13 }}>Refinances</strong>

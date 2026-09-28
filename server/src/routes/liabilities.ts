@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { prisma } from "../db.js";
+import { prisma, prismaAll } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { deleteWithLinks, refuseIfInUse } from "../services/deletion.js";
 import { logAudit } from "../services/audit.js";
@@ -88,6 +88,18 @@ function toData({ owners: _owners, ...parsed }: z.infer<typeof liabilityInput>) 
   };
 }
 
+/** Whether a new loan is secured on a property you're only considering (not yours yet). */
+async function securedOnConsidered(p: { securityPropertyId?: string | null; securityCommercialPropertyId?: string | null; securityAssetId?: string | null }) {
+  const [property, commercial, asset] = await Promise.all([
+    p.securityPropertyId ? prismaAll.property.findUnique({ where: { id: p.securityPropertyId }, select: { asset: { select: { status: true } } } }) : null,
+    p.securityCommercialPropertyId
+      ? prismaAll.commercialProperty.findUnique({ where: { id: p.securityCommercialPropertyId }, select: { asset: { select: { status: true } } } })
+      : null,
+    p.securityAssetId ? prismaAll.asset.findUnique({ where: { id: p.securityAssetId }, select: { status: true } }) : null,
+  ]);
+  return [property?.asset.status, commercial?.asset.status, asset?.status].some((s) => s && s !== "OWNED");
+}
+
 liabilitiesRouter.post(
   "/",
   asyncHandler(async (req, res) => {
@@ -99,6 +111,8 @@ liabilitiesRouter.post(
       data: {
         ...toData(parsed),
         balanceAsAt: parsed.currentBalance != null ? new Date() : null,
+        // Approved for a property still being bought: counted once it settles.
+        counted: !(await securedOnConsidered(parsed)),
         ...(owners ? { ownerships: { create: owners.map((o) => ({ ownerEntityId: o.entityId, ownershipPercent: o.percent })) } } : {}),
       },
       include: { entity: true, securityProperty: true, securityCommercialProperty: true, securityAsset: true, holdingTrust: true, ownerships: { include: { ownerEntity: true }, orderBy: { createdAt: "asc" } }, offsetAccounts: { select: { id: true, institution: true, accountName: true, currentBalance: true } } },

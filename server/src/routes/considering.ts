@@ -6,6 +6,7 @@ import { logAudit } from "../services/audit.js";
 import { checkOwners, ownersInput } from "../services/ownership.js";
 import { assess, workingAssessment } from "../services/assessment.js";
 import { addItem, CHECK_STATUSES, dueDiligence, ensureCheck, removeItem, saveCheck } from "../services/dueDiligence.js";
+import { pricePaid, purchaseSteps, saveStep } from "../services/purchaseSteps.js";
 
 /**
  * Properties I'm considering: a property you're looking at buying is a
@@ -186,6 +187,18 @@ export async function markBought(assetId: string, on = new Date(), price?: numbe
         currentValue: asset.currentValue ?? cost,
       },
     });
+    // Its loans (recorded at finance approval) count from today too.
+    const [p, c] = await Promise.all([
+      tx.property.findFirst({ where: { assetId: asset.id }, select: { id: true } }),
+      tx.commercialProperty.findFirst({ where: { assetId: asset.id }, select: { id: true } }),
+    ]);
+    await tx.liability.updateMany({
+      where: {
+        counted: false,
+        OR: [{ securityAssetId: asset.id }, ...(p ? [{ securityPropertyId: p.id }] : []), ...(c ? [{ securityCommercialPropertyId: c.id }] : [])],
+      },
+      data: { counted: true },
+    });
     await tx.property.updateMany({
       where: { assetId: asset.id },
       data: { purchasePrice: cost, purchaseDate: asset.acquisitionDate ?? on, settlementDate: on },
@@ -314,5 +327,39 @@ consideringRouter.delete(
   asyncHandler(async (req, res) => {
     await removeItem(req.params.assetId, checkKey.parse(req.params.key));
     res.json(await dueDiligence(req.params.assetId));
+  })
+);
+
+// Buying it: offer, contract and settlement steps.
+consideringRouter.get(
+  "/:assetId/steps",
+  asyncHandler(async (req, res) => {
+    res.json(await purchaseSteps(req.params.assetId));
+  })
+);
+
+consideringRouter.put(
+  "/:assetId/steps/:key",
+  asyncHandler(async (req, res) => {
+    const u = z
+      .object({
+        done: z.boolean().optional(),
+        amount: z.number().nonnegative().max(1e10).nullable().optional(),
+        date: z.string().datetime().nullable().optional(),
+        note: z.string().max(2000).nullable().optional(),
+      })
+      .parse(req.body);
+    const key = z.string().regex(/^[a-z-]{1,40}$/).parse(req.params.key);
+    await saveStep(req.params.assetId, key, u);
+    await logAudit("PURCHASE_STEP", { targetType: "Asset", targetId: req.params.assetId, data: { key, done: u.done } });
+    // Settled: it's yours from the settlement day, at the price paid.
+    if (key === "settled" && u.done) {
+      const { steps } = await purchaseSteps(req.params.assetId);
+      const booked = steps.find((s) => s.key === "settlement-booked")?.date ?? null;
+      await markBought(req.params.assetId, booked ?? new Date(), pricePaid(steps));
+      res.json({ bought: true });
+      return;
+    }
+    res.json(await purchaseSteps(req.params.assetId));
   })
 );

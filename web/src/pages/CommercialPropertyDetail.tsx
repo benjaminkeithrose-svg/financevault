@@ -301,6 +301,18 @@ export function CommercialPropertyDetail() {
       {considering && <AssessmentCard assetId={property.assetId} reloadKey={property} />}
       {/* Problems found change the cash needed, so the page (and the assessment) reload. */}
       {considering && <DueDiligenceCards assetId={property.assetId} onChange={load} />}
+      {/* Finance approved: the loan is recorded here, and counted once it settles. */}
+      {considering && ["CONTRACT", "SETTLEMENT"].includes(property.asset?.pipelineStage ?? "") && (
+        <SecuredLoansCard
+          kind="commercial"
+          title="Financing (counted from settlement)"
+          securityId={property.id}
+          ownerEntityId={property.asset?.entityId ?? property.entityId}
+          name={property.name}
+          loans={property.loans || []}
+          onChange={load}
+        />
+      )}
 
       {m && !considering && (
         <>

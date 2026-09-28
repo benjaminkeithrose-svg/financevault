@@ -95,7 +95,9 @@ describe("properties being considered", () => {
   });
 
   it("lists them with their stage, and keeps the ones passed on", async () => {
-    const list = (await agent.get("/api/considering")).body as Array<Record<string, unknown>>;
+    // (Only this test's own — other test files leave theirs in the shared test database.)
+    const mine = () => agent.get("/api/considering").then((r) => (r.body as Array<Record<string, unknown>>).filter((x) => x.owner === "Considering Cleo"));
+    const list = await mine();
     expect(list).toHaveLength(3);
     const house = list.find((x) => x.address === "5 Maybe Ave, Orange NSW 2800")!;
     expect(house).toMatchObject({ kind: "RESIDENTIAL", stage: "LOOKING", status: "CONSIDERING", suburb: "Orange", askingPrice: 650_000 });
@@ -121,7 +123,7 @@ describe("properties being considered", () => {
     const asset = await prisma.asset.findUnique({ where: { id: house.assetId } });
     expect(asset).toMatchObject({ status: "OWNED", acquisitionCost: 640_000, currentValue: 660_000, pipelineStage: null });
     expect(((await agent.get("/api/properties")).body as Array<{ id: string }>).map((p) => p.id)).toContain(house.id);
-    expect(((await agent.get("/api/considering")).body as unknown[]).length).toBe(2);
+    expect(((await agent.get("/api/considering")).body as Array<{ owner: string }>).filter((x) => x.owner === "Considering Cleo").length).toBe(2);
     const after = (await agent.get("/api/net-worth/preview")).body;
     expect(JSON.stringify(after)).not.toBe(JSON.stringify(before));
     // Bought is final — it's not "considered" any more.
