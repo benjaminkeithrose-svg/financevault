@@ -2,6 +2,7 @@ import { Router } from "express";
 import fs from "node:fs";
 import path from "node:path";
 import { z } from "zod";
+import { parseKeys } from "../services/upkeep.js";
 import { prisma } from "../db.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { getEffectiveStorageDir } from "../services/paths.js";
@@ -33,7 +34,12 @@ export function parseFeaturesOff(raw: string | null | undefined): string[] {
 async function respond(res: import("express").Response) {
   const settings = await getOrCreateSettings();
   const effectiveStorageDir = await getEffectiveStorageDir();
-  res.json({ ...settings, featuresOff: parseFeaturesOff(settings.featuresOff), effectiveStorageDir });
+  res.json({
+    ...settings,
+    featuresOff: parseFeaturesOff(settings.featuresOff),
+    setupSkipped: parseKeys(settings.setupSkipped),
+    effectiveStorageDir,
+  });
 }
 
 settingsRouter.get(
@@ -46,6 +52,8 @@ settingsRouter.get(
 const updateInput = z.object({
   allowExternalAiProcessing: z.boolean().optional(),
   checklistDismissed: z.boolean().optional(),
+  setupHaveDone: z.boolean().optional(),
+  setupSkipped: z.array(z.string().regex(/^[a-z]{1,20}$/)).max(20).optional(),
   allowPriceLookups: z.boolean().optional(),
   defaultLandingPage: z.enum(["DASHBOARD", "VISUALIZATION"]).optional(),
   customStorageDir: z.string().optional().nullable(),
@@ -72,10 +80,14 @@ settingsRouter.put(
     }
 
     await getOrCreateSettings();
-    const { featuresOff, ...rest } = parsed;
+    const { featuresOff, setupSkipped, ...rest } = parsed;
     await prisma.settings.update({
       where: { id: 1 },
-      data: { ...rest, ...(featuresOff ? { featuresOff: JSON.stringify([...new Set(featuresOff)]) } : {}) },
+      data: {
+        ...rest,
+        ...(featuresOff ? { featuresOff: JSON.stringify([...new Set(featuresOff)]) } : {}),
+        ...(setupSkipped ? { setupSkipped: JSON.stringify([...new Set(setupSkipped)]) } : {}),
+      },
     });
     await respond(res);
   })

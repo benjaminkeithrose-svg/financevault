@@ -6,6 +6,7 @@ import { formatCurrency, formatDate, humanize } from "../utils.js";
 import { WorthDoing } from "../components/WorthDoing.js";
 import { FeatureGate } from "../components/FeatureGate.js";
 import { ComingUp } from "../components/ComingUp.js";
+import { GettingStarted } from "../components/GettingStarted.js";
 
 export function Dashboard() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -47,6 +48,7 @@ export function Dashboard() {
         </select>
       </div>
 
+      {!entityId && <GettingStarted summary={summary} onChange={load} />}
       {!entityId && <WorthDoing summary={summary} onChange={load} />}
       {!entityId && <ComingUp />}
 

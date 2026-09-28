@@ -1204,6 +1204,10 @@ model Settings {
   lastBackupAt              DateTime?
   // The getting-started checklist on the dashboard, once put away.
   checklistDismissed        Boolean   @default(false)
+  // Getting started: "What do you have?" answered, and the steps skipped
+  // (or, for Reports, looked at) — a JSON array of step keys.
+  setupHaveDone             Boolean   @default(false)
+  setupSkipped              String?
   // The borrowing estimate's assumptions (buffer, rent shading, card %,
   // expenses benchmark, LVRs…), as JSON, once changed from the defaults.
   borrowingAssumptions      String?

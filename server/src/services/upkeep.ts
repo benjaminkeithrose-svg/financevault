@@ -29,33 +29,122 @@ export async function staleValues(now = new Date()) {
     name: a.name,
     value: a.currentValue,
     since: (a.valuationDate ?? a.createdAt).toISOString(),
-    route: a.property ? `/properties/${a.property.id}` : a.commercialProperty ? `/commercial-properties/${a.commercialProperty.id}` : `/assets/${a.id}`,
+    route: a.property
+      ? `/properties/${a.property.id}`
+      : a.commercialProperty
+        ? `/commercial-properties/${a.commercialProperty.id}`
+        : `/assets/${a.id}`,
   }));
 }
 
+export const parseKeys = (json: string | null | undefined): string[] => {
+  try {
+    const v = JSON.parse(json ?? "[]");
+    return Array.isArray(v) ? v.filter((k): k is string => typeof k === "string") : [];
+  } catch {
+    return [];
+  }
+};
+
+/**
+ * Getting started: small steps in the order a family's records are built up.
+ * Each ticks itself off from what's recorded, so stopping and coming back
+ * loses nothing. Loans and Reports only appear once there's something for
+ * them to be about. Any step can be skipped; the list can be put away.
+ */
 export async function gettingStarted() {
-  const [settings, people, family, structures, assets, loans, documents] = await Promise.all([
+  const [settings, people, family, assets, accounts, securing, loans, documents] = await Promise.all([
     prisma.settings.findUnique({ where: { id: 1 } }),
     prisma.person.count(),
     prisma.personRelationship.count(),
-    prisma.entity.count({ where: { personalFor: null } }),
     prisma.asset.count({ where: { parentAssetId: null } }),
+    prisma.account.count(),
+    prisma.asset.count({ where: { parentAssetId: null, assetType: { in: ["PROPERTY", "COMMERCIAL_PROPERTY", "VEHICLE"] } } }),
     prisma.liability.count(),
     prisma.document.count(),
   ]);
+  const off = new Set(parseKeys(settings?.featuresOff));
+  const on = (feature: string) => !off.has(feature);
+  const skipped = new Set(parseKeys(settings?.setupSkipped));
+  const owns = assets + accounts > 0;
+  const buttons = (list: Array<[string, string, string?]>) =>
+    list.filter(([, , feature]) => !feature || on(feature)).map(([label, route]) => ({ label, route }));
+
   const steps = [
-    { key: "people", label: "Add the people in your family", route: "/people", done: people > 0 },
-    { key: "family", label: "Link partners, parents and children", route: "/people", done: family > 0 || people === 1 },
-    { key: "structures", label: "Add any trusts, companies or SMSF (skip if you have none)", route: "/people", done: structures > 0, optional: true },
-    { key: "assets", label: "Add your properties, vehicles and other assets", route: "/properties", done: assets > 0 },
-    { key: "loans", label: "Add loans and credit cards", route: "/loans", done: loans > 0 },
-    { key: "documents", label: "Upload or import documents", route: "/documents", done: documents > 0 },
-    { key: "backup", label: "Take your first full backup", route: "/settings", done: !!settings?.lastBackupAt },
-  ];
-  const required = steps.filter((s) => !s.optional);
-  return {
-    steps,
-    dismissed: settings?.checklistDismissed ?? false,
-    complete: required.every((s) => s.done),
-  };
+    {
+      key: "have",
+      label: "What do you have?",
+      explain: "Tick what applies — anything you don't have is kept out of the menu. Change it any time in Settings → Features.",
+      buttons: [],
+      done: !!settings?.setupHaveDone,
+    },
+    {
+      key: "people",
+      label: "Add the people, then their relationships",
+      explain: "Your family, and any trusts, companies or SMSF.",
+      buttons: buttons([["Add people", "/people"]]),
+      done: people > 0 && (family > 0 || people === 1),
+    },
+    {
+      key: "own",
+      label: "Add what they own",
+      explain: "Start with one — you can add the detail later.",
+      buttons: buttons([
+        ["Property", "/properties"],
+        ["Bank account", "/banking"],
+        ["Vehicle or boat", "/vehicles", "vehicles"],
+        ["Shares or crypto", "/investments", "investments"],
+        ["Super", "/super", "super"],
+        ["Something else", "/assets"],
+      ]),
+      done: owns,
+    },
+    ...(securing > 0
+      ? [
+          {
+            key: "loans",
+            label: "Add loans",
+            explain: "Home loans, car loans and credit cards.",
+            buttons: buttons([["Add a loan", "/loans"]]),
+            done: loans > 0,
+          },
+        ]
+      : []),
+    {
+      key: "papers",
+      label: "Add papers and cover",
+      explain: "Statements, contracts and policies — they back up the figures.",
+      buttons: buttons([
+        ["Upload documents", "/documents"],
+        ["Add insurance", "/insurance", "insurance"],
+        ["See what's missing", "/missing", "expected"],
+      ]),
+      done: documents > 0,
+    },
+    ...(owns && loans > 0
+      ? [
+          {
+            key: "reports",
+            label: "Have a look at the reports",
+            explain: "There's enough recorded now for them to mean something.",
+            buttons: buttons([
+              ["Net Worth", "/net-worth"],
+              ["Reports", "/reports"],
+            ]),
+            done: false,
+          },
+        ]
+      : []),
+    {
+      key: "backup",
+      label: "Take your first full backup",
+      explain: "Keep a copy somewhere other than this computer.",
+      buttons: buttons([["Backup", "/settings"]]),
+      done: !!settings?.lastBackupAt,
+    },
+  ].map((s) => ({ ...s, skipped: !s.done && skipped.has(s.key) }));
+  // Reports appears last, once there are assets and loans; until then
+  // there's still a step to come (or the list can be put away).
+  const complete = steps.every((s) => s.done || s.skipped) && steps.some((s) => s.key === "reports");
+  return { steps, dismissed: settings?.checklistDismissed ?? false, complete };
 }

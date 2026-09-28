@@ -2697,3 +2697,44 @@ code.path {
 .review-box {
   border-left: 4px solid var(--accent);
 }
+
+/* Getting started (dashboard) */
+.getting-started {
+  margin-bottom: 16px;
+}
+
+.setup-steps li {
+  display: block;
+}
+
+.setup-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  flex-wrap: wrap;
+}
+
+.setup-row .link-button {
+  min-height: 40px;
+}
+
+.setup-label {
+  text-align: left;
+}
+
+.setup-steps li.open .setup-label {
+  font-weight: 600;
+}
+
+.setup-steps li.skipped .setup-label {
+  color: var(--text-muted);
+}
+
+.setup-body {
+  margin: 0 0 12px 32px;
+}
+
+.setup-body .toolbar {
+  margin-top: 6px;
+}

@@ -12,38 +12,30 @@ interface NavItem {
   also?: string[];
 }
 
-// Grouped per the "who owns it" architecture: people (each also their own
-// personal entity) and the trusts/companies/funds around them are the
-// ownership layer; Assets/Liabilities are what they own and owe. Keeping
-// this distinction visible in the nav, not just in the data model.
+// In the order a family's records are built up: the people (each also their
+// own personal entity) and the trusts/companies/funds around them, then what
+// they own and owe, then planning, the papers behind it all, and reports.
+// Settings and Help sit at the very bottom.
 export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
   {
     label: "",
     items: [
       { to: "/", label: "Dashboard" },
-      { to: "/calendar", label: "Calendar" },
+      { to: "/inbox", label: "To review" },
       // One entry for both views; tabs on the page switch between them.
       { to: "/tree", label: "Asset tree & diagram" },
     ],
   },
-  {
-    label: "Documents",
-    items: [
-      { to: "/inbox", label: "To review" },
-      // Importing a folder or from Gmail are buttons on the Documents page.
-      { to: "/documents", label: "Documents", also: ["/bulk-import", "/email-import"] },
-    ],
-  },
   // Professional advisers are a section at the foot of People & entities.
-  { label: "Who owns it", items: [{ to: "/people", label: "People & entities", also: ["/advisers", "/entities"] }] },
+  { label: "People & relationships", items: [{ to: "/people", label: "People & entities", also: ["/advisers", "/entities"] }] },
   // Each kind of asset or debt has one home — no catch-all list repeating them.
   {
     label: "Assets",
     items: [
       { to: "/properties", label: "Properties" },
+      { to: "/banking", label: "Bank accounts" },
       { to: "/vehicles", label: "Vehicles & boats", feature: "vehicles" },
       { to: "/investments", label: "Investments", feature: "investments" },
-      { to: "/banking", label: "Bank accounts" },
       { to: "/super", label: "Super", feature: "super" },
       { to: "/assets", label: "Other assets" },
       { to: "/insurance", label: "Insurance", feature: "insurance" },
@@ -51,27 +43,38 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
   },
   {
     label: "Liabilities",
+    // Property loans, vehicle loans, cards and personal debts as sections of one page.
+    items: [{ to: "/loans", label: "Loans & cards", also: ["/vehicle-loans", "/credit-cards", "/liabilities"] }],
+  },
+  {
+    label: "Planning",
     items: [
-      // Property loans, vehicle loans, cards and personal debts as sections of one page.
-      { to: "/loans", label: "Loans & cards", also: ["/vehicle-loans", "/credit-cards", "/liabilities"] },
+      { to: "/portfolio-plans", label: "Portfolio Plan", feature: "portfolio-plan" },
+      { to: "/structure-comparison", label: "Who should own it?", feature: "structure" },
       { to: "/borrowing", label: "How much could I borrow?", feature: "borrowing" },
     ],
   },
   {
-    label: "Plan & report",
+    label: "Supporting information",
     items: [
-      { to: "/net-worth", label: "Net Worth" },
-      { to: "/tax", label: "Tax" },
-      { to: "/reports", label: "Reports" },
+      // Importing a folder or from Gmail are buttons on the Documents page.
+      { to: "/documents", label: "Documents", also: ["/bulk-import", "/email-import"] },
+      { to: "/calendar", label: "Calendar" },
       { to: "/missing", label: "What's missing", feature: "expected" },
-      { to: "/accountant-checklist", label: "Worth asking your accountant", feature: "accountant" },
-      { to: "/structure-comparison", label: "Who should own it?", feature: "structure" },
-      { to: "/portfolio-plans", label: "Portfolio Plan", feature: "portfolio-plan" },
       { to: "/packs", label: "Document Packs", feature: "packs" },
     ],
   },
   {
-    label: "",
+    label: "Reports",
+    items: [
+      { to: "/net-worth", label: "Net Worth" },
+      { to: "/tax", label: "Tax" },
+      { to: "/reports", label: "Reports" },
+      { to: "/accountant-checklist", label: "Worth asking your accountant", feature: "accountant" },
+    ],
+  },
+  {
+    label: "Settings & help",
     items: [
       { to: "/settings", label: "Settings" },
       { to: "/help", label: "Help" },
@@ -87,30 +90,33 @@ export function NavMenuList({ onNavigate }: { onNavigate: () => void }) {
   const features = useFeatures();
   return (
     <nav>
-      {NAV_GROUPS.map((group, i) => (
-        <div key={i}>
-          {group.label && <div className="nav-group-label">{group.label}</div>}
-          {group.items.filter((s) => !s.feature || features.on(s.feature)).map((s) => (
-            <NavLink
-              key={s.to}
-              to={s.to === "/tree" ? lastStructureView() : s.to}
-              end={s.to === "/"}
-              className={({ isActive }) =>
-                `nav-link${
-                  isActive || (s.to === "/tree" && STRUCTURE_ROUTES.includes(pathname)) || s.also?.includes(pathname) ? " active" : ""
-                }`
-              }
-              onClick={() => {
-                // The menu starts a new path down the tree.
-                startNewTrail();
-                onNavigate();
-              }}
-            >
-              {s.label}
-            </NavLink>
-          ))}
-        </div>
-      ))}
+      {NAV_GROUPS.map((group) => ({ ...group, items: group.items.filter((s) => !s.feature || features.on(s.feature)) }))
+        // A group whose features are all switched off goes, heading and all.
+        .filter((group) => group.items.length > 0)
+        .map((group, i) => (
+          <div key={i}>
+            {group.label && <div className="nav-group-label">{group.label}</div>}
+            {group.items.map((s) => (
+              <NavLink
+                key={s.to}
+                to={s.to === "/tree" ? lastStructureView() : s.to}
+                end={s.to === "/"}
+                className={({ isActive }) =>
+                  `nav-link${
+                    isActive || (s.to === "/tree" && STRUCTURE_ROUTES.includes(pathname)) || s.also?.includes(pathname) ? " active" : ""
+                  }`
+                }
+                onClick={() => {
+                  // The menu starts a new path down the tree.
+                  startNewTrail();
+                  onNavigate();
+                }}
+              >
+                {s.label}
+              </NavLink>
+            ))}
+          </div>
+        ))}
     </nav>
   );
 }

@@ -1,7 +1,7 @@
 {
   "name": "financevault",
   "private": true,
-  "version": "1.11.1",
+  "version": "1.12.0",
   "description": "Private Australian personal financial management & document system",
   "workspaces": [
     "server",

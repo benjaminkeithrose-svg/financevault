@@ -875,13 +875,22 @@ export interface DocumentLink {
   createdAt: string;
 }
 
+export interface GettingStartedStep {
+  key: string;
+  label: string;
+  explain: string;
+  buttons: Array<{ label: string; route: string }>;
+  done: boolean;
+  skipped: boolean;
+}
+
 export interface DashboardSummary {
   backup: { lastBackupAt: string | null; remindAfterDays: number };
   staleValues: Array<{ id: string; name: string; value: number | null; since: string; route: string }>;
   missing: { red: number; amber: number; met: number; setAside: number; fyLabel: string } | null;
   referenceCheck: { due: boolean; lastCheckedAt: string | null } | null;
   gettingStarted: {
-    steps: Array<{ key: string; label: string; route: string; done: boolean; optional?: boolean }>;
+    steps: GettingStartedStep[];
     dismissed: boolean;
     complete: boolean;
   };
@@ -941,6 +950,8 @@ export interface Settings {
   allowPriceLookups: boolean;
   lastBackupAt?: string | null;
   checklistDismissed?: boolean;
+  setupHaveDone?: boolean;
+  setupSkipped?: string[];
   featuresOff: string[];
 }
 

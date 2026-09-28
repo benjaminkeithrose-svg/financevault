@@ -3,6 +3,10 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.12.0 — 28 September 2026
+- A tidier menu, in the order your records are built up: Dashboard, To review and the Asset tree at the top; then People & relationships, Assets (bank accounts and insurance included), Liabilities, a new Planning group (Portfolio Plan, Who should own it?, How much could I borrow?), Supporting information (documents, calendar, what's missing, packs), Reports, and Settings & help at the bottom. Nothing has been removed — everything is where you'd look for it. A group whose parts are all switched off disappears.
+- Getting started is now its own card at the top of the dashboard on a new setup, one small step at a time: What do you have? (tick what applies; the rest is kept out of the menu), the people and their relationships, what they own, loans (once there's a property or vehicle), papers and cover, the reports (once there's enough to report on) and a first backup. Each step ticks itself off, any step can be skipped, and Help → "Worth doing" can bring the list back. If you'd already finished or hidden the old checklist, it stays away.
+
 ## 1.11.1 — 28 September 2026
 - Less clutter — boxes that can't apply now go away. A home (PPOR) or a holiday home nobody rents no longer asks for a tenant, property manager or rent, and doesn't show the rental profit graph or property management, depreciation and building write-off. A home doesn't ask for land value or land tax (it's exempt). Change "How it's used" and the right boxes appear. Anything you'd already typed in is kept.
 - Loans: "Fixed period ends" shows only on a fixed loan.

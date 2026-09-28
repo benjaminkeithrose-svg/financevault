@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { ShowGettingStartedAgain } from "../components/GettingStarted.js";
 
 /**
  * The user manual, built into the app so it's always one tap away and always
@@ -214,7 +215,7 @@ const SECTIONS: Section[] = [
   {
     id: "getting-around",
     title: "Getting around: back up the path you came down",
-    keywords: "back arrow breadcrumb path trail navigate up tree parent home menu",
+    keywords: "back arrow breadcrumb path trail navigate up tree parent home menu groups order planning supporting information",
     body: (
       <>
         <p>
@@ -225,6 +226,12 @@ const SECTIONS: Section[] = [
         <p>
           Under the top bar, the path is shown in full — for example <strong>Vehicles &amp; Boats › Toyota Prado › Car
           insurance – NRMA › Insurance</strong>. Tap any step to jump straight back to it.
+        </p>
+        <p>
+          The <strong>menu</strong> runs in the order your records are built up: Dashboard, To review and the Asset tree at
+          the top; then People &amp; relationships, Assets, Liabilities, Planning, Supporting information (documents, calendar,
+          what's missing, packs), Reports, and Settings &amp; help at the bottom. Anything switched off in Settings → Features
+          is left out.
         </p>
         <p>
           The menu, the home button and search start a new path. The path is kept while the window is open; the next time you
@@ -239,12 +246,16 @@ const SECTIONS: Section[] = [
     keywords: "checklist getting started reminders backup reminder stale values out of date valuation nudges monthly snapshot",
     body: (
       <>
+        <p>
+          <strong>Getting started</strong>, at the top of the dashboard on a new setup, takes you through it one small step at a
+          time: <strong>What do you have?</strong> (tick what applies; the rest is kept out of the menu), the people and their
+          relationships, what they own, loans (once there's a property or vehicle for them), papers and cover, the reports
+          (once there's enough to report on) and a first backup. Each step ticks itself off from what you've recorded, so you
+          can stop and come back any time. <strong>Skip</strong> passes over a step; <strong>Hide</strong> puts the list away.
+        </p>
+        <ShowGettingStartedAgain />
         <p>The dashboard's <strong>Worth doing</strong> card lists a few things to keep your records useful. Each one goes away once it's done.</p>
         <ul>
-          <li>
-            <strong>Getting started</strong> — the first steps: add your people and link their family, any trusts or
-            companies, your assets, loans and documents, and take a first backup. <strong>Hide this list</strong> puts it away for good.
-          </li>
           <li>
             <strong>Backup</strong> — shown when there's never been a full backup, or the last one was over 30 days ago.
           </li>
