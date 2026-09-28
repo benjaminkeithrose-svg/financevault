@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
+import { PERSON_FEATURES } from "../services/personFeatures.js";
 import { prisma } from "../db.js";
 import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { deleteWithLinks, entityDependents, personSuperDependents, refuseIfInUse } from "../services/deletion.js";
@@ -87,6 +88,7 @@ const personInput = z.object({
   nextOfKinAddress: z.string().optional().nullable(),
   occupation: z.string().max(120).optional().nullable(),
   occupationGuide: z.string().max(200).optional().nullable(),
+  featuresOff: z.array(z.enum(PERSON_FEATURES)).max(PERSON_FEATURES.length).optional().nullable(),
   employer: z.string().max(120).optional().nullable(),
   employmentType: z.enum(["FULL_TIME", "PART_TIME", "CASUAL", "CONTRACT", "SELF_EMPLOYED", ""]).optional().nullable(),
   carAllowance: z.number().nonnegative().optional().nullable(),
@@ -115,6 +117,7 @@ const BLANKABLE = [
 function personData<T extends Partial<z.infer<typeof personInput>>>(parsed: T) {
   const data: Record<string, unknown> = {
     ...parsed,
+    featuresOff: parsed.featuresOff === undefined ? undefined : parsed.featuresOff?.length ? JSON.stringify([...new Set(parsed.featuresOff)]) : null,
     dateOfBirth: parsed.dateOfBirth !== undefined ? (parsed.dateOfBirth ? new Date(parsed.dateOfBirth) : null) : undefined,
   };
   for (const field of BLANKABLE) {

@@ -88,3 +88,28 @@ export function useFeatures() {
     off: [...off],
   };
 }
+
+/**
+ * Parts of the app that can also be switched off for one person, on their
+ * page (Show on this page) — e.g. a child with no job, cover or will. A
+ * feature switched off in Settings stays off for everyone.
+ */
+export const PERSON_FEATURES = [
+  { id: "payg", global: "payg" as FeatureId | null, name: "Job & work deductions", blurb: "Their job, work claims and the ATO checklist for it." },
+  { id: "pay-tracking", global: null, name: "Pay tracking", blurb: "Payslips against each pay period." },
+  { id: "insurance", global: "insurance" as FeatureId | null, name: "Life & income cover", blurb: "Their cover, and What's missing asking about it." },
+  { id: "super", global: "super" as FeatureId | null, name: "Super", blurb: "Super statements on What's missing, and the contribution checks." },
+  { id: "estate", global: null, name: "Will & estate papers", blurb: "Their will, powers of attorney and wishes." },
+] as const;
+
+export type PersonFeatureId = (typeof PERSON_FEATURES)[number]["id"];
+
+/** The features switched off for a person (their featuresOff, a JSON list). */
+export function personFeaturesOff(person: { featuresOff?: string | null }): Set<string> {
+  try {
+    const list = JSON.parse(person.featuresOff || "[]");
+    return new Set(Array.isArray(list) ? list : []);
+  } catch {
+    return new Set();
+  }
+}

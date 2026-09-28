@@ -430,6 +430,24 @@ isn't safe to sync live, only the documents folder is.
   put there before. What's missing expects a current logbook and the
   year's odometer readings for any vehicle with a logbook (kind `RECORD`).
 
+### The 2026 guides and per-person switches (1.7.0)
+
+- `Property.use` adds `HOLIDAY_RENTED` and `HOME_PART_RENTED` (the latter
+  keeps `mainResidence` FULL, so no land tax); `Property.rentedShare`
+  (0-100) and `mainlyRented`. `propertyProfit` claims management fees in
+  full and the rented share of everything else; a holiday home not mainly
+  rented claims none of its ownership costs (s 26-50, TR 2026/1). The row
+  carries `use`, `rentedShare` and `deductions`; the tax result is
+  rent − deductions.
+- `accountantChecklist`: holiday homes (TR 2026/1, PCG 2026/3), a missing
+  rented share (PCG 2026/2), part-rented homes (reduced main residence
+  exemption), clearance certificates for property sold this year or last,
+  and the $20,000 instant asset write-off for 2025-26 business equipment.
+- `Person.featuresOff` (JSON list; `services/personFeatures.ts`:
+  payg, pay-tracking, insurance, super, estate) hides those sections on the
+  person's page and drops their items from `expectedChecklist` and the
+  accountant checklist for that person.
+
 ### The installable Windows program (1.6.0)
 
 - `desktop/` is kept apart from the app's own workspaces, so the folder

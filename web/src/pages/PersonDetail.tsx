@@ -16,6 +16,8 @@ import { PersonalDetailsPanel } from "../components/PersonalDetailsPanel.js";
 import { IncomeCard } from "../components/IncomeCard.js";
 import { PaygPanel } from "../components/PaygPanel.js";
 import { FeatureGate } from "../components/FeatureGate.js";
+import { PersonSections } from "../components/PersonSections.js";
+import { personFeaturesOff } from "../features.js";
 import { useTrailTitle } from "../trail.js";
 import { RemindersCard } from "../components/RemindersCard.js";
 
@@ -270,6 +272,8 @@ export function PersonDetail() {
     if (loadError) return <LoadFailed message={loadError} backTo="/people" backLabel="Back to people" />;
     return <div className="empty-state">Loading…</div>;
   }
+  // Sections switched off for this person (Show on this page).
+  const hidden = personFeaturesOff(person);
 
   async function addRelationship() {
     if (!id || !relEntityId) return;
@@ -356,18 +360,20 @@ export function PersonDetail() {
 
       <IncomeCard person={person} onChange={load} />
 
-      <FeatureGate feature="payg" quiet>
-        <PaygPanel person={person} onChange={load} />
-      </FeatureGate>
+      {!hidden.has("payg") && (
+        <FeatureGate feature="payg" quiet>
+          <PaygPanel person={person} onChange={load} />
+        </FeatureGate>
+      )}
 
       <FamilyPanel person={person} people={people} onChange={load} />
 
       <IdentityPanel personId={person.id} />
 
       <MissingFlags target={`person:${person.id}`} />
-      <InsurancePanel personId={person.id} title="Life & income cover" defaultHolderId={person.entityId} />
+      {!hidden.has("insurance") && <InsurancePanel personId={person.id} title="Life & income cover" defaultHolderId={person.entityId} />}
 
-      <EstatePanel personId={person.id} />
+      {!hidden.has("estate") && <EstatePanel personId={person.id} />}
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Tax file number</h3>
@@ -440,62 +446,65 @@ export function PersonDetail() {
         </div>
       </div>
 
-      <div className="card">
-        <h3 style={{ marginTop: 0 }}>Pay tracking</h3>
-        <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
-          Tracks payslips against expected pay periods so a missed upload gets flagged rather than silently
-          forgotten. Mark a period "Non-working" instead of uploading when it was an intentional gap (e.g. a casual
-          week off) — it will never be counted as missing.
-        </p>
-        <label>Pay frequency</label>
-        <select value={person.payFrequency || ""} onChange={(e) => setPayFrequency(e.target.value)}>
-          <option value="">Not tracked</option>
-          {PAY_FREQUENCIES.map((f) => (
-            <option key={f} value={f}>
-              {humanize(f)}
-            </option>
-          ))}
-        </select>
+      {!hidden.has("pay-tracking") && (
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Pay tracking</h3>
+          <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+            Tracks payslips against expected pay periods so a missed upload gets flagged rather than silently
+            forgotten. Mark a period "Non-working" instead of uploading when it was an intentional gap (e.g. a casual
+            week off) — it will never be counted as missing.
+          </p>
+          <label>Pay frequency</label>
+          <select value={person.payFrequency || ""} onChange={(e) => setPayFrequency(e.target.value)}>
+            <option value="">Not tracked</option>
+            {PAY_FREQUENCIES.map((f) => (
+              <option key={f} value={f}>
+                {humanize(f)}
+              </option>
+            ))}
+          </select>
 
-        {person.payFrequency && (
-          <>
-            <label style={{ marginTop: 12 }}>Financial year</label>
-            <select value={financialYearId} onChange={(e) => setFinancialYearId(e.target.value)} style={{ width: 160 }}>
-              <option value="">— Select FY —</option>
-              {financialYears.map((y) => (
-                <option key={y.id} value={y.id}>
-                  {y.label}
-                </option>
-              ))}
-            </select>
+          {person.payFrequency && (
+            <>
+              <label style={{ marginTop: 12 }}>Financial year</label>
+              <select value={financialYearId} onChange={(e) => setFinancialYearId(e.target.value)} style={{ width: 160 }}>
+                <option value="">— Select FY —</option>
+                {financialYears.map((y) => (
+                  <option key={y.id} value={y.id}>
+                    {y.label}
+                  </option>
+                ))}
+              </select>
 
-            {financialYearId &&
-              (periods.length === 0 ? (
-                <p className="empty-state">No periods for this financial year.</p>
-              ) : (
-                <table style={{ marginTop: 12 }}>
-                  <thead>
-                    <tr>
-                      <th>Period</th>
-                      <th>Status</th>
-                      <th>Document</th>
-                      <th>Amount</th>
-                      <th>Super</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {periods.map((p) => (
-                      <PayPeriodRow key={p.periodStart} period={p} onChange={loadPeriods} />
-                    ))}
-                  </tbody>
-                </table>
-              ))}
-          </>
-        )}
-      </div>
+              {financialYearId &&
+                (periods.length === 0 ? (
+                  <p className="empty-state">No periods for this financial year.</p>
+                ) : (
+                  <table style={{ marginTop: 12 }}>
+                    <thead>
+                      <tr>
+                        <th>Period</th>
+                        <th>Status</th>
+                        <th>Document</th>
+                        <th>Amount</th>
+                        <th>Super</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {periods.map((p) => (
+                        <PayPeriodRow key={p.periodStart} period={p} onChange={loadPeriods} />
+                      ))}
+                    </tbody>
+                  </table>
+                ))}
+            </>
+          )}
+        </div>
+      )}
 
       <RemindersCard targetType="PERSON" targetId={person.id} name={person.name} />
+      <PersonSections person={person} onChange={load} />
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="PERSON" targetId={person.id} />

@@ -416,7 +416,7 @@ exemption); each person's employment contract or benefits summary.
 
 ## 11. Turn features on or off
 
-**Status:** built in batch 5 (Settings → Features). Not yet: switching a feature per person.
+**Status:** built in batch 5 (Settings → Features). Per person built in 1.7.0: "Show on this page" on each person's page (job and work deductions, pay tracking, life and income cover, super, will and estate papers).
 
 **Why:** not everyone needs every part of the app — SMSF, commercial
 property, salary packaging, car benefits, Gmail import and so on. Hidden

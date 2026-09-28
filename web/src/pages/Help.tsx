@@ -1362,13 +1362,19 @@ const SECTIONS: Section[] = [
   {
     id: "features",
     title: "Switching features on and off",
-    keywords: "features switch turn off hide menu modules smsf commercial gmail import vehicles investments super insurance advisers",
+    keywords: "features switch turn off hide menu modules smsf commercial gmail import vehicles investments super insurance advisers per person show on this page child pay tracking will estate",
     body: (
       <>
         <p>
           Not everyone needs every part of the app. In <Link to="/settings#features">Settings</Link> → <strong>Features</strong>,
           untick anything you don't use — for example Self-managed super fund, Commercial property, Import from Gmail or Job
           &amp; work deductions.
+        </p>
+        <p>
+          <strong>For one person only.</strong> At the bottom of a person's page, <strong>Show on this page</strong> lists the
+          parts that can be switched off just for them: job &amp; work deductions, pay tracking, life &amp; income cover, super,
+          and will &amp; estate papers. Untick what doesn't apply — say, for a child — and it leaves their page, and What's missing
+          and the accountant checklist stop asking about it for them. Nothing is deleted; tick it again to bring it back.
         </p>
         <p>
           A switched-off feature disappears from the menu, the dashboard and the pages it appears on. <strong>Nothing is

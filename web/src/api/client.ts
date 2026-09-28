@@ -71,6 +71,8 @@ export interface Person {
   variableIncome?: number | null;
   occupation?: string | null;
   occupationGuide?: string | null;
+  /** Parts of the app switched off for this person only (a JSON list of ids). */
+  featuresOff?: string | null;
   employer?: string | null;
   employmentType?: string | null;
   carAllowance?: number | null;
@@ -2131,7 +2133,7 @@ export const api = {
     revealTfn: (id: string) => request<{ tfn: string | null }>(`/people/${id}/tfn`),
     revealMotherMaidenName: (id: string) => request<{ motherMaidenName: string | null }>(`/people/${id}/mother-maiden-name`),
     create: (data: Partial<Person>) => request<Person>("/people", { method: "POST", body: JSON.stringify(data) }),
-    update: (id: string, data: Partial<Person>) =>
+    update: (id: string, data: Partial<Omit<Person, "featuresOff">> & { featuresOff?: string[] }) =>
       request<Person>(`/people/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     remove: (id: string) => request<void>(`/people/${id}`, { method: "DELETE" }),
     addRelationship: (data: Partial<PersonEntityRelationship>) =>

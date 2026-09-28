@@ -9,6 +9,8 @@ on:
   push:
     paths:
       - "desktop/**"
+      # A new version (the version number in package.json) gets its Setup file built and checked.
+      - "package.json"
       - ".github/workflows/windows-installer.yml"
 
 jobs:

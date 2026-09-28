@@ -54,6 +54,10 @@ model Person {
   // Employment — for the occupation deduction checklist and the fact find.
   occupation      String? // e.g. "Sales and marketing", "Teacher"
   occupationGuide String? // the ATO occupation guide it follows (its key, e.g. "nurses-and-midwives-income-and-work-related-deductions")
+  // Parts of the app switched off for this person only (JSON list of feature
+  // ids: payg, pay-tracking, insurance, super, estate) — e.g. a child with no
+  // job, cover or will. The switches in Settings → Features still apply to all.
+  featuresOff    String?
   employer        String?
   employmentType  String? // FULL_TIME | PART_TIME | CASUAL | CONTRACT | SELF_EMPLOYED
   carAllowance    Float? // a year, shown separately on the income statement

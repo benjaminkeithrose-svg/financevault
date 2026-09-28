@@ -126,6 +126,10 @@ export function Settings() {
           Switch off what you don't use. It disappears from the menu, the dashboard and the pages — nothing is deleted, and
           switching it back on brings everything back as it was. This applies on every computer that opens this vault.
         </p>
+        <p className="cap-explain">
+          For one person only — a child with no job, cover or will, say — use <strong>Show on this page</strong> at the bottom
+          of their page instead.
+        </p>
         {settings && (
           <div className="feature-list">
             {FEATURES.map((f) => {

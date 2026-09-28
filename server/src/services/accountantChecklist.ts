@@ -1,6 +1,7 @@
 import { prisma } from "../db.js";
 import { purposeSplit } from "./debtAllocation.js";
 import { fyLabelFor } from "./superRules.js";
+import { personFeatureOn } from "./personFeatures.js";
 import { propertyProfit } from "./propertyProfit.js";
 import { concessionalStatus, CapHistory, contributionKind } from "./superRules.js";
 
@@ -63,6 +64,7 @@ export async function accountantChecklist(today = new Date()): Promise<Checklist
 
   // --- Super -------------------------------------------------------------------
   for (const p of people) {
+    if (!personFeatureOn(p, "super")) continue;
     const theirs = contributions.filter((c) => c.personId === p.id);
     const years = memberYears.filter((y) => y.personId === p.id);
     if (!theirs.length && !years.length) continue;
@@ -94,7 +96,7 @@ export async function accountantChecklist(today = new Date()): Promise<Checklist
   for (const p of people) {
     if (!hasIncome(p)) continue;
     const income = incomeOf(p);
-    if (income < 64_293 && income > 0) {
+    if (income < 64_293 && income > 0 && personFeatureOn(p, "super")) {
       items.push({
         id: `co-contribution-${p.id}`,
         title: `${p.name}: government super co-contribution`,
@@ -123,7 +125,9 @@ export async function accountantChecklist(today = new Date()): Promise<Checklist
   }
 
   // --- Work deductions ------------------------------------------------------------
-  for (const p of people.filter((x) => x.carAllowance && !workDeductions.some((d) => d.personId === x.id && d.category === "CAR"))) {
+  // Switched off for someone (Show on this page): their job and claims aren't asked about.
+  const paygOn = new Set(people.filter((p) => personFeatureOn(p, "payg")).map((p) => p.id));
+  for (const p of people.filter((x) => paygOn.has(x.id) && x.carAllowance && !workDeductions.some((d) => d.personId === x.id && d.category === "CAR"))) {
     items.push({
       id: `car-allowance-${p.id}`,
       title: `${p.name}: car allowance with no car claim`,
@@ -135,7 +139,7 @@ export async function accountantChecklist(today = new Date()): Promise<Checklist
       link: `/people/${p.id}`,
     });
   }
-  const unevidenced = workDeductions.filter((d) => !d.documentId && !(d.category === "CAR" && d.method === "CENTS_PER_KM"));
+  const unevidenced = workDeductions.filter((d) => paygOn.has(d.personId) && !d.documentId && !(d.category === "CAR" && d.method === "CENTS_PER_KM"));
   if (unevidenced.length) {
     items.push({
       id: "work-claims-evidence",

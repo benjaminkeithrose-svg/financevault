@@ -3,6 +3,13 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.7.0 — 28 September 2026
+- Checked against the ATO's 2026 guides. Two new ways a property can be used: "Holiday home, also rented" and "Our home, part rented" (a room or granny flat let). Enter the rented share of its costs on the property's page and the profit report claims only that share.
+- Holiday homes you also rent out follow the ATO's new ruling (TR 2026/1): if it isn't mainly used to earn rent — say you keep school holidays, Christmas or Easter for yourselves — its interest, rates, land tax, insurance and repairs can't be claimed. Answer "Is it mainly used to earn rent?" on its page; the accountant checklist flags it.
+- Selling a property: a reminder to get an ATO clearance certificate before settlement — without it the buyer holds back 15% of the price, even on your home — and, after a sale, a checklist reminder to claim back anything held back.
+- The $20,000 instant asset write-off for 2025-26 is flagged for equipment a company, trust or partnership bought.
+- Switch parts of the app off for one person: at the bottom of their page, "Show on this page" — job and work deductions, pay tracking, life and income cover, super, and will and estate papers. Handy for children. What's missing and the accountant checklist stop asking about them for that person.
+
 ## 1.6.0 — 28 September 2026
 - Financial Vault now comes as a proper Windows program: "Financial Vault Setup 1.6.0.exe". Double-click it and it installs, with a desktop icon and a Start menu entry — no Node.js to install first, no black window, and no wait while it builds itself the first time. It uses the same records in Documents > Financial Vault Data.
 - To update the installed program, run the new version's Setup file over it. Your records are backed up first, and it opens showing what's new.

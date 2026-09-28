@@ -1,6 +1,7 @@
 import { prisma } from "../db.js";
 import { financialYearBounds, financialYearLabelForDate } from "./financialYear.js";
 import { landTaxByAsset } from "./landTax.js";
+import { personFeatureOn } from "./personFeatures.js";
 
 /**
  * "What's missing" (IDEAS.md idea 13): the insurance and paperwork that is
@@ -427,14 +428,14 @@ export async function expectedChecklist(fyLabel?: string, today = new Date()): P
           )
         );
       }
-      items.push(insurance(target, ["LIFE", "TPD"], "Life and TPD cover", "AMBER", "Often held inside super by default — check the amount would clear the debts and support the family. If it's in super, record it with \"held in super\" ticked.", null, person.id));
-      items.push(insurance(target, ["INCOME_PROTECTION"], "Income protection", "AMBER", "Pays part of your salary if illness or injury stops you working. Premiums outside super are tax-deductible.", null, person.id));
+      if (personFeatureOn(person, "insurance")) items.push(insurance(target, ["LIFE", "TPD"], "Life and TPD cover", "AMBER", "Often held inside super by default — check the amount would clear the debts and support the family. If it's in super, record it with \"held in super\" ticked.", null, person.id));
+      if (personFeatureOn(person, "insurance")) items.push(insurance(target, ["INCOME_PROTECTION"], "Income protection", "AMBER", "Pays part of your salary if illness or injury stops you working. Premiums outside super are tax-deductible.", null, person.id));
       items.push(doc(target, "PAYG Summary / Income Statement", [], "Income statement (from myGov)", "RED", "Marked \"tax ready\" by the employer after 30 June — the salary and tax withheld for the return.", true, targets, owners));
       if (hospital) {
         items.push(doc(target, "Private Health Statement", [], "Private health insurance tax statement", "AMBER", "Shows the rebate received and days covered — the return needs it (it's usually pre-filled, but worth checking).", true, targets, owners));
       }
     }
-    for (const s of owners.flatMap((id) => superByEntity.get(id) ?? [])) {
+    for (const s of personFeatureOn(person, "super") ? owners.flatMap((id) => superByEntity.get(id) ?? []) : []) {
       items.push(
         doc(`asset:${s.id}`, "Super Statement", [], `Super statement — ${s.name}`, "AMBER", "The yearly member statement: balance, contributions and insurance held in the fund. Needed for the contribution caps and any insurance review.", true, [...targets, ["ASSET", s.id]], owners)
       );
