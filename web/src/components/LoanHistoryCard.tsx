@@ -285,7 +285,7 @@ export function LoanHistoryCard({ liabilityId, onChange }: { liabilityId: string
                   )}
                 </div>
               </div>
-              <button className="btn secondary" onClick={() => remove(r.id)} aria-label={`Remove the ${formatDate(r.asAt)} point`}>
+              <button className="icon-btn danger" onClick={() => remove(r.id)} aria-label={`Remove the ${formatDate(r.asAt)} point`}>
                 <IconBin />
               </button>
             </li>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ProfitHistoryCard } from "../components/ProfitHistoryCard.js";
 import { MissingFlags } from "../components/MissingFlags.js";
 import { useParams } from "react-router-dom";
 import { api, CommercialProperty, Entity, FinancialYear, LeaseExtractionResponse } from "../api/client.js";
@@ -1127,6 +1128,8 @@ export function CommercialPropertyDetail() {
       {property.asset && <PropertyCostsCard property={null} asset={property.asset} onChange={load} />}
 
       {!property.asset?.disposalDate && <UsableEquityCard assetId={property.assetId} />}
+
+      <ProfitHistoryCard assetId={property.assetId} />
 
       <ItemsPanel parentAssetId={property.assetId} title="Plant & equipment" />
 

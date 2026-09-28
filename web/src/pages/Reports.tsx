@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ProfitHistoryCard } from "../components/ProfitHistoryCard.js";
 import { Link } from "react-router-dom";
 import {
   api,
@@ -114,6 +115,7 @@ function PropertyProfit() {
           {data.rows.map((r) => (
             <details key={r.assetId} className="profit-details">
               <summary>{r.name}</summary>
+              <ProfitHistoryCard assetId={r.assetId} title="Year by year" />
               <table className="kv-table">
                 <tbody>
                   <tr>

@@ -4,6 +4,7 @@ import { prisma } from "../db.js";
 import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
 import { projectPlan, purchaseCosts } from "../services/planProjection.js";
+import { planBorrowingCheck } from "../services/planBorrowing.js";
 
 export { purchaseCosts };
 
@@ -69,15 +70,17 @@ const planInput = z.object({
   refinanceLvrTarget: z.number(),
   depositPercent: z.number().optional(),
   startingCash: z.number().min(0).optional(),
+  // Whose income backs the borrowing check (person ids); empty = everyone with a salary.
+  borrowerIds: z.array(z.string()).optional(),
   notes: z.string().optional().nullable(),
 });
 
 portfolioPlansRouter.post(
   "/",
   asyncHandler(async (req, res) => {
-    const parsed = planInput.parse(req.body);
+    const { borrowerIds, ...parsed } = planInput.parse(req.body);
     const plan = await prisma.portfolioPlan.create({
-      data: parsed,
+      data: { ...parsed, borrowerIds: borrowerIds?.length ? JSON.stringify(borrowerIds) : null },
       include: { entity: true, startFinancialYear: true, properties: true },
     });
     await logAudit("PORTFOLIO_PLAN_CREATED", { targetType: "PortfolioPlan", targetId: plan.id, data: { name: plan.name } });
@@ -88,10 +91,10 @@ portfolioPlansRouter.post(
 portfolioPlansRouter.put(
   "/:id",
   asyncHandler(async (req, res) => {
-    const parsed = planInput.partial().parse(req.body);
+    const { borrowerIds, ...parsed } = planInput.partial().parse(req.body);
     const plan = await prisma.portfolioPlan.update({
       where: { id: req.params.id },
-      data: parsed,
+      data: { ...parsed, ...(borrowerIds ? { borrowerIds: borrowerIds.length ? JSON.stringify(borrowerIds) : null } : {}) },
       include: { entity: true, startFinancialYear: true, properties: true },
     });
     await logAudit("PORTFOLIO_PLAN_CHANGED", { targetType: "PortfolioPlan", targetId: plan.id, data: parsed });
@@ -228,6 +231,7 @@ portfolioPlansRouter.post(
           refinanceLvrTarget: source.refinanceLvrTarget,
           depositPercent: source.depositPercent,
           startingCash: source.startingCash,
+          borrowerIds: source.borrowerIds,
           notes: source.notes,
           basePlanId: source.id,
           holdings: { create: source.holdings.map((h) => ({ assetId: h.assetId })) },
@@ -349,5 +353,15 @@ portfolioPlansRouter.get(
       return;
     }
     res.json(projection);
+  })
+);
+
+/** "Can you borrow it?" — each year's new borrowing against roughly what a lender might lend (services/planBorrowing.ts). */
+portfolioPlansRouter.get(
+  "/:id/borrowing",
+  asyncHandler(async (req, res) => {
+    const check = await planBorrowingCheck(req.params.id);
+    if (!check) throw new HttpError(404, "Portfolio plan not found");
+    res.json(check);
   })
 );

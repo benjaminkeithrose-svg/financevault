@@ -1196,13 +1196,20 @@ const SECTIONS: Section[] = [
   {
     id: "property-profit",
     title: "Property profit after tax",
-    keywords: "yield net yield after tax negative gearing land tax running costs depreciation income salary rental profit property profit",
+    keywords: "yield net yield after tax negative gearing land tax running costs depreciation income salary rental profit property profit year by year history past year trend graph",
     body: (
       <>
         <p>
           <Link to="/reports">Reports</Link> → <strong>Property Profit</strong> shows what each investment property really returns
           in a year, best first — so a property that looks like a 4% yield but is closer to 2% after costs is spotted before tax
           time.
+        </p>
+        <p>
+          <strong>Year by year.</strong> Each property's figures for the financial year are saved as you go, and when 30 June passes
+          that year's are kept. <strong>Profit year by year</strong> (on the property's page, and under each property in the
+          report) shows rent against costs and interest as bars, and the cash left as a line. For years before you started,{" "}
+          <strong>Add a past year</strong> and type in the rent, costs and interest from that year's tax return or your
+          accountant's rental schedule — the interest fills itself in if you've read that year's loan statement.
         </p>
         <ol>
           <li>Rent, less running costs and land tax — the <strong>net yield</strong>.</li>
@@ -1698,7 +1705,7 @@ const SECTIONS: Section[] = [
   {
     id: "portfolio-plan",
     title: "Portfolio Plan",
-    keywords: "projection future purchases refinance equity draw funding source home usable growth graph chart timeline cash pool short what if copy compare owned stamp duty transfer duty buying costs gst going concern deposit cash",
+    keywords: "projection future purchases refinance equity draw funding source home usable growth graph chart timeline cash pool short what if copy compare owned borrow borrowing capacity lender serviceability stamp duty transfer duty buying costs gst going concern deposit cash",
     body: (
       <>
         <p>
@@ -1724,6 +1731,15 @@ const SECTIONS: Section[] = [
           contribution, rent less interest and funding costs, equity drawn and cash released by refinancing, and takes off
           the cash each purchase needs. If it goes below zero in any year, a note at the top says which years and by how
           much.
+        </p>
+        <p>
+          <strong>Can you borrow it?</strong> Each year the plan borrows — purchase loans, equity drawn, and what refinancing
+          adds — is checked against roughly what a lender might lend you then, worked out like the{" "}
+          <Link to="/borrowing">How much could I borrow?</Link> page: your incomes and loans from the records, plus the rent and
+          loans of the plan's properties bought by then, with the lender's buffer on the rate. Each year says{" "}
+          <strong>Fine</strong>, <strong>Some lenders only</strong> (between the careful and generous estimates, or past 6× your
+          income) or <strong>Likely too much</strong>, and a note at the top names any year that's tight. <strong>Change who</strong>{" "}
+          picks whose income backs the plan (everyone with a salary, unless you choose). Incomes are held at today's level.
         </p>
         <p>
           <strong>What-if versions.</strong> <em>Make a what-if copy</em> copies the whole plan. Change anything in the copy

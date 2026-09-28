@@ -3,6 +3,11 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.11.0 — 28 September 2026
+- Portfolio Plans: "Can you borrow it?" — each year the plan borrows (to buy, equity drawn, refinancing) checked against roughly what a lender might lend you then, counting the rent and loans of the plan's earlier purchases. Each year says Fine, Some lenders only, or Likely too much, and a note at the top names any tight year. "Change who" picks whose income backs the plan.
+- Property profit, year by year: each property's rent, costs, interest and cash left are saved for the financial year and kept after 30 June. "Profit year by year" on the property's page (and in the Property Profit report) shows them as a graph. "Add a past year" takes figures from old tax returns; the interest fills in from that year's loan statement.
+- The borrowing page and the plans now gather incomes and loans the same way.
+
 ## 1.10.0 — 28 September 2026
 - Read a loan statement: on a loan's page, "Read a statement" and choose a PDF, a photo or a CSV from your lender. The app finds the balance and its date, the interest rate and any rate changes, the repayment and the interest charged, and shows them next to what's recorded. Tick what to take. A whole financial year's statement gives that year's interest for tax, with the statement kept as the proof. An older statement never winds the loan back.
 - Each loan's interest rate and balance over the years, as graphs. Every statement, rate change and edit adds a point; "Add a rate from before" fills in years you have no papers for.

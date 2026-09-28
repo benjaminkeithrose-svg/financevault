@@ -6,6 +6,7 @@ import { relinkMovedDocuments } from "./services/paths.js";
 import { ensureMonthlySnapshot } from "./services/monthlySnapshot.js";
 import { runMirror } from "./services/mirror.js";
 import { startDailyCheck } from "./services/onlineUpdate.js";
+import { saveCurrentProfitYear } from "./services/profitHistory.js";
 
 const PORT = Number(process.env.PORT) || 4000;
 
@@ -43,6 +44,12 @@ setInterval(() => void runMirror(), 15 * 60 * 1000).unref();
 const monthly = () => ensureMonthlySnapshot().catch((err) => console.error("Monthly net worth snapshot failed:", err));
 void monthly();
 setInterval(monthly, 6 * 60 * 60 * 1000).unref();
+
+// Each property's profit this financial year, kept for the year-on-year graph
+// (last year's becomes final after 30 June).
+const profitYear = () => saveCurrentProfitYear().catch((err) => console.error("Saving this year's property profit failed:", err));
+setTimeout(profitYear, 60_000).unref();
+setInterval(profitYear, 6 * 60 * 60 * 1000).unref();
 
 // The installed program: once a day, is there a newer version on GitHub?
 // (Only asks; installing waits for "Download and install".)

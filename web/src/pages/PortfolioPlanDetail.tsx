@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { api, CommercialProperty, PlanProperty, PlanPropertyProjection, PortfolioPlan, PortfolioPlanProjection, Property } from "../api/client.js";
+import { api, CommercialProperty, PlanBorrowingCheck, PlanProperty, PlanPropertyProjection, PortfolioPlan, PortfolioPlanProjection, Property } from "../api/client.js";
 import { DrawEquityForm } from "../components/DrawEquityForm.js";
 import { EquitySourceCheck } from "../components/EquitySourceCheck.js";
 import { CashChart, GrowthChart, PlanTimeline } from "../components/PlanCharts.js";
+import { PlanBorrowingCard } from "../components/PlanBorrowingCard.js";
 import { formatCurrency, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { IconBin } from "../components/icons.js";
@@ -57,6 +58,7 @@ export function PortfolioPlanDetail() {
   const [holdingPick, setHoldingPick] = useState("");
   const [holdingError, setHoldingError] = useState<string | null>(null);
   const [copying, setCopying] = useState(false);
+  const [borrowing, setBorrowing] = useState<PlanBorrowingCheck | null>(null);
 
   function load() {
     if (!id) return;
@@ -83,6 +85,7 @@ export function PortfolioPlanDetail() {
       } else setCompare(null);
     }).catch((e: Error) => setLoadError(e.message));
     api.portfolioPlans.projection(id).then(setProjection);
+    api.portfolioPlans.borrowing(id).then(setBorrowing).catch(() => setBorrowing(null));
   }
 
   useEffect(load, [id]);
@@ -320,6 +323,14 @@ export function PortfolioPlanDetail() {
         </div>
       )}
 
+      {borrowing && borrowing.overYears.length > 0 && (
+        <div className="message-box warning">
+          <strong>Borrowing may not be possible in {borrowing.overYears.length === 1 ? "one year" : `${borrowing.overYears.length} years`}.</strong>{" "}
+          {borrowing.overYears.map((y) => `Year ${y.yearNumber}: ${y.status === "TOO_MUCH" ? "likely too much" : "some lenders only"}`).join(" · ")}. See
+          Can you borrow it? below.
+        </div>
+      )}
+
       {projection && (
         <div className="card">
           <h3 style={{ marginTop: 0 }}>The plan at a glance</h3>
@@ -329,6 +340,8 @@ export function PortfolioPlanDetail() {
           <p className="cap-explain">Point at a bar, dot or marker to see its figures. The tables further down have them all.</p>
         </div>
       )}
+
+      {borrowing && id && <PlanBorrowingCard planId={id} check={borrowing} onChange={load} />}
 
       <div className="card">
         <h3>Assumptions</h3>

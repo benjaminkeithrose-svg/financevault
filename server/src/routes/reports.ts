@@ -5,7 +5,10 @@ import { computeDisposal } from "../services/cgt.js";
 import { capitalGainsForYear } from "../services/cgtReport.js";
 import { describeVehicle, monthlyRepayment } from "../services/debts.js";
 import { positionsForAccount } from "../services/positions.js";
-import { asyncHandler } from "../middleware/errorHandler.js";
+import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
+import { z } from "zod";
+import { profitHistory, saveCurrentProfitYear } from "../services/profitHistory.js";
+import { logAudit } from "../services/audit.js";
 import { incomeAndSpending } from "../services/cashflow.js";
 
 export const reportsRouter = Router();
@@ -74,6 +77,65 @@ reportsRouter.get(
   "/property-profit",
   asyncHandler(async (_req, res) => {
     res.json(await propertyProfit());
+    // This year's figures, kept for the year-on-year graph.
+    void saveCurrentProfitYear().catch((e) => console.error("Saving this year's property profit failed:", e));
+  })
+);
+
+// Year on year — see services/profitHistory.ts.
+reportsRouter.get(
+  "/property-profit/:assetId/years",
+  asyncHandler(async (req, res) => {
+    res.json(await profitHistory(req.params.assetId));
+  })
+);
+
+const pastYearInput = z.object({
+  fyLabel: z.string().regex(/^20\d{2}-\d{2}$/, "A financial year like 2023-24"),
+  rent: z.number().min(0),
+  costs: z.number().min(0),
+  interest: z.number().min(0),
+  depreciation: z.number().min(0).optional(),
+  note: z.string().max(500).nullable().optional(),
+});
+
+/** A past year typed in from an old tax return or the accountant's rental schedule. */
+reportsRouter.post(
+  "/property-profit/:assetId/years",
+  asyncHandler(async (req, res) => {
+    const asset = await prisma.asset.findUnique({ where: { id: req.params.assetId } });
+    if (!asset) throw new HttpError(404, "Property not found");
+    const y = pastYearInput.parse(req.body);
+    const depreciation = y.depreciation ?? 0;
+    const cashBeforeTax = y.rent - y.costs - y.interest;
+    const data = {
+      rent: y.rent,
+      costs: y.costs,
+      interest: y.interest,
+      depreciation,
+      taxResult: cashBeforeTax - depreciation,
+      cashBeforeTax,
+      cashAfterTax: null,
+      source: "ENTERED",
+      final: true,
+      note: y.note ?? null,
+    };
+    const year = await prisma.propertyProfitYear.upsert({
+      where: { assetId_fyLabel: { assetId: asset.id, fyLabel: y.fyLabel } },
+      create: { assetId: asset.id, fyLabel: y.fyLabel, ...data },
+      update: data,
+    });
+    await logAudit("PROPERTY_PROFIT_YEAR_ENTERED", { targetType: "PropertyProfitYear", targetId: year.id, data: { fyLabel: y.fyLabel } });
+    res.status(201).json(year);
+  })
+);
+
+reportsRouter.delete(
+  "/property-profit/years/:id",
+  asyncHandler(async (req, res) => {
+    await prisma.propertyProfitYear.delete({ where: { id: req.params.id } });
+    await logAudit("PROPERTY_PROFIT_YEAR_REMOVED", { targetType: "PropertyProfitYear", targetId: req.params.id });
+    res.status(204).end();
   })
 );
 

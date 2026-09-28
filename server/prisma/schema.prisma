@@ -515,6 +515,7 @@ model Asset {
   planEquitySources  PlanEquityDraw[]
   planHoldings       PlanHolding[]       @relation("PlanHoldingAsset")
   planPurchases      PlanProperty[]      @relation("PlanPurchaseAsset")
+  profitYears        PropertyProfitYear[]
 
   @@index([entityId])
   @@index([assetType])
@@ -902,6 +903,7 @@ model PortfolioPlan {
   refinanceLvrTarget Float // e.g. 0.70 — default LVR a refinance resets a property's loan back up to
   depositPercent     Float @default(0.3) // default suggested deposit % when adding a new planned property
   startingCash       Float @default(0) // cash on hand at the start, for the cash pool
+  borrowerIds        String? // JSON array of person ids whose income backs the borrowing check; null = everyone with a salary
 
   // A what-if version: a copy of another plan with something changed, to compare against it.
   basePlanId String?
@@ -1817,6 +1819,31 @@ model LoanReading {
   createdAt          DateTime  @default(now())
 
   @@index([liabilityId, asAt])
+}
+
+// A property's profit for one financial year, for the year-on-year graph.
+// AUTO rows are saved by the app from the Property Profit report (the
+// current year keeps updating; a past year is final); ENTERED rows are typed
+// in from an old tax return or the accountant's rental schedule.
+model PropertyProfitYear {
+  id            String   @id @default(cuid())
+  assetId       String
+  asset         Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  fyLabel       String
+  rent          Float
+  costs         Float // running costs and land tax
+  interest      Float
+  depreciation  Float    @default(0) // plant and equipment, and capital works
+  taxResult     Float // what's claimed against the rent: negative = a loss
+  cashBeforeTax Float
+  cashAfterTax  Float?
+  value         Float?
+  source        String // AUTO | ENTERED
+  final         Boolean  @default(false)
+  note          String?
+  updatedAt     DateTime @updatedAt
+
+  @@unique([assetId, fyLabel])
 }
 
 model LoanInterestYear {

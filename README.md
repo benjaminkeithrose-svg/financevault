@@ -481,6 +481,31 @@ isn't safe to sync live, only the documents folder is.
   builds the Setup on Windows, installs it silently, runs a first start and
   an upgrade with it, and uninstalls, checking the records stay.
 
+### Plan borrowing check, property profit history (1.11.0)
+
+- `services/borrowingInputs.ts`: `savedAssumptions()` and
+  `borrowingInputs(personIds)` (incomes with each person's share of rent,
+  and every loan or card they owe on), shared by `routes/borrowing.ts` and
+  the plan check.
+- `services/planBorrowing.ts` (`GET /portfolio-plans/:id/borrowing`): for
+  each plan year, new borrowing = purchase loans (price × LVR) + equity
+  draws + refinance cash; capacity = `residentialEstimate` with the plan's
+  rate as the new-loan rate, base incomes plus that year's planned rent
+  (split between the borrowers) and base debts plus the planned loans at
+  the end of the previous year and earlier draws. Status FINE (≤ careful),
+  SOME_LENDERS (≤ generous, or past the 6× DTI line), TOO_MUCH.
+  `PortfolioPlan.borrowerIds` (JSON person ids; null = everyone with a
+  salary).
+- `PropertyProfitYear` (asset, FY, rent, costs, interest, depreciation,
+  tax result, cash before/after tax, value, AUTO | ENTERED, final):
+  `services/profitHistory.ts` `saveCurrentProfitYear()` upserts the
+  current FY from `propertyProfit()` (never over an ENTERED year) and marks
+  earlier AUTO years final — run at start-up, every 6 hours and when the
+  report is opened. Routes under `/reports/property-profit/:assetId/years`
+  (GET with `interestByYear` from the property's loans' `LoanInterestYear`,
+  POST a past year, DELETE `/reports/property-profit/years/:id`).
+  `components/ProfitHistoryCard.tsx` draws it.
+
 ### Loan statements, rate history, layout samples (1.10.0)
 
 - `services/loanStatement.ts`: `readLoanStatement(text)` finds the period,

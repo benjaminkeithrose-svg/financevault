@@ -2101,6 +2101,8 @@ export interface PortfolioPlan {
   basePlanId?: string | null;
   basePlan?: { id: string; name: string } | null;
   whatIfs?: Array<{ id: string; name: string }>;
+  /** JSON array of person ids whose income backs the borrowing check. */
+  borrowerIds?: string | null;
 }
 
 export type PlanSourceAsset = {
@@ -2110,6 +2112,41 @@ export type PlanSourceAsset = {
   property?: { id: string } | null;
   commercialProperty?: { id: string } | null;
 };
+
+export interface PropertyProfitYear {
+  id: string;
+  assetId: string;
+  fyLabel: string;
+  rent: number;
+  costs: number;
+  interest: number;
+  depreciation: number;
+  taxResult: number;
+  cashBeforeTax: number;
+  cashAfterTax: number | null;
+  value: number | null;
+  /** AUTO (saved by the app) | ENTERED (typed in) */
+  source: string;
+  final: boolean;
+  note: string | null;
+}
+
+export interface PlanBorrowingCheck {
+  people: Array<{ id: string; name: string }>;
+  /** True when the plan names who backs it; false = everyone with a salary. */
+  chosen: boolean;
+  years: Array<{
+    yearNumber: number;
+    newBorrowing: number;
+    parts: string[];
+    capacity: [number, number];
+    dtiLimit: number;
+    status: "FINE" | "SOME_LENDERS" | "TOO_MUCH" | null;
+    reason: string | null;
+  }>;
+  overYears: Array<{ yearNumber: number; status: "SOME_LENDERS" | "TOO_MUCH" }>;
+  notes: string[];
+}
 
 export type PlanTimelineEvent = { yearNumber: number; type: "BUY" | "REFINANCE" | "DRAW_FROM" | "DRAW_FOR"; label: string };
 
@@ -2665,6 +2702,11 @@ export const api = {
 
   reports: {
     propertyProfit: () => request<{ rows: PropertyProfitRow[]; taxYear: string; interestYear: string | null }>("/reports/property-profit"),
+    profitYears: (assetId: string) =>
+      request<{ years: PropertyProfitYear[]; interestByYear: Record<string, number> }>(`/reports/property-profit/${assetId}/years`),
+    addProfitYear: (assetId: string, data: { fyLabel: string; rent: number; costs: number; interest: number; depreciation?: number; note?: string | null }) =>
+      request<PropertyProfitYear>(`/reports/property-profit/${assetId}/years`, { method: "POST", body: JSON.stringify(data) }),
+    removeProfitYear: (id: string) => request<void>(`/reports/property-profit/years/${id}`, { method: "DELETE" }),
     propertyPerformance: () =>
       request<{ rows: PropertyPerformanceRow[]; formula: string }>("/reports/property-performance"),
     investmentPortfolio: () =>
@@ -2782,6 +2824,7 @@ export const api = {
       request<PortfolioPlan>(`/portfolio-plans/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     remove: (id: string) => request<void>(`/portfolio-plans/${id}`, { method: "DELETE" }),
     projection: (id: string) => request<PortfolioPlanProjection>(`/portfolio-plans/${id}/projection`),
+    borrowing: (id: string) => request<PlanBorrowingCheck>(`/portfolio-plans/${id}/borrowing`),
 
     addProperty: (planId: string, data: Record<string, unknown>) =>
       request<PlanProperty>(`/portfolio-plans/${planId}/properties`, { method: "POST", body: JSON.stringify(data) }),
