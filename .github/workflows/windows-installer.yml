@@ -85,20 +85,20 @@ jobs:
             Start-Sleep -Seconds 3
             $env:FV_UPDATE_FEED = "http://127.0.0.1:4199/releases/latest"
             $env:FV_SMOKE_UPDATE = "1"
-            $before = Get-Date
             ./desktop/smoke-test.ps1 -Name update -Passcode "smoke test passcode"
-            # The downloaded Setup runs silently, reinstalls, then starts the program again by itself.
-            # (Windows starts it as the signed-in user, so it opens on the usual data folder, not this test's.)
+            # The downloaded Setup runs silently, reinstalls, then starts the program again by itself —
+            # nothing else starts it here. (Windows starts it as the signed-in user, so it opens on the
+            # usual data folder, not this test's. The Setup keeps its files' build dates, so those can't
+            # show the reinstall.)
+            $smokeEnded = Get-Date
             $deadline = (Get-Date).AddMinutes(5)
             do {
               Start-Sleep -Seconds 5
-              $again = Get-Process -Name "Financial Vault" -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -gt $before }
-              $reinstalled = (Get-Item $env:FV_EXE -ErrorAction SilentlyContinue).LastWriteTime -gt $before
-            } until (($again -and $reinstalled) -or (Get-Date) -gt $deadline)
+              $again = Get-Process -Name "Financial Vault" -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -gt $smokeEnded }
+            } until ($again -or (Get-Date) -gt $deadline)
             Get-Process | Where-Object { $_.ProcessName -like "*Financial*" } | Format-Table ProcessName, Id, StartTime
-            Write-Host "Program file written at $((Get-Item $env:FV_EXE).LastWriteTime); check started at $before"
-            if (-not $reinstalled) { throw "The update's Setup didn't reinstall the program" }
             if (-not $again) { throw "The program didn't start again after the update's Setup ran" }
+            if (Get-Process | Where-Object { $_.ProcessName -like "Financial Vault Setup*" }) { throw "The Setup is still running" }
             Write-Host "Downloaded, checked, backed up, installed silently and started again."
           } finally {
             Stop-Process -Name "Financial Vault" -Force -ErrorAction SilentlyContinue
