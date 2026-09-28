@@ -3,6 +3,12 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.9.1 — 28 September 2026
+- Add a loan straight from a property's page: under Financing, "Add a loan". It's recorded as secured on that property and owed by its owner, and once saved you can add its documents — the loan contract, statements — right there, filed with that loan. The same on commercial properties and vehicles (no more going to the Loans page).
+- Each loan on a property's page has "Its documents", to see and add that loan's documents without leaving the page.
+- "Needs confirmation" on a new document is now amber rather than red — red is kept for deleting and errors.
+- On a phone, a long loan name no longer pushes the property page wider than the screen.
+
 ## 1.9.0 — 28 September 2026
 - Portfolio Plans now show the plan as graphs: what it's all worth, what's owed and your equity; each year's cash with the cash you'd have in hand; and a timeline of when each property is bought, refinanced or drawn on.
 - Bring the properties you already own into a plan. Their value, loans and rent come from your records and grow with the plan, so it starts from what you have rather than from nothing. Equity drawn from one adds to its loan.

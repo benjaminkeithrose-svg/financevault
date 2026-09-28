@@ -9,11 +9,12 @@ import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
 import { UsableEquityCard } from "../components/UsableEquityCard.js";
 import { PropertyCostsCard } from "../components/PropertyCostsCard.js";
-import { formatCurrency, formatDate, humanize, PROPERTY_USES, propertyUse } from "../utils.js";
+import { formatCurrency, PROPERTY_USES, propertyUse } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
 import { useTrailTitle } from "../trail.js";
 import { RemindersCard } from "../components/RemindersCard.js";
+import { SecuredLoansCard } from "../components/SecuredLoansCard.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -172,41 +173,17 @@ export function PropertyDetail() {
         </div>
 
         <div className="card">
-          <h3 style={{ marginTop: 0 }}>Financing</h3>
-          {liabilities.length === 0 ? (
-            <p className="empty-state">No loan linked. Add one from the Loans page and set this property as security.</p>
-          ) : (
-            liabilities.map((l) => (
-              <table key={l.id}>
-                <tbody>
-                  <tr>
-                    <td>Lender</td>
-                    <td>{l.lender || "—"}</td>
-                  </tr>
-                  <tr>
-                    <td>Balance</td>
-                    <td>{formatCurrency(l.currentBalance)}</td>
-                  </tr>
-                  <tr>
-                    <td>Interest rate</td>
-                    <td>{l.interestRate ? `${l.interestRate}%` : "—"}</td>
-                  </tr>
-                  <tr>
-                    <td>Type</td>
-                    <td>{l.loanType ? humanize(l.loanType) : "—"}</td>
-                  </tr>
-                  <tr>
-                    <td>Repayment</td>
-                    <td>{formatCurrency(l.repaymentAmount)}</td>
-                  </tr>
-                  <tr>
-                    <td>Fixed period ends</td>
-                    <td>{formatDate(l.fixedPeriodEnds)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            ))
-          )}
+          <SecuredLoansCard
+            bare
+            title="Financing"
+            kind="residential"
+            securityId={property.id}
+            ownerEntityId={property.asset?.entityId ?? property.entityId}
+            name={property.asset?.name ?? property.address}
+            defaultType={["HOME", "HOME_PART_RENTED"].includes(propertyUse(property).value) ? "HOME_LOAN" : "INVESTMENT_LOAN"}
+            loans={liabilities}
+            onChange={load}
+          />
 
           <h3>Income, expenses & capital</h3>
           <p style={{ color: "var(--text-muted)", fontSize: 13 }}>

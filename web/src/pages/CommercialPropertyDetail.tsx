@@ -6,6 +6,7 @@ import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { SoldPanel } from "../components/SoldPanel.js";
 import { InsurancePanel } from "../components/InsurancePanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
+import { SecuredLoansCard } from "../components/SecuredLoansCard.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
 import { UsableEquityCard } from "../components/UsableEquityCard.js";
 import { PropertyCostsCard } from "../components/PropertyCostsCard.js";
@@ -1111,26 +1112,15 @@ export function CommercialPropertyDetail() {
         )}
       </div>
 
-      <div className="card">
-        <h3 style={{ marginTop: 0 }}>Loans</h3>
-        {(property.loans || []).length === 0 ? (
-          <p className="empty-state">No loan secured against this property. Add one from the Loans page.</p>
-        ) : (
-          <table>
-            <tbody>
-              {(property.loans || []).map((l) => (
-                <tr key={l.id}>
-                  <td>{l.name}</td>
-                  <td>{l.lender || "—"}</td>
-                  <td>{formatCurrency(l.currentBalance)}</td>
-                  <td>{l.interestRate ? `${l.interestRate}%` : "—"}</td>
-                  <td>{l.interestOnly ? "Interest-only" : "P&I"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <SecuredLoansCard
+        kind="commercial"
+        title="Financing"
+        securityId={property.id}
+        ownerEntityId={property.asset?.entityId ?? property.entityId}
+        name={property.name}
+        loans={property.loans || []}
+        onChange={load}
+      />
 
       {property.asset && <AssetOwnershipPanel asset={property.asset} entities={entities} onChange={load} />}
 

@@ -7,7 +7,8 @@ import { SoldPanel } from "../components/SoldPanel.js";
 import { InsurancePanel } from "../components/InsurancePanel.js";
 import { BusinessUseCard } from "../components/BusinessUseCard.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
-import { assetListRoute, assetTypeLabel, describeVehicle, formatCurrency, humanize, itemCategoryLabel, ITEM_CATEGORIES, monthlyEquivalent, vehicleTypeLabel } from "../utils.js";
+import { SecuredLoansCard } from "../components/SecuredLoansCard.js";
+import { assetListRoute, assetTypeLabel, describeVehicle, formatCurrency, humanize, itemCategoryLabel, ITEM_CATEGORIES, vehicleTypeLabel } from "../utils.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
 import { MaintenancePanel } from "../components/MaintenancePanel.js";
 import { EMPTY_VEHICLE_FIELDS, VehicleFields, vehicleFieldsPayload } from "../components/VehicleFields.js";
@@ -230,36 +231,23 @@ export function AssetDetail() {
       </div>
 
       {isVehicle && (
-        <div className="card">
-          <div className="toolbar" style={{ justifyContent: "space-between" }}>
-            <h3 style={{ margin: 0 }}>Loans for this {asset.vehicleType === "BOAT" || asset.vehicleType === "JET_SKI" ? "boat" : "vehicle"}</h3>
-            <Link className="btn secondary" to={`/vehicle-loans?newLoanFor=${asset.id}`}>
-              Add a loan
-            </Link>
-          </div>
-          {loans.length === 0 ? (
-            <p className="empty-state">No loan recorded against it.</p>
-          ) : (
-            <ul style={{ paddingLeft: 18 }}>
-              {loans.map((l) => {
-                const monthly = monthlyEquivalent(l.repaymentAmount, l.repaymentFrequency);
-                return (
-                  <li key={l.id}>
-                    <Link to={`/liabilities/${l.id}`}>{l.name}</Link> — {formatCurrency(l.currentBalance)} owing
-                    {l.lender ? ` with ${l.lender}` : ""}
-                    {monthly ? ` · ${formatCurrency(monthly)} a month` : ""}
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+        <>
+          <SecuredLoansCard
+            kind="vehicle"
+            title={`Loans for this ${asset.vehicleType === "BOAT" || asset.vehicleType === "JET_SKI" ? "boat" : "vehicle"}`}
+            securityId={asset.id}
+            ownerEntityId={asset.entityId}
+            name={describeVehicle({ ...asset, registration: null })}
+            loans={loans}
+            onChange={load}
+          />
           {loans.length > 0 && asset.currentValue ? (
-            <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
-              Equity: {formatCurrency(asset.currentValue - loans.reduce((s, l) => s + (l.currentBalance ?? 0), 0))} (value
-              less what's owing).
+            <p style={{ color: "var(--text-muted)", fontSize: 13, marginTop: -8 }}>
+              Equity: {formatCurrency(asset.currentValue - loans.reduce((s, l) => s + (l.currentBalance ?? 0), 0))} (value less what's
+              owing).
             </p>
           ) : null}
-        </div>
+        </>
       )}
 
       {hasUpkeep && (

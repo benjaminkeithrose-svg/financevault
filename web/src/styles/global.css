@@ -409,6 +409,8 @@ h1, h2, h3, h4 {
   display: grid;
   gap: 16px;
 }
+/* A long line inside one box mustn't widen the whole row past the screen. */
+.grid > * { min-width: 0; }
 
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
@@ -455,9 +457,10 @@ h1, h2, h3, h4 {
 
 .badge.status-PENDING_CLASSIFICATION,
 .badge.status-PENDING,
-.badge.status-MISSING { background: var(--warning-bg); color: var(--warning); }
+.badge.status-MISSING,
+/* Needs attention, not an error: amber (red is kept for delete and errors). */
 .badge.status-NEEDS_CONFIRMATION,
-.badge.status-MISSING_INFORMATION { background: var(--danger-bg); color: var(--danger); }
+.badge.status-MISSING_INFORMATION { background: var(--warning-bg); color: var(--warning); }
 .badge.status-CONFIRMED,
 .badge.status-LOGGED { background: var(--success-bg); color: var(--success); }
 .badge.status-ARCHIVED,

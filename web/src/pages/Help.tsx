@@ -892,7 +892,7 @@ const SECTIONS: Section[] = [
   {
     id: "loans-assets",
     title: "Loans, other liabilities and other assets",
-    keywords: "mortgage credit card personal loan car vehicle super superannuation equipment ownership share",
+    keywords: "mortgage credit card personal loan car vehicle super superannuation equipment ownership share add a loan financing property documents contract",
     body: (
       <>
         <p>
@@ -901,6 +901,12 @@ const SECTIONS: Section[] = [
           so its LVR can be shown), <Link to="/vehicle-loans">Vehicle &amp; boat loans</Link>,{" "}
           <Link to="/credit-cards">Credit cards</Link>, and <Link to="/liabilities">Personal &amp; other debts</Link> for
           everything else. The links at the top of the page jump to each section.
+        </p>
+        <p>
+          <strong>Quicker from the property or vehicle itself:</strong> on its page, under <strong>Financing</strong> (or
+          Loans for this vehicle), click <strong>Add a loan</strong>. It's recorded as secured on that property and owed by
+          its owner. Once it's saved, add its documents right there — the loan contract, statements — and they're filed with
+          that loan. <strong>Its documents</strong> on each loan shows and adds them later.
         </p>
         <p>
           For every loan, enter the <strong>repayment amount</strong> and how often it's <strong>paid</strong> (weekly,
