@@ -1643,7 +1643,7 @@ const SECTIONS: Section[] = [
   {
     id: "portfolio-plan",
     title: "Portfolio Plan",
-    keywords: "projection future purchases refinance equity growth stamp duty transfer duty buying costs gst going concern deposit cash",
+    keywords: "projection future purchases refinance equity draw funding source home usable growth stamp duty transfer duty buying costs gst going concern deposit cash",
     body: (
       <>
         <p>
@@ -1658,6 +1658,13 @@ const SECTIONS: Section[] = [
           general rates for 2026-27 unless you enter the figure. First home buyer concessions and the foreign buyer
           surcharge aren't included. A tenanted commercial property sold as a going concern is usually GST-free; tick
           <em> GST payable</em> if it isn't. The totals table has a <strong>Cash to buy</strong> column for each year.
+        </p>
+        <p>
+          <strong>Equity from a property you own.</strong> Under a planned property, <em>Add funding source</em> and pick
+          the property the money comes from — your home, a rental, a holiday home or a commercial property. The plan
+          shows what's recorded for it: its value, what's owed on loans secured by it, and roughly how much a lender might
+          let you draw (80% of its value unless you've entered your lender's maximum on its page). If its value isn't
+          entered yet you can still plan the draw; enter the value on the property's page to see the estimate.
         </p>
         <p>It's a planning tool built from your own assumptions, not a forecast or advice.</p>
       </>

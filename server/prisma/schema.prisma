@@ -511,6 +511,7 @@ model Asset {
   insurancePolicies  InsurancePolicy[]
   logbooks           VehicleLogbook[]
   vehicleYears       VehicleYear[]
+  planEquitySources  PlanEquityDraw[]
 
   @@index([entityId])
   @@index([assetType])
@@ -962,6 +963,12 @@ model PlanEquityDraw {
   yearNumber     Int // year this funding cost starts applying
   amount         Float
   interestRate   Float? // null = use the plan's default interestRate
+
+  // The property the equity comes from — any property owned (home, rental
+  // or commercial). sourceCommercialPropertyId is the older, commercial-only
+  // link, kept filled in for commercial properties.
+  sourceAssetId String?
+  sourceAsset   Asset?  @relation(fields: [sourceAssetId], references: [id], onDelete: SetNull)
 
   sourceCommercialPropertyId String?
   sourceCommercialProperty   CommercialProperty? @relation(fields: [sourceCommercialPropertyId], references: [id])

@@ -1,11 +1,16 @@
 import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
-import { asyncHandler } from "../middleware/errorHandler.js";
+import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
 import { NSW_DUTY_RATES_YEAR, nswTransferDuty } from "../services/nswDuty.js";
 
 export const portfolioPlansRouter = Router();
+
+// The property an equity draw comes from, with where its page is.
+const sourceAssetSelect = {
+  select: { id: true, name: true, disposalDate: true, property: { select: { id: true } }, commercialProperty: { select: { id: true } } },
+} as const;
 
 portfolioPlansRouter.get(
   "/",
@@ -32,7 +37,7 @@ portfolioPlansRouter.get(
           include: {
             refinances: { orderBy: { yearNumber: "asc" } },
             commercialProperty: true,
-            equityDraws: { include: { sourceCommercialProperty: true, liability: { select: { id: true, name: true } } }, orderBy: { yearNumber: "asc" } },
+            equityDraws: { include: { sourceAsset: sourceAssetSelect, sourceCommercialProperty: true, liability: { select: { id: true, name: true } } }, orderBy: { yearNumber: "asc" } },
           },
           orderBy: { acquisitionYearNumber: "asc" },
         },
@@ -175,17 +180,34 @@ const equityDrawInput = z.object({
   yearNumber: z.number().int().min(1),
   amount: z.number(),
   interestRate: z.number().optional().nullable(),
+  // Any property owned: its asset. The older commercial-only link is still accepted.
+  sourceAssetId: z.string().optional().nullable(),
   sourceCommercialPropertyId: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
 });
 
+/** Fills in both links to the source property, whichever one was given. */
+async function drawSource(input: { sourceAssetId?: string | null; sourceCommercialPropertyId?: string | null }) {
+  if (input.sourceAssetId) {
+    const asset = await prisma.asset.findUnique({ where: { id: input.sourceAssetId }, include: { commercialProperty: { select: { id: true } } } });
+    if (!asset) throw new HttpError(400, "That property isn't in your records");
+    return { sourceAssetId: asset.id, sourceCommercialPropertyId: asset.commercialProperty?.id ?? null };
+  }
+  if (input.sourceCommercialPropertyId) {
+    const cp = await prisma.commercialProperty.findUnique({ where: { id: input.sourceCommercialPropertyId } });
+    if (!cp) throw new HttpError(400, "That property isn't in your records");
+    return { sourceAssetId: cp.assetId, sourceCommercialPropertyId: cp.id };
+  }
+  return { sourceAssetId: null, sourceCommercialPropertyId: null };
+}
+
 portfolioPlansRouter.post(
   "/properties/:propertyId/equity-draws",
   asyncHandler(async (req, res) => {
-    const parsed = equityDrawInput.parse(req.body);
+    const { sourceAssetId, sourceCommercialPropertyId, ...parsed } = equityDrawInput.parse(req.body);
     const draw = await prisma.planEquityDraw.create({
-      data: { planPropertyId: req.params.propertyId, ...parsed },
-      include: { sourceCommercialProperty: true },
+      data: { planPropertyId: req.params.propertyId, ...parsed, ...(await drawSource({ sourceAssetId, sourceCommercialPropertyId })) },
+      include: { sourceAsset: sourceAssetSelect, sourceCommercialProperty: true },
     });
     await logAudit("PLAN_EQUITY_DRAW_ADDED", { targetType: "PlanEquityDraw", targetId: draw.id });
     res.status(201).json(draw);

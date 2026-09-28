@@ -757,14 +757,16 @@ from inception through to trending it against what actually happened.
   material tend to make equity pulled out for a deposit look like money
   that just appeared — the ongoing cost of servicing it disappears. A
   planned property can now have a **funding source**: equity drawn from a
-  REAL property you already own (elsewhere in the system, not this plan),
+  REAL property you already own (elsewhere in the system, not this plan —
+  since 1.7.1 any property: home, rental, holiday home or commercial),
   at an explicit amount and rate. From that year on, the projection charges
   that draw's interest cost against the funded property's own cashflow —
   shown as "Funding cost" and "Net after funding" alongside the ordinary
   figures — and reports the year it actually becomes positively geared
   once that cost is included, not just when its own rent covers its own
-  loan. The source property's current value/debt/LVR is shown live as a
-  headroom check. (Refinancing a property that's already *in* the plan is
+  loan. The source property's current value, debt secured on it and usable
+  equity (value × lender's maximum LVR − debt) are shown live as a headroom
+  check, or a note saying its value isn't entered yet. (Refinancing a property that's already *in* the plan is
   unaffected — its cost was always captured correctly via its own higher
   loan balance after the refinance, so this only covers the previously
   invisible case: drawing on an existing, otherwise-untouched asset.)

@@ -30,7 +30,21 @@ export function UsableEquityCard({ assetId }: { assetId: string }) {
     load();
   }
 
-  if (!data?.equity) return null;
+  if (!data) return null;
+  if (!data.equity) {
+    // No value yet: say what's needed rather than hiding the card.
+    return (
+      <div className="card">
+        <h3 style={{ margin: 0 }}>
+          Usable equity <HelpLink topic="loan-purposes" />
+        </h3>
+        <p className="cap-explain">
+          Enter its "Current estimated value" on this page and save, to see roughly how much a lender might let you borrow against
+          it. Loans secured by it are taken off automatically.
+        </p>
+      </div>
+    );
+  }
   const e = data.equity;
   return (
     <div className="card">

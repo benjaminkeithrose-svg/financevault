@@ -3,6 +3,12 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.7.1 — 28 September 2026
+- Portfolio Plan: equity for a planned purchase can now come from any property you own — your home, a rental, a holiday home or a commercial property. Before, only commercial properties were offered, so a home or rental couldn't be picked.
+- Picking the property shows its value, what's owed on it and roughly how much could be drawn — or, if its value isn't entered yet, says so and where to enter it. The draw can still be planned either way.
+- A property's "Usable equity" card now shows even before its value is entered, saying what to fill in, instead of not appearing at all.
+- Adding a funding source without the year or amount now says what's missing, rather than doing nothing.
+
 ## 1.7.0 — 28 September 2026
 - Checked against the ATO's 2026 guides. Two new ways a property can be used: "Holiday home, also rented" and "Our home, part rented" (a room or granny flat let). Enter the rented share of its costs on the property's page and the profit report claims only that share.
 - Holiday homes you also rent out follow the ATO's new ruling (TR 2026/1): if it isn't mainly used to earn rent — say you keep school holidays, Christmas or Easter for yourselves — its interest, rates, land tax, insurance and repairs can't be claimed. Answer "Is it mainly used to earn rent?" on its page; the accountant checklist flags it.

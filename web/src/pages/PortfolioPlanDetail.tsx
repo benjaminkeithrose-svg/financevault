@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, CommercialProperty, PlanProperty, PlanPropertyProjection, PortfolioPlan, PortfolioPlanProjection, Property } from "../api/client.js";
 import { DrawEquityForm } from "../components/DrawEquityForm.js";
+import { EquitySourceCheck } from "../components/EquitySourceCheck.js";
 import { formatCurrency, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { IconBin } from "../components/icons.js";
@@ -29,16 +30,7 @@ const emptyPropertyForm = {
   gstPayable: false,
 };
 const emptyRefinanceForm = { yearNumber: "", targetLvr: "" };
-const emptyDrawForm = { yearNumber: "", amount: "", interestRate: "", sourceCommercialPropertyId: "" };
-
-// Live headroom check for a real property being considered as an equity
-// source — informational only, never blocks the draw.
-function headroom(cp: CommercialProperty, targetLvr: number): { value: number; debt: number; lvr: number | null; headroomToTarget: number } | null {
-  const value = cp.asset?.currentValue;
-  if (value === null || value === undefined) return null;
-  const debt = (cp.loans || []).reduce((s, l) => s + (l.currentBalance ?? 0), 0);
-  return { value, debt, lvr: value ? debt / value : null, headroomToTarget: targetLvr * value - debt };
-}
+const emptyDrawForm = { yearNumber: "", amount: "", interestRate: "", sourceAssetId: "" };
 
 export function PortfolioPlanDetail() {
   const { id } = useParams<{ id: string }>();
@@ -59,6 +51,7 @@ export function PortfolioPlanDetail() {
   const [refinanceForm, setRefinanceForm] = useState(emptyRefinanceForm);
   const [drawFormFor, setDrawFormFor] = useState<string | null>(null);
   const [drawForm, setDrawForm] = useState(emptyDrawForm);
+  const [drawError, setDrawError] = useState<string | null>(null);
 
   function load() {
     if (!id) return;
@@ -171,13 +164,22 @@ export function PortfolioPlanDetail() {
   }
 
   async function addEquityDraw(propertyId: string) {
-    if (!drawForm.yearNumber || !drawForm.amount) return;
-    await api.portfolioPlans.addEquityDraw(propertyId, {
-      yearNumber: Number(drawForm.yearNumber),
-      amount: Number(drawForm.amount),
-      interestRate: drawForm.interestRate ? Number(drawForm.interestRate) / 100 : null,
-      sourceCommercialPropertyId: drawForm.sourceCommercialPropertyId || null,
-    });
+    if (!drawForm.yearNumber || !drawForm.amount) {
+      setDrawError("Enter the year of the plan it's drawn in, and the amount.");
+      return;
+    }
+    try {
+      await api.portfolioPlans.addEquityDraw(propertyId, {
+        yearNumber: Number(drawForm.yearNumber),
+        amount: Number(drawForm.amount),
+        interestRate: drawForm.interestRate ? Number(drawForm.interestRate) / 100 : null,
+        sourceAssetId: drawForm.sourceAssetId || null,
+      });
+    } catch (e) {
+      setDrawError((e as Error).message);
+      return;
+    }
+    setDrawError(null);
     setDrawForm(emptyDrawForm);
     setDrawFormFor(null);
     load();
@@ -193,6 +195,16 @@ export function PortfolioPlanDetail() {
   }
 
   const linkedIds = new Set((plan.properties || []).map((p) => p.commercialPropertyId).filter(Boolean));
+  // Every property owned and not sold — home, rentals and commercial — as a
+  // place equity could come from.
+  const owned = [
+    ...residential
+      .filter((r) => !r.asset?.disposalDate)
+      .map((r) => ({ assetId: r.assetId, id: r.id, name: r.asset?.name || r.address, page: `/properties/${r.id}`, group: "Homes and rentals" })),
+    ...commercialProperties
+      .filter((cp) => !cp.asset?.disposalDate)
+      .map((cp) => ({ assetId: cp.assetId, id: cp.id, name: cp.name, page: `/commercial-properties/${cp.id}`, group: "Commercial" })),
+  ];
   const finalYear = projection?.portfolioByYear[projection.portfolioByYear.length - 1];
 
   return (
@@ -399,7 +411,7 @@ export function PortfolioPlanDetail() {
                             <div className="item-card-body">
                               <div className="item-card-subtitle">
                                 Year {d.yearNumber} · {formatCurrency(d.amount)} from{" "}
-                                {d.sourceCommercialProperty?.name || "an unspecified source"} at{" "}
+                                {d.sourceAsset?.name || d.sourceCommercialProperty?.name || "an unspecified source"} at{" "}
                                 {d.interestRate ? pct(d.interestRate) : "the plan's default rate"} ·{" "}
                                 {formatCurrency(d.amount * (d.interestRate ?? plan.interestRate))}/yr cost
                               </div>
@@ -424,11 +436,8 @@ export function PortfolioPlanDetail() {
                       .filter((d) => d.id === recordingDraw)
                       .map((d) => {
                         // The property it's drawn from: the plan's source first, then every property owned.
-                        const all = [
-                          ...commercialProperties.filter((cp) => !cp.asset?.disposalDate).map((cp) => ({ assetId: cp.assetId, name: cp.name, id: cp.id })),
-                          ...residential.filter((r) => !r.asset?.disposalDate).map((r) => ({ assetId: r.assetId, name: r.asset?.name ?? r.address, id: r.id })),
-                        ];
-                        const ordered = [...all.filter((x) => x.id === d.sourceCommercialPropertyId), ...all.filter((x) => x.id !== d.sourceCommercialPropertyId)];
+                        const all = owned.map(({ assetId, name, id }) => ({ assetId, name, id }));
+                        const ordered = [...all.filter((x) => x.assetId === d.sourceAssetId), ...all.filter((x) => x.assetId !== d.sourceAssetId)];
                         return (
                           <DrawEquityForm
                             key={d.id}
@@ -442,33 +451,37 @@ export function PortfolioPlanDetail() {
                       })}
                     {drawFormFor === pp.id ? (
                       <div style={{ marginTop: 8 }}>
-                        <label>Source property (optional — leave blank for an unspecified source)</label>
+                        <label>Property the equity comes from (optional)</label>
                         <select
-                          value={drawForm.sourceCommercialPropertyId}
-                          onChange={(e) => setDrawForm({ ...drawForm, sourceCommercialPropertyId: e.target.value })}
+                          value={drawForm.sourceAssetId}
+                          onChange={(e) => setDrawForm({ ...drawForm, sourceAssetId: e.target.value })}
                           style={{ maxWidth: 320 }}
                         >
-                          <option value="">— Unspecified source —</option>
-                          {commercialProperties.map((cp) => (
-                            <option key={cp.id} value={cp.id}>
-                              {cp.name}
-                            </option>
-                          ))}
+                          <option value="">— Not decided yet —</option>
+                          {["Homes and rentals", "Commercial"].map((g) =>
+                            owned.some((o) => o.group === g) ? (
+                              <optgroup key={g} label={g}>
+                                {owned
+                                  .filter((o) => o.group === g)
+                                  .map((o) => (
+                                    <option key={o.assetId} value={o.assetId}>
+                                      {o.name}
+                                    </option>
+                                  ))}
+                              </optgroup>
+                            ) : null
+                          )}
                         </select>
-                        {drawForm.sourceCommercialPropertyId &&
-                          (() => {
-                            const source = commercialProperties.find((cp) => cp.id === drawForm.sourceCommercialPropertyId);
-                            const h = source ? headroom(source, plan.refinanceLvrTarget) : null;
-                            return h ? (
-                              <div className="message-box info">
-                                Currently {formatCurrency(h.value)} value, {formatCurrency(h.debt)} debt (
-                                {pct(h.lvr)} LVR) — about {formatCurrency(h.headroomToTarget)} of headroom to the
-                                plan's {pct(plan.refinanceLvrTarget)} target LVR.
-                              </div>
-                            ) : (
-                              <div className="message-box warning">No current value recorded for this property yet.</div>
-                            );
-                          })()}
+                        {owned.length === 0 && (
+                          <p className="cap-explain">No properties are recorded yet. Add one under Properties to pick it here.</p>
+                        )}
+                        {drawForm.sourceAssetId && (
+                          <EquitySourceCheck
+                            assetId={drawForm.sourceAssetId}
+                            page={owned.find((o) => o.assetId === drawForm.sourceAssetId)?.page ?? "/properties"}
+                          />
+                        )}
+                        {drawError && <div className="message-box error">{drawError}</div>}
                         <div className="toolbar" style={{ marginTop: 8, flexWrap: "wrap" }}>
                           <input
                             type="number"
@@ -499,6 +512,7 @@ export function PortfolioPlanDetail() {
                             onClick={() => {
                               setDrawFormFor(null);
                               setDrawForm(emptyDrawForm);
+                              setDrawError(null);
                             }}
                           >
                             Cancel
@@ -507,7 +521,14 @@ export function PortfolioPlanDetail() {
                       </div>
                     ) : (
                       <div className="toolbar" style={{ marginTop: 8 }}>
-                        <button className="btn secondary" onClick={() => setDrawFormFor(pp.id)}>
+                        <button
+                          className="btn secondary"
+                          onClick={() => {
+                            setDrawFormFor(pp.id);
+                            setDrawForm(emptyDrawForm);
+                            setDrawError(null);
+                          }}
+                        >
                           Add funding source
                         </button>
                       </div>

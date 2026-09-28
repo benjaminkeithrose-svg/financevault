@@ -478,6 +478,7 @@ h1, h2, h3, h4 {
 .message-box.success { background: var(--success-bg); color: var(--success); }
 .message-box.warning { background: var(--warning-bg); color: var(--warning); }
 .message-box.info { background: var(--info-bg); color: var(--info); }
+.message-box.error { background: var(--danger-bg); color: var(--danger); }
 
 /* ---------------------------------------------------------------------- */
 /* Tables (kept for dense/ledger data, not top-level record lists)        */

@@ -1981,6 +1981,9 @@ export interface PlanEquityDraw {
   yearNumber: number;
   amount: number;
   interestRate?: number | null;
+  /** The property the equity comes from: any property owned. */
+  sourceAssetId?: string | null;
+  sourceAsset?: { id: string; name: string; disposalDate?: string | null; property?: { id: string } | null; commercialProperty?: { id: string } | null } | null;
   sourceCommercialPropertyId?: string | null;
   sourceCommercialProperty?: CommercialProperty | null;
   /** Once drawn: the real loan it became, and when. */
