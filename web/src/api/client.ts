@@ -674,6 +674,7 @@ export interface AppInfo {
   version: string;
   dataFolder: string | null;
   canUpdate: boolean;
+  installed?: boolean;
   supervised: boolean;
   previousVersion: string | null;
   lastUpdate: {

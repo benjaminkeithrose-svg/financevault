@@ -125,6 +125,12 @@ export function ProgramUpdates() {
                 onChange={(e) => e.target.files?.[0] && install(e.target.files[0])}
               />
             </>
+          ) : info.installed ? (
+            <p style={{ color: "var(--text-muted)" }}>
+              To update, download the new version's <strong>Financial Vault Setup</strong> file and double-click it. It installs over
+              this one: your records are backed up first, and your records and documents stay where they are. Nothing is downloaded
+              by the app itself.
+            </p>
           ) : (
             <p className="cap-explain">
               Updates are installed when Financial Vault is started from its desktop icon or its Start Financial Vault file.

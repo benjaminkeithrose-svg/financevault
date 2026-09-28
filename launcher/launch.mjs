@@ -43,6 +43,9 @@ const env = {
   FV_DATA_DIR: l.root,
   FV_SUPERVISED: "1",
   FV_EXIT_WHEN_CLOSED: process.env.FV_EXIT_WHEN_CLOSED ?? "1",
+  // The database tools otherwise report their use to Prisma over the internet.
+  CHECKPOINT_DISABLE: "1",
+  PRISMA_HIDE_UPDATE_MESSAGE: "1",
 };
 
 function ping() {

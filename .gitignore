@@ -28,3 +28,7 @@ server/prisma/dev.db-journal
 
 # Release downloads made by npm run release
 financevault-*.zip
+
+# The installable program: build folders (desktop/build.mjs)
+desktop/.stage/
+desktop/.cache/

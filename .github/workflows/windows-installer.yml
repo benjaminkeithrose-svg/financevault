@@ -1,0 +1,84 @@
+# Builds the Windows Setup file on a real Windows computer, installs it,
+# and checks the installed program works: it starts, sets up new records,
+# reads a scanned document, upgrades existing records (backing them up
+# first), and leaves the records in place when it's uninstalled.
+name: Windows installer
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "desktop/**"
+      - ".github/workflows/windows-installer.yml"
+
+jobs:
+  build-and-check:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install the app's libraries
+        run: npm ci --no-audit --no-fund
+
+      - name: Install the desktop build tools
+        working-directory: desktop
+        run: |
+          npm ci --no-audit --no-fund
+          npx install-electron --no
+
+      - name: Build the Setup file
+        working-directory: desktop
+        run: node build.mjs --win
+
+      - name: Install it (silently, for this Windows user)
+        shell: pwsh
+        run: |
+          $setup = Get-ChildItem "desktop/dist" -Filter "Financial Vault Setup *.exe" | Select-Object -First 1
+          Write-Host "Installing $($setup.Name) ($([math]::Round($setup.Length / 1MB)) MB)"
+          Start-Process -FilePath $setup.FullName -ArgumentList "/S" -Wait
+          Start-Sleep -Seconds 5
+          Stop-Process -Name "Financial Vault" -Force -ErrorAction SilentlyContinue
+          $exe = Get-ChildItem "$env:LOCALAPPDATA\Programs" -Recurse -Filter "Financial Vault.exe" | Select-Object -First 1
+          if (-not $exe) { throw "Financial Vault.exe wasn't installed" }
+          Write-Host "Installed at $($exe.FullName)"
+          "FV_EXE=$($exe.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
+          $desktop = [Environment]::GetFolderPath("Desktop")
+          if (-not (Test-Path "$desktop\Financial Vault.lnk")) { throw "No desktop icon" }
+          $start = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Financial Vault.lnk"
+          if (-not (Test-Path $start)) { throw "No Start menu entry" }
+          Write-Host "Desktop icon and Start menu entry are there."
+
+      - name: Check a first start (new records)
+        shell: pwsh
+        run: ./desktop/smoke-test.ps1 -Name first
+
+      - name: Check an upgrade (existing records, previous version)
+        shell: pwsh
+        run: |
+          Set-Content -Path "$env:RUNNER_TEMP\fv-data\.installed-version" -Value "1.4.0"
+          ./desktop/smoke-test.ps1 -Name upgrade -Passcode "smoke test passcode" -ExpectBackup
+
+      - name: Uninstall, and check the records stay
+        shell: pwsh
+        run: |
+          $uninstaller = Get-ChildItem (Split-Path $env:FV_EXE) -Filter "Uninstall*.exe" | Select-Object -First 1
+          Start-Process -FilePath $uninstaller.FullName -ArgumentList "/S" -Wait
+          Start-Sleep -Seconds 5
+          if (Test-Path $env:FV_EXE) { throw "The program is still there after uninstalling" }
+          if (-not (Test-Path "$env:RUNNER_TEMP\fv-data\financevault.db")) { throw "The records went with the program" }
+          Write-Host "Uninstalled; the records are still in the data folder."
+
+      - name: Keep the Setup file
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: financial-vault-setup
+          path: desktop/dist/Financial Vault Setup *.exe
+          retention-days: 7
+          if-no-files-found: ignore

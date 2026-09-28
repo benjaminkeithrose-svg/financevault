@@ -35,7 +35,8 @@ const RASTER_SCALE = 3;
  * no network at all. Dropping `eng.traineddata.gz` into this folder by hand
  * skips the download entirely, for a fully offline install.
  */
-const TESSDATA_DIR = path.join(SERVER_ROOT, "storage", "tessdata");
+// The installed program ships the language data and keeps it in the data folder.
+const TESSDATA_DIR = process.env.FV_TESSDATA_DIR ? path.resolve(process.env.FV_TESSDATA_DIR) : path.join(SERVER_ROOT, "storage", "tessdata");
 
 /**
  * Whether the language data could be loaded, resolved once per process.

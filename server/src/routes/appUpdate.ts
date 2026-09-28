@@ -10,6 +10,7 @@ import {
   dataFolder,
   dataPaths,
   inspectUpdate,
+  installed,
   previousVersion,
   programVersion,
   readLastUpdate,
@@ -23,6 +24,7 @@ export const appUpdateRouter = Router();
 const upload = multer({ dest: os.tmpdir(), limits: { fileSize: 500 * 1024 * 1024 } });
 
 function requireDataFolder(): string {
+  if (installed()) throw new HttpError(400, "This is the installed program: to update it, run the new version's Financial Vault Setup file.");
   const root = dataFolder();
   if (!root) throw new HttpError(400, "Updates are installed when Financial Vault is started with its Start Financial Vault file or desktop icon.");
   return root;
@@ -41,9 +43,10 @@ appUpdateRouter.get(
     res.json({
       version: programVersion(),
       dataFolder: root,
-      canUpdate: !!root,
+      canUpdate: !!root && !installed(),
+      installed: installed(),
       supervised: supervised(),
-      previousVersion: root ? previousVersion(root) : null,
+      previousVersion: root && !installed() ? previousVersion(root) : null,
       lastUpdate: root ? readLastUpdate(root) : null,
     });
   })
@@ -96,7 +99,8 @@ appUpdateRouter.post(
 appUpdateRouter.post(
   "/update-seen",
   asyncHandler(async (_req, res) => {
-    const root = requireDataFolder();
+    const root = dataFolder();
+    if (!root) throw new HttpError(400, "No data folder.");
     const last = readLastUpdate(root);
     if (last) fs.writeFileSync(dataPaths(root).lastUpdate, JSON.stringify({ ...last, seen: true }, null, 2));
     res.status(204).end();

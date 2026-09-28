@@ -29,6 +29,9 @@ export function dataFolder(): string | null {
 
 export const supervised = () => process.env.FV_SUPERVISED === "1";
 
+/** The installed program (Financial Vault Setup): a new version comes as a new Setup file, not a ZIP. */
+export const installed = () => process.env.FV_INSTALLED === "1";
+
 export function dataPaths(root: string) {
   return {
     updates: path.join(root, "Updates"),
