@@ -98,7 +98,10 @@ jobs:
             } until ($again -or (Get-Date) -gt $deadline)
             Get-Process | Where-Object { $_.ProcessName -like "*Financial*" } | Format-Table ProcessName, Id, StartTime
             if (-not $again) { throw "The program didn't start again after the update's Setup ran" }
-            if (Get-Process | Where-Object { $_.ProcessName -like "Financial Vault Setup*" }) { throw "The Setup is still running" }
+            # The Setup closes itself a moment after starting the program.
+            $setupDeadline = (Get-Date).AddMinutes(2)
+            while ((Get-Process | Where-Object { $_.ProcessName -like "Financial Vault Setup*" }) -and (Get-Date) -lt $setupDeadline) { Start-Sleep -Seconds 3 }
+            if (Get-Process | Where-Object { $_.ProcessName -like "Financial Vault Setup*" }) { throw "The Setup didn't finish" }
             Write-Host "Downloaded, checked, backed up, installed silently and started again."
           } finally {
             Stop-Process -Name "Financial Vault" -Force -ErrorAction SilentlyContinue
