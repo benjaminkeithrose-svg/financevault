@@ -15,6 +15,9 @@ describe("reading pages", () => {
       "Tax rates\n15% & 30%"
     );
   });
+  it("turns character codes back into characters (the ATO writes can&#x27;t)", () => {
+    expect(htmlToText("<p>You can&#x27;t claim &#39;this&#39;: 798 &times; 0.88</p>")).toBe("You can't claim 'this': 798 × 0.88");
+  });
   it("spots a withdrawn ruling near the top", () => {
     expect(looksWithdrawn("TR 95/25\nThis ruling has been withdrawn with effect from 1 July.\nMore text")).toMatch(/withdrawn/);
     expect(looksWithdrawn("TR 2000/2\nInterest on redraws. Nothing about withdrawal here.")).toBeNull();

@@ -2537,3 +2537,67 @@ code.path {
     display: none !important;
   }
 }
+
+/* The occupation guide's checklist, on a person's work deductions. */
+.occupation-checklist {
+  border-top: 1px solid var(--border);
+  margin-top: 12px;
+  padding-top: 12px;
+}
+.checklist-heading {
+  margin: 12px 0 4px;
+}
+.plain-list li.checklist-item {
+  display: block;
+  border-bottom: 1px solid var(--border);
+}
+.checklist-item summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 10px;
+  min-height: 44px;
+  padding: 6px 0;
+  cursor: pointer;
+  list-style: none;
+}
+.checklist-item summary::-webkit-details-marker {
+  display: none;
+}
+.checklist-item summary::before {
+  content: "▸";
+  color: var(--text-muted);
+  transition: transform 0.15s;
+}
+.checklist-item details[open] > summary::before {
+  transform: rotate(90deg);
+}
+.checklist-name {
+  font-weight: 600;
+}
+.cap-explain.checklist-status {
+  margin: 0;
+  max-width: 14em;
+  text-align: right;
+}
+.checklist-status.to-record {
+  color: var(--warning);
+}
+.ato-words {
+  padding: 0 0 8px;
+  max-width: 70ch;
+}
+.ato-words p {
+  margin: 6px 0;
+}
+.ato-words ul {
+  margin: 4px 0 6px;
+  padding-left: 20px;
+}
+.plain-list .ato-words li {
+  list-style: disc;
+  border: 0;
+  padding: 2px 0;
+  min-height: 0;
+  display: list-item;
+}

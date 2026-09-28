@@ -64,7 +64,7 @@ export async function readLinkPack(root = REFERENCE_ROOT): Promise<LinkEntry[]> 
   return pack.links;
 }
 
-const ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", ndash: "–", mdash: "—", rsquo: "'", lsquo: "'" };
+const ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", ndash: "–", mdash: "—", rsquo: "'", lsquo: "'", times: "×" };
 
 /** A web page's readable text: no scripts, styles or navigation markup. */
 export function htmlToText(html: string): string {
@@ -75,7 +75,9 @@ export function htmlToText(html: string): string {
     .replace(/<(script|style|noscript|svg|head|nav|header|footer|aside|form)\b[\s\S]*?<\/\1>/gi, " ")
     .replace(/<(br|\/p|\/div|\/li|\/h[1-6]|\/tr)\b[^>]*>/gi, "\n")
     .replace(/<[^>]+>/g, " ")
-    .replace(/&(#\d+|[a-z]+);/gi, (m, e: string) => (e.startsWith("#") ? String.fromCharCode(Number(e.slice(1))) : (ENTITIES[e.toLowerCase()] ?? m)))
+    .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (m, e: string) =>
+      /^#x/i.test(e) ? String.fromCharCode(parseInt(e.slice(2), 16)) : e.startsWith("#") ? String.fromCharCode(Number(e.slice(1))) : (ENTITIES[e.toLowerCase()] ?? m)
+    )
     .replace(/[ \t\r]+/g, " ")
     .replace(/ *\n */g, "\n")
     .replace(/\n\s*\n+/g, "\n")

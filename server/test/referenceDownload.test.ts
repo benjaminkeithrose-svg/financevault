@@ -71,7 +71,25 @@ describe("downloading the library", () => {
       [`${ATO}/ruling`]: html(page(`<h1>TR 2099/1</h1><p>Last updated 2 March 2020</p><a href="/api/public/content/0-99999999-2222-3333-4444-555555555555">Print whole section</a>`)),
       [`${ATO}/api/public/content/0-99999999-2222-3333-4444-555555555555`]: pdf("the whole ruling"),
       [`${ATO}/nsw`]: html(page("<h1>Land tax</h1><p>Thresholds.</p>")),
-      [`${ATO}${SECTION}`]: html(page(`<h1>Guides</h1><a href="${SECTION}/a-d">A–D</a><a href="/x/guides">Up</a><a href="/y/other">Other</a>`)),
+      [`${ATO}${SECTION}`]: html(
+        page(`<h1>Guides</h1><a href="${SECTION}/a-d">A–D</a><a href="/x/guides/l-q/dl-office-income-and-work-related-deductions">Office</a><a href="/x/guides">Up</a><a href="/y/other">Other</a>`)
+      ),
+      // A guide linked straight from the index, with a section and an expenses page below it —
+      // and a link elsewhere on the site, which isn't followed.
+      [`${ATO}/x/guides/l-q/dl-office-income-and-work-related-deductions`]: html(
+        page(
+          `<h1>DL Office workers – income and work-related deductions</h1><p>Last updated 11 May 2026</p><a href="/x/guides/l-q/dl-office-income-and-work-related-deductions/deductions-for-work-expenses">Deductions</a><a href="/x/guides/employees-guide">Employees guide</a>`
+        )
+      ),
+      [`${ATO}/x/guides/l-q/dl-office-income-and-work-related-deductions/deductions-for-work-expenses`]: html(
+        page(`<h1>Deductions for work expenses</h1><p>Print or Download</p><a href="/x/guides/l-q/dl-office-income-and-work-related-deductions/deductions-for-work-expenses/office-worker-expenses-a-f">A–F</a>`)
+      ),
+      [`${ATO}/x/guides/l-q/dl-office-income-and-work-related-deductions/deductions-for-work-expenses/office-worker-expenses-a-f`]: html(
+        page(
+          `<h1>Office worker expenses A–F</h1><p>Print or Download</p><p>Books, periodicals and digital information services</p><p>You can claim a deduction for books connected to your work.</p><p>Child care</p><p>You can&#x27;t claim a deduction for child care.</p><p>QC 1</p>`
+        )
+      ),
+      [`${ATO}/x/guides/employees-guide`]: html(page(`<h1>Employees guide</h1>`)),
       [`${ATO}${SECTION}/a-d`]: html(page(`<h1>A–D</h1><a href="${SECTION}/a-d/dl-nurses">Nurses</a><a href="${ATO}${SECTION}/a-d/dl-cleaners/">Cleaners</a>`)),
       [`${ATO}${SECTION}/a-d/dl-nurses`]: html(
         page(`<h1>DL Nurses and midwives</h1><p>Last updated 20 July 2026</p><a href="/api/public/content/0-11111111-2222-3333-4444-555555555555">Print whole section</a>`)
@@ -85,6 +103,20 @@ describe("downloading the library", () => {
       asked.push(url);
       return site[url] ?? { status: 404, contentType: "text/html", body: Buffer.from("not found") };
     };
+    // A section saved on its own by a download before 1.5.0: replaced by the whole guide.
+    const oldSection = await prisma.document.create({
+      data: {
+        originalFilename: "Occupation guide — Clothing.txt",
+        storedFilename: "old.txt",
+        filePath: "missing/old.txt",
+        mimeType: "text/plain",
+        fileSize: 1,
+        fileHash: `old-section-${Date.now()}`,
+        documentType: "Tax Reference",
+        referenceLinkId: "occupation:occupation-and-industry-specific-guides-a-d-dl-cleaners-clothing",
+        sourceUrl: `${ATO}${SECTION}/a-d/dl-cleaners/clothing`,
+      },
+    });
     const now = new Date("2026-09-27T01:00:00Z");
     const r = await downloadReferencePack({ fetcher, root, outRoot: out, now, pauseMs: 0, zip: false });
 
@@ -96,19 +128,26 @@ describe("downloading the library", () => {
     expect(await doc("dl-ruling")).toMatchObject({ referenceFolder: "ATO/Rulings", mimeType: "application/pdf" });
     expect(await doc("dl-nsw")).toMatchObject({ referenceFolder: "Revenue NSW" });
     const nurses = await doc("occupation:occupation-and-industry-specific-guides-a-d-dl-nurses");
-    expect(nurses).toMatchObject({ referenceFolder: "ATO/Occupation guides/A–D", mimeType: "application/pdf" });
+    // Always the text — a guide's print copy holds only its first page.
+    expect(nurses).toMatchObject({ referenceFolder: "ATO/Occupation guides/A–D", mimeType: "text/plain" });
     expect(nurses!.sourceUpdatedAt!.toISOString().slice(0, 10)).toBe("2026-07-20");
+    // A guide straight off the index: one document, its sections and their pages joined, shelved by the letters in its address.
+    const office = await doc("occupation:l-q-dl-office-income-and-work-related-deductions");
+    expect(office).toMatchObject({ referenceFolder: "ATO/Occupation guides/L–Q", originalFilename: expect.stringMatching(/^Occupation guide — DL Office workers/) });
+    expect(office!.ocrText).toMatch(/Office worker expenses A–F[\s\S]*You can claim a deduction for books/);
+    expect(asked).not.toContain(`${ATO}/x/guides/employees-guide`);
+    expect((await prisma.document.findUnique({ where: { id: oldSection.id } }))!.supersededAt).not.toBeNull();
     // A guide with no print link: its pages joined into one.
     const cleaners = await doc("occupation:occupation-and-industry-specific-guides-a-d-dl-cleaners");
     expect(cleaners!.ocrText).toMatch(/Deductions for cleaners[\s\S]*Uniforms can be claimed/);
-    expect(r.occupationGuides).toBe(2);
+    expect(r.occupationGuides).toBe(3);
     expect(r.failed).toEqual([expect.objectContaining({ title: "DL test moved page" })]);
     expect(asked.some((u) => u.includes("/y/"))).toBe(false);
 
     // The folders and their index.
     expect(fs.existsSync(path.join(out, "ATO", "Rulings", "DL test ruling TR 2099 1.pdf"))).toBe(true);
     expect(fs.readFileSync(path.join(out, "ATO", "Rates and thresholds", "DL test rates.txt"), "utf8")).toMatch(/The rate is 5%/);
-    expect(fs.existsSync(path.join(out, "ATO", "Occupation guides", "A–D", "Occupation guide — DL Nurses and midwives.pdf"))).toBe(true);
+    expect(fs.existsSync(path.join(out, "ATO", "Occupation guides", "A–D", "Occupation guide — DL Nurses and midwives.txt"))).toBe(true);
     const index = fs.readFileSync(path.join(out, "_Index.csv"), "utf8");
     expect(index).toMatch(/ATO\/Rates and thresholds,DL test rates\.txt,DL test rates,2026-07-03,Yes,2026-09-27,2026-09-27/);
     expect(index).toMatch(/ATO\/Rulings,DL test ruling TR 2099 1\.pdf,DL test ruling TR 2099 1,2020-03-02,No/);

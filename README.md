@@ -430,6 +430,34 @@ isn't safe to sync live, only the documents folder is.
   put there before. What's missing expects a current logbook and the
   year's odometer readings for any vehicle with a logbook (kind `RECORD`).
 
+### Occupation deduction checklists (1.5.0)
+
+- `services/occupationGuides.ts`: `parseGuide(text)` reads an ATO
+  occupation guide as the downloader saves it (pages joined, each starting
+  with its title and address) into items from its "… expenses A–F" pages:
+  a heading followed by words about it (not by another heading or a list of
+  links, within the page's letter range, in alphabetical order), its "You
+  can claim" / "You can't claim" sentences and its text with the worked
+  examples left out. `verdict` is CAN when the first thing said is that it
+  can be claimed, CANT when nothing says it can, otherwise DEPENDS;
+  `category` maps it to a work deduction kind.
+- `reference/occupation-guides.json` ships the guides, built from a
+  "Reference downloads" folder with
+  `npx tsx scripts/build-occupation-guides.ts "<folder>"` (in `server`).
+  `guideFor(key)` uses the reference library's copy instead when it has
+  items and isn't older; `guideList()` adds guides found only there.
+- `Person.occupationGuide` (the guide's key, its address's last part);
+  `OccupationItemChoice` (CLAIM | NOT_FOR_ME, per person and item, across
+  years); `WorkDeduction.checklistItem`. `GET /api/payg/guides`,
+  `GET /api/payg/people/:id/checklist?fy=` (with `suggestGuide` from the
+  job title, and a summary: claimed, recorded, to record, without a
+  record), `PUT /api/payg/people/:id/checklist/:itemKey`.
+- The downloader now follows only pages under each page's own address below
+  the index (four levels, 800 pages at most), treats a page one step from
+  the index as a guide unless it's a letters page (A–D), saves each guide
+  whole as text, and marks the per-section copies of earlier downloads
+  replaced. `htmlToText` decodes `&#x27;`-style character codes.
+
 ### Drawing equity, redraws and the quick wins (1.4.0)
 
 - `services/debtAllocation.ts`: `purposeSplit` applies TR 2000/2 — uses in
@@ -457,9 +485,8 @@ isn't safe to sync live, only the documents folder is.
   polled with GET): runs the link-pack check (`checkForNewVersions` — a
   changed page is judged on its text, and the copy kept is the page's
   "Print whole section" PDF when it has one), then crawls the ATO
-  occupation guides from their index (same section, three levels, 400
-  pages at most) and files each guide as one Tax reference (its
-  whole-section PDF, or its pages' text joined), change-checked by hash
+  occupation guides from their index (see 1.5.0) and files each guide as
+  one Tax reference (its pages' text joined), change-checked by hash
   in `ReferenceCheck` (`occupation:<slug>`).
 - `Document.sourceUpdatedAt` is the publisher's "Last updated" date read
   from the page; `Document.referenceFolder` its shelf ("ATO/Rulings",

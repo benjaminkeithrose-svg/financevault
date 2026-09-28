@@ -40,23 +40,24 @@ datasource db {
 // ---------------------------------------------------------------------------
 
 model Person {
-  id           String    @id @default(cuid())
-  name         String
-  dateOfBirth  DateTime?
-  tfn          String?
-  contactInfo  String? // JSON blob: address, phone, email — superseded by the explicit fields below; kept for compatibility, unused by the app
-  notes        String?
-  payFrequency String? // WEEKLY | FORTNIGHTLY | MONTHLY — used to work out expected pay periods for gap detection. Null = not tracked.
+  id              String    @id @default(cuid())
+  name            String
+  dateOfBirth     DateTime?
+  tfn             String?
+  contactInfo     String? // JSON blob: address, phone, email — superseded by the explicit fields below; kept for compatibility, unused by the app
+  notes           String?
+  payFrequency    String? // WEEKLY | FORTNIGHTLY | MONTHLY — used to work out expected pay periods for gap detection. Null = not tracked.
   // Income a year, before tax — for the after-tax property figures and the
   // borrowing estimate. Variable = bonus, overtime, commission (lenders shade it).
-  grossSalary    Float?
-  variableIncome Float?
+  grossSalary     Float?
+  variableIncome  Float?
   // Employment — for the occupation deduction checklist and the fact find.
-  occupation     String? // e.g. "Sales and marketing", "Teacher"
-  employer       String?
-  employmentType String? // FULL_TIME | PART_TIME | CASUAL | CONTRACT | SELF_EMPLOYED
-  carAllowance   Float? // a year, shown separately on the income statement
-  benefits       String? // comma-separated: NOVATED_LEASE, COMPANY_CAR, FUEL_CARD, PHONE, LAPTOP, SALARY_SACRIFICE_SUPER, OTHER
+  occupation      String? // e.g. "Sales and marketing", "Teacher"
+  occupationGuide String? // the ATO occupation guide it follows (its key, e.g. "nurses-and-midwives-income-and-work-related-deductions")
+  employer        String?
+  employmentType  String? // FULL_TIME | PART_TIME | CASUAL | CONTRACT | SELF_EMPLOYED
+  carAllowance    Float? // a year, shown separately on the income statement
+  benefits        String? // comma-separated: NOVATED_LEASE, COMPANY_CAR, FUEL_CARD, PHONE, LAPTOP, SALARY_SACRIFICE_SUPER, OTHER
 
   // Personal and contact details — what a lender's fact find asks for.
   phone                 String?
@@ -90,6 +91,7 @@ model Person {
   insurancePolicies   InsurancePolicy[]
   estateDocuments     EstateDocument[]
   workDeductions      WorkDeduction[]
+  occupationChoices   OccupationItemChoice[]
   incomeStatements    IncomeStatement[]
   // Documents reference this Person via the polymorphic DocumentLink
   // (targetType = PERSON, targetId = this.id) — no direct relation field,
@@ -398,17 +400,17 @@ model Document {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  links            DocumentLink[]
-  loanPurposes     LoanPurpose[]
+  links             DocumentLink[]
+  loanPurposes      LoanPurpose[]
   loanInterestYears LoanInterestYear[]
-  workDeductions   WorkDeduction[]
-  vehicleLogbooks  VehicleLogbook[]
-  incomeStatements IncomeStatement[]
-  claimNotesCiting ClaimNote[]
-  transactions     Transaction[]
-  auditLogs        AuditLog[]
-  payPeriodEntries PayPeriodEntry[]
-  importBatchFiles ImportBatchFile[]
+  workDeductions    WorkDeduction[]
+  vehicleLogbooks   VehicleLogbook[]
+  incomeStatements  IncomeStatement[]
+  claimNotesCiting  ClaimNote[]
+  transactions      Transaction[]
+  auditLogs         AuditLog[]
+  payPeriodEntries  PayPeriodEntry[]
+  importBatchFiles  ImportBatchFile[]
 
   @@index([reviewStatus])
   @@index([financialYearId])
@@ -588,34 +590,34 @@ model Liability {
 // ---------------------------------------------------------------------------
 
 model Property {
-  id               String    @id @default(cuid())
-  assetId          String    @unique
-  asset            Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
-  entityId         String
-  entity           Entity    @relation(fields: [entityId], references: [id])
-  address          String
-  state            String?
-  purchaseDate     DateTime?
-  settlementDate   DateTime?
-  purchasePrice    Float?
-  ownershipPercent Float?
-  tenantInfo       String?
-  propertyManager  String?
-  weeklyRent       Float? // current rent, used for rent cover on an SMSF's LRBA loan
+  id                String    @id @default(cuid())
+  assetId           String    @unique
+  asset             Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  entityId          String
+  entity            Entity    @relation(fields: [entityId], references: [id])
+  address           String
+  state             String?
+  purchaseDate      DateTime?
+  settlementDate    DateTime?
+  purchasePrice     Float?
+  ownershipPercent  Float?
+  tenantInfo        String?
+  propertyManager   String?
+  weeklyRent        Float? // current rent, used for rent cover on an SMSF's LRBA loan
   // How it's used: HOME (principal place of residence) | INVESTMENT (rented,
   // or for rent) | HOLIDAY (holiday home, not rented). Null = investment.
   // HOME keeps the asset's mainResidence at FULL for land tax and CGT.
-  use              String?
+  use               String?
   // Running costs a year, for the after-tax profit figures. Insurance comes
   // from the policies recorded against the property.
-  councilRates     Float?
-  waterRates       Float?
-  strataFees       Float?
+  councilRates      Float?
+  waterRates        Float?
+  strataFees        Float?
   managementPercent Float? // of rent, e.g. 7.5
-  repairsPerYear   Float?
+  repairsPerYear    Float?
   otherCostsPerYear Float?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   liabilities Liability[]
 
@@ -902,7 +904,7 @@ model PlanProperty {
   // Buying costs, so the cash needed isn't just the deposit.
   transferDuty          Float? // null = estimate from the NSW general rates
   otherBuyingCosts      Float? // legal, inspections, lender fees
-  gstPayable            Boolean @default(false) // false = GST-free going concern
+  gstPayable            Boolean       @default(false) // false = GST-free going concern
 
   // Once actually purchased, link to the real record so the projection can
   // show actuals (from its saved AnnualPropertySnapshots) alongside the
@@ -1721,24 +1723,24 @@ model Adviser {
 // what the borrowed money was used for, not what secures the loan (TR 95/25,
 // TR 2000/2). Each entry records one use of a loan's money, with evidence.
 model LoanPurpose {
-  id          String    @id @default(cuid())
-  liabilityId String
-  liability   Liability @relation(fields: [liabilityId], references: [id], onDelete: Cascade)
-  date        DateTime?
-  amount      Float
-  use         String // PROPERTY | SHARES | BUSINESS | PRIVATE | OTHER
-  deductible  Boolean // used to produce assessable income
-  assetId     String? // what it bought or paid for, where recorded
-  asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: SetNull)
-  description String
+  id            String    @id @default(cuid())
+  liabilityId   String
+  liability     Liability @relation(fields: [liabilityId], references: [id], onDelete: Cascade)
+  date          DateTime?
+  amount        Float
+  use           String // PROPERTY | SHARES | BUSINESS | PRIVATE | OTHER
+  deductible    Boolean // used to produce assessable income
+  assetId       String? // what it bought or paid for, where recorded
+  asset         Asset?    @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  description   String
   // A redraw or increase on a loan already partly repaid: the balance just
   // before it. Earlier uses are scaled to it in proportion (TR 2000/2
   // paragraph 16) before this one is added.
   balanceBefore Float?
-  documentId  String? // evidence: settlement statement, loan statement…
-  document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
-  notes       String?
-  createdAt   DateTime  @default(now())
+  documentId    String? // evidence: settlement statement, loan statement…
+  document      Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  notes         String?
+  createdAt     DateTime  @default(now())
 
   @@index([liabilityId])
   @@index([assetId])
@@ -1783,21 +1785,38 @@ model ClaimNote {
 // 10). Categories follow the ATO's work-related deductions pages; car and
 // work-from-home claims can be worked out from kilometres or hours.
 model WorkDeduction {
-  id          String    @id @default(cuid())
-  personId    String
-  person      Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
-  fyLabel     String
-  category    String // CAR | TRAVEL | WORK_FROM_HOME | CLOTHING | SELF_EDUCATION | TOOLS | PHONE_INTERNET | MEMBERSHIPS | OTHER
-  description String
-  amount      Float
-  method      String? // car: CENTS_PER_KM | LOGBOOK; WFH: FIXED_RATE | ACTUAL_COST
-  quantity    Float? // kilometres or hours, for the fixed-rate methods
-  documentId  String?
-  document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
-  notes       String?
-  createdAt   DateTime  @default(now())
+  id            String    @id @default(cuid())
+  personId      String
+  person        Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  fyLabel       String
+  category      String // CAR | TRAVEL | WORK_FROM_HOME | CLOTHING | SELF_EDUCATION | TOOLS | PHONE_INTERNET | MEMBERSHIPS | OTHER
+  description   String
+  amount        Float
+  method        String? // car: CENTS_PER_KM | LOGBOOK; WFH: FIXED_RATE | ACTUAL_COST
+  quantity      Float? // kilometres or hours, for the fixed-rate methods
+  checklistItem String? // the occupation guide's item it was added from (e.g. "laundry-and-maintenance")
+  documentId    String?
+  document      Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  notes         String?
+  createdAt     DateTime  @default(now())
 
   @@index([personId, fyLabel])
+}
+
+// What a person has said about an item on their occupation guide's
+// checklist: they claim it most years (so a year without it is flagged), or
+// it's not for them. Kept across years; keyed by the item, so it carries
+// over if they change guide.
+model OccupationItemChoice {
+  id        String   @id @default(cuid())
+  personId  String
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  itemKey   String
+  choice    String // CLAIM | NOT_FOR_ME
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([personId, itemKey])
 }
 
 // The end-of-year income statement (myGov) or PAYG payment summary, read by

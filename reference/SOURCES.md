@@ -1,6 +1,6 @@
 # Source documents: received and still needed
 
-Generated from link-pack.json and sources/index.json. 37 of 46 documents saved (index pages don't need saving).
+Generated from link-pack.json and sources/index.json. 42 of 46 documents saved (index pages don't need saving).
 
 ## Still needed
 
@@ -8,23 +8,13 @@ Open each link on your own computer, save it as a PDF (for web pages use the pag
 
 1. **PCG 2026/2 — apportioning rental property deductions (part-private use)**
    https://www.ato.gov.au/law/view/document?DocID=COG/PCG20262/NAT/ATO/00001
-2. **Rental properties guide (yearly)**
-   https://www.ato.gov.au/api/public/content/d1dd11d5fc1a460f9b4b6faf74e79b4a?v=c79af85b
-3. **Guide to depreciating assets (yearly)**
-   https://www.ato.gov.au/api/public/content/b5c7bb178b9f4757bd7a2b1d82c119c1?v=5f0342dc
-4. **Effective life of depreciating assets — determinations, rulings and law**
-   https://www.ato.gov.au/businesses-and-organisations/income-deductions-and-concessions/depreciation-and-capital-expenses-and-allowances/general-depreciation-rules-capital-allowances/effective-life-of-an-asset/effective-life-determinations-rulings-and-law
-5. **Guide to capital gains tax (yearly)**
-   https://www.ato.gov.au/api/public/content/359216df15a44556a9af2ac851c1ef5a
-6. **Medicare levy**
+2. **Medicare levy**
    https://www.ato.gov.au/individuals-and-families/medicare-and-private-health-insurance/medicare-levy
-7. **Occupation guides — 'print whole section' (all guides in one)** - What downloaded was only the list of guides. Instead, open the guide for each occupation you need (from the list) and use its "Print whole section" option.
+3. **Occupation guides — 'print whole section' (all guides in one)** - Not needed: its 'print whole section' copy is only the list of guides. Each guide is downloaded by the app, and the checklists read from them ship in reference/occupation-guides.json.
    https://www.ato.gov.au/api/public/content/0-23394288-dde4-4157-950f-33536a6bb202
-8. **FBT on cars, other vehicles, parking and tolls**
+4. **FBT on cars, other vehicles, parking and tolls**
    https://www.ato.gov.au/businesses-and-organisations/hiring-and-paying-your-workers/fringe-benefits-tax/types-of-fringe-benefits/fbt-on-cars-other-vehicles-parking-and-tolls
-9. **FBT electric cars exemption (novated leases included)**
-   https://www.ato.gov.au/law/view/pdf/afs/afs_ev_fbt.pdf
-10. **ASIC RG 209 — responsible lending conduct** - Only the web landing page was received. The guide itself is the PDF behind its 'Download' button, hosted on download.asic.gov.au.
+5. **ASIC RG 209 — responsible lending conduct** - Only the web landing page was received. The guide itself is the PDF behind its 'Download' button, hosted on download.asic.gov.au.
    https://www.asic.gov.au/regulatory-resources/find-a-document/regulatory-guides/rg-209-credit-licensing-responsible-lending-conduct
 
 ## Received
@@ -61,3 +51,8 @@ Open each link on your own computer, save it as a PDF (for web pages use the pag
 - `super-rates-thresholds.pdf` - covers: super-rates-thresholds, super-contribution-caps, super-minimum-pension - Whole "Key super rates and thresholds" section (74 pages).
 - `lcr-2021-2.pdf` - covers: lcr-2021-2
 - `apra-dti-limit.txt` - covers: apra-dti-limit - Fetched directly from apra.gov.au (web page saved as text).
+- `rental-properties-guide-2026.pdf` - covers: rental-properties-guide - The 2026 edition (current at 1 June 2026). Downloaded by Financial Vault's reference download on 27 September 2026.
+- `depreciating-assets-guide-2026.pdf` - covers: depreciating-assets-guide - The 2026 edition (current at 1 June 2026). Downloaded by Financial Vault's reference download on 27 September 2026.
+- `cgt-guide-2026.pdf` - covers: cgt-guide - The 2026 edition (current at 1 June 2026). Downloaded by Financial Vault's reference download on 27 September 2026.
+- `fbt-electric-cars.pdf` - covers: fbt-electric-cars - The ATO's fact sheet for employers. Downloaded by Financial Vault's reference download on 27 September 2026.
+- `effective-life.txt` - covers: effective-life - Web page saved as text. Downloaded by Financial Vault's reference download on 27 September 2026.

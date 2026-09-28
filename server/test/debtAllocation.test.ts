@@ -148,9 +148,11 @@ describe("through the app", () => {
 
   it("puts one check-current reminder per date in the calendar", async () => {
     const events = (await agent.get("/api/calendar?from=2026-01-01&to=2028-12-31")).body as Array<{ category: string; title: string }>;
-    const refs = events.filter((e) => e.category === "REFERENCE");
-    expect(refs).toHaveLength(1);
-    expect(refs[0].title).toMatch(/TR 2000\/2/);
+    const refs = events.filter((e) => e.category === "REFERENCE") as Array<{ category: string; title: string; date: string }>;
+    // One reminder a date. Other tests save references at the same time (the
+    // database is shared), so this one's reminder may count them in too.
+    expect(new Set(refs.map((e) => e.date)).size).toBe(refs.length);
+    expect(refs.some((e) => /TR 2000\/2|Check \d+ tax references/.test(e.title))).toBe(true);
   });
 
   it("loads a reference library once, and only adds what's missing the second time", async () => {

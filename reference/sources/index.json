@@ -210,10 +210,45 @@
         "apra-dti-limit"
       ],
       "note": "Fetched directly from apra.gov.au (web page saved as text)."
+    },
+    {
+      "file": "rental-properties-guide-2026.pdf",
+      "covers": [
+        "rental-properties-guide"
+      ],
+      "note": "The 2026 edition (current at 1 June 2026). Downloaded by Financial Vault's reference download on 27 September 2026."
+    },
+    {
+      "file": "depreciating-assets-guide-2026.pdf",
+      "covers": [
+        "depreciating-assets-guide"
+      ],
+      "note": "The 2026 edition (current at 1 June 2026). Downloaded by Financial Vault's reference download on 27 September 2026."
+    },
+    {
+      "file": "cgt-guide-2026.pdf",
+      "covers": [
+        "cgt-guide"
+      ],
+      "note": "The 2026 edition (current at 1 June 2026). Downloaded by Financial Vault's reference download on 27 September 2026."
+    },
+    {
+      "file": "fbt-electric-cars.pdf",
+      "covers": [
+        "fbt-electric-cars"
+      ],
+      "note": "The ATO's fact sheet for employers. Downloaded by Financial Vault's reference download on 27 September 2026."
+    },
+    {
+      "file": "effective-life.txt",
+      "covers": [
+        "effective-life"
+      ],
+      "note": "Web page saved as text. Downloaded by Financial Vault's reference download on 27 September 2026."
     }
   ],
   "notes": {
     "asic-rg-209": "Only the web landing page was received. The guide itself is the PDF behind its 'Download' button, hosted on download.asic.gov.au.",
-    "occupation-guides-print-all": "What downloaded was only the list of guides. Instead, open the guide for each occupation you need (from the list) and use its \"Print whole section\" option."
+    "occupation-guides-print-all": "Not needed: its 'print whole section' copy is only the list of guides. Each guide is downloaded by the app, and the checklists read from them ship in reference/occupation-guides.json."
   }
 }

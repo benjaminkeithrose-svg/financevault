@@ -3,6 +3,13 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.5.0 — 28 September 2026
+- A deduction checklist for each job, from the ATO's own occupation guides (about 40 jobs, from nurses and teachers to tradespeople and sales). On a person's page, under Work-related deductions, choose their guide — one is suggested from their job title — and see every expense it covers: what can be claimed, what depends, and what usually can't, in the ATO's words.
+- Mark what you claim most years. Each year the checklist shows what's recorded, what has no receipt attached, and what's still to record before 30 June. "Add a claim" on an item fills in the claim for you; "Not for me" puts an item away.
+- When you download the reference library again, a newer copy of a guide takes over from the one that came with the app. The doctors' guide is the one to download again: it was cut short last time.
+- The download now saves each occupation guide whole, as one document (it was split into its sections), goes through every guide, and replaces the section copies from last time. Pages with an apostrophe are saved again once, as they now show "can't" rather than "can&#x27;t".
+- Five more official documents come with the app, from your download: the 2026 Rental properties guide, Guide to depreciating assets and Guide to capital gains tax, the ATO's fact sheet on electric cars and fringe benefits tax, and its page on effective lives. On Documents, "Load the reference library" adds them.
+
 ## 1.4.0 — 27 September 2026
 - Draw equity: on a property's Usable equity card, record borrowing against it — as a new split under the same facility, or a redraw on a loan already there. "Check it" says first what to watch for: more than the usable-equity estimate, a loan that would become mixed-purpose, private use, or a split-loan arrangement the ATO looks at (TD 2012/1).
 - Redraws are worked out the ATO's way (TR 2000/2): enter the balance just before a redraw and earlier uses are scaled down before it's added; a year's deductible share is weighted by balance and days. A loan's page warns when it's mixed purpose.

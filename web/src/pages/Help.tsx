@@ -1192,7 +1192,7 @@ const SECTIONS: Section[] = [
   {
     id: "work-deductions",
     title: "Work deductions, income statements and car options",
-    keywords: "payg employee occupation deductions work from home car cents per km logbook self-education tools uniform income statement payment summary novated lease electric car allowance fbt salary packaging",
+    keywords: "payg employee occupation deductions work from home car cents per km logbook self-education tools uniform income statement payment summary novated lease electric car allowance fbt salary packaging checklist ato occupation guide nurse teacher tradesperson not for me",
     body: (
       <>
         <p>
@@ -1208,8 +1208,8 @@ const SECTIONS: Section[] = [
           </li>
           <li>Attach the receipt or record. The book icon records why it's claimed.</li>
           <li>
-            The checklist underneath lists what can be claimed and the records needed. Warnings show missing records, a car
-            allowance with no car claim, and items over $300 (those are depreciated, not claimed at once).
+            Warnings show missing records, a car allowance with no car claim, and items over $300 (those are depreciated, not
+            claimed at once).
           </li>
           <li>
             Add the <strong>income statement</strong> figures from myGov after 30 June — it's compared with the income on the page.
@@ -1217,7 +1217,26 @@ const SECTIONS: Section[] = [
         </ol>
         <p>
           Every claim needs three things: you spent the money and weren't paid back; it was for earning your income; and you have a
-          record. The ATO's guide for each occupation (linked from the card) lists what that job can claim.
+          record.
+        </p>
+        <p>
+          <strong>The checklist for the job</strong> comes from the ATO's own guide for that occupation — there are about 40,
+          from nurses and teachers to tradespeople and sales. Choose the guide once (one is suggested from the job title); then:
+        </p>
+        <ol>
+          <li>Tap an expense to read what the ATO says about it. Each is marked "Can claim", "It depends" or "Usually can't".</li>
+          <li>
+            For what you claim most years, choose <strong>I claim this most years</strong>. Each year it shows what's recorded and
+            what's still to record before 30 June.
+          </li>
+          <li>
+            <strong>Add a claim</strong> on an expense fills in the claim form for it. <strong>Not for me</strong> puts it away
+            (under "Not for you", where <strong>Put it back</strong> undoes it).
+          </li>
+        </ol>
+        <p>
+          The guides came with the app, as the ATO published them in May 2026. When you download the reference library again
+          (Documents → Official reference library), a newer copy of a guide is used instead.
         </p>
         <p>
           <strong>Compare car options</strong> works out what a car costs after tax as a car allowance, a novated lease, or an

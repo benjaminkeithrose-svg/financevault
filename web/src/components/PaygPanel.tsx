@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api, Document, PaygView, Person } from "../api/client.js";
+import { api, ChecklistItem, Document, PaygView, Person } from "../api/client.js";
 import { confirmThenDelete, financialYearLabelForToday, formatCurrency } from "../utils.js";
 import { HelpLink } from "./HelpLink.js";
 import { IconBin } from "./icons.js";
+import { OccupationChecklist } from "./OccupationChecklist.js";
 import { WhyClaimed } from "./WhyClaimed.js";
 
 /**
@@ -36,7 +37,7 @@ export function PaygPanel({ person, onChange }: { person: Person; onChange: () =
   return (
     <>
       <EmploymentCard person={person} onChange={onChange} />
-      <WorkDeductionsCard person={person} />
+      <WorkDeductionsCard person={person} onChange={onChange} />
     </>
   );
 }
@@ -155,9 +156,9 @@ function EmploymentCard({ person, onChange }: { person: Person; onChange: () => 
   );
 }
 
-const emptyClaim = { category: "OTHER", description: "", amount: "", method: "", quantity: "", documentId: "" };
+const emptyClaim = { category: "OTHER", description: "", amount: "", method: "", quantity: "", documentId: "", checklistItem: "" };
 
-function WorkDeductionsCard({ person }: { person: Person }) {
+function WorkDeductionsCard({ person, onChange }: { person: Person; onChange: () => void }) {
   const [fy, setFy] = useState(financialYearLabelForToday());
   const [view, setView] = useState<PaygView | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -166,8 +167,12 @@ function WorkDeductionsCard({ person }: { person: Person }) {
   const [addingStatement, setAddingStatement] = useState(false);
   const [statement, setStatement] = useState({ grossPayments: "", taxWithheld: "", allowances: "", reportableFringeBenefits: "", reportableSuper: "", documentId: "" });
   const [error, setError] = useState<string | null>(null);
+  const [checklistKey, setChecklistKey] = useState(0);
 
-  const load = () => api.payg.get(person.id, fy).then(setView);
+  const load = () => {
+    setChecklistKey((k) => k + 1);
+    return api.payg.get(person.id, fy).then(setView);
+  };
   // Reloads when the job details change too (a new car allowance changes the checks).
   useEffect(() => {
     load();
@@ -202,6 +207,7 @@ function WorkDeductionsCard({ person }: { person: Person }) {
         method: form.method || null,
         quantity: form.quantity === "" ? null : Number(form.quantity),
         documentId: form.documentId || null,
+        checklistItem: form.checklistItem || null,
       });
       setForm(emptyClaim);
       setAdding(false);
@@ -309,11 +315,14 @@ function WorkDeductionsCard({ person }: { person: Person }) {
       )}
 
       {adding ? (
-        <div className="sub-form">
+        <div className="sub-form" id={`claim-form-${person.id}`}>
           <div className="grid grid-2">
             <div>
               <label>Kind of claim</label>
-              <select value={form.category} onChange={(e) => setForm({ ...emptyClaim, category: e.target.value, description: form.description })}>
+              <select
+                value={form.category}
+                onChange={(e) => setForm({ ...emptyClaim, category: e.target.value, description: form.description, checklistItem: form.checklistItem })}
+              >
                 {view.categories.map((c) => (
                   <option key={c.key} value={c.key}>
                     {c.label}
@@ -375,7 +384,13 @@ function WorkDeductionsCard({ person }: { person: Person }) {
             <button className="btn" onClick={addClaim}>
               Save
             </button>
-            <button className="btn secondary" onClick={() => setAdding(false)}>
+            <button
+              className="btn secondary"
+              onClick={() => {
+                setAdding(false);
+                setForm(emptyClaim);
+              }}
+            >
               Cancel
             </button>
           </div>
@@ -388,8 +403,21 @@ function WorkDeductionsCard({ person }: { person: Person }) {
         </div>
       )}
 
+      <OccupationChecklist
+        person={person}
+        fy={fy}
+        reloadKey={checklistKey}
+        onGuideChanged={onChange}
+        onAddClaim={(item: ChecklistItem) => {
+          setError(null);
+          setForm({ ...emptyClaim, category: item.category, description: item.name, checklistItem: item.key });
+          setAdding(true);
+          setTimeout(() => document.getElementById(`claim-form-${person.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 0);
+        }}
+      />
+
       <details className="profit-details" style={{ marginTop: 12 }}>
-        <summary>What can be claimed — checklist for {fy}</summary>
+        <summary>The general rules, for every job</summary>
         <p className="cap-explain">
           Every claim must be: money you spent and weren't paid back for; directly for earning your income; and backed by a record.
         </p>

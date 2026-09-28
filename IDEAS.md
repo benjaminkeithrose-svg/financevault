@@ -410,7 +410,7 @@ exemption); each person's employment contract or benefits summary.
   this reads the figures out of it (checked by the person, since the text
   read from a scan can be wrong).
 
-**Status:** built in batch 4 — job and benefits, the deduction checklist with calculators and records, income statement figures, and the car comparison. Still to add: occupation-specific checklists, once each person's ATO occupation guide is saved (only the list of guides was downloaded).
+**Status:** built in batch 4 — job and benefits, the deduction checklist with calculators and records, income statement figures, and the car comparison. Occupation-specific checklists built in 1.5.0, from the ATO's 40 occupation guides (downloaded September 2026): choose the guide for each person, mark what they claim most years, and see what's still to record before 30 June.
 
 ---
 

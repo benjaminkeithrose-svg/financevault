@@ -5,6 +5,7 @@ import { asyncHandler, HttpError } from "../middleware/errorHandler.js";
 import { logAudit } from "../services/audit.js";
 import { compareCars } from "../services/carCompare.js";
 import { taxChange } from "../services/incomeTax.js";
+import { guideFor, guideList, suggestGuide } from "../services/occupationGuides.js";
 import { carRateFor, CAR_KM_CAP, DEDUCTION_CATEGORIES, IMMEDIATE_DEDUCTION_LIMIT, wfhRateFor } from "../services/workDeductions.js";
 
 /**
@@ -92,6 +93,7 @@ const deductionInput = z.object({
   quantity: z.number().min(0).nullable().optional(),
   documentId: z.string().nullable().optional(),
   notes: z.string().nullable().optional(),
+  checklistItem: z.string().max(80).nullable().optional(),
 });
 
 paygRouter.post(
@@ -124,6 +126,74 @@ paygRouter.delete(
     ]);
     await logAudit("WORK_DEDUCTION_DELETED", { targetType: "WorkDeduction", targetId: req.params.id });
     res.status(204).send();
+  })
+);
+
+// ---------------------------------------------------------------------------
+// The ATO occupation guide's checklist: each expense the guide covers, what
+// the person has said about it, and what's recorded for the year.
+
+paygRouter.get(
+  "/guides",
+  asyncHandler(async (_req, res) => {
+    res.json(await guideList());
+  })
+);
+
+paygRouter.get(
+  "/people/:id/checklist",
+  asyncHandler(async (req, res) => {
+    const person = await requirePerson(req.params.id);
+    const fy = fyLabel.parse(req.query.fy);
+    const list = await guideList();
+    const suggested = suggestGuide(person.occupation, list);
+    const guide = person.occupationGuide ? await guideFor(person.occupationGuide) : null;
+    if (!guide) {
+      res.json({ fy, guide: null, chosen: person.occupationGuide, suggested, suggestedTitle: list.find((g) => g.key === suggested)?.title ?? null });
+      return;
+    }
+    const [choices, deductions] = await Promise.all([
+      prisma.occupationItemChoice.findMany({ where: { personId: person.id } }),
+      prisma.workDeduction.findMany({ where: { personId: person.id, fyLabel: fy, checklistItem: { not: null } } }),
+    ]);
+    const choice = new Map(choices.map((c) => [c.itemKey, c.choice]));
+    const items = guide.items.map((it) => {
+      const claims = deductions.filter((d) => d.checklistItem === it.key);
+      return {
+        ...it,
+        choice: choice.get(it.key) ?? null,
+        claims: claims.map((d) => ({ id: d.id, amount: d.amount, description: d.description, hasRecord: !!d.documentId })),
+        total: claims.reduce((s, d) => s + d.amount, 0),
+      };
+    });
+    const claimed = items.filter((i) => i.choice === "CLAIM" || i.claims.length > 0);
+    res.json({
+      fy,
+      guide: { key: guide.key, title: guide.title, url: guide.url, updated: guide.updated, source: guide.source, documentId: guide.documentId },
+      chosen: person.occupationGuide,
+      suggested,
+      suggestedTitle: list.find((g) => g.key === suggested)?.title ?? null,
+      items,
+      summary: {
+        claimed: claimed.length,
+        recorded: claimed.filter((i) => i.claims.length > 0).length,
+        toRecord: claimed.filter((i) => i.claims.length === 0).length,
+        withoutRecord: claimed.filter((i) => i.claims.some((c) => !c.hasRecord)).length,
+      },
+    });
+  })
+);
+
+paygRouter.put(
+  "/people/:id/checklist/:itemKey",
+  asyncHandler(async (req, res) => {
+    const person = await requirePerson(req.params.id);
+    const { choice } = z.object({ choice: z.enum(["CLAIM", "NOT_FOR_ME"]).nullable() }).parse(req.body);
+    const itemKey = z.string().min(1).max(80).parse(req.params.itemKey);
+    const where = { personId_itemKey: { personId: person.id, itemKey } };
+    if (choice === null) await prisma.occupationItemChoice.deleteMany({ where: { personId: person.id, itemKey } });
+    else await prisma.occupationItemChoice.upsert({ where, update: { choice }, create: { personId: person.id, itemKey, choice } });
+    res.json({ itemKey, choice });
   })
 );
 

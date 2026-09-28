@@ -70,6 +70,7 @@ export interface Person {
   grossSalary?: number | null;
   variableIncome?: number | null;
   occupation?: string | null;
+  occupationGuide?: string | null;
   employer?: string | null;
   employmentType?: string | null;
   carAllowance?: number | null;
@@ -577,6 +578,36 @@ export interface IncomeStatement {
   lumpSums: number | null;
   documentId: string | null;
   document?: { id: string; originalFilename: string } | null;
+}
+
+export interface OccupationGuideSummary {
+  key: string;
+  title: string;
+  updated: string | null;
+  items: number;
+}
+
+export interface ChecklistItem {
+  key: string;
+  name: string;
+  verdict: "CAN" | "CANT" | "DEPENDS";
+  can: string[];
+  cant: string[];
+  text: string;
+  category: string;
+  choice: "CLAIM" | "NOT_FOR_ME" | null;
+  claims: Array<{ id: string; amount: number; description: string; hasRecord: boolean }>;
+  total: number;
+}
+
+export interface OccupationChecklist {
+  fy: string;
+  guide: { key: string; title: string; url: string | null; updated: string | null; source: "SHIPPED" | "LIBRARY"; documentId: string | null } | null;
+  chosen: string | null;
+  suggested: string | null;
+  suggestedTitle: string | null;
+  items?: ChecklistItem[];
+  summary?: { claimed: number; recorded: number; toRecord: number; withoutRecord: number };
 }
 
 export interface PaygView {
@@ -2159,6 +2190,10 @@ export const api = {
     addStatement: (personId: string, data: Record<string, unknown>) =>
       request<IncomeStatement>(`/payg/people/${personId}/income-statements`, { method: "POST", body: JSON.stringify(data) }),
     removeStatement: (id: string) => request<void>(`/payg/income-statements/${id}`, { method: "DELETE" }),
+    guides: () => request<OccupationGuideSummary[]>("/payg/guides"),
+    checklist: (personId: string, fy: string) => request<OccupationChecklist>(`/payg/people/${personId}/checklist?fy=${fy}`),
+    choose: (personId: string, itemKey: string, choice: "CLAIM" | "NOT_FOR_ME" | null) =>
+      request<void>(`/payg/people/${personId}/checklist/${encodeURIComponent(itemKey)}`, { method: "PUT", body: JSON.stringify({ choice }) }),
     carCompare: (data: Record<string, unknown>) =>
       request<{ baseIncome: number; incomeRecorded: boolean; options: CarOption[] }>("/payg/car-compare", { method: "POST", body: JSON.stringify(data) }),
   },

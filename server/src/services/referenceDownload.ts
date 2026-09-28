@@ -24,6 +24,7 @@ import {
   referenceFolderFor,
   saveCopy,
 } from "./referenceUpdates.js";
+import { PAGE_BREAK, shortTitle } from "./occupationGuides.js";
 import { TAX_REFERENCE_TYPE } from "./taxReference.js";
 
 export { findPrintLink };
@@ -49,8 +50,9 @@ export { findPrintLink };
 export const DOWNLOADS_FOLDER = "Reference downloads";
 export const ZIP_FEATURE = "reference-zip";
 const OCCUPATION_INDEX_ID = "occupation-guides";
-const MAX_OCCUPATION_PAGES = 400;
-const MAX_DEPTH = 3;
+const MAX_OCCUPATION_PAGES = 800;
+// Index → (A–D) → guide → section → expenses A–F.
+const MAX_DEPTH = 4;
 const DAY = 86_400_000;
 
 export function downloadsRoot(): string {
@@ -83,12 +85,12 @@ function heading(html: string): string | null {
   return t || null;
 }
 
-const slug = (s: string) =>
+const slug = (s: string, max = 80) =>
   s
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 80) || "page";
+    .slice(0, max) || "page";
 
 const safeName = (s: string) =>
   s
@@ -125,10 +127,16 @@ interface Page {
   text: string;
 }
 
+const LETTERS = /^([A-Z])\s*[–-]\s*([A-Z])$/;
+
 /**
- * The occupation guides: from the index, down through A–D, E–K… to each
- * guide and its pages. Each guide is kept as one document — its "Print whole
- * section" PDF when it has one, otherwise its pages' text joined.
+ * The occupation guides: from the index to each guide (through A–D, E–K…
+ * pages, where the site has them), and down through each guide's sections
+ * (Income and allowances, Deductions for work expenses…) to their pages
+ * (Nurse expenses A–F…). Below the index, only pages under a page's own
+ * address are followed, so the rest of the ATO site isn't wandered into.
+ * Each guide is kept as one document: all its pages' text, joined — the
+ * app's deduction checklists are read from it.
  */
 async function occupationGuides(index: LinkEntry, fetcher: Fetcher, today: Date, pause: number, progress: (t: string) => void) {
   const failed: DownloadResult["failed"] = [];
@@ -157,47 +165,50 @@ async function occupationGuides(index: LinkEntry, fetcher: Fetcher, today: Date,
     const title = heading(html) ?? new URL(url).pathname.split("/").pop()!.replace(/-/g, " ");
     pages.set(url, { url, depth, parent, title, html, text: htmlToText(html) });
     if (depth >= MAX_DEPTH) continue;
-    for (const next of findSectionLinks(html, url, prefix)) {
+    for (const next of findSectionLinks(html, url, depth === 0 ? prefix : `${new URL(url).pathname}/`)) {
       if (seen.has(next)) continue;
       seen.add(next);
       queue.push({ url: next, depth: depth + 1, parent: url });
     }
   }
 
-  // Depth 1 are the groups (A–D, E–K…); depth 2 the guides, with their own
-  // pages below them. A group page that leads nowhere is a guide itself.
+  // A page one step from the index is a guide — unless it's a letters page
+  // (A–D), whose own pages are the guides. Everything below a guide is part
+  // of it, in the order found.
   const all = [...pages.values()];
   const children = (url: string) => all.filter((p) => p.parent === url);
-  const guides: Array<{ page: Page; group: string; parts: Page[] }> = [];
-  for (const g of all.filter((p) => p.depth === 1)) {
-    const under = children(g.url);
-    if (under.length === 0) guides.push({ page: g, group: "Other", parts: [] });
-    for (const p of under) guides.push({ page: p, group: g.title, parts: children(p.url) });
+  const below = (url: string): Page[] => children(url).flatMap((c) => [c, ...below(c.url)]);
+  // Its shelf: the letters page it came from, or the letters in its address (/l-q/).
+  const lettersOf = (p: Page, via?: Page) => {
+    const m = via?.title.match(LETTERS) ?? new URL(p.url).pathname.match(/\/([a-z])-([a-z])\//);
+    return m ? `${m[1].toUpperCase()}–${m[2].toUpperCase()}` : undefined;
+  };
+  const guides: Array<{ page: Page; group?: string; parts: Page[] }> = [];
+  for (const top of all.filter((p) => p.depth === 1)) {
+    if (LETTERS.test(top.title)) for (const g of children(top.url)) guides.push({ page: g, group: lettersOf(g, top), parts: below(g.url) });
+    else guides.push({ page: top, group: lettersOf(top), parts: below(top.url) });
   }
 
   let changed = 0;
   for (const { page, group, parts } of guides) {
     progress(`Occupation guide — ${page.title}`);
-    const id = `occupation:${slug(new URL(page.url).pathname.slice(prefix.length))}`;
-    const text = [page, ...parts].map((p) => `${p.title}\n${p.url}\n\n${p.text}`).join("\n\n----------\n\n");
+    // In full: some guides' addresses run past 80 characters.
+    const id = `occupation:${slug(new URL(page.url).pathname.slice(prefix.length), 200)}`;
+    const text = [page, ...parts].map((p) => `${p.title}\n${p.url}\n\n${p.text}`).join(`\n${PAGE_BREAK}\n`);
     const hash = sha256(Buffer.from(text, "utf8"));
     const previous = await prisma.referenceCheck.findUnique({ where: { linkId: id } });
-    const link: LinkEntry = { id, title: `Occupation guide — ${page.title}`, publisher: "ATO", kind: "occupation-guide", url: page.url };
+    const link: LinkEntry = { id, title: `Occupation guide — ${shortTitle(page.title)}`, publisher: "ATO", kind: "occupation-guide", url: page.url };
     const folder = referenceFolderFor(link, group);
+    await retireSections(page.url, today);
     if (previous?.contentHash === hash && previous.documentId) {
       await prisma.referenceCheck.update({ where: { linkId: id }, data: { checkedAt: today, status: "CURRENT", message: "No change since the last download." } });
       await prisma.document.updateMany({ where: { id: previous.documentId }, data: { referenceFolder: folder } });
       continue;
     }
-    let pdf: Buffer | null = null;
-    const print = findPrintLink(page.html, page.url);
-    if (print) {
-      const p = await fetcher(print).catch(() => null);
-      if (p?.status === 200 && isPdf(p)) pdf = p.body;
-    }
+    // Always the text, not a "print" PDF: the guide's print copy holds only its first page.
     const saved = await saveCopy(link, null, page.url, today, link.title, {
-      pdf,
-      text: pdf ? null : `${link.title}\nSource: ${page.url}\nSaved: ${today.toISOString().slice(0, 10)}\n\n${text}\n`,
+      pdf: null,
+      text: `${link.title}\nSource: ${page.url}\nSaved: ${today.toISOString().slice(0, 10)}\n\n${text}\n`,
       folder,
     });
     // The publisher's date is read from the guide's own words, even when its PDF is kept.
@@ -208,6 +219,21 @@ async function occupationGuides(index: LinkEntry, fetcher: Fetcher, today: Date,
     changed += 1;
   }
   return { guides: guides.length, changed, failed };
+}
+
+/**
+ * Downloads before 1.5.0 saved each section of a guide as its own document
+ * (…-deductions/deductions-for-work-expenses). Now the guide is saved
+ * whole, those are marked replaced.
+ */
+async function retireSections(guideUrl: string, today: Date) {
+  const old = await prisma.document.findMany({
+    where: { documentType: TAX_REFERENCE_TYPE, supersededAt: null, referenceLinkId: { startsWith: "occupation:" }, sourceUrl: { startsWith: `${guideUrl}/` } },
+    select: { id: true, referenceLinkId: true },
+  });
+  if (old.length === 0) return;
+  await prisma.document.updateMany({ where: { id: { in: old.map((d) => d.id) } }, data: { supersededAt: today } });
+  await prisma.referenceCheck.deleteMany({ where: { linkId: { in: old.map((d) => d.referenceLinkId!) } } });
 }
 
 function csv(value: unknown): string {
