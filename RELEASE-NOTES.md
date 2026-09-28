@@ -3,6 +3,13 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.9.0 — 28 September 2026
+- Portfolio Plans now show the plan as graphs: what it's all worth, what's owed and your equity; each year's cash with the cash you'd have in hand; and a timeline of when each property is bought, refinanced or drawn on.
+- Bring the properties you already own into a plan. Their value, loans and rent come from your records and grow with the plan, so it starts from what you have rather than from nothing. Equity drawn from one adds to its loan.
+- Cash in hand: enter the cash you have at the start, and the plan follows it year by year — contributions, rent less interest, equity drawn and refinances in; each purchase's deposit and costs out. Any year it runs short is flagged at the top.
+- What-if versions: "Make a what-if copy" copies a plan so you can change something and see both on the same graphs.
+- A planned purchase, once bought, can be linked to a home or rental as well as a commercial property.
+
 ## 1.8.0 — 28 September 2026
 - The installed program now updates itself. Once a day it checks the project's GitHub page for a new version; when there is one, a note at the top says so. Click "Download and install": your records are backed up, and Financial Vault closes, installs the new version and opens again by itself.
 - The check only asks what the latest version is — nothing about you or your records is sent — and nothing is installed until you say so. The download is used only if it's exactly the file that version published, and only a newer version is ever installed.

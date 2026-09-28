@@ -2021,6 +2021,9 @@ export interface PlanProperty {
   gstPayable?: boolean;
   commercialPropertyId?: string | null;
   commercialProperty?: CommercialProperty | null;
+  /** Bought: the property in the records it became (any kind). */
+  assetId?: string | null;
+  asset?: PlanSourceAsset | null;
   notes?: string | null;
   createdAt: string;
   refinances?: PlanRefinance[];
@@ -2041,10 +2044,55 @@ export interface PortfolioPlan {
   annualContribution: number;
   refinanceLvrTarget: number;
   depositPercent: number;
+  /** Cash on hand at the start, for the cash pool. */
+  startingCash: number;
   notes?: string | null;
   createdAt: string;
   updatedAt: string;
   properties?: PlanProperty[];
+  /** Properties already owned, in the plan. */
+  holdings?: Array<{ id: string; assetId: string; asset?: PlanSourceAsset }>;
+  /** A what-if version: the plan it was copied from. */
+  basePlanId?: string | null;
+  basePlan?: { id: string; name: string } | null;
+  whatIfs?: Array<{ id: string; name: string }>;
+}
+
+export type PlanSourceAsset = {
+  id: string;
+  name: string;
+  disposalDate?: string | null;
+  property?: { id: string } | null;
+  commercialProperty?: { id: string } | null;
+};
+
+export type PlanTimelineEvent = { yearNumber: number; type: "BUY" | "REFINANCE" | "DRAW_FROM" | "DRAW_FOR"; label: string };
+
+export interface PlanHoldingProjection {
+  holdingId: string;
+  assetId: string;
+  name: string;
+  use: string;
+  page: string;
+  sold: boolean;
+  /** Its loan's interest counts in the plan's cash (an investment, not the home). */
+  loanInCash: boolean;
+  start: { value: number; loan: number; rent: number; interest: number };
+  /** What the records don't have yet. */
+  missing: string[];
+  events: PlanTimelineEvent[];
+  rows: Array<{
+    yearNumber: number;
+    propertyValue: number;
+    loan: number;
+    rent: number;
+    interest: number;
+    cashflow: number;
+    equity: number;
+    lvr: number | null;
+    releasableEquity: number;
+    drawn: number;
+  }>;
 }
 
 export interface PlanActualFigures {
@@ -2080,6 +2128,8 @@ export interface PlanPropertyProjection {
   acquisitionYearNumber: number;
   linked: boolean;
   commercialPropertyName: string | null;
+  linkedAsset?: { id: string; name: string } | null;
+  events: PlanTimelineEvent[];
   hasFunding: boolean;
   positivelyGearedFromYear: number | null;
   /** Cash needed to buy: deposit plus the costs the loan doesn't cover. */
@@ -2108,12 +2158,23 @@ export interface PortfolioYearTotals {
   totalAvailableForRedeployment: number;
   /** Cash needed for the properties bought this year (deposits and buying costs). */
   cashToBuy: number;
+  ownedValue: number;
+  ownedLoan: number;
+  /** Equity drawn this year, and cash released by refinances this year. */
+  equityDrawn: number;
+  refinanceCash: number;
+  cashPoolStart: number;
+  /** Cash left at the end of the year. */
+  cashPool: number;
+  short: boolean;
 }
 
 export interface PortfolioPlanProjection {
-  plan: { id: string; name: string; projectionYears: number; startFinancialYearLabel: string };
+  plan: { id: string; name: string; projectionYears: number; startFinancialYearLabel: string; startingCash: number; basePlanId: string | null };
   properties: PlanPropertyProjection[];
+  holdings: PlanHoldingProjection[];
   portfolioByYear: PortfolioYearTotals[];
+  shortYears: Array<{ yearNumber: number; shortBy: number }>;
   note: string;
 }
 
@@ -2677,6 +2738,12 @@ export const api = {
     addEquityDraw: (propertyId: string, data: Record<string, unknown>) =>
       request<PlanEquityDraw>(`/portfolio-plans/properties/${propertyId}/equity-draws`, { method: "POST", body: JSON.stringify(data) }),
     removeEquityDraw: (drawId: string) => request<void>(`/portfolio-plans/equity-draws/${drawId}`, { method: "DELETE" }),
+
+    addHolding: (planId: string, assetId: string) =>
+      request<{ id: string }>(`/portfolio-plans/${planId}/holdings`, { method: "POST", body: JSON.stringify({ assetId }) }),
+    removeHolding: (holdingId: string) => request<void>(`/portfolio-plans/holdings/${holdingId}`, { method: "DELETE" }),
+    copy: (planId: string, name?: string) =>
+      request<PortfolioPlan>(`/portfolio-plans/${planId}/copy`, { method: "POST", body: JSON.stringify(name ? { name } : {}) }),
   },
 
   transactionImport: {

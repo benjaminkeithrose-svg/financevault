@@ -512,6 +512,8 @@ model Asset {
   logbooks           VehicleLogbook[]
   vehicleYears       VehicleYear[]
   planEquitySources  PlanEquityDraw[]
+  planHoldings       PlanHolding[]       @relation("PlanHoldingAsset")
+  planPurchases      PlanProperty[]      @relation("PlanPurchaseAsset")
 
   @@index([entityId])
   @@index([assetType])
@@ -896,12 +898,19 @@ model PortfolioPlan {
   annualContribution Float @default(0) // extra cash added to the portfolio pool each year, tracked as a running total
   refinanceLvrTarget Float // e.g. 0.70 — default LVR a refinance resets a property's loan back up to
   depositPercent     Float @default(0.3) // default suggested deposit % when adding a new planned property
+  startingCash       Float @default(0) // cash on hand at the start, for the cash pool
+
+  // A what-if version: a copy of another plan with something changed, to compare against it.
+  basePlanId String?
+  basePlan   PortfolioPlan?  @relation("WhatIf", fields: [basePlanId], references: [id], onDelete: SetNull)
+  whatIfs    PortfolioPlan[] @relation("WhatIf")
 
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   properties PlanProperty[]
+  holdings   PlanHolding[]
 
   @@index([entityId])
 }
@@ -925,6 +934,10 @@ model PlanProperty {
   // prediction. Null means this is still a hypothetical future purchase.
   commercialPropertyId String?             @unique
   commercialProperty   CommercialProperty? @relation(fields: [commercialPropertyId], references: [id])
+  // Bought: the property in the records it became — any kind (home, rental,
+  // commercial). commercialPropertyId stays filled in for a commercial one.
+  assetId              String?
+  asset                Asset?              @relation("PlanPurchaseAsset", fields: [assetId], references: [id], onDelete: SetNull)
 
   notes     String?
   createdAt DateTime @default(now())
@@ -933,6 +946,20 @@ model PlanProperty {
   equityDraws PlanEquityDraw[]
 
   @@index([planId])
+}
+
+// A property already owned, in a plan: its value, loans and rent come from
+// the records each time the plan is worked out, and grow from there.
+model PlanHolding {
+  id        String        @id @default(cuid())
+  planId    String
+  plan      PortfolioPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  assetId   String
+  asset     Asset         @relation("PlanHoldingAsset", fields: [assetId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+
+  @@unique([planId, assetId])
+  @@index([assetId])
 }
 
 model PlanRefinance {

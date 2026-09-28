@@ -1668,14 +1668,37 @@ const SECTIONS: Section[] = [
   {
     id: "portfolio-plan",
     title: "Portfolio Plan",
-    keywords: "projection future purchases refinance equity draw funding source home usable growth stamp duty transfer duty buying costs gst going concern deposit cash",
+    keywords: "projection future purchases refinance equity draw funding source home usable growth graph chart timeline cash pool short what if copy compare owned stamp duty transfer duty buying costs gst going concern deposit cash",
     body: (
       <>
         <p>
-          A <Link to="/portfolio-plans">Portfolio Plan</Link> is a saved, year-by-year projection of planned property
-          purchases: growth, rent, loans, refinances and equity drawn from properties you already own (including what
-          that borrowing costs). Once a planned property is actually bought, link it to the real commercial property and
-          the plan shows actual figures next to the prediction.
+          A <Link to="/portfolio-plans">Portfolio Plan</Link> is a saved, year-by-year projection of your properties:
+          the ones you own now and the ones you plan to buy — growth, rent, loans, refinances and equity drawn (including
+          what that borrowing costs). Once a planned purchase is bought, pick the property it became (a home, rental or
+          commercial property); for a commercial one the plan shows its actual figures next to the prediction.
+        </p>
+        <p>
+          <strong>The plan at a glance.</strong> Three graphs at the top: what it's all worth, what's owed and your equity
+          (the gap between them); each year's cash — rent less interest and funding costs — with the cash you'd have in
+          hand; and a timeline of when each property is bought, refinanced or drawn on. Point at a bar, dot or marker to see
+          its figures. The tables further down have them all.
+        </p>
+        <p>
+          <strong>Properties you already own.</strong> Add them to the plan and it starts from what you have. Their value,
+          loans and rent come from your records each time you look (so keep those up to date), and grow at the plan's rate.
+          If something's missing — a value, the rent, a loan's interest rate — the plan says so. Equity drawn from one of
+          them adds to its loan. Your home's loan is left out of the plan's cash, like your other living costs.
+        </p>
+        <p>
+          <strong>Cash in hand.</strong> Enter the cash you have at the start in the assumptions. Each year adds the yearly
+          contribution, rent less interest and funding costs, equity drawn and cash released by refinancing, and takes off
+          the cash each purchase needs. If it goes below zero in any year, a note at the top says which years and by how
+          much.
+        </p>
+        <p>
+          <strong>What-if versions.</strong> <em>Make a what-if copy</em> copies the whole plan. Change anything in the copy
+          — a higher interest rate, a later purchase — and its graphs show the original plan's equity and cash as a dotted
+          line to compare. The original stays as it is.
         </p>
         <p>
           <strong>Cash needed to buy.</strong> Each planned property shows the cash it needs: the deposit, stamp duty,

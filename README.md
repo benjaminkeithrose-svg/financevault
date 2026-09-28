@@ -481,6 +481,35 @@ isn't safe to sync live, only the documents folder is.
   builds the Setup on Windows, installs it silently, runs a first start and
   an upgrade with it, and uninstalls, checking the records stay.
 
+### Portfolio Plan: owned properties, graphs, cash in hand, what-ifs (1.9.0)
+
+- The projection moved to `services/planProjection.ts` (`projectPlan`,
+  `purchaseCosts`). `PlanHolding` (plan + asset, unique) brings a property
+  already owned into a plan: value (`Asset.currentValue`), loans secured on
+  it (by asset, property or commercial property; each loan's own rate, or
+  the plan's) and rent (`weeklyRent × 52`, or active leases) are read live
+  and grow at the plan's rate from year 1. Draws with `sourceAssetId` on it
+  add to its loan from their year (their interest stays on the purchase
+  they fund). The loan's interest counts in the plan's cash only for
+  investments (`INVESTMENT`, `HOLIDAY_RENTED`, commercial); the home's is a
+  living cost. `missing` lists what the records lack.
+- Cash in hand (`PortfolioPlan.startingCash`): each year adds the
+  contribution, cashflow after funding costs, equity drawn and refinance
+  cash (new loan − previous loan), and takes off `cashToBuy`;
+  `shortYears` lists years below zero.
+- `PlanProperty.assetId` links a purchase to any property it became
+  (`commercialPropertyId` still set for a commercial one, for actuals).
+- What-ifs: `PortfolioPlan.basePlanId`; `POST /portfolio-plans/:id/copy`
+  copies assumptions, purchases, refinances, draws and holdings, but not
+  links to real purchases or loans. The detail page fetches the base
+  plan's projection and draws it dotted on the graphs.
+- `components/PlanCharts.tsx`: growth (value, loans, equity area), cash
+  (bars and the cash-in-hand line, short years marked) and a timeline
+  (events from `properties[].events` and `holdings[].events`), as SVG with
+  `<title>` hover text; theme colours, one accent.
+- Holding routes: `POST /portfolio-plans/:id/holdings {assetId}`,
+  `DELETE /portfolio-plans/holdings/:id`.
+
 ### Automatic updates for the installed program (1.8.0)
 
 - Releases: when `package.json` has a new version, the Windows workflow
