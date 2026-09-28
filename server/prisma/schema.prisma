@@ -473,6 +473,16 @@ model Asset {
   landTaxPerYear       Float?
   // Why it's owned by whom it is — worth recording at purchase (IDEAS.md idea 9).
   ownershipReason      String?
+  // OWNED (counted everywhere) | CONSIDERING (a property you're looking at
+  // buying) | PASSED_ON (one you decided against, kept for reference). Only
+  // OWNED assets count in any total — the rule is applied once, in db.ts.
+  status               String    @default("OWNED")
+  // While considering: LOOKING | INVESTIGATING | OFFER | CONTRACT | SETTLEMENT
+  // (and where it stopped, once passed on).
+  pipelineStage        String?
+  askingPrice          Float?
+  passedOnAt           DateTime?
+  passedOnReason       String?
   // From the depreciation schedule: plant & equipment (Division 40) and the
   // building write-off (capital works, Division 43), a year.
   depreciationPerYear  Float?
@@ -520,6 +530,8 @@ model Asset {
   @@index([entityId])
   @@index([assetType])
   @@index([parentAssetId])
+
+  @@index([status])
 }
 
 // Service, repair and running-cost history for an asset or sub-asset.
@@ -621,6 +633,10 @@ model Property {
   // or granny flat rented). Null = investment. HOME and HOME_PART_RENTED keep
   // the asset's mainResidence at FULL for land tax.
   use               String?
+  // For the due diligence checklist (and searching later).
+  suburb            String?
+  kind              String? // HOUSE | UNIT | TOWNHOUSE | LAND | OTHER
+  titleType         String? // TORRENS | STRATA | COMMUNITY
   // Part rented, part private (HOLIDAY_RENTED, HOME_PART_RENTED): the share
   // of the property's costs that relates to renting (0-100), worked out the
   // way PCG 2026/2 accepts — by days, floor area, or both.
@@ -663,6 +679,8 @@ model CommercialProperty {
   address       String
   state         String?
   postcode      String?
+  suburb        String?
+  titleType     String? // TORRENS | STRATA | COMMUNITY
   // Comma-separated list, e.g. "INDUSTRIAL,WAREHOUSE" — a property can carry
   // multiple classifications (spec section 2). Allowed values: OFFICE |
   // RETAIL | INDUSTRIAL | WAREHOUSE | LOGISTICS | MEDICAL | CHILDCARE |

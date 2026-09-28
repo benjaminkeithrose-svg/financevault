@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { prisma } from "../db.js";
+import { prisma, prismaAll } from "../db.js";
 import { dataFolder } from "./appInfo.js";
 import { readDocumentFile } from "./documentFiles.js";
 import { hasDataKey } from "./fieldCrypto.js";
@@ -90,7 +90,8 @@ export async function planCopies(): Promise<Placement[]> {
     await Promise.all([
       prisma.entity.findMany({ select: { id: true, name: true } }),
       prisma.person.findMany({ select: { id: true, name: true, entityId: true } }),
-      prisma.asset.findMany({ select: { id: true, name: true, assetType: true, entityId: true, parentAssetId: true, property: { select: { id: true } }, commercialProperty: { select: { id: true } } } }),
+      // Properties being considered have their papers too — in their own folder.
+      prismaAll.asset.findMany({ select: { id: true, name: true, assetType: true, entityId: true, parentAssetId: true, status: true, property: { select: { id: true } }, commercialProperty: { select: { id: true } } } }),
       prisma.liability.findMany({ select: { id: true, name: true, entityId: true, securityPropertyId: true, securityCommercialPropertyId: true, securityAssetId: true } }),
       prisma.account.findMany({ select: { id: true, institution: true, accountName: true, entityId: true } }),
       prisma.investmentAccount.findMany({ select: { id: true, institution: true, accountType: true, entityId: true } }),
@@ -144,7 +145,8 @@ export async function planCopies(): Promise<Placement[]> {
       const parent = assetPath(a.parentAssetId, depth + 1);
       if (parent) return [...parent, safeName(a.name)];
     }
-    return [owner(a.entityId), ASSET_GROUPS[a.assetType] ?? "Other assets", safeName(a.name)];
+    const group = a.status === "CONSIDERING" ? "Properties I'm considering" : a.status === "PASSED_ON" ? "Properties passed on" : ASSET_GROUPS[a.assetType];
+    return [owner(a.entityId), group ?? "Other assets", safeName(a.name)];
   };
   const loanPath = (id: string): string[] | null => {
     const l = loanById.get(id);

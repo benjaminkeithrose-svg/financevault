@@ -124,7 +124,9 @@ describe("selling, stale values and the monthly snapshot", () => {
 
   it("offers the getting-started steps until they're done or put away", async () => {
     const dash = (await agent.get("/api/dashboard")).body;
-    expect(dash.gettingStarted.steps.find((s: { key: string }) => s.key === "people").done).toBe(true);
+    // Done once there are people and (with more than one) their relationships are linked.
+    const [people, links] = [await prisma.person.count(), await prisma.personRelationship.count()];
+    expect(dash.gettingStarted.steps.find((s: { key: string }) => s.key === "people").done).toBe(people > 0 && (links > 0 || people === 1));
     await agent.put("/api/settings").send({ checklistDismissed: true });
     expect((await agent.get("/api/dashboard")).body.gettingStarted.dismissed).toBe(true);
   });

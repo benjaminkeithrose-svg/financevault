@@ -83,6 +83,11 @@ const createInput = z.object({
   managementPercent: z.number().nonnegative().optional().nullable(),
   repairsPerYear: z.number().nonnegative().optional().nullable(),
   otherCostsPerYear: z.number().nonnegative().optional().nullable(),
+  suburb: z.string().max(80).optional().nullable(),
+  kind: z.enum(["HOUSE", "UNIT", "TOWNHOUSE", "LAND", "OTHER"]).optional().nullable(),
+  titleType: z.enum(["TORRENS", "STRATA", "COMMUNITY"]).optional().nullable(),
+  // While it's being considered.
+  askingPrice: z.number().nonnegative().optional().nullable(),
   owners: ownersInput,
 });
 
@@ -133,6 +138,9 @@ propertiesRouter.post(
           managementPercent: parsed.managementPercent,
           repairsPerYear: parsed.repairsPerYear,
           otherCostsPerYear: parsed.otherCostsPerYear,
+          suburb: parsed.suburb,
+          kind: parsed.kind,
+          titleType: parsed.titleType,
         },
         include: { asset: true, entity: true },
       });
@@ -175,6 +183,7 @@ propertiesRouter.put(
           acquisitionDate: parsed.purchaseDate !== undefined ? (parsed.purchaseDate ? new Date(parsed.purchaseDate) : null) : undefined,
           acquisitionCost: parsed.purchasePrice,
           currentValue: parsed.currentValue,
+          askingPrice: parsed.askingPrice,
         },
       });
       return tx.property.update({
@@ -199,6 +208,9 @@ propertiesRouter.put(
           managementPercent: parsed.managementPercent,
           repairsPerYear: parsed.repairsPerYear,
           otherCostsPerYear: parsed.otherCostsPerYear,
+          suburb: parsed.suburb,
+          kind: parsed.kind,
+          titleType: parsed.titleType,
         },
         include: { asset: true, entity: true },
       });

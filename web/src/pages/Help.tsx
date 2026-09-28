@@ -912,6 +912,39 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "considering",
+    title: "Properties I'm considering",
+    keywords: "considering buying prospective pipeline looking investigating offer contract settlement passed on reject opportunity asking price due diligence",
+    body: (
+      <>
+        <p>
+          <strong>Planning → Properties I'm considering</strong> keeps every property you're looking at buying, from first
+          spotting it to settlement. <strong>Add a property I'm considering</strong> asks only for the address, the asking
+          price and who'd buy it (a person, two of you, a trust, a company or your SMSF); everything else goes on its page as
+          you find it out.
+        </p>
+        <p>
+          They're shown in columns by how far along each one is — <strong>Looking</strong>, <strong>Investigating</strong>,{" "}
+          <strong>Offer</strong>, <strong>Under contract</strong>, <strong>Settlement</strong> — with the ones you decided
+          against greyed in <strong>Passed on</strong> at the end. The switch at the top shows residential, commercial or both.
+          On a phone the columns scroll sideways.
+        </p>
+        <p>
+          Each one opens as a normal property page, showing only what applies before buying: the address, suburb, kind and
+          title, the asking price and expected rent, running costs, leases (commercial), documents and reminders. Move it along
+          with the buttons at the top. <strong>Pass on this one</strong> keeps it, with your reason, for reference;{" "}
+          <strong>Bring it back</strong> undoes that. <strong>We bought it</strong> makes it yours: from that day it counts in
+          your totals and moves to Properties.
+        </p>
+        <p>
+          Until it's bought it isn't yours, so it's left out of <strong>every</strong> total, report and checklist — net worth,
+          the dashboard, tax, borrowing, land tax, What's missing, the Asset tree and the rest. Its documents go in their own
+          folder ("Properties I'm considering") in the readable copy.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "loans-assets",
     title: "Loans, other liabilities and other assets",
     keywords: "mortgage credit card personal loan car vehicle super superannuation equipment ownership share add a loan financing property documents contract statement read import csv rate history graph interest year balance",

@@ -43,38 +43,63 @@ const base = new PrismaClient({
   },
 });
 
-export const prisma = base.$extends({
-  query: {
-    $allModels: {
-      async $allOperations({ model, operation, args, query }) {
-        // A changed value is a new valuation: its date is kept, so the
-        // dashboard can say which values haven't been looked at in a while.
-        if (model === "Asset" && (operation === "create" || operation === "update")) {
-          const a = args as { data?: Record<string, unknown>; where?: { id?: string } };
-          const value = a.data?.currentValue;
-          if (typeof value === "number" && a.data && a.data.valuationDate === undefined) {
-            const before =
-              operation === "update" && a.where?.id
-                ? await base.asset.findUnique({ where: { id: a.where.id }, select: { currentValue: true } })
-                : null;
-            if (operation === "create" || before?.currentValue !== value) a.data.valuationDate = new Date();
+// Properties being considered (or passed on) aren't yours: every list of
+// assets or properties leaves them out, so no total, report, checklist or
+// tree can count them. Applied here once rather than at each of the many
+// queries. Looking one up by id still works (its own page), and the few
+// places that deal with them on purpose use prismaAll.
+const LISTS = new Set(["findMany", "findFirst", "findFirstOrThrow", "count", "aggregate", "groupBy"]);
+function ownedOnly(model: string | undefined, operation: string, args: unknown) {
+  if (!LISTS.has(operation)) return;
+  const rule =
+    model === "Asset"
+      ? { status: "OWNED" }
+      : model === "Property" || model === "CommercialProperty"
+        ? { asset: { is: { status: "OWNED" } } }
+        : null;
+  if (!rule) return;
+  const a = args as { where?: object };
+  a.where = a.where ? { AND: [a.where, rule] } : rule;
+}
+
+const extend = (listsOwnedOnly: boolean) =>
+  base.$extends({
+    query: {
+      $allModels: {
+        async $allOperations({ model, operation, args, query }) {
+          if (listsOwnedOnly) ownedOnly(model, operation, args);
+          // A changed value is a new valuation: its date is kept, so the
+          // dashboard can say which values haven't been looked at in a while.
+          if (model === "Asset" && (operation === "create" || operation === "update")) {
+            const a = args as { data?: Record<string, unknown>; where?: { id?: string } };
+            const value = a.data?.currentValue;
+            if (typeof value === "number" && a.data && a.data.valuationDate === undefined) {
+              const before =
+                operation === "update" && a.where?.id
+                  ? await base.asset.findUnique({ where: { id: a.where.id }, select: { currentValue: true } })
+                  : null;
+              if (operation === "create" || before?.currentValue !== value) a.data.valuationDate = new Date();
+            }
           }
-        }
-        const fields = model ? ENCRYPTED_FIELDS[model] : undefined;
-        if (fields) {
-          const a = args as Record<string, unknown>;
-          if (operation === "create" || operation === "update" || operation === "updateMany") {
-            encryptInPlace(a.data, fields);
-          } else if (operation === "createMany") {
-            const rows = Array.isArray(a.data) ? a.data : [a.data];
-            for (const row of rows) encryptInPlace(row, fields);
-          } else if (operation === "upsert") {
-            encryptInPlace(a.create, fields);
-            encryptInPlace(a.update, fields);
+          const fields = model ? ENCRYPTED_FIELDS[model] : undefined;
+          if (fields) {
+            const a = args as Record<string, unknown>;
+            if (operation === "create" || operation === "update" || operation === "updateMany") {
+              encryptInPlace(a.data, fields);
+            } else if (operation === "createMany") {
+              const rows = Array.isArray(a.data) ? a.data : [a.data];
+              for (const row of rows) encryptInPlace(row, fields);
+            } else if (operation === "upsert") {
+              encryptInPlace(a.create, fields);
+              encryptInPlace(a.update, fields);
+            }
           }
-        }
-        return query(args);
+          return query(args);
+        },
       },
     },
-  },
-});
+  });
+
+export const prisma = extend(true);
+/** Includes properties being considered or passed on — for the pages and services that deal with them. */
+export const prismaAll = extend(false);

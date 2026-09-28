@@ -17,6 +17,20 @@ import { DeleteSection } from "../components/DeleteSection.js";
 import { useTrailTitle } from "../trail.js";
 import { RemindersCard } from "../components/RemindersCard.js";
 import { SecuredLoansCard } from "../components/SecuredLoansCard.js";
+import { ConsideringBar } from "../components/ConsideringBar.js";
+
+const KINDS = [
+  ["HOUSE", "House"],
+  ["UNIT", "Unit or apartment"],
+  ["TOWNHOUSE", "Townhouse or villa"],
+  ["LAND", "Vacant land"],
+  ["OTHER", "Other"],
+];
+const TITLES = [
+  ["TORRENS", "Torrens (freehold)"],
+  ["STRATA", "Strata"],
+  ["COMMUNITY", "Community title"],
+];
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -51,6 +65,10 @@ export function PropertyDetail() {
         tenantInfo: p.tenantInfo || "",
         propertyManager: p.propertyManager || "",
         weeklyRent: p.weeklyRent?.toString() || "",
+        suburb: p.suburb || "",
+        kind: p.kind || "",
+        titleType: p.titleType || "",
+        askingPrice: p.asset?.askingPrice?.toString() || "",
       });
     }).catch((e: Error) => setLoadError(e.message));
   }
@@ -77,6 +95,10 @@ export function PropertyDetail() {
         tenantInfo: form.tenantInfo || null,
         propertyManager: form.propertyManager || null,
         weeklyRent: form.weeklyRent ? Number(form.weeklyRent) : null,
+        suburb: form.suburb || null,
+        kind: form.kind || null,
+        titleType: form.titleType || null,
+        ...(considering ? { askingPrice: form.askingPrice ? Number(form.askingPrice) : null } : {}),
       });
       load();
     } finally {
@@ -93,6 +115,8 @@ export function PropertyDetail() {
   }
 
   const summary = property.summary || {};
+  // Being considered (or passed on): not yours yet, so only what applies before buying.
+  const considering = !!property.asset?.status && property.asset.status !== "OWNED";
   const use = propertyUse(property);
   // A home or a holiday home that isn't rented has no tenant, manager or rent.
   const rented = !["HOME", "HOLIDAY"].includes(use.value);
@@ -106,6 +130,8 @@ export function PropertyDetail() {
           <p>{property.address}</p>
         </div>
       </div>
+
+      {considering && property.asset && <ConsideringBar asset={property.asset} onChange={load} />}
 
       {!property.asset?.disposalDate && (
         <div className="card property-use">
@@ -124,55 +150,102 @@ export function PropertyDetail() {
         </div>
       )}
 
-      <div className="grid grid-2">
+      <div className={considering ? "" : "grid grid-2"}>
         <div className="card">
           <h3 style={{ marginTop: 0 }}>Overview</h3>
           <label>Display name</label>
           <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <label>Address</label>
           <input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
-          <label>State</label>
-          <input value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} />
           <div className="grid grid-2">
             <div>
-              <label>Purchase date</label>
-              <input type="date" value={form.purchaseDate} onChange={(e) => setForm({ ...form, purchaseDate: e.target.value })} />
+              <label>Suburb</label>
+              <input value={form.suburb} onChange={(e) => setForm({ ...form, suburb: e.target.value })} />
             </div>
             <div>
-              <label>Settlement date</label>
-              <input
-                type="date"
-                value={form.settlementDate}
-                onChange={(e) => setForm({ ...form, settlementDate: e.target.value })}
-              />
+              <label>State</label>
+              <input value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} />
             </div>
           </div>
           <div className="grid grid-2">
             <div>
-              <label>Purchase price</label>
-              <input
-                type="number"
-                value={form.purchasePrice}
-                onChange={(e) => setForm({ ...form, purchasePrice: e.target.value })}
-              />
+              <label>Kind of property</label>
+              <select value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value })}>
+                <option value="">— Not recorded —</option>
+                {KINDS.map(([v, l]) => (
+                  <option key={v} value={v}>
+                    {l}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
-              <label>Current estimated value</label>
-              <input
-                type="number"
-                value={form.currentValue}
-                onChange={(e) => setForm({ ...form, currentValue: e.target.value })}
-              />
+              <label>Title</label>
+              <select value={form.titleType} onChange={(e) => setForm({ ...form, titleType: e.target.value })}>
+                <option value="">— Not recorded —</option>
+                {TITLES.map(([v, l]) => (
+                  <option key={v} value={v}>
+                    {l}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-          {rented && (
+          {considering ? (
             <>
-              <label>Tenant / rental information</label>
-              <input value={form.tenantInfo} onChange={(e) => setForm({ ...form, tenantInfo: e.target.value })} />
-              <label>Property manager</label>
-              <input value={form.propertyManager} onChange={(e) => setForm({ ...form, propertyManager: e.target.value })} />
-              <label>Rent per week</label>
-              <input type="number" value={form.weeklyRent} onChange={(e) => setForm({ ...form, weeklyRent: e.target.value })} />
+              <label>Asking price</label>
+              <input type="number" value={form.askingPrice} onChange={(e) => setForm({ ...form, askingPrice: e.target.value })} />
+              {rented && (
+                <>
+                  <label>Expected rent per week</label>
+                  <input type="number" value={form.weeklyRent} onChange={(e) => setForm({ ...form, weeklyRent: e.target.value })} />
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="grid grid-2">
+                <div>
+                  <label>Purchase date</label>
+                  <input type="date" value={form.purchaseDate} onChange={(e) => setForm({ ...form, purchaseDate: e.target.value })} />
+                </div>
+                <div>
+                  <label>Settlement date</label>
+                  <input
+                    type="date"
+                    value={form.settlementDate}
+                    onChange={(e) => setForm({ ...form, settlementDate: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-2">
+                <div>
+                  <label>Purchase price</label>
+                  <input
+                    type="number"
+                    value={form.purchasePrice}
+                    onChange={(e) => setForm({ ...form, purchasePrice: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label>Current estimated value</label>
+                  <input
+                    type="number"
+                    value={form.currentValue}
+                    onChange={(e) => setForm({ ...form, currentValue: e.target.value })}
+                  />
+                </div>
+              </div>
+              {rented && (
+                <>
+                  <label>Tenant / rental information</label>
+                  <input value={form.tenantInfo} onChange={(e) => setForm({ ...form, tenantInfo: e.target.value })} />
+                  <label>Property manager</label>
+                  <input value={form.propertyManager} onChange={(e) => setForm({ ...form, propertyManager: e.target.value })} />
+                  <label>Rent per week</label>
+                  <input type="number" value={form.weeklyRent} onChange={(e) => setForm({ ...form, weeklyRent: e.target.value })} />
+                </>
+              )}
             </>
           )}
           <div className="toolbar" style={{ marginTop: 16 }}>
@@ -182,72 +255,83 @@ export function PropertyDetail() {
           </div>
         </div>
 
-        <div className="card">
-          <SecuredLoansCard
-            bare
-            title="Financing"
-            kind="residential"
-            securityId={property.id}
-            ownerEntityId={property.asset?.entityId ?? property.entityId}
-            name={property.asset?.name ?? property.address}
-            defaultType={["HOME", "HOME_PART_RENTED"].includes(use.value) ? "HOME_LOAN" : "INVESTMENT_LOAN"}
-            loans={liabilities}
-            onChange={load}
-          />
+        {!considering && (
+          <div className="card">
+            <SecuredLoansCard
+              bare
+              title="Financing"
+              kind="residential"
+              securityId={property.id}
+              ownerEntityId={property.asset?.entityId ?? property.entityId}
+              name={property.asset?.name ?? property.address}
+              defaultType={["HOME", "HOME_PART_RENTED"].includes(use.value) ? "HOME_LOAN" : "INVESTMENT_LOAN"}
+              loans={liabilities}
+              onChange={load}
+            />
 
-          <h3>Income, expenses & capital</h3>
-          <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
-            Derived from documents linked below, grouped by tax category. Tag a linked document with a tax category to
-            have it counted here.
-          </p>
-          <table>
-            <tbody>
-              {(rented || !!summary.INCOME?.total) && (
+            <h3>Income, expenses & capital</h3>
+            <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+              Derived from documents linked below, grouped by tax category. Tag a linked document with a tax category to
+              have it counted here.
+            </p>
+            <table>
+              <tbody>
+                {(rented || !!summary.INCOME?.total) && (
+                  <tr>
+                    <td>Income</td>
+                    <td>{formatCurrency(summary.INCOME?.total || 0)}</td>
+                  </tr>
+                )}
                 <tr>
-                  <td>Income</td>
-                  <td>{formatCurrency(summary.INCOME?.total || 0)}</td>
+                  <td>Expenses</td>
+                  <td>{formatCurrency(summary.EXPENSE?.total || 0)}</td>
                 </tr>
-              )}
-              <tr>
-                <td>Expenses</td>
-                <td>{formatCurrency(summary.EXPENSE?.total || 0)}</td>
-              </tr>
-              <tr>
-                <td>Capital</td>
-                <td>{formatCurrency(summary.CAPITAL?.total || 0)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                <tr>
+                  <td>Capital</td>
+                  <td>{formatCurrency(summary.CAPITAL?.total || 0)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {property.asset && <AssetOwnershipPanel asset={property.asset} entities={entities} onChange={load} />}
 
       {property.asset && <PropertyCostsCard property={property} asset={property.asset} onChange={load} />}
 
-      {!property.asset?.disposalDate && <UsableEquityCard assetId={property.assetId} />}
+      {/* Owned only: equity, its profit years, what's in it, what's expected and its cover. */}
+      {!considering && (
+        <>
+          {!property.asset?.disposalDate && <UsableEquityCard assetId={property.assetId} />}
 
-      {/* Not rented: only if it has years from when it was. */}
-      <ProfitHistoryCard assetId={property.assetId} onlyIfSaved={!rented} />
+          {/* Not rented: only if it has years from when it was. */}
+          <ProfitHistoryCard assetId={property.assetId} onlyIfSaved={!rented} />
 
-      <ItemsPanel parentAssetId={property.assetId} title="Items in this property" />
+          <ItemsPanel parentAssetId={property.assetId} title="Items in this property" />
 
-      <MissingFlags target={`asset:${property.assetId}`} />
-      <InsurancePanel assetId={property.assetId} defaultKind="BUILDING_AND_CONTENTS" defaultHolderId={property.asset?.entityId} />
+          <MissingFlags target={`asset:${property.assetId}`} />
+          <InsurancePanel assetId={property.assetId} defaultKind="BUILDING_AND_CONTENTS" defaultHolderId={property.asset?.entityId} />
+        </>
+      )}
 
       <RemindersCard targetType="PROPERTY" targetId={property.id} name={property.asset?.name ?? property.address} />
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="PROPERTY" targetId={property.id} />
       </div>
-      {property.asset && <SoldPanel asset={property.asset} onChange={load} />}
+      {property.asset && !considering && <SoldPanel asset={property.asset} onChange={load} />}
 
       <DeleteSection
         title="Delete this property"
-        note="Sold it? Use Sold above instead — that keeps its history and capital gains record. Deleting isn't possible while a loan is secured against it or items (appliances, solar…) are recorded under it. Its documents stay in Documents, just no longer linked to it; its insurance policies stay in the insurance register; its servicing records are removed."
+        note={
+          considering
+            ? "Decided against it? Use Pass on this one at the top instead — that keeps it, with what you found out, for reference. Deleting removes it completely; its documents stay in Documents."
+            : "Sold it? Use Sold above instead — that keeps its history and capital gains record. Deleting isn't possible while a loan is secured against it or items (appliances, solar…) are recorded under it. Its documents stay in Documents, just no longer linked to it; its insurance policies stay in the insurance register; its servicing records are removed."
+        }
         question={`Delete ${property.asset?.name ?? "this property"}? This can't be undone.`}
         action={() => api.properties.remove(property.id)}
-        redirectTo="/properties"
+        redirectTo={considering ? "/considering" : "/properties"}
       />
     </div>
   );

@@ -875,6 +875,26 @@ export interface DocumentLink {
   createdAt: string;
 }
 
+export interface ConsideredProperty {
+  assetId: string;
+  id: string;
+  kind: "RESIDENTIAL" | "COMMERCIAL";
+  route: string;
+  name: string;
+  address: string;
+  suburb: string | null;
+  askingPrice: number | null;
+  stage: string;
+  status: "CONSIDERING" | "PASSED_ON";
+  passedOnAt: string | null;
+  passedOnReason: string | null;
+  owner: string;
+  grossYield: number | null;
+  yearlyRent: number | null;
+  /** The assessment's expected column, once filled in. */
+  expected?: { grossYield: number | null; netYield: number | null; weeklyCash: number | null; afterTax: boolean } | null;
+}
+
 export interface GettingStartedStep {
   key: string;
   label: string;
@@ -1163,6 +1183,12 @@ export interface Asset {
   name: string;
   assetType: string;
   entityId: string;
+  /** OWNED | CONSIDERING | PASSED_ON — only owned ones count anywhere. */
+  status?: string;
+  pipelineStage?: string | null;
+  askingPrice?: number | null;
+  passedOnAt?: string | null;
+  passedOnReason?: string | null;
   entity?: Entity;
   acquisitionDate?: string | null;
   acquisitionCost?: number | null;
@@ -1396,6 +1422,9 @@ export interface Property {
   entity?: Entity;
   address: string;
   state?: string | null;
+  suburb?: string | null;
+  kind?: string | null;
+  titleType?: string | null;
   purchaseDate?: string | null;
   settlementDate?: string | null;
   purchasePrice?: number | null;
@@ -1697,6 +1726,8 @@ export interface CommercialProperty {
   address: string;
   state?: string | null;
   postcode?: string | null;
+  suburb?: string | null;
+  titleType?: string | null;
   propertyTypes: string; // comma-separated
   ownershipPercent?: number | null;
   purchaseDate?: string | null;
@@ -2486,6 +2517,19 @@ export const api = {
   },
 
   search: (q: string) => request<{ documents: Document[]; entities: Entity[] }>(`/search?q=${encodeURIComponent(q)}`),
+
+  considering: {
+    list: () => request<ConsideredProperty[]>("/considering"),
+    add: (data: { kind: "RESIDENTIAL" | "COMMERCIAL"; address: string; askingPrice?: number | null; entityId: string; owners?: unknown }) =>
+      request<{ assetId: string; id: string; route: string }>("/considering", { method: "POST", body: JSON.stringify(data) }),
+    setStage: (assetId: string, stage: string) =>
+      request<{ stage: string }>(`/considering/${assetId}/stage`, { method: "PUT", body: JSON.stringify({ stage }) }),
+    passOn: (assetId: string, reason: string) =>
+      request<{ status: string }>(`/considering/${assetId}/pass`, { method: "POST", body: JSON.stringify({ reason }) }),
+    reconsider: (assetId: string) => request<{ status: string }>(`/considering/${assetId}/reconsider`, { method: "POST", body: "{}" }),
+    bought: (assetId: string, price?: number | null) =>
+      request<{ status: string }>(`/considering/${assetId}/bought`, { method: "POST", body: JSON.stringify({ price }) }),
+  },
 
   settings: {
     get: () => request<Settings>("/settings"),

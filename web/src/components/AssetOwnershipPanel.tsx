@@ -26,7 +26,7 @@ export function AssetOwnershipPanel({
   onChange,
   kind = "asset",
 }: {
-  asset: { id: string; entityId: string; entity?: Entity | null; ownerships?: ShareRow[] };
+  asset: { id: string; entityId: string; entity?: Entity | null; ownerships?: ShareRow[]; status?: string };
   entities: Entity[];
   onChange: () => void;
   kind?: "asset" | "loan" | "account" | "investment";
@@ -78,7 +78,7 @@ export function AssetOwnershipPanel({
 
   return (
     <div className="card">
-      <h3 style={{ marginTop: 0 }}>{kind === "loan" ? "Who owes it" : "Who owns it"}</h3>
+      <h3 style={{ marginTop: 0 }}>{kind === "loan" ? "Who owes it" : asset.status && asset.status !== "OWNED" ? "Who'd buy it" : "Who owns it"}</h3>
       {rows.length === 0 ? (
         <p className="empty-state">
           <Link to={`/entities/${asset.entityId}`}>{asset.entity?.name ?? "The owner on record"}</Link> {verb} 100%.

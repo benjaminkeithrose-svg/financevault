@@ -3,6 +3,12 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.13.0 — 28 September 2026
+- Properties I'm considering (Planning in the menu): every property you're looking at buying, in columns by how far along it is — Looking, Investigating, Offer, Under contract, Settlement — and the ones you passed on, greyed, at the end. Residential and commercial together, with a switch to show one or the other.
+- Add one with just the address, asking price and who'd buy it. It opens as a normal property page showing only what applies before buying. Pass on one (it's kept with your reason) or mark it bought — then it's yours, counts in your totals and moves to Properties. Nothing is re-entered.
+- Until it's bought it's left out of every total, report and checklist.
+- Every property now has a suburb, the kind of property (house, unit, townhouse…) and the title (Torrens, strata, community).
+
 ## 1.12.0 — 28 September 2026
 - A tidier menu, in the order your records are built up: Dashboard, To review and the Asset tree at the top; then People & relationships, Assets (bank accounts and insurance included), Liabilities, a new Planning group (Portfolio Plan, Who should own it?, How much could I borrow?), Supporting information (documents, calendar, what's missing, packs), Reports, and Settings & help at the bottom. Nothing has been removed — everything is where you'd look for it. A group whose parts are all switched off disappears.
 - Getting started is now its own card at the top of the dashboard on a new setup, one small step at a time: What do you have? (tick what applies; the rest is kept out of the menu), the people and their relationships, what they own, loans (once there's a property or vehicle), papers and cover, the reports (once there's enough to report on) and a first backup. Each step ticks itself off, any step can be skipped, and Help → "Worth doing" can bring the list back. If you'd already finished or hidden the old checklist, it stays away.

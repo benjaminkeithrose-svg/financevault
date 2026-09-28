@@ -12,6 +12,7 @@ import { PeopleAndEntities } from "./pages/PeopleAndEntities.js";
 import { PersonDetail } from "./pages/PersonDetail.js";
 import { Search } from "./pages/Search.js";
 import { Settings } from "./pages/Settings.js";
+import { Considering } from "./pages/Considering.js";
 import { Properties } from "./pages/Properties.js";
 import { PropertyDetail } from "./pages/PropertyDetail.js";
 import { CommercialPropertyDetail } from "./pages/CommercialPropertyDetail.js";
@@ -102,6 +103,7 @@ export default function App() {
           <Route path="/entities/:id" element={<EntityDetail />} />
           <Route path="/search" element={<Search />} />
           <Route path="/properties" element={<Properties />} />
+          <Route path="/considering" element={<Considering />} />
           <Route path="/properties/:id" element={<PropertyDetail />} />
           <Route path="/commercial-properties/acquisition-model" element={gate("commercial", <AcquisitionModel />)} />
           <Route path="/commercial-properties/:id" element={gate("commercial", <CommercialPropertyDetail />)} />

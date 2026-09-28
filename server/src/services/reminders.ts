@@ -1,4 +1,4 @@
-import { prisma } from "../db.js";
+import { prisma, prismaAll } from "../db.js";
 
 /**
  * The person's own reminders, done like tasks: each stays in the calendar
@@ -44,9 +44,9 @@ export async function describeTargets(refs: Array<{ targetType: string | null; t
   const put = (type: string, id: string, name: string, route: string) => out.set(`${type}:${id}`, { name, route });
 
   const [assets, properties, commercial, people, entities, loans, policies, accounts, investments] = await Promise.all([
-    prisma.asset.findMany({ where: { id: { in: ids("ASSET") } }, select: { id: true, name: true, property: { select: { id: true } }, commercialProperty: { select: { id: true } } } }),
-    prisma.property.findMany({ where: { id: { in: ids("PROPERTY") } }, select: { id: true, asset: { select: { name: true } } } }),
-    prisma.commercialProperty.findMany({ where: { id: { in: ids("COMMERCIAL_PROPERTY") } }, select: { id: true, name: true } }),
+    prismaAll.asset.findMany({ where: { id: { in: ids("ASSET") } }, select: { id: true, name: true, property: { select: { id: true } }, commercialProperty: { select: { id: true } } } }),
+    prismaAll.property.findMany({ where: { id: { in: ids("PROPERTY") } }, select: { id: true, asset: { select: { name: true } } } }),
+    prismaAll.commercialProperty.findMany({ where: { id: { in: ids("COMMERCIAL_PROPERTY") } }, select: { id: true, name: true } }),
     prisma.person.findMany({ where: { id: { in: ids("PERSON") } }, select: { id: true, name: true } }),
     prisma.entity.findMany({ where: { id: { in: ids("ENTITY") } }, select: { id: true, name: true } }),
     prisma.liability.findMany({ where: { id: { in: ids("LIABILITY") } }, select: { id: true, name: true } }),

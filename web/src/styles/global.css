@@ -2738,3 +2738,70 @@ code.path {
 .setup-body .toolbar {
   margin-top: 6px;
 }
+
+/* Properties I'm considering: stage columns. On a phone the board scrolls
+   sideways inside itself; the page doesn't. */
+.board {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  align-items: flex-start;
+}
+
+.board-column {
+  flex: 0 0 200px;
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  padding: 10px;
+  min-height: 120px;
+}
+
+.board-column h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+.board-count {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.board-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface);
+  border: var(--card-border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  color: inherit;
+  text-decoration: none;
+  min-height: 40px;
+  font-size: 14px;
+}
+
+.board-card + .board-card {
+  margin-top: 8px;
+}
+
+.board-card-title {
+  font-weight: 600;
+}
+
+.board-card-figures {
+  font-size: 13px;
+}
+
+.board-card .muted,
+.board-column.passed h3 {
+  color: var(--text-muted);
+}
+
+/* Passed on: greyed, not red (red is for deleting and errors). */
+.board-card.passed {
+  border-left-color: var(--border);
+  color: var(--text-muted);
+  background: var(--surface-2);
+}

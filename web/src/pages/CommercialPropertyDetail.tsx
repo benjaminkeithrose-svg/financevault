@@ -18,6 +18,7 @@ import { DeleteSection } from "../components/DeleteSection.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { useTrailTitle } from "../trail.js";
 import { RemindersCard } from "../components/RemindersCard.js";
+import { ConsideringBar } from "../components/ConsideringBar.js";
 
 function toDateInput(value?: string | null): string {
   if (!value) return "";
@@ -91,6 +92,9 @@ export function CommercialPropertyDetail() {
         address: p.address,
         state: p.state || "",
         postcode: p.postcode || "",
+        suburb: p.suburb || "",
+        titleType: p.titleType || "",
+        askingPrice: p.asset?.askingPrice?.toString() || "",
         purchaseDate: toDateInput(p.purchaseDate),
         purchasePrice: p.purchasePrice?.toString() || "",
         currentValue: p.asset?.currentValue?.toString() || "",
@@ -128,6 +132,9 @@ export function CommercialPropertyDetail() {
         address: form.address,
         state: form.state || null,
         postcode: form.postcode || null,
+        suburb: form.suburb || null,
+        titleType: form.titleType || null,
+        ...(considering ? { askingPrice: form.askingPrice ? Number(form.askingPrice) : null } : {}),
         purchaseDate: form.purchaseDate ? new Date(form.purchaseDate).toISOString() : null,
         purchasePrice: form.purchasePrice ? Number(form.purchasePrice) : null,
         currentValue: form.currentValue ? Number(form.currentValue) : null,
@@ -270,6 +277,8 @@ export function CommercialPropertyDetail() {
   }
 
   const m = property.metrics;
+  // Being considered (or passed on): not yours yet, so only what applies before buying.
+  const considering = !!property.asset?.status && property.asset.status !== "OWNED";
 
   return (
     <div>
@@ -286,7 +295,9 @@ export function CommercialPropertyDetail() {
         </select>
       </div>
 
-      {m && (
+      {considering && property.asset && <ConsideringBar asset={property.asset} onChange={load} />}
+
+      {m && !considering && (
         <>
           <div className="grid grid-4">
             <div className="stat-tile">
@@ -448,36 +459,60 @@ export function CommercialPropertyDetail() {
           <input value={form.address || ""} onChange={(e) => setForm({ ...form, address: e.target.value })} />
           <div className="grid grid-2">
             <div>
+              <label>Suburb</label>
+              <input value={form.suburb || ""} onChange={(e) => setForm({ ...form, suburb: e.target.value })} />
+            </div>
+            <div>
               <label>State</label>
               <input value={form.state || ""} onChange={(e) => setForm({ ...form, state: e.target.value })} />
             </div>
+          </div>
+          <div className="grid grid-2">
             <div>
               <label>Postcode</label>
               <input value={form.postcode || ""} onChange={(e) => setForm({ ...form, postcode: e.target.value })} />
             </div>
-          </div>
-          <div className="grid grid-2">
             <div>
-              <label>Purchase date</label>
-              <input type="date" value={form.purchaseDate || ""} onChange={(e) => setForm({ ...form, purchaseDate: e.target.value })} />
-            </div>
-            <div>
-              <label>Purchase price</label>
-              <input type="number" value={form.purchasePrice || ""} onChange={(e) => setForm({ ...form, purchasePrice: e.target.value })} />
-            </div>
-          </div>
-          <div className="grid grid-2">
-            <div>
-              <label>Current estimated value</label>
-              <input type="number" value={form.currentValue || ""} onChange={(e) => setForm({ ...form, currentValue: e.target.value })} />
-            </div>
-            <div>
-              <label>Valuation date</label>
-              <input type="date" value={form.valuationDate || ""} onChange={(e) => setForm({ ...form, valuationDate: e.target.value })} />
+              <label>Title</label>
+              <select value={form.titleType || ""} onChange={(e) => setForm({ ...form, titleType: e.target.value })}>
+                <option value="">— Not recorded —</option>
+                <option value="TORRENS">Torrens (freehold)</option>
+                <option value="STRATA">Strata</option>
+                <option value="COMMUNITY">Community title</option>
+              </select>
             </div>
           </div>
-          <label>Valuer</label>
-          <input value={form.valuer || ""} onChange={(e) => setForm({ ...form, valuer: e.target.value })} />
+          {considering ? (
+            <>
+              <label>Asking price</label>
+              <input type="number" value={form.askingPrice || ""} onChange={(e) => setForm({ ...form, askingPrice: e.target.value })} />
+            </>
+          ) : (
+            <>
+              <div className="grid grid-2">
+                <div>
+                  <label>Purchase date</label>
+                  <input type="date" value={form.purchaseDate || ""} onChange={(e) => setForm({ ...form, purchaseDate: e.target.value })} />
+                </div>
+                <div>
+                  <label>Purchase price</label>
+                  <input type="number" value={form.purchasePrice || ""} onChange={(e) => setForm({ ...form, purchasePrice: e.target.value })} />
+                </div>
+              </div>
+              <div className="grid grid-2">
+                <div>
+                  <label>Current estimated value</label>
+                  <input type="number" value={form.currentValue || ""} onChange={(e) => setForm({ ...form, currentValue: e.target.value })} />
+                </div>
+                <div>
+                  <label>Valuation date</label>
+                  <input type="date" value={form.valuationDate || ""} onChange={(e) => setForm({ ...form, valuationDate: e.target.value })} />
+                </div>
+              </div>
+              <label>Valuer</label>
+              <input value={form.valuer || ""} onChange={(e) => setForm({ ...form, valuer: e.target.value })} />
+            </>
+          )}
           <div className="toolbar" style={{ marginTop: 16 }}>
             <button className="btn" onClick={save} disabled={saving}>
               {saving ? "Saving…" : "Save"}
@@ -930,225 +965,240 @@ export function CommercialPropertyDetail() {
         )}
       </div>
 
-      <div className="card">
-        <div className="toolbar" style={{ justifyContent: "space-between" }}>
-          <h3 style={{ margin: 0 }}>Capital expenditure</h3>
-          <button className="btn" onClick={() => setShowCapexForm((v) => !v)}>
-            {showCapexForm ? "Cancel" : "Add item"}
-          </button>
-        </div>
-
-        {showCapexForm && (
-          <div style={{ marginTop: 12 }}>
-            <div className="grid grid-2">
-              <div>
-                <label>Date</label>
-                <input type="date" value={capexForm.date} onChange={(e) => setCapexForm({ ...capexForm, date: e.target.value })} />
-              </div>
-              <div>
-                <label>Amount</label>
-                <input type="number" value={capexForm.amount} onChange={(e) => setCapexForm({ ...capexForm, amount: e.target.value })} />
-              </div>
-            </div>
-            <label>Description</label>
-            <input value={capexForm.description} onChange={(e) => setCapexForm({ ...capexForm, description: e.target.value })} />
-            <label>Useful life (years, if known)</label>
-            <input
-              type="number"
-              value={capexForm.usefulLifeYears}
-              onChange={(e) => setCapexForm({ ...capexForm, usefulLifeYears: e.target.value })}
-            />
-            <div className="toolbar" style={{ marginTop: 12 }}>
-              <button className="btn" onClick={addCapex}>
-                Add
+      {/* Owned only: its capital works, occupancy, yearly records and loans. */}
+      {!considering && (
+        <>
+          <div className="card">
+            <div className="toolbar" style={{ justifyContent: "space-between" }}>
+              <h3 style={{ margin: 0 }}>Capital expenditure</h3>
+              <button className="btn" onClick={() => setShowCapexForm((v) => !v)}>
+                {showCapexForm ? "Cancel" : "Add item"}
               </button>
             </div>
-          </div>
-        )}
 
-        {(property.capitalExpenditure || []).length === 0 ? (
-          <p className="empty-state">No capital expenditure recorded yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Tax treatment</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {(property.capitalExpenditure || []).map((c) => (
-                <tr key={c.id}>
-                  <td>{formatDate(c.date)}</td>
-                  <td>{c.description}</td>
-                  <td>{formatCurrency(c.amount)}</td>
-                  <td>{humanize(c.taxTreatmentStatus)}</td>
-                  <td>
-                    <button className="btn secondary" onClick={() => removeCapex(c.id)}>
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      <div className="card">
-        <div className="toolbar" style={{ justifyContent: "space-between" }}>
-          <h3 style={{ margin: 0 }}>Occupancy history</h3>
-          <button className="btn" onClick={() => setShowOccupancyForm((v) => !v)}>
-            {showOccupancyForm ? "Cancel" : "Add snapshot"}
-          </button>
-        </div>
-
-        {showOccupancyForm && (
-          <div style={{ marginTop: 12 }}>
-            <label>As at date</label>
-            <input type="date" value={occupancyForm.asAtDate} onChange={(e) => setOccupancyForm({ ...occupancyForm, asAtDate: e.target.value })} />
-            <div className="grid grid-2">
-              <div>
-                <label>Total NLA (m²)</label>
-                <input type="number" value={occupancyForm.totalNla} onChange={(e) => setOccupancyForm({ ...occupancyForm, totalNla: e.target.value })} />
-              </div>
-              <div>
-                <label>Occupied NLA (m²)</label>
+            {showCapexForm && (
+              <div style={{ marginTop: 12 }}>
+                <div className="grid grid-2">
+                  <div>
+                    <label>Date</label>
+                    <input type="date" value={capexForm.date} onChange={(e) => setCapexForm({ ...capexForm, date: e.target.value })} />
+                  </div>
+                  <div>
+                    <label>Amount</label>
+                    <input type="number" value={capexForm.amount} onChange={(e) => setCapexForm({ ...capexForm, amount: e.target.value })} />
+                  </div>
+                </div>
+                <label>Description</label>
+                <input value={capexForm.description} onChange={(e) => setCapexForm({ ...capexForm, description: e.target.value })} />
+                <label>Useful life (years, if known)</label>
                 <input
                   type="number"
-                  value={occupancyForm.occupiedNla}
-                  onChange={(e) => setOccupancyForm({ ...occupancyForm, occupiedNla: e.target.value })}
+                  value={capexForm.usefulLifeYears}
+                  onChange={(e) => setCapexForm({ ...capexForm, usefulLifeYears: e.target.value })}
                 />
+                <div className="toolbar" style={{ marginTop: 12 }}>
+                  <button className="btn" onClick={addCapex}>
+                    Add
+                  </button>
+                </div>
               </div>
-            </div>
-            <div className="toolbar" style={{ marginTop: 12 }}>
-              <button className="btn" onClick={addOccupancySnapshot}>
-                Add
+            )}
+
+            {(property.capitalExpenditure || []).length === 0 ? (
+              <p className="empty-state">No capital expenditure recorded yet.</p>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Tax treatment</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(property.capitalExpenditure || []).map((c) => (
+                    <tr key={c.id}>
+                      <td>{formatDate(c.date)}</td>
+                      <td>{c.description}</td>
+                      <td>{formatCurrency(c.amount)}</td>
+                      <td>{humanize(c.taxTreatmentStatus)}</td>
+                      <td>
+                        <button className="btn secondary" onClick={() => removeCapex(c.id)}>
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          <div className="card">
+            <div className="toolbar" style={{ justifyContent: "space-between" }}>
+              <h3 style={{ margin: 0 }}>Occupancy history</h3>
+              <button className="btn" onClick={() => setShowOccupancyForm((v) => !v)}>
+                {showOccupancyForm ? "Cancel" : "Add snapshot"}
               </button>
             </div>
+
+            {showOccupancyForm && (
+              <div style={{ marginTop: 12 }}>
+                <label>As at date</label>
+                <input type="date" value={occupancyForm.asAtDate} onChange={(e) => setOccupancyForm({ ...occupancyForm, asAtDate: e.target.value })} />
+                <div className="grid grid-2">
+                  <div>
+                    <label>Total NLA (m²)</label>
+                    <input type="number" value={occupancyForm.totalNla} onChange={(e) => setOccupancyForm({ ...occupancyForm, totalNla: e.target.value })} />
+                  </div>
+                  <div>
+                    <label>Occupied NLA (m²)</label>
+                    <input
+                      type="number"
+                      value={occupancyForm.occupiedNla}
+                      onChange={(e) => setOccupancyForm({ ...occupancyForm, occupiedNla: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <div className="toolbar" style={{ marginTop: 12 }}>
+                  <button className="btn" onClick={addOccupancySnapshot}>
+                    Add
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {(property.occupancySnapshots || []).length === 0 ? (
+              <p className="empty-state">No historical snapshots recorded yet.</p>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Occupied / Total NLA</th>
+                    <th>Occupancy</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(property.occupancySnapshots || []).map((s) => (
+                    <tr key={s.id}>
+                      <td>{formatDate(s.asAtDate)}</td>
+                      <td>
+                        {s.occupiedNla} / {s.totalNla} m²
+                      </td>
+                      <td>{pct(s.totalNla ? s.occupiedNla / s.totalNla : null)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
-        )}
 
-        {(property.occupancySnapshots || []).length === 0 ? (
-          <p className="empty-state">No historical snapshots recorded yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Occupied / Total NLA</th>
-                <th>Occupancy</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(property.occupancySnapshots || []).map((s) => (
-                <tr key={s.id}>
-                  <td>{formatDate(s.asAtDate)}</td>
-                  <td>
-                    {s.occupiedNla} / {s.totalNla} m²
-                  </td>
-                  <td>{pct(s.totalNla ? s.occupiedNla / s.totalNla : null)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+          <div className="card">
+            <h3 style={{ marginTop: 0 }}>Annual snapshots</h3>
+            <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+              A saved, historical record for a financial year — generated from the live calculation above but never
+              silently recalculated once saved.
+            </p>
+            <div className="toolbar">
+              <select id="fy-select" defaultValue="">
+                <option value="" disabled>
+                  Choose a financial year…
+                </option>
+                {financialYears.map((fy) => (
+                  <option key={fy.id} value={fy.id}>
+                    {fy.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                className="btn secondary"
+                onClick={() => {
+                  const select = document.getElementById("fy-select") as HTMLSelectElement;
+                  if (select.value) generateAnnualSnapshot(select.value);
+                }}
+              >
+                Generate & save from current figures
+              </button>
+            </div>
+            {(property.annualSnapshots || []).length === 0 ? (
+              <p className="empty-state">No annual snapshots saved yet.</p>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>FY</th>
+                    <th>NOI</th>
+                    <th>Cap rate</th>
+                    <th>LVR</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(property.annualSnapshots || []).map((s) => (
+                    <tr key={s.id}>
+                      <td>{s.financialYear?.label}</td>
+                      <td>{formatCurrency(s.noi)}</td>
+                      <td>{pct(s.capRate)}</td>
+                      <td>{pct(s.lvr)}</td>
+                      <td>{humanize(s.status)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </>
+      )}
 
-      <div className="card">
-        <h3 style={{ marginTop: 0 }}>Annual snapshots</h3>
-        <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
-          A saved, historical record for a financial year — generated from the live calculation above but never
-          silently recalculated once saved.
-        </p>
-        <div className="toolbar">
-          <select id="fy-select" defaultValue="">
-            <option value="" disabled>
-              Choose a financial year…
-            </option>
-            {financialYears.map((fy) => (
-              <option key={fy.id} value={fy.id}>
-                {fy.label}
-              </option>
-            ))}
-          </select>
-          <button
-            className="btn secondary"
-            onClick={() => {
-              const select = document.getElementById("fy-select") as HTMLSelectElement;
-              if (select.value) generateAnnualSnapshot(select.value);
-            }}
-          >
-            Generate & save from current figures
-          </button>
-        </div>
-        {(property.annualSnapshots || []).length === 0 ? (
-          <p className="empty-state">No annual snapshots saved yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>FY</th>
-                <th>NOI</th>
-                <th>Cap rate</th>
-                <th>LVR</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(property.annualSnapshots || []).map((s) => (
-                <tr key={s.id}>
-                  <td>{s.financialYear?.label}</td>
-                  <td>{formatCurrency(s.noi)}</td>
-                  <td>{pct(s.capRate)}</td>
-                  <td>{pct(s.lvr)}</td>
-                  <td>{humanize(s.status)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      <SecuredLoansCard
-        kind="commercial"
-        title="Financing"
-        securityId={property.id}
-        ownerEntityId={property.asset?.entityId ?? property.entityId}
-        name={property.name}
-        loans={property.loans || []}
-        onChange={load}
-      />
+      {!considering && (
+        <SecuredLoansCard
+          kind="commercial"
+          title="Financing"
+          securityId={property.id}
+          ownerEntityId={property.asset?.entityId ?? property.entityId}
+          name={property.name}
+          loans={property.loans || []}
+          onChange={load}
+        />
+      )}
 
       {property.asset && <AssetOwnershipPanel asset={property.asset} entities={entities} onChange={load} />}
 
       {property.asset && <PropertyCostsCard property={null} asset={property.asset} onChange={load} />}
 
-      {!property.asset?.disposalDate && <UsableEquityCard assetId={property.assetId} />}
+      {!considering && (
+        <>
+          {!property.asset?.disposalDate && <UsableEquityCard assetId={property.assetId} />}
 
-      <ProfitHistoryCard assetId={property.assetId} />
+          <ProfitHistoryCard assetId={property.assetId} />
 
-      <ItemsPanel parentAssetId={property.assetId} title="Plant & equipment" />
+          <ItemsPanel parentAssetId={property.assetId} title="Plant & equipment" />
 
-      <MissingFlags target={`asset:${property.assetId}`} />
-      <InsurancePanel assetId={property.assetId} defaultKind="BUILDING" defaultHolderId={property.asset?.entityId} />
+          <MissingFlags target={`asset:${property.assetId}`} />
+          <InsurancePanel assetId={property.assetId} defaultKind="BUILDING" defaultHolderId={property.asset?.entityId} />
+        </>
+      )}
 
       <RemindersCard targetType="COMMERCIAL_PROPERTY" targetId={property.id} name={property.name} />
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Documents</h3>
         <DocumentLinker targetType="COMMERCIAL_PROPERTY" targetId={property.id} />
       </div>
-      {property.asset && <SoldPanel asset={property.asset} onChange={load} />}
+      {property.asset && !considering && <SoldPanel asset={property.asset} onChange={load} />}
 
       <DeleteSection
         title="Delete this property"
-        note="Sold it? Use Sold above instead — that keeps its history and capital gains record. Deleting is only possible once it has no tenancies, outgoings, capital works, snapshots, secured loans or items recorded under it — that history is kept on purpose. Its documents stay in Documents, just no longer linked to it."
+        note={
+          considering
+            ? "Decided against it? Use Pass on this one at the top instead — that keeps it, with what you found out, for reference. Deleting is only possible once its leases and outgoings are removed; its documents stay in Documents."
+            : "Sold it? Use Sold above instead — that keeps its history and capital gains record. Deleting is only possible once it has no tenancies, outgoings, capital works, snapshots, secured loans or items recorded under it — that history is kept on purpose. Its documents stay in Documents, just no longer linked to it."
+        }
         question={`Delete ${property.name}? This can't be undone.`}
         action={() => api.commercialProperties.remove(property.id)}
-        redirectTo="/properties"
+        redirectTo={considering ? "/considering" : "/properties"}
       />
     </div>
   );

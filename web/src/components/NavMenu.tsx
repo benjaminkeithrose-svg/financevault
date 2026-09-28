@@ -49,6 +49,7 @@ export const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
   {
     label: "Planning",
     items: [
+      { to: "/considering", label: "Properties I'm considering" },
       { to: "/portfolio-plans", label: "Portfolio Plan", feature: "portfolio-plan" },
       { to: "/structure-comparison", label: "Who should own it?", feature: "structure" },
       { to: "/borrowing", label: "How much could I borrow?", feature: "borrowing" },

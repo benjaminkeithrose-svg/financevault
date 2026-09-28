@@ -183,6 +183,17 @@ export const DEBT_LISTS = {
 export type DebtList = keyof typeof DEBT_LISTS;
 
 /** How a residential property is used — decides its insurance, paperwork, land tax and whether it's in the profit report. */
+/** Where a property you're considering is up to (Properties I'm considering). */
+export const CONSIDER_STAGES: Array<{ value: string; label: string; explain: string }> = [
+  { value: "LOOKING", label: "Looking", explain: "Just spotted it." },
+  { value: "INVESTIGATING", label: "Investigating", explain: "Working out the numbers and checking it over." },
+  { value: "OFFER", label: "Offer", explain: "Making an offer." },
+  { value: "CONTRACT", label: "Under contract", explain: "Contracts exchanged; finance and inspections to clear." },
+  { value: "SETTLEMENT", label: "Settlement", explain: "Getting ready to settle." },
+];
+
+export const stageLabel = (value: string | null | undefined) => CONSIDER_STAGES.find((s) => s.value === value)?.label ?? "Looking";
+
 export const PROPERTY_USES = [
   { value: "HOME", label: "Our home (PPOR)", short: "Home (PPOR)", explain: "Where you live — your principal place of residence. No landlord insurance or rental paperwork; exempt from land tax." },
   {

@@ -22,6 +22,7 @@ const TITLES: Record<string, string> = {
   "/entities": "People & Entities",
   "/search": "Search",
   "/properties": "Properties",
+  "/considering": "Considering",
   "/commercial-properties/acquisition-model": "Acquisition Model",
   "/vehicles": "Vehicles & Boats",
   "/investments": "Investments",

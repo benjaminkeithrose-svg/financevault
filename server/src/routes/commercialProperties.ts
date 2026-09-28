@@ -209,6 +209,10 @@ const createInput = z.object({
   nla: z.number().optional().nullable(),
   gla: z.number().optional().nullable(),
   siteArea: z.number().optional().nullable(),
+  suburb: z.string().max(80).optional().nullable(),
+  titleType: z.enum(["TORRENS", "STRATA", "COMMUNITY"]).optional().nullable(),
+  // While it's being considered.
+  askingPrice: z.number().nonnegative().optional().nullable(),
   owners: ownersInput,
 });
 
@@ -299,6 +303,7 @@ commercialPropertiesRouter.put(
           acquisitionCost: parsed.purchasePrice,
           currentValue: parsed.currentValue,
           valuationDate: dateOrUndefined(parsed.valuationDate),
+          askingPrice: parsed.askingPrice,
         },
       });
       return tx.commercialProperty.update({
@@ -306,6 +311,8 @@ commercialPropertiesRouter.put(
         data: {
           name: parsed.name,
           address: parsed.address,
+          suburb: parsed.suburb,
+          titleType: parsed.titleType,
           state: parsed.state,
           postcode: parsed.postcode,
           propertyTypes: parsed.propertyTypes ? parsed.propertyTypes.join(",") : undefined,
