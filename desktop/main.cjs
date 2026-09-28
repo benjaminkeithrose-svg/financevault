@@ -19,7 +19,7 @@
 //   FV_SMOKE_TEST=1   start, check the app answers and shows its first
 //                     screen, write the result to FV_SMOKE_RESULT, and quit.
 
-const { app, BrowserWindow, Menu, dialog, shell } = require("electron");
+const { app, BrowserWindow, Menu, dialog, session, shell } = require("electron");
 const { spawn } = require("node:child_process");
 const fs = require("node:fs");
 const http = require("node:http");
@@ -91,7 +91,8 @@ function createWindow() {
     backgroundColor: "#f6f5fb",
     autoHideMenuBar: true,
     show: !SMOKE,
-    webPreferences: { contextIsolation: true, sandbox: true, nodeIntegration: false, spellcheck: true },
+    // Spelling uses Windows' own checker; elsewhere Electron would download dictionaries from Google, so it's off.
+    webPreferences: { contextIsolation: true, sandbox: true, nodeIntegration: false, spellcheck: process.platform === "win32" },
   });
   // The app's own pages (a document opened in a new window) stay here; websites open in the normal browser.
   w.webContents.setWindowOpenHandler(({ url }) => {
@@ -278,6 +279,8 @@ async function waitUntilUp(exited, seconds = 90) {
 }
 
 async function start() {
+  // Nothing is fetched from the internet by the window itself.
+  session.defaultSession.setSpellCheckerDictionaryDownloadURL("http://127.0.0.1:9/");
   const { layout, ensureFolders, programVersion, stamp } = await lib("paths.mjs");
   const logging = await lib("log.mjs");
   const { latestNotes, writeJson } = await lib("update.mjs");

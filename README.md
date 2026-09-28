@@ -430,6 +430,39 @@ isn't safe to sync live, only the documents folder is.
   put there before. What's missing expects a current logbook and the
   year's odometer readings for any vehicle with a logbook (kind `RECORD`).
 
+### The installable Windows program (1.6.0)
+
+- `desktop/` is kept apart from the app's own workspaces, so the folder
+  version never downloads Electron. Set up once with
+  `cd desktop && npm install && npx install-electron --no`; then
+  `npm run release:windows` (or `node desktop/build.mjs --win`) makes
+  `desktop/dist/Financial Vault Setup <version>.exe`. On Linux the NSIS
+  step needs Wine (32-bit too); `--linux` makes a test build instead.
+- `desktop/build.mjs` stages `resources/program` laid out like the folder
+  version: `server/dist`, the migrations and a bundled `seed.mjs`,
+  `web/dist`, `launcher/lib`, `reference/`, and only the libraries the
+  server runs on (its dependencies and the Prisma CLI, copied from this
+  checkout, native engines left out). Prisma's engines for the target are
+  downloaded from binaries.prisma.sh, checked against their checksums, and
+  used through `PRISMA_QUERY_ENGINE_LIBRARY`/`PRISMA_SCHEMA_ENGINE_BINARY`.
+  The OCR language data (`eng.traineddata.gz`) is shipped too. Setup is
+  one-click and per user (no administrator), with desktop and Start menu
+  shortcuts; English-only Chromium languages.
+- `desktop/main.cjs` (Electron's main process) reuses `launcher/lib` for
+  the data folder and finding older records; after a new version it
+  copies the records into Backups and writes `last-update.json`; runs
+  `prisma migrate deploy` and the seed on Electron's Node.js
+  (`ELECTRON_RUN_AS_NODE`), starts `server/dist` the same way with
+  `FV_INSTALLED=1` and `FV_EXIT_WHEN_CLOSED=0`, and shows it in a
+  `BrowserWindow`; websites open in the normal browser. It unpacks the
+  OCR language data into `<data>/.ocr-language-data` itself — tesseract.js
+  hangs unpacking it on Electron's Node.js.
+- `FV_SMOKE_TEST=1` starts, sets a passcode (or unlocks with
+  `FV_SMOKE_PASSCODE`), reads a drawn "TAX INVOICE 4821" image, writes the
+  result to `FV_SMOKE_RESULT` and quits. `.github/workflows/windows-installer.yml`
+  builds the Setup on Windows, installs it silently, runs a first start and
+  an upgrade with it, and uninstalls, checking the records stay.
+
 ### Occupation deduction checklists (1.5.0)
 
 - `services/occupationGuides.ts`: `parseGuide(text)` reads an ATO

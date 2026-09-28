@@ -65,9 +65,24 @@ const SECTIONS: Section[] = [
   {
     id: "updates",
     title: "Updating to a new version",
-    keywords: "update upgrade new version install download zip keep data previous version put back rollback what's new",
+    keywords: "update upgrade new version install download zip keep data previous version put back rollback what's new setup exe installed program windows uninstall",
     body: (
       <>
+        <p>
+          <strong>The installed program (Windows, from 1.6.0):</strong> download the new version's{" "}
+          <strong>Financial Vault Setup</strong> file and double-click it. It installs over the one you have, and Financial
+          Vault opens on the new version with a note saying what's new. Your records are backed up first (into the Backups
+          folder in your data folder) and stay where they are. If Windows says "Windows protected your PC", click{" "}
+          <strong>More info</strong>, then <strong>Run anyway</strong>.
+        </p>
+        <p>
+          Uninstalling it (Windows Settings → Apps) removes the program only: your records, documents and backups stay in
+          Documents → Financial Vault Data. Press <strong>Alt</strong> in its window for a menu with the data and logs folders,
+          zoom and reload.
+        </p>
+        <p>
+          <strong>The folder version</strong> (started with "Start Financial Vault", and on a Mac):
+        </p>
         <ol>
           <li>Download the new version's ZIP file. Don't unzip it.</li>
           <li>

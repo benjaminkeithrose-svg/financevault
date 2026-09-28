@@ -4,8 +4,39 @@ FINANCIAL VAULT — START HERE
 Everything stays on this computer. Nothing is uploaded anywhere.
 
 
-FIRST TIME ON THIS COMPUTER
----------------------------
+WINDOWS: INSTALL IT (THE EASY WAY, FROM VERSION 1.6.0)
+------------------------------------------------------
+1. Download "Financial Vault Setup 1.6.0.exe".
+   If your browser warns that it "isn't commonly downloaded", click the
+   three dots next to the warning, choose "Keep", then "Keep anyway".
+2. Double-click the Setup file.
+3. A blue box may say "Windows protected your PC". Click "More info",
+   then "Run anyway". (It says this because the program isn't signed by
+   a paid certificate yet. It only asks once.)
+4. It installs by itself and opens Financial Vault. There's nothing to
+   choose and no Node.js to install.
+5. First time ever: choose a passcode and write down the recovery key it
+   shows you. Already using Financial Vault? It finds your records by
+   itself: unlock with your usual passcode.
+6. Use the "Financial Vault" icon on the desktop or in the Start menu
+   from now on.
+
+To update later: download the new version's Setup file and double-click
+it. It installs over the old one; your records are backed up first and
+stay where they are.
+
+Coming from the folder version: close its window first, then install.
+Your records are already in Documents > Financial Vault Data, and the
+installed program uses them straight away. The old "financevault" folder
+can be deleted after a week or two.
+
+Uninstalling (Settings > Apps > Financial Vault > Uninstall) removes the
+program only. Your records, documents and backups stay in
+Documents > Financial Vault Data.
+
+
+MAC, OR THE FOLDER VERSION: FIRST TIME ON THIS COMPUTER
+-------------------------------------------------------
 1. Install Node.js if you haven't already: go to https://nodejs.org,
    download the LTS version and install it. (One time only.)
 2. Unzip the Financial Vault download. (Windows: right-click it, choose
@@ -37,8 +68,8 @@ from an unidentified developer. Right-click (or Control-click) the file,
 choose Open, then click Open again.
 
 
-UPDATING TO A NEW VERSION (version 1.0 and later)
--------------------------------------------------
+UPDATING THE FOLDER VERSION (version 1.0 and later)
+---------------------------------------------------
 1. Download the new version's ZIP. Don't unzip it.
 2. In Financial Vault, go to Settings > Program and updates.
 3. Click "Install an update" and choose the ZIP.

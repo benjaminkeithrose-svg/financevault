@@ -3,6 +3,12 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.6.0 — 28 September 2026
+- Financial Vault now comes as a proper Windows program: "Financial Vault Setup 1.6.0.exe". Double-click it and it installs, with a desktop icon and a Start menu entry — no Node.js to install first, no black window, and no wait while it builds itself the first time. It uses the same records in Documents > Financial Vault Data.
+- To update the installed program, run the new version's Setup file over it. Your records are backed up first, and it opens showing what's new.
+- Reading scanned documents and photos now works straight away in the installed program: the language data it needs comes with it. (In the folder version it only worked if that file had been put in by hand.)
+- The database tools no longer report their use to Prisma over the internet.
+
 ## 1.5.0 — 28 September 2026
 - A deduction checklist for each job, from the ATO's own occupation guides (about 40 jobs, from nurses and teachers to tradespeople and sales). On a person's page, under Work-related deductions, choose their guide — one is suggested from their job title — and see every expense it covers: what can be claimed, what depends, and what usually can't, in the ATO's words.
 - Mark what you claim most years. Each year the checklist shows what's recorded, what has no receipt attached, and what's still to record before 30 June. "Add a claim" on an item fills in the claim for you; "Not for me" puts an item away.

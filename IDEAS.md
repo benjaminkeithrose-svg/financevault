@@ -588,7 +588,7 @@ new download.
 
 ## 17. Desktop icon, and its own window
 
-**Status:** step 1 built in batch 6 — desktop icon (Windows shortcut + Start menu, Mac app), own window via Edge/Chrome app mode, no terminal window when started from the icon, closing the window stops it. Step 2 (a packaged Electron app) not done.
+**Status:** step 1 built in batch 6 — desktop icon (Windows shortcut + Start menu, Mac app), own window via Edge/Chrome app mode, no terminal window when started from the icon, closing the window stops it. Step 2 built in 1.6.0 for Windows: an installable Electron program (Financial Vault Setup), one click, per user, no Node.js needed, unsigned for now. Not yet: a Mac version, and signing.
 
 **Why:** start Financial Vault from a desktop icon like any other program,
 and have it open in its own window — not as another tab in a browser that's
