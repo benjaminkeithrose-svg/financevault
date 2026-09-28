@@ -3,6 +3,13 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.11.1 — 28 September 2026
+- Less clutter — boxes that can't apply now go away. A home (PPOR) or a holiday home nobody rents no longer asks for a tenant, property manager or rent, and doesn't show the rental profit graph or property management, depreciation and building write-off. A home doesn't ask for land value or land tax (it's exempt). Change "How it's used" and the right boxes appear. Anything you'd already typed in is kept.
+- Loans: "Fixed period ends" shows only on a fixed loan.
+- Company, trust and fund pages: the ACN shows only for a company; a person's own page no longer shows "Established".
+- Insurance: a CTP green slip doesn't ask for an amount covered, and income protection asks for the monthly benefit.
+- Changing "How it's used" now updates "What's missing" on the spot — before, the rental paperwork stayed listed until you left the page.
+
 ## 1.11.0 — 28 September 2026
 - Portfolio Plans: "Can you borrow it?" — each year the plan borrows (to buy, equity drawn, refinancing) checked against roughly what a lender might lend you then, counting the rent and loans of the plan's earlier purchases. Each year says Fine, Some lenders only, or Likely too much, and a note at the top names any tight year. "Change who" picks whose income backs the plan.
 - Property profit, year by year: each property's rent, costs, interest and cash left are saved for the financial year and kept after 30 June. "Profit year by year" on the property's page (and in the Property Profit report) shows them as a graph. "Add a past year" takes figures from old tax returns; the interest fills in from that year's loan statement.

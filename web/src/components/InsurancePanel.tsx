@@ -27,6 +27,11 @@ export const POLICY_KINDS: Record<string, string> = {
   OTHER: "Other insurance",
 };
 
+/** CTP has no amount covered (injury cover is unlimited); income protection pays a monthly benefit. */
+export function coverAmountLabel(kind: string): string | null {
+  return kind === "CTP" ? null : kind === "INCOME_PROTECTION" ? "Monthly benefit" : "Amount covered";
+}
+
 /** Cover on a person rather than a thing — it can be held through super. */
 export const PERSON_KINDS = ["LIFE", "TPD", "TRAUMA", "INCOME_PROTECTION"];
 
@@ -68,7 +73,7 @@ export function policyPayload(form: PolicyForm) {
   return {
     kind: form.kind,
     insurer: form.insurer || null,
-    coverAmount: num(form.coverAmount),
+    coverAmount: coverAmountLabel(form.kind) ? num(form.coverAmount) : null,
     premium: num(form.premium),
     premiumFrequency: form.premium ? form.premiumFrequency : null,
     renewalDate: form.renewalDate ? new Date(form.renewalDate).toISOString() : null,
@@ -120,10 +125,12 @@ export function PolicyFields({
           <label>Renews on</label>
           <input type="date" value={form.renewalDate} onChange={(e) => set({ renewalDate: e.target.value })} />
         </div>
-        <div>
-          <label>Amount covered</label>
-          <input type="number" min="0" value={form.coverAmount} onChange={(e) => set({ coverAmount: e.target.value })} />
-        </div>
+        {coverAmountLabel(form.kind) && (
+          <div>
+            <label>{coverAmountLabel(form.kind)}</label>
+            <input type="number" min="0" value={form.coverAmount} onChange={(e) => set({ coverAmount: e.target.value })} />
+          </div>
+        )}
         <div>
           <label>Premium</label>
           <div className="toolbar" style={{ flexWrap: "nowrap" }}>
@@ -325,7 +332,7 @@ function InsurancePanelInner({
                 {!scoped && <span style={{ color: "var(--text-muted)" }}> · covers {coversLink(p)}</span>}
               </div>
               <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                {[p.coverAmount ? `Cover ${formatCurrency(p.coverAmount)}` : null, premiumText(p), p.heldInSuper ? "Held in super" : null]
+                {[p.coverAmount ? (p.kind === "INCOME_PROTECTION" ? `Benefit ${formatCurrency(p.coverAmount)} a month` : `Cover ${formatCurrency(p.coverAmount)}`) : null, premiumText(p), p.heldInSuper ? "Held in super" : null]
                   .filter(Boolean)
                   .join(" · ")}
                 {p.coverAmount || p.premium || p.heldInSuper ? " · " : ""}

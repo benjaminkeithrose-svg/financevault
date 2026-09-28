@@ -217,10 +217,13 @@ export function EntityDetail() {
                 <td>ABN</td>
                 <td>{entity.abn || "—"}</td>
               </tr>
-              <tr>
-                <td>ACN</td>
-                <td>{entity.acn || "—"}</td>
-              </tr>
+              {/* Only a company has an ACN. */}
+              {(entity.entityType === "COMPANY" || entity.acn) && (
+                <tr>
+                  <td>ACN</td>
+                  <td>{entity.acn || "—"}</td>
+                </tr>
+              )}
               {!entity.personalFor && (
                 <tr>
                   <td>TFN</td>
@@ -229,10 +232,12 @@ export function EntityDetail() {
                   </td>
                 </tr>
               )}
-              <tr>
-                <td>Established</td>
-                <td>{formatDate(entity.establishmentDate)}</td>
-              </tr>
+              {!entity.personalFor && entity.entityType !== "INDIVIDUAL" && (
+                <tr>
+                  <td>Established</td>
+                  <td>{formatDate(entity.establishmentDate)}</td>
+                </tr>
+              )}
               <tr>
                 <td>Notes</td>
                 <td>{entity.notes || "—"}</td>

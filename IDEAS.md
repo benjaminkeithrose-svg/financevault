@@ -702,3 +702,32 @@ nothing readable. Works with SQLite now, and is the same idea Postgres would
 need.
 
 **Status:** idea only — not started.
+
+## 20. Only show the boxes that apply — no clutter
+
+**Why:** a home (PPOR) has no tenant, property manager or rent, but the
+property page still asked for them. The same kind of leftover boxes showed on
+other pages. Fields that can't apply to what's been chosen should go away,
+and come back if the choice changes.
+
+**Done (1.11.1):**
+- Property page, when it's **Our home** or a **Holiday home, not rented**:
+  no tenant, property manager or rent per week; no "Income" line (unless
+  something is already filed as income); no "Profit year by year" (unless it
+  has years from when it was rented). Running costs drop property management,
+  depreciation and the building write-off.
+- Land value and land tax aren't asked for a home (full or part rented) —
+  it's exempt from land tax.
+- Loans: "Fixed period ends" only on a fixed loan; switching a loan to
+  variable clears the date (so no reminder for it).
+- Business, trust and fund pages: ACN only on a company; "Established" not on
+  a person's own page.
+- Insurance: a CTP green slip doesn't ask for an amount covered; income
+  protection asks for the monthly benefit.
+- Anything already entered in a hidden box is kept, not deleted — it shows
+  again if the choice is changed back. (Except a variable loan's fixed-period
+  date and a CTP policy's amount covered, which are cleared when saved.)
+
+**Already done before:** vehicles vs other assets, offset accounts, card vs
+loan fields, SMSF loan fields, coin ids only for crypto, and per-person
+feature switches for pay tracking and the like.

@@ -92,7 +92,8 @@ export function LiabilityDetail() {
         creditLimit: isCard && form.creditLimit ? Number(form.creditLimit) : null,
         ...(vehicleLinkable ? { securityAssetId: form.securityAssetId || null } : {}),
         ...(isLrba ? { holdingTrustEntityId: form.holdingTrustEntityId || null } : {}),
-        fixedPeriodEnds: form.fixedPeriodEnds ? new Date(form.fixedPeriodEnds).toISOString() : null,
+        // A variable loan has no fixed period (and no reminder for one).
+        fixedPeriodEnds: form.loanType === "fixed" && form.fixedPeriodEnds ? new Date(form.fixedPeriodEnds).toISOString() : null,
         maturityDate: form.maturityDate ? new Date(form.maturityDate).toISOString() : null,
         startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
         ...(isCard ? {} : { facility: form.facility?.trim() || null }),
@@ -221,14 +222,16 @@ export function LiabilityDetail() {
                 <label>{isLrba ? "Date the fund entered into the loan" : "Start date (when the loan was taken out)"}</label>
                 <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
               </div>
-              <div>
-                <label>Fixed period ends</label>
-                <input
-                  type="date"
-                  value={form.fixedPeriodEnds}
-                  onChange={(e) => setForm({ ...form, fixedPeriodEnds: e.target.value })}
-                />
-              </div>
+              {form.loanType === "fixed" && (
+                <div>
+                  <label>Fixed period ends</label>
+                  <input
+                    type="date"
+                    value={form.fixedPeriodEnds}
+                    onChange={(e) => setForm({ ...form, fixedPeriodEnds: e.target.value })}
+                  />
+                </div>
+              )}
               <div>
                 <label>Maturity date</label>
                 <input

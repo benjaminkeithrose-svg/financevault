@@ -10,6 +10,7 @@ import { DocumentLinker } from "../components/DocumentLinker.js";
 import { ItemsPanel } from "../components/ItemsPanel.js";
 import { UsableEquityCard } from "../components/UsableEquityCard.js";
 import { PropertyCostsCard } from "../components/PropertyCostsCard.js";
+import { recordsChanged } from "../features.js";
 import { formatCurrency, PROPERTY_USES, propertyUse } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DeleteSection } from "../components/DeleteSection.js";
@@ -87,10 +88,14 @@ export function PropertyDetail() {
     if (!id) return;
     await api.properties.update(id, { use });
     load();
+    // What's expected (landlord insurance, rental paperwork) depends on the use.
+    recordsChanged();
   }
 
   const summary = property.summary || {};
   const use = propertyUse(property);
+  // A home or a holiday home that isn't rented has no tenant, manager or rent.
+  const rented = !["HOME", "HOLIDAY"].includes(use.value);
   const liabilities: Liability[] = property.liabilities || [];
 
   return (
@@ -160,12 +165,16 @@ export function PropertyDetail() {
               />
             </div>
           </div>
-          <label>Tenant / rental information</label>
-          <input value={form.tenantInfo} onChange={(e) => setForm({ ...form, tenantInfo: e.target.value })} />
-          <label>Property manager</label>
-          <input value={form.propertyManager} onChange={(e) => setForm({ ...form, propertyManager: e.target.value })} />
-          <label>Rent per week</label>
-          <input type="number" value={form.weeklyRent} onChange={(e) => setForm({ ...form, weeklyRent: e.target.value })} />
+          {rented && (
+            <>
+              <label>Tenant / rental information</label>
+              <input value={form.tenantInfo} onChange={(e) => setForm({ ...form, tenantInfo: e.target.value })} />
+              <label>Property manager</label>
+              <input value={form.propertyManager} onChange={(e) => setForm({ ...form, propertyManager: e.target.value })} />
+              <label>Rent per week</label>
+              <input type="number" value={form.weeklyRent} onChange={(e) => setForm({ ...form, weeklyRent: e.target.value })} />
+            </>
+          )}
           <div className="toolbar" style={{ marginTop: 16 }}>
             <button className="btn" onClick={save} disabled={saving}>
               {saving ? "Saving…" : "Save"}
@@ -181,7 +190,7 @@ export function PropertyDetail() {
             securityId={property.id}
             ownerEntityId={property.asset?.entityId ?? property.entityId}
             name={property.asset?.name ?? property.address}
-            defaultType={["HOME", "HOME_PART_RENTED"].includes(propertyUse(property).value) ? "HOME_LOAN" : "INVESTMENT_LOAN"}
+            defaultType={["HOME", "HOME_PART_RENTED"].includes(use.value) ? "HOME_LOAN" : "INVESTMENT_LOAN"}
             loans={liabilities}
             onChange={load}
           />
@@ -193,10 +202,12 @@ export function PropertyDetail() {
           </p>
           <table>
             <tbody>
-              <tr>
-                <td>Income</td>
-                <td>{formatCurrency(summary.INCOME?.total || 0)}</td>
-              </tr>
+              {(rented || !!summary.INCOME?.total) && (
+                <tr>
+                  <td>Income</td>
+                  <td>{formatCurrency(summary.INCOME?.total || 0)}</td>
+                </tr>
+              )}
               <tr>
                 <td>Expenses</td>
                 <td>{formatCurrency(summary.EXPENSE?.total || 0)}</td>
@@ -216,7 +227,8 @@ export function PropertyDetail() {
 
       {!property.asset?.disposalDate && <UsableEquityCard assetId={property.assetId} />}
 
-      <ProfitHistoryCard assetId={property.assetId} />
+      {/* Not rented: only if it has years from when it was. */}
+      <ProfitHistoryCard assetId={property.assetId} onlyIfSaved={!rented} />
 
       <ItemsPanel parentAssetId={property.assetId} title="Items in this property" />
 

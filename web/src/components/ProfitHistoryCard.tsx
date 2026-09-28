@@ -72,7 +72,7 @@ function YearsChart({ years }: { years: PropertyProfitYear[] }) {
   );
 }
 
-export function ProfitHistoryCard({ assetId, title = "Profit year by year" }: { assetId: string; title?: string }) {
+export function ProfitHistoryCard({ assetId, title = "Profit year by year", onlyIfSaved = false }: { assetId: string; title?: string; onlyIfSaved?: boolean }) {
   const [data, setData] = useState<{ years: PropertyProfitYear[]; interestByYear: Record<string, number> } | null>(null);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ fyLabel: "", rent: "", costs: "", interest: "", depreciation: "" });
@@ -125,6 +125,8 @@ export function ProfitHistoryCard({ assetId, title = "Profit year by year" }: { 
   const choices = Array.from({ length: 10 }, (_, i) => thisStart - 1 - i)
     .map((s) => `${s}-${String((s + 1) % 100).padStart(2, "0")}`)
     .filter((l) => !had.has(l) || years.find((y) => y.fyLabel === l)?.source === "ENTERED");
+
+  if (onlyIfSaved && years.length === 0) return null;
 
   return (
     <div className="card">

@@ -5,7 +5,7 @@ import { DeleteSection } from "../components/DeleteSection.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { HelpLink } from "../components/HelpLink.js";
 import { LoadFailed } from "../components/LoadFailed.js";
-import { coversLink, EMPTY_POLICY, InsurancePanel, PolicyFields, PolicyForm, policyKindLabel, policyPayload, premiumText, RenewalBadge } from "../components/InsurancePanel.js";
+import { coverAmountLabel, coversLink, EMPTY_POLICY, InsurancePanel, PolicyFields, PolicyForm, policyKindLabel, policyPayload, premiumText, RenewalBadge } from "../components/InsurancePanel.js";
 import { formatCurrency } from "../utils.js";
 import { useTrailTitle } from "../trail.js";
 import { RemindersCard } from "../components/RemindersCard.js";
@@ -132,8 +132,12 @@ export function InsuranceDetail() {
             <dd>
               <RenewalBadge date={policy.renewalDate} />
             </dd>
-            <dt>Amount covered</dt>
-            <dd>{policy.coverAmount ? formatCurrency(policy.coverAmount) : "—"}</dd>
+            {coverAmountLabel(policy.kind) && (
+              <>
+                <dt>{coverAmountLabel(policy.kind)}</dt>
+                <dd>{policy.coverAmount ? formatCurrency(policy.coverAmount) : "—"}</dd>
+              </>
+            )}
             <dt>Premium</dt>
             <dd>{premiumText(policy) ?? "—"}</dd>
             <dt>Held by</dt>

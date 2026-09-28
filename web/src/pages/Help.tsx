@@ -870,7 +870,9 @@ const SECTIONS: Section[] = [
           <strong>Holiday home, also rented</strong>. It decides what's expected on What's missing (no landlord insurance or
           rental paperwork for your home), and your home and a holiday home nobody rents are left out of the property profit
           report and the accountant checklist. Moving out and renting it? Change it to Rental — the main residence exemption
-          record for capital gains changes with it.
+          record for capital gains changes with it. The page only asks for what applies: a home, or a holiday home nobody rents,
+          doesn't ask for a tenant, property manager or rent, and a home doesn't ask for land value or land tax. Anything already
+          typed in is kept and shows again if you change it back.
         </p>
         <p>
           <strong>Part rented, part private.</strong> For a home with a room or granny flat let, or a holiday home you also rent
