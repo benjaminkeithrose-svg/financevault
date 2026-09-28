@@ -1035,6 +1035,18 @@ export interface PurchaseStepView {
   note: string | null;
 }
 
+export type EstimateField = "price" | "buyingCosts" | "rent" | "runningCosts" | "cashYear";
+
+export interface EstimateVsActual {
+  frozenAt: string;
+  estimates: Record<EstimateField, number | null>;
+  original: Record<EstimateField, number | null>;
+  afterTax: boolean;
+  corrections: Array<{ field: string; from: number | string | null; to: number | string | null; at: string }>;
+  actual: { price: number | null; buyingCosts: number | null };
+  years: Array<{ fyLabel: string; soFar: boolean; rent: number; runningCosts: number; cash: number; cashAfterTax: boolean }>;
+}
+
 export interface ConsideredProperty {
   assetId: string;
   id: string;
@@ -1349,6 +1361,7 @@ export interface Asset {
   askingPrice?: number | null;
   passedOnAt?: string | null;
   passedOnReason?: string | null;
+  recordCorrections?: string | null;
   entity?: Entity;
   acquisitionDate?: string | null;
   acquisitionCost?: number | null;
@@ -2709,6 +2722,11 @@ export const api = {
       request<{ stage: string; steps: PurchaseStepView[]; next: { key: string; label: string } | null }>(`/considering/${assetId}/steps`),
     saveStep: (assetId: string, key: string, data: { done?: boolean; amount?: number | null; date?: string | null; note?: string | null }) =>
       request<unknown>(`/considering/${assetId}/steps/${key}`, { method: "PUT", body: JSON.stringify(data) }),
+    estimateVsActual: (assetId: string) => request<EstimateVsActual | null>(`/considering/${assetId}/estimate-vs-actual`),
+    correctEstimate: (assetId: string, field: EstimateField, value: number | null) =>
+      request<EstimateVsActual>(`/considering/${assetId}/estimate`, { method: "PUT", body: JSON.stringify({ field, value }) }),
+    correctPassedOnReason: (assetId: string, reason: string | null) =>
+      request<{ ok: boolean }>(`/considering/${assetId}/passed-on-reason`, { method: "PUT", body: JSON.stringify({ reason }) }),
     bought: (assetId: string, price?: number | null) =>
       request<{ status: string }>(`/considering/${assetId}/bought`, { method: "POST", body: JSON.stringify({ price }) }),
   },

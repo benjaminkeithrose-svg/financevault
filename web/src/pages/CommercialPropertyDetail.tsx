@@ -19,6 +19,7 @@ import { HelpLink } from "../components/HelpLink.js";
 import { useTrailTitle } from "../trail.js";
 import { RemindersCard } from "../components/RemindersCard.js";
 import { ConsideringBar } from "../components/ConsideringBar.js";
+import { EstimateVsActualCard } from "../components/EstimateVsActualCard.js";
 import { AssessmentCard } from "../components/AssessmentCard.js";
 import { DueDiligenceCards } from "../components/DueDiligenceCards.js";
 
@@ -1191,6 +1192,9 @@ export function CommercialPropertyDetail() {
           {!property.asset?.disposalDate && <UsableEquityCard assetId={property.assetId} />}
 
           <ProfitHistoryCard assetId={property.assetId} />
+
+          {/* Bought through Properties I'm considering: what was expected against what happened. */}
+          <EstimateVsActualCard assetId={property.assetId} />
 
           <ItemsPanel parentAssetId={property.assetId} title="Plant & equipment" />
 

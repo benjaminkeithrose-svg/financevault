@@ -3,6 +3,10 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.17.0 — 28 September 2026
+- When a property you were considering settles, its assessment is kept exactly as it stood. Estimate vs actual, on the bought property's page, compares it with what really happened: the price and buying costs, then each year's rent, running costs and cash from Profit year by year.
+- Correct an estimate: the original and the date you changed it stay shown. The reason on a property you passed on can be corrected the same way.
+
 ## 1.16.0 — 28 September 2026
 - Buying it, step by step: Offer (offer made, accepted), Under contract (exchanged, deposit paid, cooling-off ends, finance approved, building and pest cleared) and Settlement (date booked, final inspection, funds ready, settled). The next step shows first, and each step keeps the day it was ticked.
 - The loan, added under Financing once finance is approved, is recorded but not counted anywhere until settlement.

@@ -483,6 +483,9 @@ model Asset {
   askingPrice          Float?
   passedOnAt           DateTime?
   passedOnReason       String?
+  // Corrections to a passed-on record (JSON list of { field, from, to, at }),
+  // so the original stays visible.
+  recordCorrections    String?
   // From the depreciation schedule: plant & equipment (Division 40) and the
   // building write-off (capital works, Division 43), a year.
   depreciationPerYear  Float?

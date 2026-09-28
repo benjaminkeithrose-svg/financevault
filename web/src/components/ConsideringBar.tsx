@@ -15,6 +15,14 @@ export function ConsideringBar({ asset, onChange }: { asset: Asset; onChange: ()
   const [error, setError] = useState<string | null>(null);
   const stage = asset.pipelineStage ?? "LOOKING";
   const passed = asset.status === "PASSED_ON";
+  const [editing, setEditing] = useState<string | null>(null);
+  const corrections: Array<{ from: string | null; at: string }> = (() => {
+    try {
+      return asset.recordCorrections ? JSON.parse(asset.recordCorrections) : [];
+    } catch {
+      return [];
+    }
+  })();
 
   async function run(action: () => Promise<unknown>) {
     try {
@@ -36,6 +44,37 @@ export function ConsideringBar({ asset, onChange }: { asset: Asset; onChange: ()
               Passed on{asset.passedOnAt ? ` ${formatDate(asset.passedOnAt)}` : ""} <HelpLink topic="considering" />
             </h3>
             <p style={{ margin: "4px 0 0" }}>{asset.passedOnReason || "No reason noted."}</p>
+            {corrections.map((c, i) => (
+              <p key={i} className="cap-explain" style={{ margin: "2px 0 0" }}>
+                Corrected {formatDate(c.at)} — it said: “{c.from || "no reason"}”
+              </p>
+            ))}
+            {editing === null ? (
+              <button className="link-button" onClick={() => setEditing(asset.passedOnReason ?? "")}>
+                Correct the reason
+              </button>
+            ) : (
+              <div className="sub-form">
+                <textarea rows={2} value={editing} onChange={(e) => setEditing(e.target.value)} aria-label="The reason" />
+                <p className="cap-explain">What it said before stays on record.</p>
+                <div className="toolbar">
+                  <button
+                    className="btn"
+                    onClick={() =>
+                      run(async () => {
+                        await api.considering.correctPassedOnReason(asset.id, editing.trim() || null);
+                        setEditing(null);
+                      })
+                    }
+                  >
+                    Save
+                  </button>
+                  <button className="btn secondary" onClick={() => setEditing(null)}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
             <p className="cap-explain" style={{ margin: "4px 0 0" }}>
               Kept for reference, with everything you found out. It never counts in your totals.{" "}
               <Link to="/considering">All properties I'm considering</Link>

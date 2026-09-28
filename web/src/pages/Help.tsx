@@ -971,6 +971,12 @@ const SECTIONS: Section[] = [
           from the settlement date at the price paid (the contract price unless you enter another), and switches its loan on.
         </p>
         <p>
+          <strong>Estimate vs actual</strong>: when it settles, the assessment is kept exactly as it stood. On the bought
+          property's page, it's compared with what really happened — the price and buying costs you paid, then each year's
+          rent, running costs and cash (from Profit year by year). <strong>Correct an estimate</strong> fixes a mistake; the
+          original and the date you changed it stay shown. A property you passed on can have its reason corrected the same way.
+        </p>
+        <p>
           A <strong>Portfolio Plan</strong>'s planned purchase can be linked to a property you're considering: the plan then
           uses that property's own price, borrowing, rent, stamp duty and buying costs. The link stays once it's bought.
         </p>

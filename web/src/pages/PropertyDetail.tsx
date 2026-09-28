@@ -18,6 +18,7 @@ import { useTrailTitle } from "../trail.js";
 import { RemindersCard } from "../components/RemindersCard.js";
 import { SecuredLoansCard } from "../components/SecuredLoansCard.js";
 import { ConsideringBar } from "../components/ConsideringBar.js";
+import { EstimateVsActualCard } from "../components/EstimateVsActualCard.js";
 import { AssessmentCard } from "../components/AssessmentCard.js";
 import { DueDiligenceCards } from "../components/DueDiligenceCards.js";
 
@@ -329,6 +330,9 @@ export function PropertyDetail() {
 
           {/* Not rented: only if it has years from when it was. */}
           <ProfitHistoryCard assetId={property.assetId} onlyIfSaved={!rented} />
+
+          {/* Bought through Properties I'm considering: what was expected against what happened. */}
+          <EstimateVsActualCard assetId={property.assetId} />
 
           <ItemsPanel parentAssetId={property.assetId} title="Items in this property" />
 

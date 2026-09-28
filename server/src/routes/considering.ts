@@ -7,6 +7,7 @@ import { checkOwners, ownersInput } from "../services/ownership.js";
 import { assess, workingAssessment } from "../services/assessment.js";
 import { addItem, CHECK_STATUSES, dueDiligence, ensureCheck, removeItem, saveCheck } from "../services/dueDiligence.js";
 import { pricePaid, purchaseSteps, saveStep } from "../services/purchaseSteps.js";
+import { correctEstimate, correctPassedOnReason, ESTIMATES, EstimateField, estimateVsActual, freezeAssessment } from "../services/estimateVsActual.js";
 
 /**
  * Properties I'm considering: a property you're looking at buying is a
@@ -176,6 +177,8 @@ export async function markBought(assetId: string, on = new Date(), price?: numbe
   const asset = await considered(assetId);
   if (asset.status !== "CONSIDERING") throw new HttpError(400, "Bring it back first — it's been passed on.");
   const cost = price ?? asset.acquisitionCost ?? asset.askingPrice ?? null;
+  // The assessment as it stands at purchase is kept, unchanged, to compare with what really happens.
+  await freezeAssessment(asset.id, on);
   await prismaAll.$transaction(async (tx) => {
     await tx.asset.update({
       where: { id: asset.id },
@@ -361,5 +364,35 @@ consideringRouter.put(
       return;
     }
     res.json(await purchaseSteps(req.params.assetId));
+  })
+);
+
+// Estimate vs actual, once bought; and corrections that keep the original.
+consideringRouter.get(
+  "/:assetId/estimate-vs-actual",
+  asyncHandler(async (req, res) => {
+    res.json(await estimateVsActual(req.params.assetId));
+  })
+);
+
+consideringRouter.put(
+  "/:assetId/estimate",
+  asyncHandler(async (req, res) => {
+    const { field, value } = z
+      .object({ field: z.enum(Object.keys(ESTIMATES) as [EstimateField, ...EstimateField[]]), value: z.number().min(-1e10).max(1e10).nullable() })
+      .parse(req.body);
+    await correctEstimate(req.params.assetId, field, value);
+    await logAudit("ESTIMATE_CORRECTED", { targetType: "Asset", targetId: req.params.assetId, data: { field } });
+    res.json(await estimateVsActual(req.params.assetId));
+  })
+);
+
+consideringRouter.put(
+  "/:assetId/passed-on-reason",
+  asyncHandler(async (req, res) => {
+    const { reason } = z.object({ reason: z.string().trim().max(2000).nullable() }).parse(req.body);
+    await correctPassedOnReason(req.params.assetId, reason || null);
+    await logAudit("PASSED_ON_CORRECTED", { targetType: "Asset", targetId: req.params.assetId });
+    res.json({ ok: true });
   })
 );
