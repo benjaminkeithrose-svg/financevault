@@ -1,0 +1,2135 @@
+SMSFR 2012/1 - Self Managed Superannuation
+Funds: limited recourse borrowing arrangements -
+application of key concepts
+
+  This cover sheet is provided for information only. It does not form part of SMSFR 2012/1 - Self
+Managed Superannuation Funds: limited recourse borrowing arrangements - application of key
+concepts
+
+
+  There is a Compendium for this document: SMSFR 2012/1EC .
+
+   Legislative changes to limited recourse borrowing arrangements commence on 10 August. We
+are currently reviewing and updating this Ruling. For more information on these changes, see
+Limited Recourse Borrowing Arrangement (LRBA) Provisions
+
+
+
+
+Generated on: 26 September 2026, 09:14:16 AM
+                                                                       Self Managed Superannuation Funds Ruling
+
+                                                                            SMSFR 2012/1
+                                Page status: not legally binding                                            Page 1 of 41
+
+
+
+
+                                Self Managed Superannuation Funds
+                                Ruling
+                                Self Managed Superannuation Funds:
+                                limited recourse borrowing arrangements
+                                – application of key concepts
+
+Contents                 Para   Preamble
+
+What this Ruling is about 1     This publication represents the Commissioner’s view about the way in which
+                                provisions of the Superannuation Industry (Supervision) Act 1993, or
+Ruling                      5   regulations under that Act, apply to superannuation funds that the
+Funds to which the              Commissioner regulates: principally self managed superannuation funds.
+Ruling applies            42    Self Managed Superannuation Funds Rulings (whether draft or final) are not
+Date of effect            43    legally binding on the Commissioner. However, if the Commissioner later
+                                takes the view that the law applies less favourably to you than this ruling
+Appendix 1:                     indicates, the fact that you acted in accordance with this ruling would be a
+Examples                  45    relevant factor in your favour in the Commissioner’s exercise of any
+Appendix 2:                     discretion as to what action to take in response to a breach of that law. The
+Explanation               85    Commissioner may, having regard to all the circumstances, decide that it is
+                                appropriate to take no action in response to the breach.
+Appendix 3:
+Alternative views        146
+Appendix 4:
+Detailed contents list   152
+                                What this Ruling is about
+                                1.       This Ruling explains key concepts relevant to the application
+                                of the limited recourse borrowing arrangement (LRBA) provisions, as
+                                those provisions apply to a self managed superannuation fund
+                                (SMSF) that enters into an LRBA. The LRBA provisions are found in
+                                sections 67A and 67B of the Superannuation Industry (Supervision)
+                                Act 1993 (SISA). 1
+                                2.         The key concepts explained are:
+                                           •         what is an ‘acquirable asset’ and a ‘single acquirable
+                                                     asset’;
+                                           •         ‘maintaining’ or ‘repairing’ the acquirable asset as
+                                                     distinguished from ‘improving’ it; and
+                                           •         when a single acquirable asset is changed to such an
+                                                     extent that it is a different (replacement) asset.
+                                3.      Although the analysis and examples developed in this Ruling
+                                focus primarily on real property, the principles discussed can also
+                                apply to other types of assets such as machinery or equipment.
+
+
+                                1
+                                    All legislative references in this Ruling are to the SISA unless otherwise indicated.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 2 of 41                                       Page status: not legally binding
+
+
+
+4.       This Ruling does not consider:
+         •         other issues arising from an LRBA, such as the
+                   application of the in-house asset rules 2 if an asset
+                   continues to be held under the LRBA trust (the holding
+                   trust) once the borrowing has been repaid; or
+         •         how other SISA and Superannuation Industry
+                   (Supervision) Regulations 1994 (SISR) provisions
+                   apply to any arrangement discussed, or examples
+                   given, in this Ruling.
+
+
+
+Ruling
+The meaning of ‘acquirable asset’ and ‘single acquirable asset’
+5.      An ‘acquirable asset’ 3 is any asset, other than money, that
+neither the SISA 4 nor any other law prohibits a trustee of an SMSF
+from acquiring.
+6.     An asset is defined in subsection 10(1) to mean any form of
+property. In the context of an LRBA, an acquirable asset is therefore
+any form of property, other than money, that a trustee of an SMSF is
+not otherwise prohibited from acquiring.
+7.     Money is Australian currency or currency of another country
+but does not extend to collectable banknotes or coins. 5
+8.     The term ‘property’ is not defined in the SISA and therefore
+takes on its ordinary meaning. The phrase ‘any form of property’ has
+a very wide meaning.
+9.     The term ‘property’ can be used in different senses. It can
+describe:
+         •         the proprietary rights, or
+         •         the often physical object of the proprietary rights (for
+                   example, land or machinery).
+
+
+
+
+2
+  Part 8. The in-house asset rules are discussed in Self Managed Superannuation
+  Funds Ruling SMSFR 2009/4 Self Managed Superannuation Funds: the meaning
+  of 'asset', 'loan', 'investment in', 'lease' and 'lease arrangement' in the definition of
+  an 'in-house asset' in the Superannuation Industry (Supervision) Act 1993.
+3
+  Subsection 67A(2).
+4
+  See for example section 66 which, subject to some limited exceptions, prohibits the
+  acquisition of assets from a related party. This provision is discussed in Self
+  Managed Superannuation Funds Ruling SMSFR 2010/1 Self Managed
+  Superannuation Funds: the application of subsection 66(1) of the Superannuation
+  Industry (Supervision) Act 1993 to the acquisition of an asset by a self managed
+  superannuation fund from a related party.
+5
+  This is consistent with the view in SMSFR 2010/1 (paragraph 28).
+                                  Self Managed Superannuation Funds Ruling
+
+
+                                       SMSFR 2012/1
+Page status: not legally binding                                    Page 3 of 41
+
+
+10.    It is necessary to consider the meaning of property in both
+senses to determine whether money borrowed under an LRBA has
+been applied for the acquisition of a single acquirable asset. That is, it
+is necessary to consider both the legal form and substance of the
+asset acquired.
+11.       Having regard to both the proprietary rights and the object of
+those proprietary rights, it may be possible to conclude that a trustee
+of an SMSF is acquiring a single acquirable asset in the sense that
+the trustee is acquiring a single object of property notwithstanding
+that it is comprised of separate bundles of proprietary rights (for
+example, if there are two or more blocks of land). However, this will
+only be so if it is reasonable to conclude that, notwithstanding the
+separate bundles of proprietary rights, what is being acquired is
+distinctly identifiable as a single asset. 6
+12.    Factors relevant in determining if it is reasonable to conclude
+that what is being acquired is a single object of property include:
+        •        the existence of a unifying physical object, such as a
+                 fixture attached to the land which is permanent in
+                 nature and not easily removed and that is significant in
+                 value relative to the value of the asset; 7 or
+        •        whether under a law of a State or Territory the two
+                 assets must be dealt with together. 8
+13.      Each of the following circumstances would not, without more,
+be sufficient to support a conclusion that what is being acquired is
+identifiable as a single object of property:
+        •        there is a physical object situated across two or more
+                 titles and that physical object:
+                 -   is not significant in value relative to the value of the
+                     land; 9 or
+                 -   is temporary in nature or otherwise able to be
+                     relocated or removed relatively easily therefore not
+                     preventing the titles being dealt with separately. 10
+
+
+
+
+6
+  See also paragraphs 97 to 115 of this Ruling.
+7
+  See Example 2 (paragraphs 49 to 51) and Example 3 (paragraphs 52 to 57) of this
+  Ruling.
+8
+  See Example 4 (paragraphs 58 and 59) of this Ruling.
+9
+  See Example 2 (paragraphs 49 to 51) and Example 3 (paragraphs 52 to 57) of this
+  Ruling.
+10
+   See Example 3 (paragraphs 52 to 57) of this Ruling.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 4 of 41                                Page status: not legally binding
+
+
+
+
+        •       a business is being conducted on two or more titles; 11
+                or
+        •       the assets are being acquired under a single contract
+                because, for example, the vendor wants to deal with
+                the assets as a package or the lender will only lend
+                over a group of assets. 12
+
+
+Borrowings applied in maintaining or repairing but not
+improving the acquirable asset
+14.     Money borrowed under an LRBA may be applied not only in
+acquiring a single acquirable asset but also in carrying out repairs
+and maintenance to that asset whether necessary at the time of its
+acquisition or at a later time.
+15.      No amount that has been borrowed under an LRBA by a
+trustee of an SMSF may be applied to improve the single acquirable
+asset. 13 If a trustee of an SMSF expends borrowed money to improve
+a single acquirable asset, the exception under section 67A to the
+subsection 67(1) borrowing prohibition ceases to be satisfied. If the
+borrowing is maintained the trustee of the SMSF will contravene
+subsection 67(1).
+16.    To determine if an asset has been repaired or maintained or
+whether it has been improved, reference is made to the qualities and
+characteristics of the asset at the time the asset is acquired under the
+LRBA.
+
+
+Distinguishing between maintaining, repairing and improving a
+single acquirable asset
+17.     The terms ‘maintaining’, ‘repairing’ and ‘improving’ an asset
+are often practically concerned with the physical form of an asset
+rather than its legal form. However, to the extent relevant to
+proprietary rights, they similarly apply.
+18.   Maintaining, repairing and improving are given their ordinary
+meaning having regard to the context in which they appear in the
+LRBA provisions. 14
+
+
+
+
+11
+   See Example 3 (paragraphs 52 to 57) of this Ruling.
+12
+   See Example 1 (paragraphs 47 and 48) and Example 5 (paragraphs 60 and 61) of
+   this Ruling.
+13
+   Subparagraph 67A(1)(a)(i).
+14
+   See also paragraphs 116 to 133 of this Ruling.
+                                      Self Managed Superannuation Funds Ruling
+
+
+                                           SMSFR 2012/1
+Page status: not legally binding                                            Page 5 of 41
+
+
+Maintaining the acquirable asset
+19.     The term ‘maintaining’ ordinarily means work done to prevent
+defects, damage or deterioration of an asset, or in anticipation of
+future defects, damage or deterioration, provided that the work merely
+ensures the continued functioning of the asset in its present state.
+
+
+Repairing the acquirable asset
+20.   The term ‘repairing’ ordinarily means remedying or making
+good defects in, damage to, or deterioration of an asset and
+contemplates the continued existence of the asset.
+21.     A repair is usually occasional and partial. A repair restores the
+function of the asset without changing its character and may include
+restoration to its former appearance, form, state or condition. A repair
+merely replaces a part of something or corrects something that is
+already there and has become worn out or dilapidated through
+ordinary wear and tear, or is damaged whether accidentally or
+deliberately or by natural causes.
+22.        As to whether the repair is partial and restorative it is the
+entire asset that is held under an LRBA that is relevant. For example,
+if it is a house and land held under the LRBA, then in determining if
+the asset is maintained, repaired or restored, or whether it has been
+improved, it is necessary to consider the overall effect of the work (or
+expenditure) on both the house and the land and the qualities and
+characteristics 15 of the asset at the time it was acquired under the
+LRBA. If work on the asset restores the function of the asset to what it
+was at the time it was acquired, and uses similar or modern
+equivalent materials, it is a repair.
+
+
+Improving the acquirable asset
+23.     In contrast to repair, an asset is improved if the state or
+function of the asset is significantly altered for the better, through
+substantial alterations, or the addition of further substantial features
+or rights, to the asset. 16
+
+
+
+
+15
+   This would include considering the appearance, form, state and condition of the
+   acquirable asset.
+16
+   It will be a different asset (as discussed at paragraphs 31 to 37 of this Ruling) if the
+   alterations or additions are to such an extent that its character is fundamentally
+   changed.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 6 of 41                                  Page status: not legally binding
+
+
+
+24.     Determining if an acquirable asset is merely restored, or
+whether its state or function is significantly altered for the better, is a
+question of fact and degree. In each case it is necessary to consider
+the qualities and characteristics of the acquirable asset that is subject
+to the LRBA at the time the LRBA was entered into. Whether the
+state or function of the acquirable asset has altered significantly for
+the better is determined objectively and without reference to the
+actual use to which the acquirable asset is put. Alterations will not
+amount to an improvement if the state or function of the acquirable
+asset is only bettered to a minor or trifling extent as compared to the
+asset as a whole.
+25.   The following table provides illustrations contrasting repairs or
+maintenance with improvements.
+
+
+Table 1: repair or maintenance or improvement
+        Repair or maintenance example          Improvement example
+ Residential property
+ 1.     A fire damages part of the kitchen     If the house was extended to
+        (cooktop, benches, walls and           increase the size of the
+        ceiling).                              kitchen this would be an
+        Restoration (replacement) of the       improvement.
+        damaged part of the kitchen with       If as well as restoring the
+        modern equivalent materials or         damaged part of the internal
+        appliances would constitute repair     kitchen (a repair) a new
+        or restoration of a part of the        external kitchen was added
+        entire asset being the house and       to the entertainment area of
+        land.                                  the house the external
+        If superior materials or appliances    kitchen would be an
+        are used it is a question of degree    improvement.
+        as to whether the changes
+        significantly improve the state or
+        function of the asset as a whole.
+        For example, the addition of a
+        dishwasher would not amount to
+        an improvement, even if a
+        dishwasher was not previously
+        part of the kitchen, on the basis
+        that this is a minor or trifling
+        improvement to the state or
+        function of the asset as a whole.
+                                Self Managed Superannuation Funds Ruling
+
+
+                                    SMSFR 2012/1
+Page status: not legally binding                                 Page 7 of 41
+
+
+
+       Repair or maintenance example          Improvement example
+ 2.    • The guttering on the house is        • A pergola is built to create
+         replaced with the modern               an outdoor entertaining
+         equivalent and the house is            area.
+         repainted. If in replacing the       • The addition of a
+         guttering a leaf guard is also         swimming pool or a
+         fitted this would not amount to        garage.
+         an improvement on the basis
+         that this is a minor or trifling     • An integrated home
+         addition to the entire asset           automation system is
+         being the house and land.              installed including
+                                                electronically controlled
+       • A fence is replaced using              lighting, multi-room
+         modern equivalent materials. If        audiovisual distribution
+         part of replacing the fence also       and security system.
+         included the addition of a gate
+         to provide another access            • A house extension to add
+         point, this would not be               a further bathroom.
+         regarded as an improvement
+         on the basis that this is a minor
+         or trifling addition to the entire
+         asset being the house and
+         land.
+       • A fire alarm is installed to
+         comply with new requirements
+         of the local council. This would
+         not be regarded as an
+         improvement on the basis that
+         this is a minor or trifling
+         addition to the entire asset
+         being the house and land.
+ 3.    A cyclone damages the roof of the      The addition of a second
+       house. Replacement of the roof in      storey to the house at the
+       its entirety with the modern           time of also replacing the
+       equivalent is a repair as it is        roof would be an
+       restoring the asset to what it was.    improvement.
+       If superior materials are used it is
+       a question of degree as to
+       whether the changes significantly
+       improve the state or function of
+       the asset as a whole.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 8 of 41                                     Page status: not legally binding
+
+
+
+
+           Repair or maintenance example          Improvement example
+     4.    A fire destroys a three bedroom        Rebuilding a residential
+           residential house. Rebuilding a        house that is not broadly
+           broadly comparable house is not        comparable to that destroyed
+           an improvement as it restores the      is an improvement.
+           asset to what it was before the        However, if the funds to
+           fire.                                  rebuild are from an
+           If superior materials, fittings or     insurance company and not
+           appliances are used it is a            from borrowings this does
+                                                                       17
+           question of degree as to whether       not affect the LRBA.
+           the changes significantly improve
+           the state or function of the asset
+           as a whole.
+     5.    A residential house is acquired        A residential house is
+           under an LRBA and is rented out        acquired under an LRBA and
+           for a number of years. As the area     is rented out for a number of
+           is now a real estate hot spot a        years. As the area is now a
+           decision is taken to renew the         real estate hot spot a
+           kitchen which, although functional,    decision is taken to demolish
+           is significantly out of date and       the house. Rebuilding a
+           showing wear and tear.                 residential house that is not
+           The design of the kitchen is           broadly comparable to that
+           improved and modern equivalent,        demolished is an
+           rather than superior, materials        improvement.
+           and appliances are used.               However, if the funds to
+           The changes made do not                rebuild are not from
+           significantly improve the state or     borrowings this does not
+                                                                    18
+           function of the asset as a whole.      affect the LRBA.
+
+     Farm on a single title
+     The farm is the single acquirable asset under an LRBA. At the time of
+     entering into the LRBA the farm includes one set of cattle yards, four
+     bores including windmills, tanks and troughs and three kilometres of
+     fencing.
+     6.    Replacing a section of the cattle      Each of the following
+           yards or the existing fencing is a     additions is an improvement:
+           repair.                                • a further set of cattle
+           Ensuring the bores, windmills,            yards;
+           tanks and troughs continue             • a further bore, tank;
+           working is repair or maintenance.         windmill and trough;
+           This would include laying new
+                                                  • a further dam;
+           pipes between the tank and
+           trough to replace the old pipes.       • a further shed;
+                                                  • a further two kilometres of
+                                                     fencing.
+
+
+
+
+17
+     See paragraph 30 of this Ruling.
+18
+     See paragraph 30 of this Ruling.
+                                      Self Managed Superannuation Funds Ruling
+
+
+                                           SMSFR 2012/1
+Page status: not legally binding                                         Page 9 of 41
+
+
+
+           Repair or maintenance example            Improvement example
+     Machinery or equipment
+     7.    An item of earth moving                  A major overhaul of the
+           equipment is acquired under an           asset is carried out with all
+           LRBA. Immediately after its              significant parts of the asset
+           acquisition money borrowed               being replaced. This is likely
+           under the LRBA is used to fund           to be an improvement on the
+           repairs to the hydraulic system of       basis that the changes have
+           the asset to return it to its full       significantly improved the
+           functionality. This would be a           state or function of the asset.
+           repair.
+
+
+Acquiring an asset in need of repair
+26.    If deterioration of an asset occurred before the asset was
+acquired under an LRBA and that asset is subsequently repaired
+using borrowings under the LRBA, the use of borrowings for that
+purpose is nonetheless permitted under subparagraph 67A(1)(a)(i).
+27.       However, the greater the state of deterioration of the asset at
+the time of its acquisition, and the LRBA being entered into, the more
+likely it is that subsequent alterations or additions to that asset will be
+regarded as improvements. 19
+
+
+Subsequent draw downs for repairs
+28.     Subsequent draw downs under an LRBA give rise to
+additional borrowings. 20 However, an LRBA that satisfies the
+requirements of section 67A when entered into will continue to satisfy
+those requirements if:
+           •        the additional borrowings are applied in maintaining or
+                    repairing the asset held under the LRBA; and
+           •        the draw downs are provided for under the terms of
+                    that LRBA.
+
+
+
+
+19
+     See also paragraphs 132 and 133 of this Ruling.
+20
+     Each drawn down is a new borrowing: see paragraph 65 and 93 of Self Managed
+     Superannuation Funds Ruling SMSFR 2009/2 Self Managed Superannuation
+     Funds: the meaning of 'borrow money' or 'maintain an existing borrowing of
+     money' for the purposes of section 67 of the Superannuation Industry (Supervision)
+     Act 1993.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 10 of 41                                  Page status: not legally binding
+
+
+
+Repairs to an asset already owned by an SMSF
+29.     If an asset is already owned by an SMSF, and thus not
+subject to an LRBA, a borrowing to fund repairs or maintenance for
+that asset would not satisfy the requirements of the LRBA provisions.
+This is on the basis that:
+        •        the money is not applied for the acquisition of a single
+                 acquirable asset 21 but is instead applied to repair an
+                 asset that the SMSF already owns;
+        •        the asset that is the subject of the repair is not held on
+                 separate trust for the benefit of the SMSF. 22 Rather it
+                 is held directly by the SMSF; and
+        •        anything used in carrying out the repair is not subject
+                 to an LRBA in its own right.
+
+
+Money other than borrowings used to improve an asset
+30.     Subparagraph 67A(1)(a)(i) provides that borrowings under an
+LRBA cannot be used to fund improvements. However, money from
+other sources can be used to improve (or repair or maintain) a single
+acquirable asset. For example, accumulated funds held by the SMSF
+may be used to fund the improvements. 23 However, any
+improvements must not result in the acquirable asset becoming a
+different asset. 24
+
+
+Whether the same asset or a different asset is held on trust
+under the LRBA
+31.    The single acquirable asset identified when the LRBA is put in
+place must continue to be the asset that is held on trust under that
+LRBA, unless its replacement is covered by section 67B.
+32.     If an asset is replaced in its entirety with a different asset
+(even if of the same type) and that replacement is not covered by
+section 67B, the exception under section 67A to the borrowing
+prohibition ceases to be satisfied from that time. If the borrowing is
+maintained the trustee of the SMSF will contravene subsection 67(1).
+
+
+
+
+21
+   As required under paragraph 67A(1)(a).
+22
+   As required under paragraph 67A(1)(b).
+23
+   If the money is sourced from the SMSF, the other provisions of the SISA must
+   nonetheless be complied with by the trustee (or the investment manager) of the
+   SMSF.
+24
+   See also paragraphs 31 to 37 of this Ruling.
+                                      Self Managed Superannuation Funds Ruling
+
+
+                                          SMSFR 2012/1
+Page status: not legally binding                                     Page 11 of 41
+
+
+33.     If alterations or additions are made to the physical object or
+the proprietary rights that comprise an asset held under an LRBA
+and, having regard to both the object and the proprietary rights, those
+alterations or additions fundamentally change the character of that
+asset, this results in a different asset being held on trust under the
+LRBA. It is consistent with the approach at paragraphs 10 and 11 of
+this Ruling, to consider both the characteristics of the physical object
+(assuming it is not an intangible asset) and the attributes of the
+proprietary rights comprising the asset, to determine if the character
+of the asset as a whole has fundamentally changed.
+34.     If the character of the asset as a whole has fundamentally
+changed, the exception under section 67A to the borrowing
+prohibition ceases to be satisfied from the time the alterations or
+additions are made to the asset. If the borrowing is maintained the
+trustee of the SMSF will contravene subsection 67(1). 25
+35.    The following table illustrates whether a change to a single
+acquirable asset results in a different asset(s). 26
+
+
+Table 2: whether it is a different asset
+           Single acquirable asset       Whether it is a different asset(s)
+     1.    Vacant block of land on       A vacant block of land is subsequently
+           single title                  subdivided resulting in multiple titles.
+                                         One asset has been replaced by
+                                         several different assets as a result of
+                                         the subdivision.
+     2.    Vacant block of land on       A residential house is built on vacant
+           single title                  land which is on a single title. The
+                                         character of the asset has
+                                         fundamentally changed from vacant
+                                         land to residential premises. This is a
+                                         different asset.
+     3.    Residential house and         A house is demolished following a fire
+           land                          and is replaced by three strata titled
+                                         units. The character of the asset has
+                                         fundamentally changed along with the
+                                         underlying proprietary rights. This has
+                                         created three different assets.
+     4.    Residential house and         A residential house is converted into a
+           land                          restaurant by renovations which
+                                         include fitting out a fully functioning
+                                         commercial kitchen. As a result of the
+                                         renovation the character of the asset
+                                         has fundamentally changed from
+                                         residential premises to restaurant
+                                         premises. This is a different asset.
+
+
+
+25
+     See Examples 11 to 15 (paragraphs 73 to 84) of this Ruling.
+26
+     See also paragraphs 134 to 145 of this Ruling.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 12 of 41                           Page status: not legally binding
+
+
+
+
+       Single acquirable asset   Whether it is a different asset(s)
+ 5.    Residential house and     One bedroom of a residential house is
+       land                      converted to a home office. This
+                                 would not ordinarily result in a change
+                                 in the overall character of the asset as
+                                 a residential house. The conversion of
+                                 the bedroom into an office does not
+                                 result in a different asset.
+ 6.    Residential house and     A fire destroys a four bedroom house
+       land                      and a new superior residential house
+                                 is constructed on that land using both
+                                 insurance proceeds and additional
+                                 SMSF funds. Rebuilding another
+                                 residential house (whether of the
+                                 same size or larger) does not
+                                 fundamentally change the character of
+                                 the asset held under the LRBA. The
+                                 addition of a garage, for example,
+                                 would also not change the character
+                                 of the asset.
+ 7.    Residential house and     While each of the following changes
+       land                      would be improvements each (or all)
+                                 of the changes would not result in a
+                                 different asset:
+                                 • an extension to add two bedrooms;
+                                 • the addition of a swimming pool;
+                                 • an extension consisting of an
+                                     outdoor entertainment area;
+                                 • the addition of a garage shed and
+                                     driveway;
+                                 • the addition of a garden shed.
+ 8.    Residential house and     To allow a road to be widened, a local
+       land                      government authority undertakes the
+                                 compulsory resumption of a minor
+                                 portion of the frontage of a property
+                                 which has a residence on it. While the
+                                 resumption results in the existing
+                                 property title being replaced, the minor
+                                 extent of the resumption is such that
+                                 the fundamental character of the
+                                 asset, taking account of not only the
+                                 proprietary rights but also the object of
+                                 those proprietary rights, remains that
+                                 of being the residential property.
+                                       Self Managed Superannuation Funds Ruling
+
+
+                                            SMSFR 2012/1
+Page status: not legally binding                                          Page 13 of 41
+
+
+           Single acquirable asset         Whether it is a different asset(s)
+     9.    Residential house and           A ‘granny flat’ is to be constructed in
+           land                            the backyard of a property which
+                                           already has a four bedroom residence
+                                           established on it. The granny flat will
+                                           have two bedrooms, a family room, a
+                                           kitchen and a bathroom and will be
+                                           connected to utilities such as
+                                           electricity, water and sewage.
+                                           The character of the asset would
+                                           remain residential premises and thus
+                                           the construction of the granny flat
+                                           would not result in there being a
+                                           different asset.
+     10.   The improvements listed         These improvements do not result in a
+           in Column 3 of Table 1 at       different asset as the changes do not
+           paragraph 25 of this            fundamentally change the character of
+           Ruling.                         the asset held under the LRBA.
+
+
+Alterations or additions to the asset not made by the trustee of
+an SMSF
+36.    Whether or not alterations or additions to a single acquirable
+asset result in a different asset being held on trust is not affected by
+the identity of whoever made the changes.
+37.      Alterations or additions made by a tenant to a rental property
+that is held under an LRBA do not, however, result in a different asset
+if:
+           •        the alterations or additions do not fundamentally
+                    change the character of the asset (as discussed at
+                    paragraphs 31 to 35); 27 or
+           •        in the case of the addition of fixtures that do
+                    fundamentally change the character of the asset, the
+                    fixtures remain the property of the tenant. 28
+
+
+Property development
+38.      If a house on a single title block of land (that is, the single
+acquirable asset) is acquired under a contract of purchase with a
+deposit paid upon entering into that contract and the balance payable
+at settlement, each payment is applied for the acquisition of that
+single acquirable asset and may be funded under a single LRBA.
+
+
+
+
+27
+     For example, a tenant’s fit out of office space.
+28
+     This is further explained at paragraphs 143 to 145 of this Ruling.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 14 of 41                                    Page status: not legally binding
+
+
+
+39.      If a contract is entered into for an off-the-plan purchase of a
+strata titled unit (that is, the purchase of a unit that is yet to be built
+and strata titled) and under the contract a deposit is required upon
+entering into the contract with the balance payable at settlement after
+the unit is built and strata titled, each payment is applied for the
+acquisition of that strata titled unit. Providing that the strata titled unit
+is a single acquirable asset 29 the deposit and the balance payable at
+settlement may be funded under a single LRBA.
+40.     A similar outcome results if the contract entered into is for the
+purchase of a single title vacant block of land along with the
+construction of a house on that land before settlement occurs. In this
+situation the deposit paid upon entering into the contract and the
+balance payable upon settlement is applied for the acquisition, under
+that contract, of land with a completed house on it. The deposit and
+the balance payable at settlement may be funded under a single
+LRBA. 30
+41.     However, if an option is acquired for an off-the-plan purchase
+of a house on a single title block of land or a strata titled unit, the
+relevant single acquirable asset is the option. The money applied to
+acquire the option may be funded under an LRBA. However, the
+subsequent acquisition of the house and land or the strata titled unit
+upon exercise of that option would need to be funded under a
+separate LRBA, as the asset acquired upon exercise of the option is
+different to the option asset itself.
+
+
+
+Funds to which the Ruling applies
+42.    This Ruling applies to SMSFs 31 and former SMSFs. 32
+References in the Ruling to SMSFs include former SMSFs unless
+otherwise indicated.
+
+
+
+Date of effect
+43.     This Ruling applies to arrangements entered into on or after
+7 July 2010 (including an arrangement that is a refinancing of a
+borrowing of money under an arrangement entered into before, on or
+after 7 July 2010).
+
+
+
+29
+   This outcome may differ if the acquisition is of the strata titled unit and another
+   asset(s) such as a separately titled car park or a furniture package.
+30
+   See Example 10 (paragraphs 71 and 72) of this Ruling. This is in contrast to the
+   outcome if construction of the house occurs after settlement, which is illustrated at
+   Example 9 (paragraphs 68 to 70) of this Ruling.
+31
+   As defined in section 17A.
+32
+   A former SMSF is a fund that has ceased being an SMSF and has not appointed a
+   registrable superannuation entity (RSE) licensee as trustee – see subsection 10(4).
+                              Self Managed Superannuation Funds Ruling
+
+
+                                   SMSFR 2012/1
+Page status: not legally binding                           Page 15 of 41
+
+
+44.      However, this Ruling will not apply to taxpayers to the extent
+that it conflicts with the terms of a settlement of a dispute agreed to
+before the date of issue of this Ruling
+
+
+
+
+Commissioner of Taxation
+23 May 2012
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 16 of 41                            Page status: not legally binding
+
+
+
+
+Appendix 1 – Examples
+       This Appendix is provided as information to help you
+understand how the Commissioner’s view has been reached.
+
+45.     The following examples further illustrate the application of the
+principles discussed in this Ruling.
+46.     Each example assumes that the SMSF is not prohibited from
+acquiring the asset (for example, the acquisition is not from a related
+party). Further, the application of other provisions of the SISA and
+SISR have not been considered and could, therefore, potentially
+apply depending on the particular circumstances.
+
+
+Example 1 – two adjacent blocks of land
+47.    As part of the investment strategy of an SMSF, the trustees of
+the SMSF want to acquire two adjacent blocks of land under a single
+LRBA. While the vendor will only sell the two blocks together, there
+are no physical or legal impediments to the two blocks of land being
+sold separately.
+48.      The two blocks of land are not a single acquirable asset. As a
+result, the two blocks of land cannot be acquired under a single
+LRBA. However, the blocks of land could be acquired under separate
+LRBAs.
+
+
+Example 2 – a factory complex on more than one title
+49.     A trustee of an SMSF wants to enter into an LRBA to acquire
+a factory which is constructed across three titles. The existence of the
+factory adds considerably to the value of the land and thus is a
+significant part of the value of the asset. The factory is therefore
+relevant as a unifying physical object.
+50.     The factory and the land comprised of the three titles, is a
+single acquirable asset and can be acquired under a single LRBA.
+51.    However, if the factory was derelict and thus not of significant
+value relative to the land this asset could not be acquired under a
+LRBA as the factory is not relevant as a unifying physical object and
+thus the assets are the three titles.
+
+
+Example 3 – farmland with multiple titles
+52.    The trustee of an SMSF wants to enter into an LRBA to
+acquire a farm. While the farm has been conducted as a single
+primary production business it comprises two titles.
+53.    Although only one farming business is conducted on the land,
+there are no physical or legal impediments to the land, represented
+by the different titles, from being dealt with separately.
+                                      Self Managed Superannuation Funds Ruling
+
+                                          SMSFR 2012/1
+Page status: not legally binding                                       Page 17 of 41
+
+
+
+54.    The existence of any (or all) of the following features spanning
+the two titles is not sufficient to alter this outcome:
+           •        agricultural crops;
+           •        fencing; or
+           •        irrigation systems.
+55.      In this regard, agricultural crops do not prohibit titles being
+dealt with separately and fencing and irrigation systems are able to
+be moved or altered such that the titles either with or without those
+objects can be dealt with separately. Further, an inability to physically
+access land identified by one of the titles, other than through the land
+identified by the other title, is not of itself sufficient to prohibit the titles
+being dealt with separately.
+56.      As these features are not necessarily considered a barrier to
+part of the farm (one of the titles) being sold off, whether for farming
+or for other purposes, the farm consisting of both titles is not a single
+acquirable asset and cannot be acquired under a single LRBA.
+57.     However, if the farming business concerned a piggery and the
+piggery is conducted in a large shed with infrastructure that is
+constructed over both titles then, similar to the approach with the
+factory in Example 2, this would be a relevant consideration.
+Assuming that the piggery adds considerably to the value of the land
+and thus is a significant part of the value of the asset it would be a
+single acquirable asset.
+
+
+Example 4 – apartment with separate car park
+58.      The trustee of an SMSF wants to enter into an LRBA to
+purchase an apartment with a separate car park on the same strata
+plan that contains a notice of restriction. The apartment and car park
+are each on a separate legal title. As the strata plan contains a notice
+of restriction, if the car park and apartment are not transferred
+together the transfer of title of the apartment cannot be registered
+according to the relevant law of the State. 33
+59.     As the two titles must both be transferred if the transfer of title
+of the apartment is to be registered, this effectively means that the
+two assets must be dealt with together under a law of the State. In
+these circumstances the apartment and car park comprise a single
+acquirable asset that may be acquired under a single LRBA.
+
+
+
+
+33
+     For example, in the circumstances covered by section 6 of Schedule 2 to the
+     Subdivision Act 1988 (Vic). (See also section 8 of Schedule 2 of that Act).
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 18 of 41                                     Page status: not legally binding
+
+
+
+Example 5 – serviced apartment and furnishings
+60.     The trustees of an SMSF want to enter into an LRBA to
+purchase a serviced apartment that will be leased to a provider of
+short-term residential accommodation. The purchaser of the
+apartment is required by the vendor 34 to also purchase a furnishings
+package.
+61.     The apartment without the furnishings package is a single
+acquirable asset and its acquisition could be funded under an LRBA.
+However, the apartment and the furnishings package, even if
+purchased together under the one contract, is not a single acquirable
+asset. The furnishings package, even if purchased under a separate
+contract, is still not a single acquirable asset as it would include
+multiple items.
+
+
+Example 6 – purchase of residential premises
+62.     The trustees of an SMSF want to acquire land that has an
+existing residential house on it. A deposit is paid to the vendor on
+signing the contract to acquire that land with the house. The balance
+of the purchase price is paid at settlement 60 days later. The relevant
+asset acquired is the land along with the existing house.
+63.     The land with the existing house is a single acquirable asset
+and the deposit and the payment at settlement is applied for the
+acquisition of that asset. The trustees of the SMSF can enter into a
+single LRBA to fund both payments.
+
+
+Example 7 – completed ‘off-the-plan’ apartment
+64.      The trustees of an SMSF enter into a contract to purchase a
+strata titled apartment ‘off-the-plan’. A deposit is required upon
+entering into the contract with the balance to be paid upon settlement
+for the completed strata titled apartment.
+65.     A single LRBA can be entered into to fund both the deposit
+and the balance to be paid under the contract upon settlement. Both
+the deposit and the settlement payment are applied for the acquisition
+of a single acquirable asset being the completed strata titled
+apartment.
+
+
+Example 8 – house built in situ on land already owned by the
+SMSF
+66.    An SMSF owns a vacant block of land. The trustees of the
+SMSF want to enter into an LRBA to construct a house in situ on the
+block of land.
+
+
+34
+     It would not alter the outcome if the furniture package was being acquired because
+     the apartment is leased to an existing tenant as a furnished apartment.
+                               Self Managed Superannuation Funds Ruling
+
+                                   SMSFR 2012/1
+Page status: not legally binding                            Page 19 of 41
+
+
+
+67.     The house cannot be a single acquirable asset under
+section 67A. As the house is built in situ it does not exist as an asset
+separate from the land that can be held on separate trust. Money
+borrowed to build the house effectively results in the acquisition of
+services and building materials. These acquisitions would not satisfy
+the LRBA requirement that the arrangement involves the acquisition
+of a single acquirable asset.
+
+
+Example 9 – purchase of land and construction of house using
+borrowings
+68.       The trustees of an SMSF want to enter into an LRBA where
+the single acquirable asset is a vacant block of land. The SMSF
+intends that the borrowing will provide sufficient funds for the
+construction of a house on that block. Assuming that title to the
+vacant land transfers to the holding trust prior to the house being
+built, it is the vacant land that is acquired and held on trust under the
+LRBA.
+69.    This arrangement will cease to satisfy the requirements of
+section 67A if money borrowed under the LRBA is subsequently used
+to construct the house and thus improve and fundamentally change
+the character of the asset held on trust (that is, from vacant land to
+residential premises).
+70.     This outcome is not altered even if the contracts entered into
+for the acquisition of the land and the construction of the house
+contain clauses linking the two contracts.
+
+
+Example 10 – acquisition of a yet to be constructed house on
+land using borrowings
+71.     The trustees of an SMSF want to enter into a contract to
+acquire, as a ‘package’, land with a yet to be constructed house on it
+and to fund the acquisition using borrowings under an LRBA. As the
+contractual arrangement is for the acquisition of land with a
+completed house on it, and settlement occurs once construction of
+the house is finished, the deposit and the payment on settlement can
+be funded under a single LRBA.
+72.    In contrast to Example 9 (paragraphs 68 to 70), this
+arrangement is for the acquisition of a single acquirable asset, being
+the land with the house constructed on it.
+
+
+Example 11 – house built over two titles
+73.      The trustee of an SMSF enters into an LRBA where the single
+acquirable asset is a house which is built across two titles.
+Subsequently the house is relocated so that it stands on only one of
+the titles.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 20 of 41                                      Page status: not legally binding
+
+
+
+74.     The arrangement ceases to satisfy the requirements of the
+LRBA provisions. The relocation of the house results in the asset
+under the arrangement no longer being a single object of property.
+Following the relocation there are two separate assets, the block of
+land with the house and a vacant block of land, that could be dealt
+with separately. If the borrowing is maintained the trustee of the
+SMSF will contravene subsection 67(1).
+
+
+Example 12 – replacement of equipment following an insurance
+claim
+75.     An SMSF enters into an LRBA where the single acquirable
+asset is an item of equipment. The item of equipment is subsequently
+destroyed and a new item of equipment is provided by the insurer as
+a replacement.
+76.      The arrangement ceases to meet the requirements of the
+LRBA provisions as the original item of equipment has been replaced
+in its entirety and that replacement is not covered by section 67B. 35 If
+the borrowing is maintained the trustee of the SMSF will contravene
+subsection 67(1).
+77.    If a cash payment is instead made by the insurer to the
+holding trust, that cash cannot be held on trust under the LRBA as the
+replacement acquirable asset. If this were the case, the arrangement
+would also cease to meet the requirements of the LRBA provisions.
+
+
+Example 13 – purchase of cattle property and construction of a
+shed using SMSF funds
+78.     The trustees of an SMSF enter into an LRBA where the single
+acquirable asset is a 10,000 hectare cattle property. This single title
+property has fencing, water troughs, windmill pumps and a dam but
+no dwelling or other buildings or structures erected on it. A large shed
+is constructed, using SMSF money, to provide shelter to the cattle.
+79.      The shed is an improvement. However, the shed does not
+result in the property becoming a different asset as the character of
+the asset as a cattle property has not fundamentally changed.
+80.    Should a residence also be built on the property to allow the
+owner or a manager to live on site this would not result in the property
+becoming a different asset as the character of the asset as a cattle
+property would not fundamentally change. The residence would
+merely facilitate persons working on the property being able to live on
+site.
+
+
+35
+     In contrast to the example at item 6 of Table 2 (paragraph 35) of this Ruling, the
+     equipment in Example 12 is completely replaced. However, in the example at
+     item 6 the land on which the house stood continues to be held by the holding trust
+     and a house is being rebuilt to restore the asset held on trust to a house and land
+     asset.
+                              Self Managed Superannuation Funds Ruling
+
+                                   SMSFR 2012/1
+Page status: not legally binding                         Page 21 of 41
+
+
+
+Example 14 – purchase of a small farm and construction of a
+residence using SMSF funds
+81.      The trustees of an SMSF enter into an LRBA where the single
+acquirable asset is a one hectare blueberry hobby farm on a single
+title. The property has 25 mature blueberry bushes on it as well as a
+bore and irrigation.
+82.     A four bedroom house is built on the property, using
+accumulated funds held by the SMSF, with the intention of the
+property being leased to an unrelated party as a residence. The
+building of the house results in the character of the property
+fundamentally changing from that of being solely a small scale hobby
+farm to also being a residential property.
+
+
+Example 15 – commercial building extensions using SMSF funds
+83.     The trustees of an SMSF enter into an LRBA where the single
+acquirable asset is a property which has a car washing facility on it.
+The property is leased to a tenant who operates a car washing
+business. The trustees decide to expand the facility by extending the
+back of the building to double the number of wash bays. The
+extension, which involves concreting, roofing and plumbing work, will
+be funded from accumulated funds held by the SMSF and will result
+in higher rent being received from the tenant.
+84.     Although there is an improvement to the asset, that
+improvement does not result in the commercial property becoming a
+different asset. The fundamental character of the property remains a
+car wash facility.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 22 of 41                                   Page status: not legally binding
+
+
+
+
+Appendix 2 – Explanation
+       This Appendix is provided as information to help you
+understand how the Commissioner’s view has been reached.
+
+Background
+85.      A number of provisions of the SISA place restrictions on the
+investment activities of an SMSF. One of these provisions is
+subsection 67(1) which, subject to specified exceptions, prohibits a
+trustee of an SMSF from borrowing money or maintaining an existing
+borrowing of money. The borrowing prohibition is designed to limit the
+risk of superannuation fund investment as can be seen from the
+statement in the Explanatory Memorandum to the Superannuation
+Legislation Amendment Bill (No. 4) 1999:
+         Superannuation funds are generally not permitted to borrow in their
+         own right. This is designed to reduce the risk to retirement income
+         from gearing their assets. 36
+86.    One specific exception to the prohibition on borrowing is
+provided by sections 67A and 67B.
+87.     Section 67A permits a borrowing arrangement (an LRBA) if
+the money borrowed is, or has been, applied for the acquisition of a
+single acquirable asset and that asset is held in a holding trust. Under
+such an arrangement the trustee of the SMSF acquires a beneficial
+interest in the asset and the right of recourse of the lender in the
+event of default is limited to the acquirable asset held in the holding
+trust. By making one or more payments after acquiring beneficial
+ownership the trustee of the SMSF has the right to acquire legal
+ownership. Additional rules apply to treat a collection 37 of identical
+assets having the same market value in the same way as a single
+acquirable asset.
+88.    Section 67B contains the specific circumstances where the
+borrowing arrangement may be maintained in relation to a
+replacement asset rather than the asset originally acquired.
+89.    Sections 67A and 67B replace former subsection 67(4A).
+Former subsection 67(4A) was replaced as certain practices had
+developed that led to prudential concerns with the borrowing
+arrangements created to comply with its requirements. 38
+
+
+
+
+36
+   See page 4 under the heading ‘Problem Identification’.
+37
+   Subsection 67A(3).
+38
+   See paragraph 1.4 of the Explanatory Memorandum to the Superannuation
+   Industry (Supervision) Amendment Bill 2010. See also the Second Reading
+   Speech for that Bill (Australia, House of Representatives 2010, Debates, vol 7,
+   pages 4126 to 4128).
+                                    Self Managed Superannuation Funds Ruling
+
+                                         SMSFR 2012/1
+Page status: not legally binding                                       Page 23 of 41
+
+
+
+90.     By comparison with former subsection 67(4A), which applies
+to arrangements entered into before 7 July 2010, sections 67A and
+67B have been enacted to ensure that the term ‘asset’ is read in the
+singular and is not interpreted as permitting one borrowing
+arrangement over multiple assets. The exception to this is if the
+assets comprise a collection of identical assets that have the same
+market value. This change removes the ability, available under former
+subsection 67(4A), to pool different assets in one arrangement and
+thus prevents a lender from choosing which assets are sold in the
+event of a default on the borrowing. 39
+91.     A further concern under former subsection 67(4A) was that of
+assets that were the subject of the borrowing being replaced at the
+discretion of the trustee of the SMSF or the lender. 40 Section 67B
+addresses this concern.
+92.   The borrowing prohibition in subsection 67(1) is also
+complemented by other investment rules in the SISA and the SISR. 41
+
+
+Contraventions
+93.    Section 67A provides a limited exception to the prohibition
+under subsection 67(1) of a trustee of an SMSF borrowing money.
+94.     Section 67 is a civil penalty provision and therefore
+contravening, or being involved in a contravention, of section 67 may
+have civil and criminal consequences. 42 Contravention places at risk
+the status of the SMSF as a complying superannuation fund under
+the SISA. 43
+
+
+Legislative context
+95.    The most relevant elements of sections 67A and 67B are set
+out below:
+         67A Limited recourse borrowing arrangements
+         Exception
+         (1)      Subsection 67(1) does not prohibit a trustee of a regulated
+                  superannuation fund (the RSF trustee) from borrowing
+                  money, or maintaining a borrowing of money, under an
+                  arrangement under which:
+
+39
+   Paragraphs 1.10 and 1.11 of the Explanatory Memorandum to the Superannuation
+   Industry (Supervision) Amendment Bill 2010.
+40
+   Paragraph 1.4 of the Explanatory Memorandum to Superannuation Industry
+   (Supervision) Amendment Bill 2010.
+41
+   For example, the restriction on acquiring assets from a related party in section 66.
+   See a list of other restrictions at paragraph 80 of SMSFR 2010/1.
+42
+   Subsection 67(7).
+43
+   See subsection 42A(5) in relation to an SMSF. The status of an SMSF as
+   complying or non-complying for SISA purposes will also have consequences for
+   the SMSF under the income tax law and other parts of the superannuation law.
+   Also see Law Administration Practice Statements: PS LA 2006/17, PS LA 2006/18
+   and PS LA 2006/19.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 24 of 41                               Page status: not legally binding
+
+
+
+                (a)    the money is or has been applied for the acquisition
+                       of a single acquirable asset, including:
+                       (i)      expenses incurred in connection with the
+                                borrowing or acquisition, or in maintaining or
+                                repairing the acquirable asset (but not
+                                expenses incurred in improving the
+                                acquirable asset); and
+                       Example: Conveyancing fees, stamp duty,        brokerage or
+                                loan establishment costs.
+                       (ii)     money applied to refinance a borrowing
+                                (including any accrued interest on a
+                                borrowing) to which this subsection applied
+                                (including because of section 67B) in
+                                relation to the single acquirable asset (and
+                                no other acquirable asset); and
+                (b)    the acquirable asset is held on trust so that the RSF
+                       trustee acquires a beneficial interest in the
+                       acquirable asset; and
+                (c)    the RSF trustee has a right to acquire legal
+                       ownership of the acquirable asset by making one or
+                       more payments after acquiring the beneficial
+                       interest; and
+                (d)    the rights of the lender or any other person against
+                       the RSF trustee for, in connection with, or as a result
+                       of, (whether directly or indirectly) default on:
+                       (i)      the borrowing; or
+                       (ii)     the sum of the borrowing and charges
+                                related to the borrowing;
+                       are limited to rights relating to the acquirable asset;
+                       and
+                       Example: Any right of a person to be indemnified by the
+                                RSF trustee because of a personal guarantee
+                                given by that person in favour of the lender is
+                                limited to rights relating to the acquirable asset.
+                (e)    if, under the arrangement, the RSF trustee has a
+                       right relating to the acquirable asset (other than a
+                       right described in paragraph (c)) – the rights of the
+                       lender or any other person against the RSF trustee
+                       for, in connection with, or as a result of, (whether
+                       directly or indirectly) the RSF trustee’s exercise of
+                       the RSF trustee’s right are limited to rights relating to
+                       the acquirable asset; and
+                (f)    the acquirable asset is not subject to any charge
+                       (including a mortgage, lien or other encumbrance)
+                       except as provided for in paragraph (d) or (e).
+       Meaning of acquirable asset
+       (2)      An asset is an acquirable asset if:
+                (a)    the asset is not money (whether Australian currency
+                       or currency of another country); and
+                                      Self Managed Superannuation Funds Ruling
+
+                                           SMSFR 2012/1
+Page status: not legally binding                                        Page 25 of 41
+
+
+
+                    (b)      neither this Act nor any other law prohibits the RSF
+                             trustee from acquiring the asset.
+           (3)      This section and section 67B apply to a collection of assets
+                    in the same way as they apply to a single asset, if:
+                    (a)      the assets in the collection have the same market
+                             value as each other; and
+                    (b)      the assets in the collection are identical to each
+                             other.
+                    Example: A collection of shares of the same class in a single
+                             company.
+           (4)      For the purposes of this section and section 67B, the
+                    regulations may provide that, in prescribed circumstances,
+                    an acquirable asset ceases to be that particular acquirable
+                    asset.
+           ……
+           67B Limited recourse borrowing arrangements – replacement
+           assets
+           (1)      Subsection (2) applies to:
+                    (a)      a reference in paragraph 67A(1)(b), (c), (d), (e) or (f)
+                             to an acquirable asset (the original asset); or
+                    (b)      a reference in subsection 71(8) to an acquirable
+                             asset (the original asset) mentioned in
+                             paragraph 67A(1)(b);
+                    (including a reference resulting from a previous application
+                    of subsection (2) of this section).
+           (2)      Treat the reference as being a reference to another single
+                    acquirable asset (the replacement asset) if:
+                    (a)      the replacement asset replaces the original asset;
+                             and
+                    (b)      subsection (3), (4), (5), (6), (7) or (8) applies.
+           ……
+96.   The categories of replacement assets set out in
+subsections 67B(3) to (7) 44 deal exclusively with shares in
+companies, units in unit trusts and instalment receipts (as defined in
+subsection 10(1)).
+
+
+The meaning of ‘acquirable asset’ and ‘single acquirable asset’
+97.     Subsection 67A(1) sets out the requirements of an exception
+to the borrowing prohibition in subsection 67(1).
+
+
+
+
+44
+     Subsection 67B(8) provides for regulations to prescribe other circumstances.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 26 of 41                             Page status: not legally binding
+
+
+
+98.      Under the requirements of subsection 67A(1), a borrowing of
+money may be made or maintained if, under an arrangement, the
+money is or has been applied for the acquisition of a ‘single
+acquirable asset’. That single acquirable asset must be held on trust
+so that the trustee of the SMSF acquires a beneficial interest in that
+asset. 45
+
+
+The meaning of ‘acquirable asset’
+99.    The term ‘acquirable asset’ is a key concept as the exception
+under section 67A can only apply to a borrowing of money if, under
+an arrangement, the money is or has been applied to acquire a single
+acquirable asset.
+100. The definition of acquirable asset in subsection 67A(2) makes
+it clear that an asset is an acquirable asset if:
+        •        it is an asset that is not money, whether Australian
+                 currency or currency of another country; 46 and
+        •        neither the SISA nor any other law prohibits the trustee
+                 of the SMSF from acquiring the asset. 47
+
+
+Exclusion of money from acquirable asset
+101. While money is specifically included in the definition of
+asset, 48 it is specifically excluded from the definition of acquirable
+asset.
+102. Both definitions refer to money in the form of currency,
+whether Australian currency or otherwise. However, the exclusion of
+money from the meaning of acquirable asset does not extend to
+collectable bank notes and coins.
+
+
+An asset the trustee of an SMSF is not prohibited from acquiring
+103. Paragraph 67A(2)(b) requires that the asset is one that the
+trustee of an SMSF is not prohibited from acquiring either by the SISA
+or by any other law.
+104. The SISA does not prescribe the types of assets that an
+SMSF may acquire as part of its investment strategy. However, it
+does, for example, contain a prohibition on acquiring assets from
+related parties of the SMSF.
+
+
+
+
+45
+   Paragraph 67A(1)(b).
+46
+   Paragraph 67A(2)(a).
+47
+   Paragraph 67A(2)(b).
+48
+   Subsection 10(1).
+                                   Self Managed Superannuation Funds Ruling
+
+                                        SMSFR 2012/1
+Page status: not legally binding                                    Page 27 of 41
+
+
+
+105. Subject to certain specific exceptions, subsection 66(1)
+prohibits a trustee or investment manager of an SMSF from
+intentionally acquiring an asset from a related party of the SMSF. 49 If
+the acquisition of the asset from the related party is prohibited by
+subsection 66(1), an arrangement under which borrowings are
+applied to acquire that asset will not meet the requirements of
+section 67A. 50 A related party 51 is a member of the SMSF, a standard
+employer-sponsor of the SMSF, or a Part 8 associate of either of
+those entities.
+106. Section 83 is a further example of a provision that is relevant
+in determining if the acquisition of an asset is prohibited. Under
+section 83 an SMSF must not acquire an in-house asset 52 if:
+        •        the market value ratio 53 of the in-house assets of the
+                 SMSF exceeds 5%; 54 or
+        •        the acquisition of the in-house asset would result in the
+                 market value ratio of the in-house assets of the SMSF
+                 exceeding 5%. 55
+107. More broadly, the laws of the Commonwealth and the State or
+Territory in question must also be complied with. This includes
+compliance with the trust laws of the various States or Territories
+applicable to the SMSF. 56 Whether an acquisition is prohibited by a
+provision of the SISA, the SISR or any other law requires an
+examination of the facts of the particular case.
+
+
+Meaning of asset – any form of property
+108. The meaning of acquirable asset is clearly dependent upon
+the meaning of asset which, subject to any contrary intention, is
+defined in subsection 10(1) as follows:
+        asset means any form of property and, to avoid doubt, includes
+        money 57 (whether Australian currency or currency of another
+        country).
+
+
+
+
+49
+   Subsections 66(2), 66(2A) and 66(2B). Subsections 66(2) and 66(2A) are further
+   explained in SMSFR 2010/1.
+50
+   For example, residential property owned by a related party could not be acquired
+   under an LRBA as the SMSF trustee is prohibited from making such an acquisition
+   under subsection 66(1).
+51
+   See definition of ‘related party’ in subsection 10(1).
+52
+   As defined in section 71. This is further explained in SMSFR 2009/4.
+53
+   Section 75.
+54
+   Subsection 83(2).
+55
+   Subsection 83(3).
+56
+   Paragraph 67A(2)(b); paragraph 1.20 of the Explanatory Memorandum to the
+   Superannuation Industry (Supervision) Amendment Bill 2010.
+57
+   As discussed at paragraphs 101 and 102 of this Ruling, money is specifically
+   excluded from being an acquirable asset.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 28 of 41                               Page status: not legally binding
+
+
+
+109. The term ‘property’ is not defined in the SISA and as
+discussed in SMSFR 2010/1 58 and SMSFR 2009/4 59 , the phrase ‘any
+form of property’ has a very wide meaning. To summarise from those
+Rulings, property can include any type of right (that is, a claim
+recognised by law), interest or thing of value which is legally capable
+of ownership.
+
+
+Property can refer to the proprietary rights or the object of those
+proprietary rights
+110. In the High Court case of White v. Director of Public
+Prosecutions (WA) 60 French CJ, Crennan and Bell JJ (at [12]) noted
+in their joint judgement:
+        The term ‘property’ used in a statute may take its ordinary meaning,
+        its legal meaning, or both meanings. The interpretation of the term
+        depends upon the context and purpose of the provision in which it is
+        found.
+111. Similarly, in McCaughey v. Commr of Stamp Duties 61 Jordan
+CJ discussed the meaning of property in the following terms:
+        The word ‘property’ is used in different senses. It may denote either
+        objects of proprietary rights, such as pieces of land, domesticated
+        animals, and machines; or the proprietary rights themselves ... In
+        common parlance it is usually employed in the former sense, but in
+        the language of jurisprudence in the latter ... Property, in the sense
+        of proprietary rights, may exist in relation to physical objects, or to
+        intangible things such as debts or patent rights. Each separate piece
+        of property consists of a bundle of proprietary rights relating to a
+        particular object, including rights of administration and rights of
+        enjoyment, the totality of which may be vested in a single person, or
+        may be divided amongst a number of persons, as for example when
+        they are shared by several who together own them all, jointly or in
+        common.
+112. In an LRBA context it is relevant to consider the meaning of
+property in both senses to determine whether borrowed money has
+been applied for the acquisition of a single acquirable asset. That is, it
+is necessary to consider both the proprietary rights and the object of
+those proprietary rights.
+113. In taking this approach it may be possible to conclude that a
+trustee of an SMSF has acquired a single acquirable asset in the
+sense that the trustee has acquired a single object of property that is
+comprised of separate bundles of proprietary rights. However, this will
+only be so if it is reasonable to conclude that notwithstanding the
+separate bundles of proprietary rights, what is being acquired is
+distinctly identifiable as a single asset.
+
+
+58
+   Paragraphs 9 to 12 and 90 to 99.
+59
+   Paragraphs 7 to 9 and 38 to 45.
+60
+   [2011] HCA 20; (2011) 243 CLR 478.
+61
+   (1945) 46 SR (NSW) 192 at 201.
+                                  Self Managed Superannuation Funds Ruling
+
+                                     SMSFR 2012/1
+Page status: not legally binding                             Page 29 of 41
+
+
+
+114. Factors relevant in determining if it is reasonable to conclude
+that what is being acquired is a single object of property are set out at
+paragraphs 12 and 13 of this Ruling.
+115. If there is more than one acquirable asset, the exception
+under section 67A can only apply if separate LRBAs are entered into
+with respect to each single acquirable asset.
+
+
+Borrowings applied in maintaining or repairing but not
+improving the acquirable asset
+116. A borrowing of money under an LRBA can be applied to
+expenses incurred in maintaining or repairing the acquirable asset
+that is held under the LRBA.
+117. However, a borrowing of money under an LRBA cannot be
+applied to expenses incurred in improving the acquirable asset. 62
+
+
+The acquirable asset is identified at the time the LRBA
+commences
+118. Determining whether an acquirable asset has been repaired
+or maintained or whether it has been improved necessarily requires
+reference to the qualities and characteristics of the acquirable asset
+at a particular point in time.
+119. The acquirable asset must be identified at the time the asset
+is acquired and the LRBA is put in place, as it is this asset that is
+required to be held on trust under paragraph 67A(1)(b). Thus, to
+determine if an acquirable asset has been repaired or maintained or if
+it has been improved, it is necessary to refer to the qualities and
+characteristics of the asset at that time.
+120. Further, in determining whether the acquirable asset has been
+maintained or repaired or if an improvement has been made, it is the
+entire acquirable asset held on trust under paragraph 67A(1)(b) that
+is relevant. It is this acquirable asset that must continue to be held on
+trust under paragraph 67A(1)(b). For example, if the asset held under
+the LRBA is a three bedroom house and land, then it is the house and
+land asset that is relevant and not just the proprietary rights.
+121. This approach is consistent with that taken to determine if
+what is acquired under an LRBA is a single acquirable asset. That is,
+both the proprietary rights and the object of those proprietary rights
+must be considered (see discussion at paragraphs 110 to 115 of this
+Ruling).
+
+
+
+
+62
+     Subparagraph 67A(1)(a)(i).
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 30 of 41                                  Page status: not legally binding
+
+
+
+Distinguishing between maintaining, repairing and improving an
+acquirable asset
+122. As the terms maintaining, repairing and improving are not
+defined in the SISA they take their ordinary meaning having regard to
+the context in which they appear in the LRBA provisions.
+
+
+Maintaining or repairing the acquirable asset
+123. It is immaterial whether expenditure is incurred in maintaining
+the acquirable asset held under an LRBA, or in repairing that asset,
+as money borrowed under an LRBA may be applied for either
+purpose. Therefore, while the ordinary meaning of both repair and
+maintenance is discussed below, it is not necessary to determine
+which specific category the expenditure belongs to as long as it is
+either one or the other.
+124. Maintain, when used as a transitive verb is defined to mean
+(among other things) ‘to keep in existence or continuance; preserve’;
+‘to keep in due condition, operation, or force; keep unimpaired’; and
+‘to keep in a specified state, position’. 63 Thus, maintaining an asset
+typically involves work done to prevent or anticipate defects, damage
+or deterioration (in a mechanical or physical sense). For example,
+repainting a timber house to prevent deterioration is typically
+maintenance.
+125. A repair ordinarily means the remedying or making good of
+defects in, damage to, or deterioration of, property to be repaired
+(being defects, damage or deterioration in a mechanical and physical
+sense) and contemplates the continued existence of the property. 64
+126. A repair replaces a part of something or corrects something
+that is already there and that is damaged, has become worn out or
+dilapidated or has deteriorated. Repair may be necessitated through
+ordinary wear and tear, accidental or deliberate damage or by the
+operation of natural causes (whether expected or unexpected) during
+the passage of time. 65
+
+
+Improving the acquirable asset
+127. Improve, when used as a transitive verb, is defined to mean
+(among other things), ‘to bring into a more desirable or excellent
+condition’; and ‘to make (land) more profitable or valuable by
+enclosure, cultivation, etc.; increase the value of (property) by
+betterments, as buildings’. 66
+
+
+
+63
+   The Macquarie Dictionary, 2005, 4th edn, The Macquarie Library Pty Ltd, Sydney.
+64
+   This is consistent with paragraph 13 of Taxation Ruling TR 97/23 Income tax:
+   deductions for repairs.
+65
+   This is consistent with paragraph 15 of TR 97/23.
+66
+   The Macquarie Dictionary, 2005, 4th edn, The Macquarie Library Pty Ltd, Sydney.
+                                  Self Managed Superannuation Funds Ruling
+
+                                       SMSFR 2012/1
+Page status: not legally binding                                   Page 31 of 41
+
+
+
+128. To determine if an acquirable asset has been improved it is
+relevant to consider if the state or function of the acquirable asset as
+a whole has been significantly altered for the better compared to
+when it was acquired under the LRBA. Substantial alterations or the
+addition of further substantial features or rights to the acquirable
+asset for the better will result in an improvement to the acquirable
+asset. 67 However, alterations or additions that are relatively minor or
+trifling when compared to the acquirable asset as a whole will not
+result in an improvement to the acquirable asset. 68
+
+
+Question of fact and degree
+129. It is a question of fact and degree as to whether something is
+merely maintenance or repair of the acquirable asset or whether it is
+an improvement to the acquirable asset.
+130.    It is necessary to:
+        •        identify the alterations or additions made to the asset
+                 using borrowings; and
+        •        determine if those alterations or additions to the asset
+                 significantly alter for the better the state or function of
+                 the asset as a whole.
+131. While an increase in the value of the asset may provide an
+indication that the state or function of the asset has been improved, it
+is not of itself determinative. For example, rebuilding a comparable
+house following a house being destroyed by fire may result in an
+increase in value as it is now a new house on the land. However, this
+is nonetheless restoring the asset to what it was rather than
+improving it.
+
+
+Acquiring an asset in need of repair
+132. An asset may be acquired in a state in which a part of the
+asset is defective, damaged or suffering some deterioration of what
+would be considered to be its normal level of function. Restoration of
+that part of the asset is a repair for LRBA purposes if similar, or
+modern equivalent, materials are used. For example, replacing some
+broken windows in a house immediately following the acquisition of
+the house and land under an LRBA, is a repair for which borrowings
+can be used.
+
+
+
+
+67
+   For example, an extension to a house to add another bedroom or bathroom; or the
+   addition of a shed, a concrete driveway, or a pool.
+68
+   For example, a new leaf guard added when replacing the guttering.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 32 of 41                                   Page status: not legally binding
+
+
+
+133. However, the more run down an asset is at the time it is
+acquired under the LRBA the more likely that changes to that asset
+will significantly alter its state or function for the better such that the
+changes are improvements and not repairs. For example, if a run
+down building is acquired under an LRBA and the building is
+substantially renovated following its acquisition to enable it to be
+tenanted this would be an improvement for which borrowings under
+the LRBA could not be used.
+
+
+Whether the same asset or a different asset is held on trust
+under the LRBA
+134. Paragraph 67A(1)(a) requires that a borrowing under an LRBA
+is applied for the acquisition of a single acquirable asset.
+135. Paragraph 67A(1)(b) requires that the acquirable asset is held
+on separate trust so that the trustee of the SMSF acquires a
+beneficial interest in the asset. This means that the acquirable asset
+that the borrowings are applied to acquire must continue to be held
+on trust for the duration of the LRBA if section 67A is to continue to
+apply to that borrowing.
+136. The requirement for the acquirable asset under the LRBA to
+continue to be held on trust is subject to the replacement asset
+exception in section 67B.
+137. Section 67B allows for the replacement of a single acquirable
+asset (the original asset) that is a share, a unit in a unit trust or an
+instalment receipt (or a collection 69 thereof) in the circumstances set
+out in subsections 67B(3) to (8). If an acquirable asset has been
+replaced in circumstances covered by section 67B, references to the
+(original) acquirable asset in section 67A are treated as references to
+the replacement asset. 70 Consequently, the LRBA may be maintained
+over a different (replacement) acquirable asset if the asset, and the
+circumstances of its replacement, satisfy the requirements of
+section 67B.
+
+
+Whether a different asset is held on trust
+138. Consistent with the view (at paragraphs 110 to 115 of this
+Ruling) that the single acquirable asset is identified by both the
+proprietary rights and the object of those rights, consideration must
+be given to both the proprietary rights and the object of those rights
+when determining if the original acquirable asset continues to be held
+on trust under the LRBA.
+
+
+
+69
+   Subsection 67A(3) provides that sections 67A and 67B can apply to a collection of
+   assets in the same way as they apply to a single acquirable asset if the assets in
+   the collection meet the requirements as set out in subsection 67A(3).
+70
+   Subsection 67B(2).
+                                    Self Managed Superannuation Funds Ruling
+
+                                        SMSFR 2012/1
+Page status: not legally binding                                      Page 33 of 41
+
+
+
+139. If alterations or additions are made to the physical object or
+the proprietary rights that comprise an asset held under an LRBA
+and, having regard to both the object and the proprietary rights, those
+alterations or additions fundamentally change the character of the
+asset, this results in a different asset being held on trust under the
+LRBA. The exception under section 67A to the borrowing prohibition
+ceases to be satisfied from the time the alterations or additions are
+made to the asset. If the borrowing is maintained the trustee of the
+SMSF will contravene subsection 67(1).
+140. Whether an alteration or addition to a single acquirable asset
+results in a conclusion that a different asset is now being held on trust
+under the LRBA is a question of fact and degree. While it must be
+determined on the facts of each case, by reference to the legal and
+physical characteristics of the single acquirable asset as it was when
+the LRBA was entered into, relevant factors include:
+        •        whether the acquirable asset has been entirely
+                 replaced by another asset – the other asset would be a
+                 replacement of the original acquirable asset; 71
+        •        whether the function of the acquirable asset has
+                 significantly changed through alterations or additions to
+                 the asset – this would indicate that a different asset is
+                 held on trust under the LRBA; 72 and
+        •        whether the asset has been altered so that it is no
+                 longer a single acquirable asset by virtue of a unifying
+                 physical object and part of the asset could be sold off
+                 separately – this would indicate that different assets
+                 are held on trust under the LRBA. 73
+
+
+Replacement of part of the acquirable asset
+141. A portion or part of a single acquirable asset might be
+destroyed or become worn out. That portion or part of the asset can
+be rebuilt or replaced provided that the legal and physical
+characteristics of the asset are not altered to such an extent that the
+asset has a different character. For example, if the acquirable asset
+consists of a house on land and the house is destroyed by fire, flood,
+cyclone or other disasters, building a new house on that land would
+not result in the creation of a different asset, regardless of whether
+the new house was superior to the house that was destroyed. 74
+
+
+
+
+71
+   See Example 12 (paragraphs 75 to 77) of this Ruling.
+72
+   See Example 14 (paragraphs 81 and 82) as compared with Example 13
+   (paragraphs 78 to 80) of this Ruling. See also item 4 as compared with item 9 of
+   Table 2 (paragraph 35) of this Ruling.
+73
+   See Example 11 (paragraphs 73 and 74) of this Ruling.
+74
+   See also item 6 of Table 2 (paragraph 35) of this Ruling.
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 34 of 41                                    Page status: not legally binding
+
+
+
+142. Alternatively, if the acquirable asset was, for example, land
+with a hayshed and the hayshed was destroyed, building a house in
+its place would result in a different asset being held on trust under the
+LRBA. The asset subsequently held on trust under the LRBA is
+residential premises. 75
+
+
+Alterations or additions to the asset not made by the trustee of
+an SMSF
+143. Whether or not alterations or additions to a single acquirable
+asset result in a different asset being held on trust under the LRBA is
+not affected by the identity of whoever made the changes. For
+example, an alteration or addition made and funded by a member of
+an SMSF could result in a different asset being held on trust under
+the LRBA. Government action could also result in a change to the
+asset that results in a different asset being held on trust under the
+LRBA. If a different asset is held on trust (and the circumstances are
+not covered by section 67B), the exception under section 67A to the
+borrowing prohibition ceases to be satisfied. If the borrowing is
+maintained the trustee of the SMSF will contravene subsection 67(1).
+144. If property is leased by the holding trust, the tenant may be
+permitted to make changes to that property, for example by adding a
+fixture 76 . If the changes made by the tenant are of such significance
+that they result in a different asset being held on trust under the LRBA
+and the fixture is the property of the holding trust, the exception under
+section 67A to the borrowing prohibition ceases to be satisfied from
+the time the change to the asset is made. If the borrowing is
+maintained the trustee of the SMSF will contravene subsection 67(1).
+145. However, particular laws of a State or Territory may mean that
+property in a fixture remains with the tenant. If this is the case the
+changes made by the tenant would not result in a different asset
+being held on trust under the LRBA. 77
+
+
+
+
+75
+   See also item 3 of Table 2 (paragraph 35) of this Ruling.
+76
+   Whether or not something is a fixture is further explained at paragraphs 74 to 78 in
+   Self Managed Superannuation Funds Ruling SMSFR 2009/1 Self Managed
+   Superannuation Funds: business real property for the purposes of the
+   Superannuation Industry (Supervision) Act 1993.
+77
+   See, for example, section 155 of the Property Law Act 1974 (Qld). Under that
+   provision property in agricultural fixtures can remain with the tenant. See also
+   section 154A of the Property Law Act 1958 (Vic).
+                               Self Managed Superannuation Funds Ruling
+
+                                   SMSFR 2012/1
+Page status: not legally binding                            Page 35 of 41
+
+
+
+
+Appendix 3 – Alternative views
+        This Appendix sets out alternative views and explains why they
+are not supported by the Commissioner.
+
+146. An alternative view is that the reference to an ‘asset’ in
+sections 67A and 67B is concerned not with the physical properties of
+the object but only with the legal proprietary rights which are
+acquired.
+147. Taking a legal proprietary rights approach, if borrowed funds
+are applied to acquire an estate in land under an LRBA and a
+substantial improvement (for example, the erection of a building) is
+subsequently made to that land, it might be argued that this would not
+result in either an improvement to the asset or a different asset as the
+relevant asset is the proprietary rights which have not changed.
+148. However, to apply this view consistently would mean
+determining what a ‘single acquirable asset’ is solely by reference to
+the legal proprietary rights recognised at law, and regardless of any
+limitations that might exist in dealing separately with those rights.
+That is, if an SMSF wished to acquire real property comprising
+several land titles (for example, a factory built over three titles) each
+title would need to be held on a separate trust under a separate
+LRBA. Thus while the alternative view has merit it is not the view that
+is preferred.
+149. Other approaches put forward were to determine what a
+‘single acquirable asset’ is according to accounting or usage concepts
+or according to the investment decision rationale.
+150. These approaches to determining what a single acquirable
+asset is are also not preferred as it is considered that they do not give
+adequate weight to either the meaning of a ‘single’ acquirable asset
+or the mischief that sections 67A and 67B were introduced to
+address.
+151. The view in the Ruling is that it is necessary to have regard to
+both the legal form and substance of what has been acquired in order
+to determine whether it is a single acquirable asset. This view is open
+on the words of the law. In determining that it is the preferred view,
+consideration has been given to the following:
+       •       as compared with focussing only on legal title, the view
+               in the Ruling takes account of the character of the
+               asset in determining if the asset is a single acquirable
+               asset and if it remains the original asset that is held on
+               separate trust under the LRBA;
+       •       maintaining, repairing or improving an asset are
+               typically more relevant to the object of the proprietary
+               rights rather than the proprietary rights; and
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 36 of 41                            Page status: not legally binding
+
+
+
+
+       •        while the view in the Ruling may mean that an asset
+                (taking account of both the object of the proprietary
+                rights as well as the proprietary rights) has
+                fundamentally changed even though it may not have
+                changed if only the proprietary rights were considered,
+                consideration of both the object and the proprietary
+                rights is applied consistently for both purposes. That is,
+                in determining first if there is a single acquirable asset
+                and secondly if it remains the same asset.
+                                Self Managed Superannuation Funds Ruling
+
+                                     SMSFR 2012/1
+Page status: not legally binding                              Page 37 of 41
+
+
+
+
+Appendix 4 – Detailed contents list
+152.     The following is a detailed contents list for this Ruling:
+                                                                Paragraph
+What this Ruling is about                                                1
+Ruling                                                                   5
+The meaning of ‘acquirable asset’ and ‘single acquirable asset’          5
+Borrowings applied in maintaining or repairing but not improving
+the acquirable asset                                                    14
+Distinguishing between maintaining, repairing and improving a
+single acquirable asset                                                 17
+         Maintaining the acquirable asset                               19
+         Repairing the acquirable asset                                 20
+         Improving the acquirable asset                                 23
+         Table 1: repair or maintenance or improvement                  25
+Acquiring an asset in need of repair                                    26
+Subsequent draw downs for repairs                                       28
+Repairs to an asset already owned by an SMSF                            29
+Money other than borrowings used to improve an asset                    30
+Whether the same asset or a different asset is held on trust under the
+LRBA                                                                31
+         Table 2: whether it is a different asset                       35
+Alterations or additions to the asset not made by the
+trustee of an SMSF                                                      36
+Property development                                                    38
+Funds to which the Ruling applies                                       42
+Date of effect                                                          43
+Appendix 1 – Examples                                                   45
+Example 1 – two adjacent blocks of land                                 47
+Example 2 – a factory complex on more than one title                    49
+Example 3 – farmland with multiple titles                               52
+Example 4 – apartment with separate car park                            58
+Example 5 – serviced apartment and furnishings                          60
+Example 6 – purchase of residential premises                            62
+Example 7 – completed ‘off-the-plan’ apartment                          64
+Example 8 – house built in situ on land already owned by the
+SMSF                                                                    66
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 38 of 41                           Page status: not legally binding
+
+
+
+Example 9 – purchase of land and construction of house
+using borrowings                                                     68
+Example 10 – acquisition of a yet to be constructed house
+on land using borrowings                                             71
+Example 11 – house built over two titles                             73
+Example 12 – replacement of equipment following an
+insurance claim                                                      75
+Example 13 – purchase of cattle property and construction of
+a shed using SMSF funds                                              78
+Example 14 – purchase of a small farm and construction of a
+residence using SMSF funds                                           81
+Example 15 – commercial building extensions using SMSF funds         83
+Appendix 2 – Explanation                                             85
+Background                                                           85
+Contraventions                                                       93
+Legislative context                                                  95
+The meaning of ‘acquirable asset’ and ‘single acquirable asset’      97
+The meaning of ‘acquirable asset’                                    99
+Exclusion of money from acquirable asset                            101
+An asset the trustee of an SMSF is not prohibited from acquiring 103
+Meaning of asset – any form of property                             108
+       Property can refer to the proprietary rights or the
+       object of those proprietary rights                           110
+Borrowings applied in maintaining or repairing but not
+improving the acquirable asset                                      116
+The acquirable asset is identified at the time the LRBA
+commences                                                           118
+Distinguishing between maintaining, repairing and improving
+an acquirable asset                                                 122
+       Maintaining or repairing the acquirable asset                123
+       Improving the acquirable asset                               127
+       Question of fact and degree                                  129
+Acquiring an asset in need of repair                                132
+Whether the same asset or a different asset is held on trust under the
+LRBA                                                               134
+Whether a different asset is held on trust                          138
+Replacement of part of the acquirable asset                         141
+Alterations or additions to the asset not made by the
+trustee of an SMSF                                                  143
+                              Self Managed Superannuation Funds Ruling
+
+                                   SMSFR 2012/1
+Page status: not legally binding                         Page 39 of 41
+
+
+
+Appendix 3 – Alternative views                                    146
+Appendix 4 – Detailed contents list                               152
+Self Managed Superannuation Funds Ruling
+
+SMSFR 2012/1
+Page 40 of 41                         Page status: not legally binding
+
+
+
+
+References
+Previous draft:                       -    SISA 1993 67B(5)
+SMSFR 2011/D1                         -    SISA 1993 67B(6)
+                                      -    SISA 1993 67B(7)
+Related Rulings/Determinations:       -    SISA 1993 67B(8)
+                                      -    SISA 1993 Part 8
+SMSFR 2010/1; SMSFR 2009/4;
+                                      -    SISA 1993 71
+SMSFR 2009/2; SMSFR 2009/1
+                                      -    SISA 1993 75
+TR97/23
+                                      -    SISA 1993 83
+                                      -    SISA 1993 83(2)
+Subject references:
+                                      -    SISA 1993 83(3)
+- arrangement                              SISR 1994
+- borrowings & loans                  -    Property Law Act 1974 (Qld)
+- drawings                                 155
+- former SMSF                         -    Property Law Act 1958 (Vic)
+- improvement to land                      154A
+- improvements to plant               -    Subdivision Act 1988 (Vic)
+- limited recourse loans                   Sch 2 6
+- real estate                         -    Subdivision Act 1988 (Vic)
+- repair equipment                         Sch 2 8
+- self managed superannuation
+  funds                               Case references:
+- SMSF related parties
+                                      - McCaughey v. Commr of
+- strata titles
+                                        Stamp Duties (1945) 46 SR
+- superannuation
+                                        (NSW) 192
+                                      - White v. Director of Public
+Legislative references:
+                                        Prosecutions (WA) [2011] HCA
+- SISA 1993 10(1)                       20; (2011) 243 CLR 478
+- SISA 1993 10(4)
+- SISA 1993 17A                       Other references:
+- SISA 1993 42A(5)
+                                      - Explanatory Memorandum to
+- SISA 1993 66
+                                         the Superannuation Industry
+- SISA 1993 66(1)
+                                         (Supervision) Amendment Bill
+- SISA 1993 66(2)
+                                         2010
+- SISA 1993 66(2A)
+                                      - Explanatory Memorandum to
+- SISA 1993 66(2B)
+                                         the Superannuation Legislation
+- SISA 1993 67
+                                         Amendment Bill (No. 4) 1999
+- SISA 1993 67(1)
+                                      - Law Administration Practice
+- SISA 1993 67(4A)
+                                         Statement PS LA 2006/17
+- SISA 1993 67(7)
+                                      - Law Administration Practice
+- SISA 1993 67A
+                                         Statement PS LA 2006/18
+- SISA 1993 67A(1)(a)
+                                      - Law Administration Practice
+- SISA 1993 67A(1)(a)(i)
+                                         Statement PS LA 2006/19
+- SISA 1993 67A(1)(b)
+                                      - Second Reading Speech for
+- SISA 1993 67A(2)
+                                         Superannuation Industry
+- SISA 1993 67A(2)(a)
+                                         (Supervision) Amendment Bill
+- SISA 1993 67A(2)(b)
+                                         2010
+- SISA 1993 67A(3)
+                                      - The Macquarie Dictionary,
+- SISA 1993 67B
+                                         2005, 4th edn, The Macquarie
+- SISA 1993 67B(1)
+                                         Library Pty Ltd, Sydney
+- SISA 1993 67B(2)
+- SISA 1993 67B(3)
+- SISA 1993 67B(4)
+ATO references
+NO:            1-3I7CIYC
+ISSN:          1835-2138
+ATOlaw topic: Superannuation Entities ~~ Self managed superannuation
+               funds
+

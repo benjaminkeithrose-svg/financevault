@@ -1,0 +1,325 @@
+TD 2012/1 - Income tax: can Part IVA of the Income
+Tax Assessment Act 1936 apply to deny a deduction
+for some, or all, of the interest expense incurred in
+respect of an 'investment loan interest payment
+arrangement' of the type described in this
+Determination?
+
+    This cover sheet is provided for information only. It does not form part of TD 2012/1 - Income
+tax: can Part IVA of the Income Tax Assessment Act 1936 apply to deny a deduction for some, or
+all, of the interest expense incurred in respect of an 'investment loan interest payment
+arrangement' of the type described in this Determination?
+
+
+  There is a Compendium for this document: TD 2012/1EC .
+
+
+
+
+Generated on: 26 September 2026, 09:10:25 AM
+                                                                       Taxation Determination
+
+                                                                    TD 2012/1
+Page Status: legally binding                                                                    Page 1 of 7
+
+
+
+
+Taxation Determination
+Income tax: can Part IVA of the Income Tax
+Assessment Act 1936 apply to deny a deduction for
+some, or all, of the interest expense incurred in respect
+of an ‘investment loan interest payment arrangement’
+of the type described in this Determination?
+
+           This publication provides you with the following level of protection:
+This publication (excluding appendixes) is a public ruling for the purposes of the Taxation
+Administration Act 1953.
+A public ruling is an expression of the Commissioner’s opinion about the way in which a relevant
+provision applies, or would apply, to entities generally or to a class of entities in relation to a
+particular scheme or a class of schemes.
+If you rely on this ruling, the Commissioner must apply the law to you in the way set out in the ruling
+(unless the Commissioner is satisfied that the ruling is incorrect and disadvantages you, in which
+case the law may be applied to you in a way that is more favourable for you – provided the
+Commissioner is not prevented from doing so by a time limit imposed by the law). You will be
+protected from having to pay any underpaid tax, penalty or interest in respect of the matters
+covered by this ruling if it turns out that it does not correctly state how the relevant provision applies
+to you.
+
+
+Ruling
+1.      Yes, provided that the interest is otherwise an allowable deduction. In the context
+of Part IVA of the Income Tax Assessment Act 1936 (ITAA 1936) 1 a taxpayer’s purpose of
+‘paying their home loan off sooner’ or ‘owning their own home sooner’ does not prevent the
+application of section 177F to an ‘investment loan interest payment arrangement’ of the
+type described in paragraph 3 of this Determination.
+
+
+
+
+1
+    All legislative references are to the ITAA 1936 unless otherwise indicated.
+Taxation Determination
+
+TD 2012/1
+Page 2 of 7                                                      Page Status: legally binding
+
+Date of effect
+2.       This Determination applies to years of income commencing both before and after
+its date of issue. However, this Determination will not apply to taxpayers to the extent that
+it conflicts with the terms of settlement of a dispute agreed to before the date of issue of
+this Determination (see paragraphs 75 to 76 of Taxation Ruling TR 2006/10).
+
+
+
+
+Commissioner of Taxation
+7 March 2012
+                                                                                     Taxation Determination
+
+                                                                                 TD 2012/1
+Page Status: not legally binding                                                                 Page 3 of 7
+
+
+Appendix 1 – Explanation
+       This Appendix is provided as information to help you understand how the
+Commissioner’s preliminary view has been reached. It does not form part of the proposed
+binding public ruling.
+
+Explanation
+Investment loan interest payment arrangements
+3.      While investment loan interest payment arrangements may vary in the precise loan
+and security details, they all have similar financial and purported tax effects. An investment
+loan interest payment arrangement will exhibit all or a significant number of the features
+set out as follows:
+           (a)     The taxpayer(s) own at least two properties: one property is the taxpayer(s)’
+                   residence and the other is used to derive rent (‘investment property’).
+           (b)     The taxpayer(s) have an outstanding loan which was used to acquire the
+                   residence (or refinance an earlier loan used to acquire the residence)
+                   (‘home loan’), an outstanding loan which was used to acquire the
+                   investment property (or refinance an earlier loan used to acquire the
+                   investment property) (‘investment loan’) and a line of credit or similar
+                   borrowing facility with an approved limit (‘line of credit’). All three loan
+                   products are typically (but not always) provided by a single financial
+                   institution.
+           (c)     The respective interest rates on the home loan and investment loan are
+                   typically at or about the same rate. The interest rate on the line of credit is
+                   typically (but not always) higher by a small margin (for example, 0.15%).
+           (d)     The investment loan is typically an interest-only loan for a specified period
+                   with principal and interest repayments required thereafter, or the
+                   interest-only period may be extendable.
+           (e)     The line of credit typically has no minimum monthly repayment obligations
+                   provided the balance remains below the approved limit. Alternatively, it may
+                   require minimum monthly repayments equal to the accrued interest.
+           (f)     The home loan, investment loan and the line of credit are each secured
+                   against the taxpayer(s)’ residence and/or investment property.
+           (g)     The line of credit is drawn down to pay the interest on the investment loan
+                   as it falls due. Where no repayments are required on the line of credit, the
+                   taxpayer(s) will generally not make any repayments, which results in interest
+                   on the line of credit being capitalised and compounded. Where monthly
+                   interest repayments are required on the line of credit, the taxpayer(s) meet
+                   such repayments from their cash flows.
+           (h)     Typically all or a significant proportion of the taxpayer(s)’ available cash
+                   inflows (including that which the taxpayer(s) otherwise might reasonably be
+                   expected to use to pay the interest on the investment loan) are deposited
+                   into their home loan or an ‘acceptable loan account offset account’, 2 which
+                   has the effect of reducing the interest otherwise payable on the home loan.
+
+2
+    See Taxation Ruling TR 93/6 Income tax and fringe benefits tax: loan account offset arrangements.
+Taxation Determination
+
+TD 2012/1
+Page 4 of 7                                                             Page Status: not legally binding
+
+           (i)     If the line of credit reaches its approved limit before the home loan has been
+                   repaid, the taxpayer(s) may apply to increase the limit on the line of credit in
+                   conjunction with a corresponding decrease in the available ‘redraw’ amount
+                   in the home loan.
+4.     It is often said that taxpayers who enter into an investment loan interest payment
+arrangement do so for the purpose of ‘paying their home loan off sooner’ or ‘owning their
+own home sooner’.
+5.     Taxpayers who have entered into an investment loan interest payment
+arrangement may be entitled to deductions for the interest incurred on the line of credit
+under section 8-1 of the Income Tax Assessment Act 1997.
+
+
+Can Part IVA apply?
+6.      Part IVA is a general anti-avoidance rule. Part IVA gives the Commissioner the
+power to cancel a ‘tax benefit’ (or part of a ‘tax benefit’) that has been obtained, or would,
+but for section 177F, be obtained, by a taxpayer in connection with a scheme to which
+Part IVA applies.
+7.         In broad terms, Part IVA will apply where the following requirements are satisfied:
+           •       there is a scheme 3 (see section 177A);
+           •       a taxpayer has obtained, or would but for section 177F obtain, a tax benefit
+                   in connection with the scheme (see section 177C); and
+           •       the dominant purpose of a person who entered into or carried out the
+                   scheme, or any part of the scheme, was to enable the relevant taxpayer to
+                   obtain a tax benefit in connection with the scheme, or to enable the relevant
+                   taxpayer and another taxpayer or other taxpayers each to obtain a tax
+                   benefit in connection with the scheme (paragraph 177D(b)).
+8.     The application of Part IVA depends on a careful weighing of all the relevant facts
+and surrounding circumstances of each case. Therefore, in the absence of all relevant
+information it is not possible to state definitively whether a particular arrangement or
+transaction will attract Part IVA. However, an investment loan interest payment
+arrangement of the type described in paragraph 3 is capable of attracting the operation of
+Part IVA.
+9.      The precise description of the scheme for the purposes of Part IVA will depend on
+the facts of the particular case. However, in the context of considering whether Part IVA
+applies to an investment loan interest payment arrangement the scheme would normally
+include some or all of the elements described in paragraph 3 of this Determination.
+
+
+
+
+3
+    The scheme must have been entered into after 27 May 1981, or carried out, or commenced to be carried out,
+    after 27 May 1981 (other than a scheme that was entered into on or before that date): see section 177D.
+                                                                                 Taxation Determination
+
+                                                                             TD 2012/1
+Page Status: not legally binding                                                            Page 5 of 7
+
+10.      In relation to this type of scheme it might reasonably be expected that if the
+scheme had not been entered into or carried out, the taxpayer(s) would have met the
+interest payments on the investment loan out of their own cash flow rather than use the
+line of credit. Thus, the taxpayer(s) would not have incurred any interest, or would have
+incurred less interest, on the line of credit. Consequently, the taxpayer(s) would not have
+been entitled to any deductions in respect of any such interest or would have been entitled
+to a smaller deduction. Accordingly, the relevant tax benefit obtained by the taxpayer(s) in
+connection with the scheme under paragraph 177C(1)(b) is (or includes) either:
+        •        the whole amount of the allowable deduction for interest incurred on the line
+                 of credit; or
+        •        the difference between the otherwise allowable deduction for interest
+                 incurred on the line of credit and the amount of interest incurred on the line
+                 of credit that would have been an allowable deduction if the scheme had not
+                 been entered into or carried out.
+11.    A key question, for Part IVA purposes, is whether the identified scheme was
+entered into or carried out by a person for the dominant purpose of enabling the relevant
+taxpayer to obtain a tax benefit in connection with the scheme.
+12.     Paragraph 177D(b) requires the drawing of a conclusion about purpose from the
+eight objective matters identified in that provision. The conclusion to be reached is the
+conclusion of a reasonable person. 4 The provision does not require, or even permit, any
+inquiry into the subjective purpose or motive of the relevant taxpayers or others who
+entered into or carried out the scheme. 5
+13.    Further, an objective purpose of the taxpayer(s) of ‘paying their home loan off
+sooner’ does not prevent Part IVA from applying to an investment loan interest payment
+arrangement. As was noted in the joint judgment of the High Court in Spotless: 6
+        A particular course of action may be…both ‘tax driven’ and bear the character of a rational
+        commercial decision. The presence of the latter characteristic does not determine the
+        answer to the question whether, within the meaning of Part IVA, a person entered into or
+        carried out a ‘scheme’ for the ‘dominant purpose’ of enabling the taxpayer to obtain a ‘tax
+        benefit.
+14.     Further, Gleeson CJ and McHugh J of the High Court noted in Hart 7 that:
+        …a transaction may take such a form that there is a particular scheme in respect of which a
+        conclusion of the kind described in s 177D is required, even though the particular scheme
+        also advances a wider commercial objective.
+15.     Callinan J in Hart 8 similarly distinguished between objectives that are ‘entirely
+irreproachable and proper’ and the ‘means adopted to achieve these results’.
+16.     Therefore, the means by which the taxpayer(s) achieve their objective of ‘paying
+their home loan off sooner’ may result in the requirements of Part IVA being satisfied.
+
+
+
+
+4
+  FC of T v. Spotless Services Ltd & Anor (1996) 186 CLR 404 at 421; 96 ATC 5201 at 5210.
+5
+  FC of T v. Hart & Anor [2004] HCA 26 at [65]; 2004 ATC 4599 at [65].
+6
+  FC of T v. Spotless Services Ltd & Anor (1996) 186 CLR 404 at 416; 96 ATC 5201 at 5206.
+7
+  FC of T v. Hart & Anor [2004] HCA 26 at [16]; 2004 ATC 4599 at [16].
+8
+  FC of T v. Hart & Anor [2004] HCA 26 at [96]; 2004 ATC 4599 at [96].
+Taxation Determination
+
+TD 2012/1
+Page 6 of 7                                                   Page Status: not legally binding
+
+17.  In the context of applying paragraph 177D(b) to an investment loan interest
+payment arrangement the following general observations can be made:
+       (a)     In respect of arrangements that include all, or a significant number, of the
+               elements set out in paragraph 3 of this Determination the manner in which
+               the scheme is entered into or carried out is generally explicable only by the
+               taxation consequences. For instance, apart from the purported availability of
+               additional tax deductions, it appears to make little (if any) financial sense for
+               the taxpayer(s) to, in effect, fund repayments on a home loan using a line of
+               credit that has the same or a slightly higher interest rate than the home loan.
+       (b)     In many of these arrangements a careful analysis of the terms and
+               conditions indicates that the interest rate on the line of credit is both
+               notionally and in substance higher than the interest rate payable on the
+               home loan.
+       (c)     Apart from the purported availability of additional tax deductions, the
+               taxpayer(s)’ financial position under the scheme is generally no better (and
+               possibly worse) than it would have been if the arrangement had not been
+               entered into. The increase in the line of credit balance is matched by an
+               equal reduction in the balance (or effective balance) of the taxpayer(s)’
+               home loan.
+       (d)     A key feature of the investment loan interest payment arrangement is the
+               use of the line of credit to pay the interest on the investment loan. This
+               results in all or most of the interest on the investment loan, in effect, being
+               capitalised. That is, the payment of the investment loan interest is deferred.
+               This deferral has the economic effect of allowing the taxpayer(s) to repay
+               the home loan at a faster rate than would otherwise be possible: the
+               taxpayer(s) are able to pay an amount equivalent to the deferred investment
+               loan interest on the home loan.
+       (e)     In many of these arrangements a careful analysis of the all the facts
+               (including the taxpayer(s)’ financial circumstances and the relevant terms
+               and conditions of the relevant agreements) indicates that the investment
+               loan interest payment arrangement will have only a limited lifespan. The
+               circumstances often demonstrate that the arrangement will only last for the
+               period during which the taxpayer(s) have non-deductible interest expenses
+               (for example home loan interest), and that once the debt that gave rise to
+               the non-deductible interest expense is repaid the taxpayer(s) are likely to
+               revert to making the payments on their investment loan out of their cash
+               flow rather than using the line of credit. In many cases the taxpayer(s) are
+               simply reverting to what they were doing prior to entering the arrangement.
+       (f)     If the taxpayer(s)’ residence is used as security for either the investment
+               loan or the line of credit, the taxpayer(s) will not actually own an
+               unencumbered home any faster under the scheme than would have been
+               the case if they had not entered into the arrangement.
+18.     Accordingly, it would be open for a reasonable person to conclude, having regard
+to the matters in paragraph 177D(b), that one or more of the parties that entered into or
+carried out the scheme did so for the dominant purpose of enabling the taxpayer(s) to
+obtain a tax benefit in connection with the scheme. If a reasonable person would reach
+such a conclusion then Part IVA applies to the scheme and the Commissioner would be
+entitled to cancel under paragraph 177F(1)(b) the tax benefit. That is, the relevant interest
+incurred on the line of credit would not be deductible to the taxpayer(s).
+                                                                    Taxation Determination
+
+                                                                TD 2012/1
+Page Status: not legally binding                                              Page 7 of 7
+
+
+References
+Previous draft:                                Legislative references:
+TD 2011/D8                                     - ITAA 1936
+                                               - ITAA 1936 Pt IVA
+Related Rulings/Determinations:                - ITAA 1936 177A
+TR 93/6; TR 2006/10                            - ITAA 1936 177C
+                                               - ITAA 1936 177C(1)(b)
+Subject references:                            - ITAA 1936 177D
+                                               - ITAA 1936 177D(b)
+- borrowings & loans
+                                               - ITAA 1936 177F
+- cancellation of tax benefits
+                                               - ITAA 1936 177F(1)(b)
+- deductions & expenses
+                                               - ITAA 1997 8-1
+- expenses of borrowing
+- interest expenses
+                                               Case references:
+- Part IVA
+- rental property loan interest expenses       - FC of T v. Hart & Anor [2004] HCA 26;
+- schemes & shams                                2004 ATC 4599; (2004) 55 ATR 712
+- tax benefits under tax avoidance schemes     - FC of T v. Spotless Services Ltd & Anor
+- tax planning, avoidance & evasion              [1996] HCA 34; (1996) 186 CLR 404; 96
+                                                 ATC 5201; (1996) 34 ATR 183
+
+ATO references
+NO:            1-38NS0XC
+ISSN:          1038-8982
+ATOlaw topic: Income Tax ~~ Deductions ~~ borrowing expenses
+               Income Tax ~~ Deductions ~~ interest expenses
+

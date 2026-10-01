@@ -1,0 +1,834 @@
+TR 95/25 - Income tax: deductions for interest under
+section 8-1 of the Income Tax Assessment Act 1997
+following FC of T v. Roberts; FC of T v. Smith
+
+   This cover sheet is provided for information only. It does not form part of TR 95/25 - Income
+tax: deductions for interest under section 8-1 of the Income Tax Assessment Act 1997 following
+FC of T v. Roberts; FC of T v. Smith
+
+
+  This document has changed over time. This is a consolidated version of the ruling which was
+published on 23 June 1999
+
+
+
+
+Generated on: 26 September 2026, 09:10:13 AM
+                                                                                                 Taxation Ruling
+                     Australian
+                     Taxation
+                     Office
+                                                                                      TR 95/25
+                                     FOI status: may be released                                     page 1 of 16
+
+
+
+
+                                     Taxation Ruling
+                                     Income tax: deductions for interest under
+                                     section 8-1 of the Income Tax Assessment Act
+                                     1997 following FC of T v. Roberts; FC of T v.
+                                     Smith
+other Rulings on this topic
+IT 2582                              This Ruling, to the extent that it is capable of being a 'public ruling' in
+                                     terms of Part IVAAA of the Taxation Administration Act 1953, is a
+contents                      para   public ruling for the purposes of that Part. Taxation Ruling TR 92/1
+                                     explains when a Ruling is a public ruling and how it is binding on the
+What this Ruling is about       1
+                                     Commissioner.
+Class of person/arrangement 1
+                                     [Note: This is a consolidated version of this document. Refer to the
+Ruling                          2    Tax Office Legal Database (http://law.ato.gov.au) to check its
+General principles governing         currency and to view the details of all changes.]
+deductibility of interest    2
+General law partnerships        4
+Section 6(1) partnerships
+which are not general law
+partnerships                    8    What this Ruling is about
+Companies                      12
+                                     Class of person/arrangement
+Individuals                    18
+                                     1.    This Ruling outlines the implications flowing from the decision
+Date of effect                 20
+                                     of the Full Federal Court in FC of T v. Roberts; FC of T v. Smith 92
+Explanations                   21    ATC 4380; (1992) 23 ATR 494 (Roberts and Smith) for individuals,
+General principles             21    general law partnerships, partnership for tax purposes only and
+Use test                       26
+                                     companies.
+Preservation of assets test    28
+The decision in FC of T v.
+Roberts and Smith              34
+                                     Ruling
+Statutory partnerships         37    General principles governing deductibility of interest
+Companies                      38
+                                     2.    The deductibility of a loss or outgoing comprising interest under
+Apportionment                  40    section 8-1 of the Income Tax Assessment Act 1997 (ITAA 1997)
+Asset revaluation reserve      41    (formerly subsection 51(1) of the Income Tax Assessment Act 1936)
+Borrowing used to repay an
+                                     depends upon satisfying the words of the section, that is, being able to
+existing loan              42        show that the loss or outgoing (or the part of the loss or outgoing in an
+                                     appropriate case of apportionment) is:
+Examples                       43
+                                           (a)    incurred by the taxpayer in gaining or producing
+                                                  assessable income of the taxpayer and the loss or outgoing
+                                                  is not capital, or of a capital, private or domestic nature
+                                                  ('first limb'); or
+Taxation Ruling
+
+
+TR 95/25
+page 2 of 16                                       FOI status may be released
+
+
+
+      (b)      necessarily incurred by the taxpayer in carrying on a
+               business for the purpose of gaining or producing
+               assessable income of the taxpayer and the loss or outgoing
+               is not capital, or of a capital, private or domestic nature
+               ('second limb').
+
+
+3.    The cases clearly indicate that whether or not a loss or outgoing
+incurred by a taxpayer satisfies the requirements of section 8-1 is
+dependent on all the facts and matters relating to the loss or outgoing
+incurred by the taxpayer in question. However, the following general
+principles are relevant to the question whether interest is deductible
+under section 8-1:
+      (a)      The interest expense must have a sufficient connection
+               with the operations or activities which more directly gain
+               or produce the taxpayer's assessable income and not be of
+               a capital, private or domestic nature. The test is one of
+               characterisation and the essential character of an expense
+               is a question fact to be determined by reference to all the
+               circumstances.
+      (b)      The character of interest on money borrowed is generally
+               ascertained by reference to the objective circumstances of
+               the use to which the borrowed funds are put by the
+               borrower. However, regard must be had to all the
+               circumstances, including the character of the taxpayer's
+               undertaking or business, the objective purpose of the
+               borrowing, and the nature of the transaction or series of
+               transactions of which the borrowing of funds is an
+               element. In some cases, the taxpayer's subjective purpose,
+               intention or motive may be relevant in deciding the
+               deductibility of interest.
+      (c)      A tracing of the borrowed money which establishes that it
+               has been applied to an income producing use may
+               demonstrate the relevant connection between the interest
+               and the income producing activity. Normally this would
+               be the case for non-business taxpayers. It might also be
+               the case where a business makes a specific borrowing
+               which goes to the structure of the business - for example,
+               where a business makes a large borrowing to fund an
+               offshore acquisition.
+      (d)      A rigid tracing of the borrowed money will not always be
+               necessary or appropriate (e.g., where the borrowing
+               finances the replacement of funds withdrawn from the
+               business by a person entitled to be paid those funds). In
+               such cases the relevant question is whether borrowed
+                                                             Taxation Ruling
+
+
+                                                  TR 95/25
+FOI status: may be released                                      page 3 of 16
+
+
+
+             funds are being used to replace another source of funding
+             for business purposes.
+      (e)    Interest on borrowed funds will not be deductible simply
+             because it can be said to preserve assessable income
+             producing assets.
+      (f)    Interest on borrowings will not continue to be deductible if
+             the borrowed funds cease to be employed in the borrower's
+             business or income producing activity.
+      (g)    The interest will not be deductible, to the extent to which
+             it is private or domestic in nature, or is incurred in relation
+             to the gaining or production of exempt income.
+
+
+General law partnerships
+The 'refinancing principle' in Roberts and Smith in relation to
+common law partnerships
+
+4.    In Roberts and Smith, Hill J said that interest on 'a borrowing
+[by a common law partnership] to fund repayment of moneys
+originally advanced by a partner and used as partnership capital' will
+be deductible under subsection 51(1) to the extent the partnership
+capital was employed in a business of the partnership which was
+carried on for the purpose of producing or gaining assessable income
+(ATC at 4389; ATR at 505).
+5.    'In principle [he said] such a case is no different from the
+borrowing from one bank to repay working capital originally
+borrowed from another' (ATC at 4388; ATR at 504). The same
+principle could apply to discharging a liability to a supplier of goods
+or services who extends trade credit to the partnership.
+6.     Hill J said that interest on borrowings to refinance funds
+employed in the partnership business will be deductible if the funds
+represent 'partnership capital in the Lord Lindley sense, undrawn
+profit distributions, advances by the partners or other funds which
+have actually been invested in the partnership and which the partners
+were entitled to withdraw' (ATC at 4390; ATR at 506).
+7.    However, Hill J made it clear that interest on a borrowing by the
+partnership is not deductible to the extent that the borrowing is used to
+make payments to the partners which do not comprise a 'refund of
+moneys previously invested in the partnership business' (see ATC at
+4390; ATR at 505-506). On this basis, interest on borrowings to
+replace partnership capital which is represented by internally
+generated goodwill or an unrealised revaluation of assets (which are
+simply book entries) will not be deductible to the partnership (see
+ATC at 4389 and 4390; ATR at 505-506).
+Taxation Ruling
+
+
+TR 95/25
+page 4 of 16                                    FOI status may be released
+
+
+
+
+Partnerships for tax purpose only
+8.    The 'refinancing principle' in Roberts and Smith has no
+application to joint owners of investment property which are not
+common law partnerships: Case 12/95 95 ATC 175; AAT Case
+10,079 (1995) 30 ATR 1169.
+9.     In Yeung v. FC of T 88 ATC 4193; (1988) 19 ATR 1006
+(Yeung) the first issue was whether there was a partnership for tax
+purposes between the six family members. Davis J found that there
+was. He then proceeded on the basis that there was a 'partnership' and
+that from the partnership's point of view, what occurred was a change
+in the capital interests which each of the partners had in the
+partnership. However, the 'refinancing principle' in Roberts and Smith
+applies only where a partnership borrows to refund capital invested by
+partners (by way of a contribution to capital, a loan, or a share of any
+accumulated and undistributed realised profits which could be treated
+as having been distributed and lent back) or where one form of
+borrowing replaces another. Hill J makes it very clear (ATC at 4389-
+4390; ATR at 505-506) that reference to capital in this context is a
+reference to the capital of a partnership in the partnership law sense,
+that is, the 'original partnership capital in the Lord Lindley sense'.
+10. The joint owners of an investment property who comprise a
+partnership for tax purposes only in relation to the property cannot
+'withdraw' partnership capital and have no right to the 'repayment of
+capital invested' in the sense in which those concepts are used by Hill
+J in Roberts and Smith: see also Case 12/95 (ATC at 181-182); AAT
+Case 10,079 (ATR at 1169-1170). In Case 12/95; AAT Case 10,079
+the tribunal considered that the comments of Hill J (Roberts and Smith
+ATC at 4389; ATR at 504-505) cast considerable doubt on the
+application of the substitution of partnership capital principle to
+partnerships other than those that are partnerships at general law (see
+Case 12/95 ATC at 182; Case 10,079 ATR at 1175).
+11. Accordingly, it is inappropriate to describe a borrowing by the
+joint owners of investment property, which does not constitute a
+business, as a refinancing of funds employed in a business.
+
+
+Companies
+12. In determining whether interest is deductible, regard must be
+given to the commercial context in which the company borrowed the
+relevant funds. For example, there will usually be a need for a
+business to maintain a pool of circulating capital from which to meet
+the expenses of that business. In these circumstances the deductibility
+of the interest expense cannot be determined by considering only the
+                                                           Taxation Ruling
+
+
+                                                TR 95/25
+FOI status: may be released                                   page 5 of 16
+
+
+
+immediate reason for making a payment and ignoring the overall
+purpose with which the liability was incurred: see Dixon J in Herald
+and Weekly Times Ltd v. FC of T (1932) 48 CLR 113 at 118.
+13. Applying the reasoning of the Full Federal Court in Roberts and
+Smith to companies will mean that interest on a borrowing by a
+company may be deductible where the borrowing is used to fund a
+repayment of share capital to the shareholders in circumstances where
+the repaid capital was employed as capital or working capital in the
+business carried on by the company for the purpose of deriving
+assessable income. Apportionment may be necessary where exempt
+income is also derived from the business activities.
+14. The principle is the same as that which would apply to a
+replacement loan used to provide funds to meet a liability to a trade
+creditor or a lender of money where the relevant funds at the time of
+the replacement are being applied in the income producing business.
+15. Similarly, interest on a borrowing by a company is likely to be
+deductible where the borrowing is used to fund the payment of a
+declared dividend (including a deemed unfrankable and unrebatable
+dividend paid from a "tainted share capital account" after 1 July 1998)
+to the shareholders in circumstances where the funds representing the
+dividend are employed as capital or working capital in the business
+carried on by the company for the purpose of deriving assessable
+income. In circumstances where the liability to pay the dividend
+reduces the amount to the credit of the unappropriated profits account
+and the reduction is replaced in the company's accounts by the loan,
+there will usually be a nexus between the interest expense and the
+carrying on of a business for the purpose of deriving assessable
+income.
+16. As with partnerships, interest is not deductible if the borrowing
+finances payments to shareholders in reduction or extinguishment of
+share capital to the extent to which such capital represents bonus
+shares paid up out of an unrealised asset revaluation reserve or
+reduction of other equity accounts to the extent that they represent
+unrealised profit reserves (e.g., a reserve arising from the recognition
+of internally generated goodwill). Nor would interest be deductible
+where the borrowed moneys fund the payment of a dividend out of
+unrealised profit reserves. However, where the source from which
+bonus shares are issued and dividends are declared is a realised profit
+reserve, the interest on a borrowing used to repay the bonus shares or
+discharge the liability to pay a dividend would be deductible.
+17. The reasoning in Roberts and Smith does not extend to interest
+on borrowing by a company to pay subvention payments (that is,
+payments to another company in a wholly owned group in exchange
+for a loss transferred under Subdivisions 170-A and 170-B of the
+Taxation Ruling
+
+
+TR 95/25
+page 6 of 16                                    FOI status may be released
+
+
+
+ITAA 1997). In these circumstances there is no withdrawal and
+replacement of capital in the sense spoken of by Hill J in Roberts and
+Smith.
+
+
+Individuals
+18. Tests such as the purpose of the borrowing or the use and
+application of the borrowed funds, although only tools in assisting in
+determining what is essentially a question of fact, have a more
+obvious application in the context of individuals than they do in a
+large multi-faceted and widely owned businesses.
+19. It is a well established principle of law that an individual cannot
+deal with and in particular cannot lend money to her/himself. It
+follows that where an individual carries on a business alone she/he
+cannot contribute capital to or lend money to such a business in such a
+way as to create a legal liability of the business to the individual in
+respect of the funds contributed or lent. The principles in Roberts and
+Smith cannot, therefore, apply to individuals.
+
+
+Date of effect
+20. This Ruling applies to years commencing both before and after
+its date of issue. However, the Ruling does not apply to taxpayers to
+the extent that it conflicts with the terms of a settlement of a dispute
+agreed to before the date of issue of the Ruling (see paragraphs 21 and
+22 of Taxation Ruling TR 92/20).
+
+
+Explanations
+General principles
+21. Expenditure will be deductible under section 8-1 if its essential
+character is that of expenditure that has a sufficient connection with
+the operations or activities which more directly gain or produce the
+taxpayer's assessable income, provided that the expenditure is not of a
+capital, private or domestic nature. As Hill J explained in Roberts and
+Smith (ATC at 4386; ATR at 501):
+      'In FC of T v. Riverside Road Pty Ltd (in liq) 90 ATC 4567 at
+      4573-4575 the full court of this court summarised the applicable
+      principles governing deductibility under s. 51(1) of the Act. It is
+      unnecessary to repeat them here. Suffice it to say that what is
+      involved is a process of identifying the essential character of the
+      expenditure to determine whether it is in truth an outgoing
+                                                           Taxation Ruling
+
+
+                                                TR 95/25
+FOI status: may be released                                   page 7 of 16
+
+
+
+      incurred in gaining or producing the assessable income or
+      necessarily incurred in carrying on a business having the
+      purpose of gaining or producing assessable income: Lunney &
+      Anor v. FC of T (1958) 11 ATD 404 at 413; (1957-1958) 100
+      CLR 478 at 499; Fletcher & Ors v. FC of T 91 ATC 4950 at
+      4957; (1991) 22 ATR 613. The expenditure must have the
+      necessary connection with the operations or activities which
+      more directly gain or produce assessable income so as to meet
+      the statutory criterion that the outgoing be incurred in gaining or
+      producing assessable income or in carrying on a business:
+      Charles Moore & Co (WA) Pty Ltd v FC of T (1956) 11 ATD
+      147 at 149; (1956) 95 CLR 344 at 351; FC of T v. DP Smith
+      (1981) 147 CLR 578 at 586; 81 ATC 4114 at 4117; (1981) 11
+      ATR 538. That is to say it must be "incidental and relevant" to
+      that end: Ronpibon Tin NL v. FC of T (1949) 78 CLR 47 at 56.'
+22. It has been said that the test of deductibility under the first limb
+of subsection 51(1) is that:
+      'it is both sufficient and necessary that the occasion of the loss
+      or outgoing should be found in whatever is productive of the
+      assessable income or, if none be produced, would be expected to
+      produce assessable income' (Ronpibon Tin v FC of T (1949) 78
+      CLR 47 at 57).
+23. In determining the deductibility of a loss or outgoing regard
+should be had to all the objective circumstances surrounding the
+incurring of the loss or outgoing and in some circumstances the
+subjective purpose of the taxpayer may also be relevant. Fletcher v.
+FC of T 91 ATC 4950; (1991) 22 ATR 613. Tests such as the
+purpose of the borrowing or the use and application of the borrowed
+funds are tools to assist in what is essentially a question of fact
+(Kidston Goldmines Ltd v. FC of T 91 ATC 4538; (1991) 22 ATR
+168).
+24. Where the taxpayer carries on a business the second limb of
+section 8-1 requires there to be a relevant connection between the
+outgoing and the business. In deciding whether the interest is
+'necessarily incurred' in the sense of 'clearly appropriate' to that
+business (FC of T v. Snowden and Willson Pty Ltd (1958) 99 CLR
+431), regard must be had to the nature of the business activity (Magna
+Alloys & Research Pty Ltd v. FC of T 80 ATC 4542; 11 ATR 276),
+the business purpose for which the outgoing was incurred (FC of T v.
+The Midland Railway of Western Australia Ltd (1952) 85 CLR 306),
+the objective circumstances surrounding the incurring of the
+expenditure (FC of T v. South Australia Battery Makers Pty Ltd
+(1978) 140 CLR 645) and the character of the expense (John Fairfax
+& Sons Pty Ltd v. FC of T (1959) 101 CLR 30).
+Taxation Ruling
+
+
+TR 95/25
+page 8 of 16                                   FOI status may be released
+
+
+
+25. As was explained in Magna Alloys & Research Pty Ltd v. FC of
+T 80 ATC 4542 at 4545; 11 ATR 276 at 279:
+      'The purpose mentioned in the second limb is not a purpose
+      imported by the phrase, incurred in carrying on; but the purpose
+      of the business in the carrying on of which the deductible
+      expenditure is incurred (John Fairfax & Sons Pty Ltd v. FC of T
+      (1959) 101 CLR 30 at 49).'
+
+
+Use test
+26.   As Hill J stated (Roberts and Smith ATC at 4388; ATR at 504):
+      'As the cases, including Kidston, all show, the characterisation
+      of interest borrowed will generally be ascertained by reference
+      to the objective circumstances of the use to which the borrowed
+      funds are put. However, a rigid tracing of funds will not always
+      be necessary as appropriate.'
+27. Generally, the starting point for determining the essential
+character of an interest expense is to determine the 'use' to which the
+borrowed funds have been put, i.e., you trace the borrowed funds
+(Roberts and Smith ATC at 4388; ATR at 504; Kidston Goldmines
+Ltd v. FC of T 91 ATC 4538 at 4546; (1991) 22 ATR 168 at 177,
+Hayden v. FC of T 96 ATC 4797 at 4801; (1996) 33 ATR 352 at 356).
+However, such a tracing will not necessarily be determinative
+(Roberts and Smith ATC at 4388; ATR at 504). This will be
+particularly so in a multi-faceted and widely owned business. As Hill
+J warned in Roberts and Smith (ATC at 4388; ATR at 503-504), there
+is a danger in substituting for the words in subsection 51(1) language
+which does not appear in it.
+
+
+Preservation of assets test
+28. It has been argued that interest is deductible provided the
+borrowed funds can be said to preserve the taxpayer's income
+producing assets. The preservation of assets test can take different
+forms. Often, the proposition is put in circumstances where a
+taxpayer has income producing assets which could be sold to generate
+funds to satisfy non-income producing needs. An alternative to
+selling the assets would be to retain them and, instead, borrow money
+to satisfy the non-income producing needs. When a borrowing is
+made, it is argued that the interest expense is incurred in producing
+assessable income because, without the borrowing, the income
+producing assets would have been sold. It follows, according to the
+argument, that the borrowing enables the preservation of the income
+producing assets and, therefore, the interest expense is sufficiently
+                                                          Taxation Ruling
+
+
+                                               TR 95/25
+FOI status: may be released                                  page 9 of 16
+
+
+
+connected with the income derived from those assets to satisfy section
+8-1.
+29. In FC of T v. Munro (1926) 38 CLR 153 (Munro) the High
+Court considered whether interest incurred on a borrowing which was
+not used to produce assessable income, but was secured by an income
+producing asset, was deductible. The taxpayer argued that if the
+interest obligations were not discharged, the income producing asset
+that secured the borrowing would be in jeopardy. Thus, the discharge
+of the obligation to pay interest was incurred in producing assessable
+income. The High Court rejected this proposition.
+30. In Roberts and Smith Hill J commented on the two cases usually
+cited as authority for the preservation of assets argument; Begg v. FC
+of T (1937) 4 ATD 257 or Yeung. In respect of Begg Hill J said
+(Roberts and Smith ATC at 4389; ATR at 505) that:
+      'The case has stood for a long time and the present is not the
+      appropriate occasion to consider its correctness. There may,
+      however, be thought to be some difficulties in reconciling what
+      was there said with the decision of the High Court in Munro.'
+31. In respect of Yeung Hill J said (Roberts and Smith ATC at
+4389; ATR at 505) that:
+      'For present purposes it is sufficient to note that the result
+      reached in Yeung seems clearly correct if the case is viewed
+      simply as one involving a borrowing to fund the repayment of
+      moneys originally advanced by a partner and used as a
+      partnership capital, particularly given that the original funds
+      were used to purchase the rental property.'
+32. Hill J has clearly indicated his difficulties with the principle
+which has been extracted from Begg. At the same time Hill J also
+explained the decision in Yeung on the basis of the principle which he
+was applying in Roberts and Smith. The principle is that, if there is a
+partnership at general law, the business of that partnership could be
+funded by moneys originally advanced by a partner as partnership
+capital and interest on a borrowing to repay that capital would be
+deductible. The comment by Hill J on Yeung has little, if anything, to
+do with the preservation of assets proposition and certainly does not
+support it.
+33. A similar conclusion was reached by Mr K Beddoe in an
+unreported AAT decision given on 30 May 1995 (AAT reference QT
+94/116).
+33A. In Hayden the Federal Court considered whether interest
+incurred by an Executor on borrowings that were used to discharge an
+obligation of the deceased estate was deductible under
+subsection 51(1). The fact that the borrowing of funds permitted
+Taxation Ruling
+
+
+TR 95/25
+page 10 of 16                                   FOI status may be released
+
+
+
+income producing assets to remain as part of the estate so that the
+income stream to the estate was not diminished, did not bring the
+interest of the borrowings within a loss or outgoing under
+subsection 51(1).
+
+
+The decision in Roberts and Smith
+34.   As Hill J stated (Roberts and Smith ATC at 4388; ATR at 504):
+      'The issue continues to be whether the interest outgoing was
+      incurred in the income producing activity or, in a case falling to
+      be tested under the second limb, in the business activity which is
+      directed towards the gaining or producing of assessable income';
+      and
+      'The funds to be withdrawn in such a case [where a partner calls
+      up an amount owing to him as undrawn partnership
+      distributions] were employed in the partnership business; the
+      borrowing replaces those funds and the interest incurred on the
+      borrowing will meet the statutory description of interest
+      incurred in the gaining or production by the partnership of
+      assessable income.'
+      'In principle, such a case is no different from the borrowing from
+      one bank to repay working capital originally borrowed from
+      another; the character of the refinancing takes on the same
+      character as the original borrowing and gives to the interest
+      incurred the character of a working expense. Both these cases
+      would equally satisfy the second limb of s. 51(1). In no sense
+      could the interest outgoing in either case be characterised as
+      private or domestic. Similarly, where moneys are originally
+      advanced by a partner to provide working capital for the
+      partnership, interest on a borrowing made to repay these
+      advances will be deductible, irrespective of the use which the
+      partner repaid makes of the funds' (Roberts and Smith ATC at
+      4388; ATR at 504); and
+      'The provision of funds to the partners in circumstances where
+      that provision is not a repayment of funds invested in the
+      business, lacks the essential connection with the income
+      producing activities of the partnership or, in other words, the
+      partnership business. Likewise, the interest incurred on the
+      borrowings will not be incidental and relevant to the partnership
+      business' (Roberts and Smith ATC at 4390; ATR at 506).
+35. Hill J makes it clear in his discussion at ATC at 4389-4390;
+ATR at 504-506 that in his view a partnership cannot claim to be
+replacing funds contributed as partnership capital when it borrows to
+make a payment to a partner to the extent that the equity or capital
+                                                           Taxation Ruling
+
+
+                                                TR 95/25
+FOI status: may be released                                   page 11 of 16
+
+
+
+account being reduced by the payment is represented by internally
+generated goodwill. Interest on borrowings used to make such a
+payment would not be deductible. In our view, this limitation on a
+partnership's entitlement to a deduction applies also where the account
+being reduced, represents an unrealised capital profits.
+36. The explanation for this limitation on deductibility of interest is
+that partnership capital must be contributed and can never exceed the
+amount contributed. A partnership is not entitled to describe what is,
+in effect, a revaluation reserve as partnership capital. Similarly, if a
+partnership dissipates contributed partnership capital as a result of
+making operating or capital losses, only the remaining part of the
+original partnership capital can be returned to partners as partnership
+capital. It is not possible to reinstate the balance of that capital by
+revaluing assets.
+
+
+Statutory partnerships
+37. In Case 12/95 (ATC at 181); AAT Case 10,079 (ATR at 1175)
+the AAT was of the view that:
+      '...the purpose of the definition of "partnership" as it appears in
+      section 6(1) of the Act is the application to arrangements
+      answering that description of Division 5 of Part III of the Act
+      and, in the circumstances of this reference, particularly sections
+      90, 91 and 92. Against that background, and here the words of
+      Fisher J are repeated, the deeming provisions are required by
+      their nature to be construed strictly and only for the purpose for
+      which they are resorted to and it is improper to extend by
+      implication the express application of such a statutory fiction.
+      This fiction does not, in our opinion, cloak an arrangement of
+      the kind now being contemplated with the additional
+      refinements of partnership assets and liabilities and partners
+      capital accounts. On that basis the Tribunal finds that there are
+      no partnership assets or liabilities nor are there capital accounts
+      capable of being accessed by the applicant or his spouse. What
+      remains is a relationship of co-ownership as joint tenants which
+      is more accurately described as an investment rather than as
+      partners in a business operation. For these reasons the Tribunal
+      concludes that the argument of the bank loan being used to
+      replace portion of the capital accounts of the partners is not
+      available to the applicant.'
+
+
+Companies
+38. In principle, the approach adopted by Hill J in Roberts and
+Smith is not limited to partnerships and could apply to companies. For
+Taxation Ruling
+
+
+TR 95/25
+page 12 of 16                                    FOI status may be released
+
+
+
+example, in Kidston Gold Mines Limited v. FC of T 91 ATC 4538;
+(1991) 22 ATR 168, Hill J said (ATC at 4545; ATR at 176):
+      'Where the funds are employed in a business devoted to
+      assessable income, it may be said that monies borrowed to
+      secure capital or working capital will be clearly deductible: The
+      Texas Company (Australasia) Limited v. FC of T (1940) 63
+      CLR 382 at 468 per Dixon J.'
+39. However, the limitation on interest deductibility referred to in
+paragraph 35 above would also apply to a company that sought to use
+borrowings to make payments to shareholders in reduction of an
+account that was represented by revaluations of assets. If the account
+was represented by realised capital gains, however, interest on the
+borrowings would not be denied on this basis.
+
+
+Apportionment
+40. Under the reasoning in Roberts and Smith, interest on borrowed
+funds will be fully deductible provided the amount of 'capital'
+attributable to the borrower at the time of the borrowing is equal to or
+greater than the amount borrowed. If the amount of capital
+attributable to the borrower is less than the amount borrowed it will be
+necessary to apportion the interest expense. Generally the proportion
+of interest deductible will be equal to the proportion of capital that had
+been used to derive assessable income.
+
+
+Asset revaluation reserve
+41. In relation to paragraph 16 of this Ruling, it is noted that under
+Australian Accounting Standards AASB 1010 on 'Accounting for the
+revaluation of non-current assets', a revaluation reserve may represent
+both realised (by sale of the assets) and unrealised increases in the
+value of assets. In determining the deductibility of interest we will
+assume that in this situation the borrowings are first used to replace
+the part of the reserve that represents realised revaluations. However,
+the taxpayer must demonstrate how much of that reserve represents
+realised revaluations. In the absence of such evidence a deduction
+will not be allowed. This approach is particularly appropriate given
+that we understand that there is nothing in the standard which prevents
+the revaluation increment in respect of an asset that has been sold
+from being transferred to a realised capital profits reserve.
+
+
+Borrowing used to repay an existing loan
+42. Interest on a new loan will be deductible if the new loan is used
+to repay an existing loan which, at the time of the second borrowing,
+                                                          Taxation Ruling
+
+
+                                               TR 95/25
+FOI status: may be released                                 page 13 of 16
+
+
+
+was being used in an assessable income producing activity or used in
+a business activity which is directed to the production of assessable
+income (Roberts and Smith ATC at 4388; ATR at 504).
+
+
+Examples
+Example 1: Statutory partnership
+43. A and B are husband and wife. They own the family home and,
+using $50,000 of their own funds and initial borrowings of $100,000,
+they jointly purchase a rental property. A and B are deemed to be
+partners in respect of the rental property within the extended
+definition of partnership in subsection 995-1(1) of the ITAA 1997 as
+they are in receipt of income jointly, but do not in any way carry on a
+business so as to make them general law partners.
+44. Two years later A and B borrow $50,000 to renovate the family
+home, and claim that the borrowing replaces a notional withdrawal of
+partnership capital.
+45. There is no capital account capable of being withdrawn by A
+and B, and having regard to the use of the borrowed funds, the interest
+incurred is not deductible being of a private or domestic nature (see
+Case 12/95; AAT Case 10,079).
+
+
+Example 2: General law partnership
+46. D borrows $25,000 which is contributed as capital to a
+partnership.
+47. Two years later, the partnership borrows $25,000 to return D's
+initial capital contribution. The use of the repaid funds in D's hands
+will not be determinative of the deductibility of the interest to the
+partnership. At the time of the borrowing by the partnership, the
+$25,000 previously contributed by D was being employed in the
+partnership's assessable income producing business. On these facts
+the interest expense will be deductible to the partnership as the
+borrowed funds can be seen to replace the partnership capital (see
+Roberts and Smith).
+48. The funds borrowed by D are no longer invested in the
+partnership (an income producing asset). Whether or not D will
+continue to get a deduction for the interest expense on the original
+borrowings will depend on the use to which the funds returned to him
+by the partnership are put. If D uses those funds for a private purpose,
+then no further interest will be allowed.
+Taxation Ruling
+
+
+TR 95/25
+page 14 of 16                                    FOI status may be released
+
+
+
+49. If the amount borrowed by the partnership exceeds the
+partnership capital (e.g., if at the time of the second borrowing the
+partnership had repaid most of the capital) interest would only be
+deductible to the extent of the partnership capital attributable to the
+taxpayer.
+
+
+Example 3: Individual
+50. If a rental property (as in Example 1) was owned solely by an
+individual C, then the interest on the second borrowing would not be
+deductible. This would be the case even if the rental property was
+used as security for the second borrowing (e.g., a second mortgage)
+(see Munro).
+
+
+Example 4: Sole trader
+51. F is a sole trader who has built up his business over many years.
+His balance sheet shows his proprietorship/capital in the business as
+$200,000. This amount is represented by the income producing assets
+of the business, and there is no goodwill or revaluation of assets
+shown in the accounts.
+52. F decides to restructure his business. He purports to withdraw
+$50,000 of his capital from the business and replace it with borrowed
+funds. He uses the money to purchase a yacht for his family's
+personal use. On a strict tracing approach, the use of the funds is
+private and clearly the interest expense is not deductible.
+53. Despite accounting entries which show that the borrowed funds
+were placed into the business, it cannot be shown that the borrowings
+replaced F's equity in this income producing assets. An individual
+cannot withdraw equity from his/her own assets. Therefore, the
+interest expense is not deductible.
+
+
+Example 5: Company
+54. A company runs a business to produce assessable income and it
+wants to reduce the entitlement of its shareholders to the real assets of
+the company (either by way of an agreement to buy back shares or
+otherwise reduce paid up capital, or by way of dividends from profits
+that arose from the company's income producing activities). It is short
+of liquid assets so it borrows funds which are intended to take the
+place of funds to be paid to the shareholders. In these circumstances
+the company has in effect replaced capital with debt. On the basis of
+the principles in Roberts and Smith the interest on the borrowing
+would be deductible to the extent that it replaced capital or realised
+gains which were used in the business to produce assessable income.
+                                                            Taxation Ruling
+
+
+                                                TR 95/25
+FOI status: may be released                                    page 15 of 16
+
+
+
+
+Cross reference of provisions
+55. Section 8-1, Subdivisions 170-A and 170-B and the definition of
+'partnership' in subsection 995-1(1) of the Income Tax Assessment Act
+1997, to which this Ruling refers, express the same ideas as
+subsections 51(1), sections 80G and 160ZP and the definition of
+'partnership' in subsection 6(1), respectively, of the Income Tax
+Assessment Act 1936.
+
+
+Note- The Addendum to this Ruling that issued on 26 May 1999
+applies to the 1997-98 or a later income year.
+
+
+Commissioner of Taxation
+29 June 1995
+ISSN      1039 - 0731                -   Charles Moore and Co (WA) Pty
+                                         Ltd v. FC of T (1956) 11 ATD 147;
+ATO references                           (1956) 95 CLR 344
+NO      95/4339-2                    -   FC of T v DP Smith (1981) 147
+BO                                       CLR 578; 81 ATC 4114; (1981) 11
+                                         ATR 538
+Previously released in draft form    -   FC of T v. Munro (1926) 38 CLR
+as TR 93/D38                             153
+                                     -   FC of T v. Riverside Road Pty Ltd
+Price     $1.60                          (in liq) formerly Fremantle Motor
+                                         Lodge Pty Ltd 90 ATC 4567;
+FOI index detail                         (1990) 21 ATR 499
+reference number                     -   FC of T v. Roberts; FC of T v.
+    I 1016586                            Smith 92 ATC 4380; (1992) 23
+                                         ATR 494
+                                     -   FC of T v. Snowden and Willson
+subject references                       Pty Limited (1958) 99 CLR 431
+- allowable deductions               -   FC of T v. South Australian Battery
+- deductions for interest                Makers Pty Ltd (1978) 140 CLR
+                                         645
+                                     -   FC of T v. The Midland Railway of
+legislative references                   Western Australia Ltd (1952) 85
+- ITAA 1936 6(1)                         CLR 306
+- ITAA 1936 51(1)                    -   Fletcher v. FC of T 91 ATC 4950;
+- ITAA 1936 80G                          (1991) 22 ATR 613
+- ITAA 1936 160ZP                    -   Hayden v. FC of T 96 ATC 4797;
+- ITAA 1997 8-1                          (1996) 33 ATR 352
+- ITAA 1997 Subdiv 170-A             -   Herald and Weekly Times Ltd v. FC
+- ITAA 1997 Subdiv 170-B                 of T (1932) 48 CLR 113
+- ITAA 1997 995-1(1)                 -   John Fairfax and Sons Pty Ltd v. FC
+                                         of T (1959) 101 CLR 30;
+                                     -   Kidston Goldmines Ltd v. FC of T
+case references                          (1991) 22 ATR 168; 91 ATC 4538
+- Begg v. FC of T (1937) 4 ATD 257
+Taxation Ruling
+
+
+TR 95/25
+page 16 of 16                           FOI status may be released
+
+
+
+-   Lunney & Anor v FC of T (1958)
+    11 ATD 404; (1957-1958) 100 CLR
+    478
+-   Magna Alloys & Research Pty Ltd
+    v. FC of T 80 ATC 4542; 11 ATR
+    276
+-   Ronpibon Tin NL v. FC of T (1949)
+    78 CLR 47
+-   The Texas Company (Australasia)
+    Limited v. FC of T (1940) 63 CLR
+    382
+-   Yeung and Anor v. FC of T 88
+    ATC 4193; (1988) 19 ATR 1006
+-   AAT Decision, 30 May 1995,
+    Beddoe K; AAT reference QT
+    94/116 (unreported)
+-   Case 12/95 95 ATC 175; AAT Case
+    10,079 (1995) 30 ATR 1169
+
