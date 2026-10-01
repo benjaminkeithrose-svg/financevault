@@ -731,3 +731,52 @@ and come back if the choice changes.
 **Already done before:** vehicles vs other assets, offset accounts, card vs
 loan fields, SMSF loan fields, coin ids only for crypto, and per-person
 feature switches for pay tracking and the like.
+
+## 21. Choose what spending goes into a pack — categories, date ranges, adjustments
+
+**Why:** when a pack shares financial figures (a broker's fact find, for
+example), it should only hold what was asked for. A broker wants specific
+costs, like private school fees and health insurance, not every grocery
+bill. The bank's own categories often don't match what the costs really
+are, either.
+
+**The idea:**
+- Spending categories that mean something to a broker or accountant
+  (school fees, childcare, health insurance, groceries, transport, and so
+  on), separate from the tax categories.
+- Change a transaction's category from what the bank called it. Ideally,
+  one change teaches the app ("anything from this shop is groceries"), so
+  it isn't done one transaction at a time.
+- When making a pack: tick which categories go in, and leave a single
+  transaction in or out.
+- Choose the dates for each category (e.g. school fees since January
+  only).
+- See the summary before it goes out, adjust a figure by hand (keeping the
+  real figure and a note of why), then include it.
+
+**What's there now (checked 1 October 2026):**
+- Bank transactions come in from the bank's CSV export with only the date,
+  description and amount. The bank's own category isn't brought in.
+- Each transaction can be given one category, one at a time, on the bank
+  account's page. Those categories are tax categories only (Employment
+  income, Property expenses, Insurance, Other expenses, Not tax relevant,
+  and so on). There are no living-cost categories like groceries or school
+  fees.
+- "Income and spending" works out money in and out by month for the last
+  12 months (up to 24), and leaves out transfers between your own
+  accounts. There's no picking dates, categories or single transactions.
+- The broker Fact Find in Document Packs puts in **every** category's
+  monthly average, with no way to leave any out. That's the problem this
+  idea fixes.
+- The Borrowing page's living expenses are typed in by hand and don't come
+  from transactions.
+- The new packs for properties you're considering don't include any
+  spending.
+
+**Can it be done:** yes. Everything it needs is already there: the
+transactions, a category on each one, a summary by category, and the
+packs. The new parts are the spending categories, the rules that sort
+transactions automatically, and choosing and adjusting what goes into the
+pack. It all stays on the device.
+
+**Status:** idea only — not started.
