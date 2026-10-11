@@ -29,6 +29,8 @@ import { backupRouter } from "./routes/backup.js";
 import { emailImportRouter } from "./routes/emailImport.js";
 import { importBatchesRouter } from "./routes/importBatches.js";
 import { transactionImportRouter } from "./routes/transactionImport.js";
+import { statementImportRouter } from "./routes/statementImport.js";
+import { layoutRecordsRouter } from "./routes/layoutRecords.js";
 import { vaultRouter, requireSession } from "./routes/vault.js";
 import { identityRouter } from "./routes/identity.js";
 import { calendarRouter } from "./routes/calendar.js";
@@ -130,6 +132,8 @@ app.use("/api/backup", backupRouter);
 app.use("/api/email-import", emailImportRouter);
 app.use("/api/import-batches", importBatchesRouter);
 app.use("/api/transaction-import", transactionImportRouter);
+app.use("/api/statement-import", statementImportRouter);
+app.use("/api/layout-records", layoutRecordsRouter);
 
 app.use("/api", apiNotFound);
 app.use(errorHandler);

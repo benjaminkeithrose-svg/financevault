@@ -3,6 +3,10 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.19.0 — 11 October 2026
+- Transactions from PDF statements: on a bank account's page, choose as many statement PDFs as you like (or ones already in Documents). Each is read and checked against the balances it prints before anything is saved — you see which add up, and where any don't. Transactions already on the account (from an overlapping statement or the bank's CSV) aren't added again, and each PDF is filed under the account.
+- Statement layouts (Settings): a record of how each PDF that comes in is laid out — never its figures, descriptions, names or account numbers — to help improve the reader. If you set it up, they're sent once a day to your own private GitHub repository.
+
 ## 1.18.0 — 28 September 2026
 - Packs for professionals on each property you're considering: Broker, Accountant, Solicitor or conveyancer, and a Due diligence summary. Each is made from what's already recorded, with your questions for them.
 - Print one or save it as a PDF, or download a ZIP with the same summary plus the property's documents you tick. Identity documents are never offered, and no TFN or account numbers go in.

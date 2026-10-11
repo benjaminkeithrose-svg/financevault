@@ -741,6 +741,105 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "statements",
+    title: "Transactions from PDF statements",
+    keywords: "pdf statement statements import read transactions westpac st george macquarie commbank nab anz credit card old years balance adds up duplicate",
+    body: (
+      <>
+        <p>
+          For months your bank only has as PDF statements — older years, usually — open the account under{" "}
+          <Link to="/banking">Bank accounts</Link> and use <strong>Import transactions from PDF statements</strong>.{" "}
+          <strong>Choose PDF statements</strong> takes as many as you like at once (a whole folder of years);{" "}
+          <strong>Use ones already in Documents</strong> reads statements you've already imported.
+        </p>
+        <p>
+          Each statement is read and <strong>checked against the balances it prints</strong>: the opening balance plus every
+          transaction must give each balance on the page and the closing balance. Before anything is saved you see each
+          statement with its dates, how many transactions it has, how many are new, and:
+        </p>
+        <ul>
+          <li>
+            <strong>Adds up</strong> — every transaction was read and agrees with the balances. These are ticked.
+          </li>
+          <li>
+            <strong>Doesn't add up</strong> — it says the page and line where it first goes wrong. Not ticked; tick it if
+            you've checked it and want it anyway.
+          </li>
+          <li>
+            <strong>Not read</strong> — usually a scan (a picture of the page), which can't be read this way yet.
+          </li>
+        </ul>
+        <p>
+          <strong>Show the transactions</strong> lists them. A transaction already on the account on the same day for the
+          same amount — from an overlapping statement, or from the bank's CSV — isn't added again. It also warns if a statement
+          seems to be missing between two others, or if the account number printed on it doesn't end like this account's.{" "}
+          <strong>Bring in</strong> adds the ticked ones and files each PDF under the account.
+        </p>
+        <p>
+          It works by where the columns sit, not a template for each bank, so it should read most banks' statements saved from
+          internet banking — tried so far on layouts like Westpac, St.George, Macquarie and a credit card. If yours doesn't,
+          see <a href="#statement-layouts">Statement layouts</a>.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "statement-layouts",
+    title: "Statement layouts (helping the reader improve)",
+    keywords: "layout layouts record catalogue github private repository token key send share improve reader",
+    body: (
+      <>
+        <p>
+          Every PDF that comes in gets a <strong>layout record</strong>: for a statement, its column headings (only words
+          statements use — anything else shows as "[other]"), where the columns sit on the page, the date and amount formats,
+          and whether it read and added up, or the page and line where it didn't. For any other PDF, just its type, page
+          count and which common headings appear. A record <strong>never</strong> has a figure, a description, a name, an
+          account number or a transaction date. They're listed under <Link to="/settings#statement-layouts">Settings → Statement layouts</Link>;{" "}
+          <strong>Copy</strong> copies one to paste to Claude.
+        </p>
+        <p>
+          <strong>Sending them to your own private GitHub repository</strong>, once a day, saves copying them by hand.
+          It's off until you set it up, it only sends these records, and it checks GitHub says the repository is private
+          before sending anything. To set it up:
+        </p>
+        <ol>
+          <li>
+            Sign in at github.com. Press <strong>+</strong> (top right) → <strong>New repository</strong>. Name it, for
+            example, <em>financevault-layouts</em>. Choose <strong>Private</strong>. Press <strong>Create repository</strong>.
+          </li>
+          <li>
+            Press your picture (top right) → <strong>Settings</strong> → <strong>Developer settings</strong> (at the bottom of
+            the list) → <strong>Personal access tokens</strong> → <strong>Fine-grained tokens</strong> →{" "}
+            <strong>Generate new token</strong>.
+          </li>
+          <li>
+            Name it <em>Financial Vault layouts</em>. Under <strong>Repository access</strong> choose{" "}
+            <strong>Only select repositories</strong> and pick <em>financevault-layouts</em>.
+          </li>
+          <li>
+            Under <strong>Permissions</strong> → <strong>Repository permissions</strong>, set <strong>Contents</strong> to{" "}
+            <strong>Read and write</strong>. Leave everything else.
+          </li>
+          <li>
+            Press <strong>Generate token</strong> and copy it — GitHub only shows it once.
+          </li>
+          <li>
+            In Financial Vault: <strong>Settings → Statement layouts</strong>. Type the repository as{" "}
+            <em>your-github-name/financevault-layouts</em>, paste the key, press <strong>Save</strong>. It checks the
+            connection straight away.
+          </li>
+          <li>
+            Tick <strong>Send new records once a day</strong>.
+          </li>
+        </ol>
+        <p>
+          The key is stored encrypted and only works while the app is unlocked. When it expires (GitHub asks you to choose
+          when), make a new one the same way and paste it in. <strong>Remove the key</strong> stops sending.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "investments",
     title: "Shares, ETFs, crypto and managed funds",
     keywords: "parcel purchase buy sell sale dividend franking drp reinvestment price refresh yahoo coingecko",

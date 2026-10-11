@@ -1037,6 +1037,67 @@ export interface PurchaseStepView {
 
 export type EstimateField = "price" | "buyingCosts" | "rent" | "runningCosts" | "cashYear";
 
+export interface StatementSummary {
+  key: string;
+  filename: string;
+  documentId: string | null;
+  bank: string | null;
+  status: "ADDS_UP" | "DOESNT_ADD_UP" | "NOTHING_TO_CHECK" | "NOT_READ";
+  message: string;
+  period: { from: string; to: string } | null;
+  openingBalance: number | null;
+  closingBalance: number | null;
+  count: number;
+  moneyIn: number;
+  moneyOut: number;
+  newCount: number;
+  duplicates: number;
+  otherAccount: boolean;
+  alreadyRead: boolean;
+  problems: Array<{ page: number; line: number; detail: string | null }>;
+  unreadLines: number;
+  transactions: Array<{ date: string; description: string; amount: number; balance: number | null; isNew: boolean }>;
+  suggested: boolean;
+}
+
+export interface StatementBatch {
+  batchId: string;
+  statements: StatementSummary[];
+  warnings: string[];
+}
+
+export interface FiledStatement {
+  id: string;
+  name: string;
+  date: string | null;
+  filedHere: boolean;
+  alreadyRead: boolean;
+}
+
+export interface LayoutRecord {
+  id: string;
+  recordedOn: string;
+  appVersion: string;
+  kind: string;
+  issuer: string | null;
+  pages: number;
+  textLayer: boolean;
+  readerVersion: number;
+  result: string | null;
+  layout: unknown;
+  sentAt: string | null;
+}
+
+export interface LayoutShareStatus {
+  on: boolean;
+  repo: string | null;
+  hasKey: boolean;
+  lastSentAt: string | null;
+  error: string | null;
+  total: number;
+  unsent: number;
+}
+
 export type PackType = "broker" | "accountant" | "solicitor" | "due-diligence";
 
 export interface ProfessionalPack {
@@ -3151,6 +3212,30 @@ export const api = {
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `Failed: ${res.status}`);
       return res.json();
     },
+  },
+
+  statementImport: {
+    read: async (accountId: string, files: File[]): Promise<StatementBatch> => {
+      const form = new FormData();
+      form.append("accountId", accountId);
+      for (const f of files) form.append("files", f);
+      const res = await fetch(`${BASE}/statement-import/read`, { method: "POST", body: form });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `Failed: ${res.status}`);
+      return res.json();
+    },
+    filed: (accountId: string) => request<FiledStatement[]>(`/statement-import/filed?accountId=${encodeURIComponent(accountId)}`),
+    readFiled: (accountId: string, documentIds: string[]) =>
+      request<StatementBatch>("/statement-import/read-filed", { method: "POST", body: JSON.stringify({ accountId, documentIds }) }),
+    commit: (batchId: string, keys: string[]) =>
+      request<{ statements: number; imported: number; duplicates: number }>("/statement-import/commit", { method: "POST", body: JSON.stringify({ batchId, keys }) }),
+  },
+
+  layoutRecords: {
+    list: () => request<{ records: LayoutRecord[]; share: LayoutShareStatus }>("/layout-records"),
+    saveShare: (data: { on?: boolean; repo?: string | null; token?: string | null }) =>
+      request<LayoutShareStatus>("/layout-records/share", { method: "PUT", body: JSON.stringify(data) }),
+    check: () => request<{ ok: boolean; message: string }>("/layout-records/share/check", { method: "POST", body: "{}" }),
+    send: () => request<{ sent: number; error: string | null; share: LayoutShareStatus }>("/layout-records/share/send", { method: "POST", body: "{}" }),
   },
 
   vault: {

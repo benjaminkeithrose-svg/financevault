@@ -34,8 +34,10 @@ export function parseFeaturesOff(raw: string | null | undefined): string[] {
 async function respond(res: import("express").Response) {
   const settings = await getOrCreateSettings();
   const effectiveStorageDir = await getEffectiveStorageDir();
+  // The layout sharing key never leaves the server (Settings → Statement layouts shows whether one is saved).
+  const { layoutShareToken: _key, ...rest } = settings;
   res.json({
-    ...settings,
+    ...rest,
     featuresOff: parseFeaturesOff(settings.featuresOff),
     setupSkipped: parseKeys(settings.setupSkipped),
     effectiveStorageDir,

@@ -5,6 +5,7 @@ import { ThemePicker } from "../components/ThemePicker.js";
 import { FEATURES, setFeaturesOff } from "../features.js";
 import { ProgramUpdates } from "../components/ProgramUpdates.js";
 import { ReadableCopies } from "../components/ReadableCopies.js";
+import { StatementLayouts } from "../components/StatementLayouts.js";
 
 export function Settings() {
   const [settings, setSettings] = useState<SettingsType | null>(null);
@@ -261,6 +262,8 @@ export function Settings() {
         </a>
       </div>
 
+      <StatementLayouts />
+
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Data & privacy</h3>
         <ul style={{ color: "var(--text-muted)" }}>
@@ -275,6 +278,10 @@ export function Settings() {
             Everything else — balances, transactions, documents and their text — is stored unencrypted on this
             computer. The passcode stops people using the app; it doesn't stop someone with access to your files
             reading them directly.
+          </li>
+          <li>
+            Online, the installed program only asks GitHub once a day whether there's a new version — and, if you set it up
+            under Statement layouts, sends those layout records (never your figures) to your own private repository.
           </li>
         </ul>
       </div>

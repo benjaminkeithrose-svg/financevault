@@ -19,6 +19,8 @@ const SECRET_KEYS = new Set([
   "policynumber",
   "number",
   "referencenumber",
+  "token",
+  "layoutsharetoken",
 ]);
 
 export function scrubSecrets(value: unknown): unknown {

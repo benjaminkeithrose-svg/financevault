@@ -6,6 +6,7 @@ import { relinkMovedDocuments } from "./services/paths.js";
 import { ensureMonthlySnapshot } from "./services/monthlySnapshot.js";
 import { runMirror } from "./services/mirror.js";
 import { startDailyCheck } from "./services/onlineUpdate.js";
+import { startDailyLayoutShare } from "./services/layoutShare.js";
 import { saveCurrentProfitYear } from "./services/profitHistory.js";
 
 const PORT = Number(process.env.PORT) || 4000;
@@ -54,6 +55,8 @@ setInterval(profitYear, 6 * 60 * 60 * 1000).unref();
 // The installed program: once a day, is there a newer version on GitHub?
 // (Only asks; installing waits for "Download and install".)
 startDailyCheck();
+// If set up: once a day, layout records to the owner's own private GitHub repository.
+startDailyLayoutShare();
 
 // Loopback only. Listening on every interface (the old default) made the
 // whole database readable by anyone on the same Wi-Fi. Both IPv4 and IPv6

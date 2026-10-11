@@ -92,9 +92,9 @@ export function TransactionCsvImport({ accountId, onImported }: { accountId: str
     <div className="card">
       <h3 style={{ marginTop: 0 }}>Import transactions from CSV <HelpLink topic="banking" /></h3>
       <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
-        Export a date range from your bank's website as CSV and load it here. This is far more reliable than reading
-        transactions out of PDF statements. Nothing is written until you've seen the preview, and anything already
-        imported is skipped, so re-importing an overlapping range is safe.
+        Export a date range from your bank's website as CSV and load it here. Nothing is written until you've seen the
+        preview, and anything already imported is skipped, so re-importing an overlapping range is safe. For older
+        months your bank only has as PDF statements, use "Import transactions from PDF statements" below.
       </p>
 
       <input

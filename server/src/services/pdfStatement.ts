@@ -143,7 +143,15 @@ export function separate(t: Tok): Tok[] {
   let i = 0;
   // A leading date of up to three words ("12 Mar", "12 Mar 2024", "Mar 12").
   for (const n of [3, 2, 1]) {
-    if (ws.length > n && parseStatementDate(ws.slice(0, n).map((w) => w.text).join(" "))) {
+    if (
+      ws.length > n &&
+      parseStatementDate(
+        ws
+          .slice(0, n)
+          .map((w) => w.text)
+          .join(" "),
+      )
+    ) {
       out.push(slice(t, t.chars.indexOf(ws[0].chars[0]), t.chars.indexOf(ws[n - 1].chars.at(-1)!) + 1));
       i = n;
       break;
@@ -178,9 +186,25 @@ export function separate(t: Tok): Tok[] {
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 const monthOf = (s: string) => {
   const m = MONTHS.indexOf(s.slice(0, 3).toLowerCase());
-  return m >= 0 && /^[a-z]+\.?$/i.test(s) && (s.length <= 4 || MONTH_NAMES.some((n) => n.startsWith(s.toLowerCase().replace(".", "")))) ? m : -1;
+  return m >= 0 && /^[a-z]+\.?$/i.test(s) && (s.length <= 4 || MONTH_NAMES.some((n) => n.startsWith(s.toLowerCase().replace(".", ""))))
+    ? m
+    : -1;
 };
-const MONTH_NAMES = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", "sept"];
+const MONTH_NAMES = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+  "sept",
+];
 const fullYear = (y: string) => (y.length === 2 ? 2000 + Number(y) : Number(y));
 
 export interface DateParts {
@@ -196,7 +220,12 @@ export function parseStatementDate(raw: string): DateParts | null {
   const s = raw.trim().replace(/,/g, "");
   let m = /^(\d{1,2})([/.-])(\d{1,2})\2(\d{2}|\d{4})$/.exec(s);
   if (m) {
-    const parts = { day: Number(m[1]), month: Number(m[3]) - 1, year: fullYear(m[4]), format: `DD${m[2]}MM${m[2]}${m[4].length === 2 ? "YY" : "YYYY"}` };
+    const parts = {
+      day: Number(m[1]),
+      month: Number(m[3]) - 1,
+      year: fullYear(m[4]),
+      format: `DD${m[2]}MM${m[2]}${m[4].length === 2 ? "YY" : "YYYY"}`,
+    };
     return valid(parts) ? parts : null;
   }
   m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
@@ -206,12 +235,22 @@ export function parseStatementDate(raw: string): DateParts | null {
   }
   m = /^(\d{1,2})([ -])([A-Za-z]{3,9}\.?)(?:[ -](\d{2}|\d{4}))?$/.exec(s);
   if (m && monthOf(m[3]) >= 0) {
-    const parts = { day: Number(m[1]), month: monthOf(m[3]), year: m[4] ? fullYear(m[4]) : null, format: `DD${m[2]}Mon${m[4] ? `${m[2]}${m[4].length === 2 ? "YY" : "YYYY"}` : ""}` };
+    const parts = {
+      day: Number(m[1]),
+      month: monthOf(m[3]),
+      year: m[4] ? fullYear(m[4]) : null,
+      format: `DD${m[2]}Mon${m[4] ? `${m[2]}${m[4].length === 2 ? "YY" : "YYYY"}` : ""}`,
+    };
     return valid(parts) ? parts : null;
   }
   m = /^([A-Za-z]{3,9}\.?) (\d{1,2})(?: (\d{2}|\d{4}))?$/.exec(s);
   if (m && monthOf(m[1]) >= 0) {
-    const parts = { day: Number(m[2]), month: monthOf(m[1]), year: m[3] ? fullYear(m[3]) : null, format: `Mon DD${m[3] ? (m[3].length === 2 ? " YY" : " YYYY") : ""}` };
+    const parts = {
+      day: Number(m[2]),
+      month: monthOf(m[1]),
+      year: m[3] ? fullYear(m[3]) : null,
+      format: `Mon DD${m[3] ? (m[3].length === 2 ? " YY" : " YYYY") : ""}`,
+    };
     return valid(parts) ? parts : null;
   }
   return null;
@@ -266,7 +305,10 @@ export interface Column {
 }
 
 export function headingKind(text: string): ColumnKind | null {
-  const t = text.toLowerCase().replace(/\(\$\)|\$|\(aud\)|:/g, "").trim();
+  const t = text
+    .toLowerCase()
+    .replace(/\(\$\)|\$|\(aud\)|:/g, "")
+    .trim();
   if (!t || t.length > 40 || /\d{2}/.test(t)) return null;
   if (/\bdate\b|^posted$|^processed$|^when$/.test(t) && !/balance/.test(t)) return "date";
   if (/balance/.test(t)) return "balance";
@@ -449,9 +491,15 @@ interface Row {
 
 /** The statement period: two dates with years on a line that says "period" (or "from … to …"). */
 function findPeriod(lines: string[]): { from: Date; to: Date } | null {
-  const DATE_IN_TEXT = /(\d{1,2}(?:st|nd|rd|th)?[ -](?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?[ -](?:\d{4}|\d{2})|\d{1,2}[/.-]\d{1,2}[/.-](?:\d{4}|\d{2}))/gi;
+  const DATE_IN_TEXT =
+    /(\d{1,2}(?:st|nd|rd|th)?[ -](?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?[ -](?:\d{4}|\d{2})|\d{1,2}[/.-]\d{1,2}[/.-](?:\d{4}|\d{2}))/gi;
   const toDate = (s: string) => {
-    const p = parseStatementDate(s.replace(/(\d)(st|nd|rd|th)/i, "$1").replace(/-/g, s.includes("/") ? "-" : " ").replace(/\s+/g, " "));
+    const p = parseStatementDate(
+      s
+        .replace(/(\d)(st|nd|rd|th)/i, "$1")
+        .replace(/-/g, s.includes("/") ? "-" : " ")
+        .replace(/\s+/g, " "),
+    );
     return p && p.year ? new Date(Date.UTC(p.year, p.month, p.day)) : null;
   };
   const candidates: Array<{ from: Date; to: Date; score: number }> = [];
@@ -508,7 +556,9 @@ export function readStatement(buffer: Buffer, opts: { accountType?: string | nul
 export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { accountType?: string | null } = {}): StatementReading {
   const card = opts.accountType === "CREDIT_CARD";
   const allRows: Row[] = [];
-  pages.forEach((p, pi) => rowsOf(p.tokens).forEach((toks, li) => allRows.push({ page: pi + 1, line: li + 1, y: toks[0].y, toks: toks.flatMap(separate) })));
+  pages.forEach((p, pi) =>
+    rowsOf(p.tokens).forEach((toks, li) => allRows.push({ page: pi + 1, line: li + 1, y: toks[0].y, toks: toks.flatMap(separate) })),
+  );
   const lines = allRows.map((r) => r.toks.map((t) => t.text).join("  "));
   const text = lines.join("\n");
   const scanned = text.replace(/\s/g, "").length < 40;
@@ -535,7 +585,15 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
     bank: detectBank(lines.slice(0, 40).join("\n")) ?? detectBank(text),
     scanned,
     pageCount,
-    accountEndings: accountEndings(lines.slice(0, Math.max(1, allRows.findIndex((r) => findHeading(r.toks))))),
+    accountEndings: accountEndings(
+      lines.slice(
+        0,
+        Math.max(
+          1,
+          allRows.findIndex((r) => findHeading(r.toks)),
+        ),
+      ),
+    ),
     layout,
   };
   if (scanned) {
@@ -559,7 +617,19 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
 
   // --- Rows under each heading --------------------------------------------
   type Item =
-    | { type: "txn"; date: DateParts; desc: string[]; debit?: Amount; credit?: Amount; amount?: Amount; balance?: Amount; page: number; line: number; lastY: number; lineHeight: number }
+    | {
+        type: "txn";
+        date: DateParts;
+        desc: string[];
+        debit?: Amount;
+        credit?: Amount;
+        amount?: Amount;
+        balance?: Amount;
+        page: number;
+        line: number;
+        lastY: number;
+        lineHeight: number;
+      }
     | { type: "check"; kind: "opening" | "carried" | "closing"; balance: Amount; page: number; line: number };
   const items: Item[] = [];
   let columns: Column[] | null = null;
@@ -579,7 +649,9 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
   };
   const shape = (toks: Tok[]) =>
     toks
-      .map((t) => (parseStatementDate(t.text) ? "DATE" : parseStatementAmount(t.text) ? "AMOUNT" : /^[-–—]$/.test(t.text) ? "DASH" : "TEXT"))
+      .map((t) =>
+        parseStatementDate(t.text) ? "DATE" : parseStatementAmount(t.text) ? "AMOUNT" : /^[-–—]$/.test(t.text) ? "DASH" : "TEXT",
+      )
       .join(" ");
 
   const headingY = new Map<number, number>();
@@ -658,7 +730,7 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
       // "CR" or "DR" wrapped onto the line below its amount in a narrow column.
       if (/^(CR|DR)$/i.test(t.text) && t.x0 >= moneyStart - 6 && !amounts.length) {
         const above = pending ?? items.at(-1);
-        const target = above && above.page === row.page ? above.balance ?? (above.type === "txn" ? above.amount : undefined) : undefined;
+        const target = above && above.page === row.page ? (above.balance ?? (above.type === "txn" ? above.amount : undefined)) : undefined;
         if (target && !target.cr && !target.dr) {
           if (t.text.toUpperCase() === "CR") target.cr = true;
           else target.dr = true;
@@ -678,7 +750,13 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
 
     // Headings and totals.
     if (SPECIAL.total.test(words)) continue;
-    const special = SPECIAL.closing.test(words) ? "closing" : SPECIAL.carried.test(words) ? "carried" : SPECIAL.opening.test(words) && !anyMoney ? "opening" : null;
+    const special = SPECIAL.closing.test(words)
+      ? "closing"
+      : SPECIAL.carried.test(words)
+        ? "carried"
+        : SPECIAL.opening.test(words) && !anyMoney
+          ? "opening"
+          : null;
     if (special) {
       const b = bal ?? (amounts.length === 1 ? amounts[0].amount : undefined);
       if (b) items.push({ type: "check", kind: special, balance: b, page: row.page, line: row.line });
@@ -692,17 +770,46 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
       lastDate = date;
       if (!anyMoney) {
         // The money may be on the description's last line.
-        pending = { type: "txn", date, desc: words ? [words] : [], balance: bal, page: row.page, line: row.line, lastY: row.y, lineHeight: row.toks[0].size * 1.3 };
+        pending = {
+          type: "txn",
+          date,
+          desc: words ? [words] : [],
+          balance: bal,
+          page: row.page,
+          line: row.line,
+          lastY: row.y,
+          lineHeight: row.toks[0].size * 1.3,
+        };
         continue;
       }
       pending = null;
-      items.push({ type: "txn", date, desc: words ? [words] : [], debit: get("debit"), credit: get("credit"), amount: get("amount"), balance: bal, page: row.page, line: row.line, lastY: row.y, lineHeight: row.toks[0].size * 1.3 });
+      items.push({
+        type: "txn",
+        date,
+        desc: words ? [words] : [],
+        debit: get("debit"),
+        credit: get("credit"),
+        amount: get("amount"),
+        balance: bal,
+        page: row.page,
+        line: row.line,
+        lastY: row.y,
+        lineHeight: row.toks[0].size * 1.3,
+      });
       continue;
     }
     if (anyMoney) {
       if (pending) {
         const p: Item & { type: "txn" } = pending;
-        items.push({ ...p, desc: words ? [...p.desc, words] : p.desc, debit: get("debit"), credit: get("credit"), amount: get("amount"), balance: bal ?? p.balance, lastY: row.y });
+        items.push({
+          ...p,
+          desc: words ? [...p.desc, words] : p.desc,
+          debit: get("debit"),
+          credit: get("credit"),
+          amount: get("amount"),
+          balance: bal ?? p.balance,
+          lastY: row.y,
+        });
         layout.wrappedDescriptions = true;
         pending = null;
         continue;
@@ -710,7 +817,19 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
       if (lastDate) {
         // A bank that prints the date only on the first transaction of the day.
         layout.datesOnEveryRow = false;
-        items.push({ type: "txn", date: lastDate, desc: words ? [words] : [], debit: get("debit"), credit: get("credit"), amount: get("amount"), balance: bal, page: row.page, line: row.line, lastY: row.y, lineHeight: row.toks[0].size * 1.3 });
+        items.push({
+          type: "txn",
+          date: lastDate,
+          desc: words ? [words] : [],
+          debit: get("debit"),
+          credit: get("credit"),
+          amount: get("amount"),
+          balance: bal,
+          page: row.page,
+          line: row.line,
+          lastY: row.y,
+          lineHeight: row.toks[0].size * 1.3,
+        });
         continue;
       }
     }
@@ -762,7 +881,8 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
     if (a.minus) return { amount: card ? a.value : -a.value, ambiguous: false };
     return { amount: card ? -a.value : a.value, ambiguous: true };
   };
-  const balanceIn = (a: Amount, sense: "bank" | "owing") => (sense === "bank" ? (a.dr || a.minus ? -a.value : a.value) : a.cr || a.minus ? -a.value : a.value);
+  const balanceIn = (a: Amount, sense: "bank" | "owing") =>
+    sense === "bank" ? (a.dr || a.minus ? -a.value : a.value) : a.cr || a.minus ? -a.value : a.value;
 
   const attempt = (sense: "bank" | "owing") => {
     const d = sense === "bank" ? 1 : -1;
@@ -786,7 +906,13 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
         if (it === firstCheck) continue;
         if (running !== null) {
           checked++;
-          if (!near(running, b)) found.push({ page: it.page, line: it.line, kind: it.kind === "closing" ? "CLOSING_MISMATCH" : "BALANCE_MISMATCH", detail: `the statement says ${money(b)} but the transactions give ${money(running)}` });
+          if (!near(running, b))
+            found.push({
+              page: it.page,
+              line: it.line,
+              kind: it.kind === "closing" ? "CLOSING_MISMATCH" : "BALANCE_MISMATCH",
+              detail: `the statement says ${money(b)} but the transactions give ${money(running)}`,
+            });
         }
         running = b;
         continue;
@@ -804,7 +930,13 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
           // The balance printed on the line before was the one that was wrong; this one agrees with the transactions.
           running = b;
           checked++;
-          out.push({ date: date ?? new Date(0), description: it.desc.join(" ").replace(/\s+/g, " ").trim(), amount: round2(amount), balance: b, page: it.page });
+          out.push({
+            date: date ?? new Date(0),
+            description: it.desc.join(" ").replace(/\s+/g, " ").trim(),
+            amount: round2(amount),
+            balance: b,
+            page: it.page,
+          });
           continue;
         }
         if (!near(expected, b)) {
@@ -814,7 +946,12 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
             amount = -amount;
             signFromBalance = true;
           } else {
-            found.push({ page: it.page, line: it.line, kind: "BALANCE_MISMATCH", detail: `the balance printed is ${money(b)} but the transactions give ${money(expected)}` });
+            found.push({
+              page: it.page,
+              line: it.line,
+              kind: "BALANCE_MISMATCH",
+              detail: `the balance printed is ${money(b)} but the transactions give ${money(expected)}`,
+            });
             computed = expected;
           }
         } else checked++;
@@ -826,13 +963,26 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
         opening = round2(b - d * amount);
         running = b;
       }
-      out.push({ date: date ?? new Date(0), description: it.desc.join(" ").replace(/\s+/g, " ").trim(), amount: round2(amount), balance: b, page: it.page, ...(signFromBalance ? { signFromBalance } : {}) });
+      out.push({
+        date: date ?? new Date(0),
+        description: it.desc.join(" ").replace(/\s+/g, " ").trim(),
+        amount: round2(amount),
+        balance: b,
+        page: it.page,
+        ...(signFromBalance ? { signFromBalance } : {}),
+      });
     }
     if (closing === null && summaryClosing) {
       closing = balanceIn(summaryClosing, sense);
       if (running !== null) {
         checked++;
-        if (!near(running, closing)) found.push({ page: 1, line: 0, kind: "CLOSING_MISMATCH", detail: `the closing balance is ${money(closing)} but the transactions give ${money(running)}` });
+        if (!near(running, closing))
+          found.push({
+            page: 1,
+            line: 0,
+            kind: "CLOSING_MISMATCH",
+            detail: `the closing balance is ${money(closing)} but the transactions give ${money(running)}`,
+          });
       }
     }
     if (noYear) found.push({ page: 1, line: 0, kind: "NO_YEAR" });
@@ -881,7 +1031,11 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
     ...base,
     period: period ?? (txns.length ? { from: txns[0].date, to: txns.at(-1)!.date } : null),
     openingBalance: best.opening,
-    closingBalance: best.closing ?? (txns.length && best.opening !== null ? txns.reduce((s, t) => round2(s + (best.sense === "bank" ? 1 : -1) * t.amount), best.opening) : null),
+    closingBalance:
+      best.closing ??
+      (txns.length && best.opening !== null
+        ? txns.reduce((s, t) => round2(s + (best.sense === "bank" ? 1 : -1) * t.amount), best.opening)
+        : null),
     transactions: txns,
     status,
     message,
@@ -890,13 +1044,14 @@ export function readStatementPages(pages: PdfPage[], pageCount: number, opts: { 
   };
 }
 
-const money = (n: number) => `${n < 0 ? "−" : ""}$${Math.abs(n).toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const money = (n: number) =>
+  `${n < 0 ? "−" : ""}$${Math.abs(n).toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 /** Heading words for the layout record: only words statements use for headings; anything else is "[other]". */
 const HEADING_VOCAB = new Set(
   "date transaction transactions description details debit debits credit credits withdrawal withdrawals deposit deposits balance amount value money in out paid particulars narrative narration reference merchant posted processed when effective of the and value $ ($) (aud) aud".split(
-    " "
-  )
+    " ",
+  ),
 );
 export function headingWords(label: string): string {
   return label

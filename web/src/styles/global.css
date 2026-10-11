@@ -2964,3 +2964,46 @@ code.path {
 .pack-lines li + li {
   margin-top: 4px;
 }
+
+/* PDF statements on a bank account */
+.badge.success { background: var(--success-bg); color: var(--success); }
+.badge.warning { background: var(--warning-bg); color: var(--warning); }
+.warning-text { color: var(--warning); }
+
+.statement-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.statement-list > li {
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+
+.statement-list > li.unticked {
+  opacity: 0.7;
+}
+
+.statement-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.statement-list tr.dealt td {
+  color: var(--text-muted);
+}
+
+.layout-records td,
+.layout-records th {
+  white-space: nowrap;
+}
+
+/* Long descriptions wrap so the amount stays in view on a phone. */
+.statement-list td:nth-child(2) {
+  white-space: normal;
+  min-width: 140px;
+}

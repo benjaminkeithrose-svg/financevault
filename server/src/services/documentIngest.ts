@@ -10,6 +10,7 @@ import { getEffectiveStorageDir } from "./paths.js";
 import { redactTfns } from "./tfn.js";
 import { writeDocumentFile } from "./documentFiles.js";
 import { isTaxReference, nextReferenceCheck } from "./taxReference.js";
+import { recordLayout } from "./layoutRecords.js";
 
 export async function ensureFinancialYear(label: string | null) {
   if (!label) return null;
@@ -110,6 +111,9 @@ export async function ingestDocument(input: IngestInput): Promise<IngestResult> 
     documentId: document.id,
     data: { filename: document.originalFilename, confidence: classification.confidenceScore, source: input.source },
   });
+
+  // How it's laid out (never its contents) — in the background, so a big import isn't slowed.
+  void recordLayout({ buffer: input.buffer, mimeType: input.mimeType, kind: documentType });
 
   return { duplicate: false, document, classification };
 }

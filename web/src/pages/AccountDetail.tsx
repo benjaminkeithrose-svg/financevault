@@ -4,6 +4,7 @@ import { api, Account, Entity, Liability, TaxCategory } from "../api/client.js";
 import { AssetOwnershipPanel } from "../components/AssetOwnershipPanel.js";
 import { DocumentLinker } from "../components/DocumentLinker.js";
 import { TransactionCsvImport } from "../components/TransactionCsvImport.js";
+import { StatementPdfImport } from "../components/StatementPdfImport.js";
 import { formatCurrency, formatDate, humanize, confirmThenDelete } from "../utils.js";
 import { LoadFailed } from "../components/LoadFailed.js";
 import { DraftNotice, FormActions } from "../components/FormActions.js";
@@ -346,6 +347,8 @@ export function AccountDetail() {
       </div>
 
       <TransactionCsvImport accountId={account.id} onImported={load} />
+
+      <StatementPdfImport accountId={account.id} onImported={load} />
 
       <AssetOwnershipPanel kind="account" asset={account} entities={entities} onChange={load} />
 
