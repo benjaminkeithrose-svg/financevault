@@ -780,3 +780,29 @@ transactions automatically, and choosing and adjusting what goes into the
 pack. It all stays on the device.
 
 **Status:** idea only — not started.
+
+## 22. Automatic, encrypted backups (and maybe Supabase)
+
+**Why:** backups only happen when the button is pressed (Settings → Backup),
+and the database inside the backup ZIP isn't encrypted — only TFNs, account
+and policy numbers, and documents are. A backup left in Downloads can be read.
+
+**Options discussed (11 October 2026):**
+1. Keep as is — manual, readable ZIP.
+2. **Automatic encrypted backup to a folder you choose** (OneDrive, Google
+   Drive, a USB drive): once a day, locked with the passcode (and openable with
+   the recovery key), the last 30 kept. Off-site through OneDrive with no new
+   service. Recommended. Small–medium build.
+3. The same encrypted backup uploaded to Supabase storage (Sydney region).
+   Nobody can read it without the passcode. Needs a Supabase account and a key
+   in the app; the free plan is small and pauses idle projects, so likely the
+   paid plan (~US$25/month — check). Medium build.
+4. A live second database in Supabase. Always current, a step towards several
+   devices — but the records sit online readable unless each field is
+   encrypted (which removes most of the benefit), a big build, and two copies
+   to keep in step. Not recommended.
+
+2 and 3 can share one build: the encrypted backup is made once, and where it
+goes becomes a setting.
+
+**Status:** idea only — "not now" (11 October 2026).
