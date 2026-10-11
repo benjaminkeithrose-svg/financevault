@@ -1,0 +1,924 @@
+                                                                                               Taxation Ruling
+                    Australian
+                    Taxation                                                         TR 2000/2
+                    Office
+                                   FOI status: may be released                                    Page 1 of 19
+
+
+
+                                   Taxation Ruling
+                                   Income tax: deductibility of interest on
+                                   moneys drawn down under line of credit
+                                   facilities and redraw facilities
+
+Contents                    Para   Preamble
+What this Ruling is about      1   The number, subject heading, Class of person/arrangement, Date of
+Ruling                        12   effect and Ruling parts of this document are a ‘public ruling’ for the
+Date of effect                26
+                                   purposes of Part IVAAA of the Taxation Administration Act 1953 and
+                                   are legally binding on the Commissioner. The remainder of the
+Explanations                  27
+                                   document is administratively binding on the Commissioner. Taxation
+Alternative views             48   Rulings TR 92/1 and TR 97/16 together explain when a Ruling is a
+Examples                      53   public ruling and how it is binding on the Commissioner.
+Detailed contents list        74
+                                   What this Ruling is about
+                                   Class of person/arrangement
+                                   1.     This Ruling considers the deductibility of interest incurred by
+                                   borrowers on moneys drawn down under line of credit facilities and
+                                   moneys redrawn under other loans offering redraw facilities. It
+                                   considers the operation of section 8-1 of the Income Tax Assessment
+                                   Act 1997 (‘ITAA 1997’) (formerly subsection 51(1) of the Income Tax
+                                   Assessment Act 1936 (‘ITAA 1936’)) where the borrowed money
+                                   has been applied for both income producing and non-income
+                                   producing purposes.
+                                   2.      The cases cited in this Ruling that consider deductibility under
+                                   subsection 51(1) of the ITAA 1936 have equal application to section
+                                   8-1 of the ITAA 1997. All references to subsection 51(1) should be
+                                   taken as including a reference to section 8-1, and vice versa.
+                                   3.      This Ruling applies only to line of credit facilities as described
+                                   in paragraphs 4 to 8 below and redraw facilities as described in
+                                   paragraphs 8 to 11 below. This Ruling does not deal with facilities
+                                   that permit the capitalisation of interest or the applicability of the
+                                   ‘refinancing principle’ for funds borrowed by business partnerships as
+                                   discussed in Taxation Ruling TR 95/25.
+
+
+                                   Line of credit facilities
+                                   4.      A line of credit facility is a credit facility taken out with a
+                                   financial institution under which a borrower may draw down funds up
+                                   to an agreed credit limit. There are a number of different facilities
+                                   available. There may be one or more loan contracts and one or more
+Taxation Ruling
+
+TR 2000/2
+Page 2 of 19                                   FOI status: may be released
+
+
+borrowers. The line of credit may be fully drawn, i.e., the taxpayer
+borrows up to the credit limit, or partly drawn, i.e., the taxpayer draws
+only some of the funds leaving credit available to be utilised at a later
+date. If the facility is fully drawn the taxpayer can only draw further
+funds if payments in excess of interest, fees and charges are made into
+the facility. Where the facility is partly drawn the taxpayer can draw
+down further funds up to the credit limit without making repayments
+of principal.
+5.      The facility may operate with one account that is used for all
+draw downs. Funds may be drawn down from a single line of credit
+account up to the full amount of the available credit limit and may be
+used for either income producing or non-income producing purposes
+or both.
+6.      Alternatively, the facility may be divided into a number of
+sub-accounts by agreement between the lender and the borrower.
+Some financial institutions allow the sub-accounts to be held by
+different borrowers. Some sub-accounts may be used for income
+producing purposes (‘investment sub-account’) and others may be
+used for non-income producing purposes (‘private sub-account’).
+Some sub-accounts may be used for mixed income producing and
+non-income producing purposes (‘mixed purpose sub-account’).
+Funds may be drawn down from each sub-account up to an allocated
+portion of the overall credit limit.
+7.     While the focus of this ruling is on mixed purpose sub-
+accounts, the same principles apply to single line of credit accounts
+used for mixed purposes.
+8.       In most cases, the lender requires the borrower to make a
+minimum monthly payment equal to the interest, fees and charges that
+have accrued on the facility. A payment into that facility in excess of
+the interest, fees and charges, is a repayment of principal. Under these
+facilities, the borrower is able to make payments to reduce the amount
+owing under the line of credit account or sub-account at any time.
+Any payments over and above the required minimum payments for
+interest, fees and charges increase the funds available to the borrower
+to draw down, subject to the agreed credit limit for that account or
+sub-account. Where a taxpayer makes a payment over and above the
+required minimum payment, the taxpayer can direct this payment to
+be allocated to a particular sub-account.
+
+
+Redraw facilities
+9.     There are a number of loan arrangements under which a
+borrower may redraw previous repayments of the loan principal.
+There may be one or more loan contracts and one or more borrowers.
+The loan may be for income producing purposes, non-income
+                                                           Taxation Ruling
+
+                                                 TR 2000/2
+FOI status: may be released                                    Page 3 of 19
+
+
+
+producing purposes or mixed purposes. The lender prescribes a
+minimum payment that is due on the loan. This minimum payment is
+at least equal to the amount of interest, fees and charges that accrues
+on the loan, but more commonly is a principal and interest payment.
+10.      The redraw facility allows the borrower to make payments
+over and above the minimum payments required under the loan
+agreement, and then permits the borrower to redraw an amount
+equivalent to those payments in excess of interest, fees and charges at
+a later time. Those payments in excess of interest, fees and charges
+reduce the borrower’s outstanding loan debt and money redrawn
+increases the outstanding loan debt.
+11.     A taxpayer may use the money redrawn for income producing
+purposes, non-income producing purposes or mixed purposes
+regardless of the use of the original borrowed funds. In some cases
+the consent of the lender is required to redraw funds and the redraw
+may be subject to other conditions affecting the amount and frequency
+of redraws. Redraws may also be subject to the consent of the loan
+guarantors.
+
+Ruling
+Line of credit facilities
+12.     Where a line of credit facility is divided into sub-accounts and
+each sub-account is used for a specific purpose, interest is fully
+deductible where funds drawn down on an investment sub-account
+continue to be used exclusively for an income producing purpose.
+Interest is not deductible where funds drawn down on a private sub-
+account are used for a non-income producing purpose.
+13.      Where interest accrues periodically on the outstanding balance
+of a mixed purpose line of credit sub-account, the deductibility of
+accrued interest is determined by considering the application of the
+borrowed funds for income producing and non-income producing
+purposes. The original application of the borrowed funds will not
+determine deductibility where funds borrowed under a line of credit
+facility have been recouped or withdrawn from the original use and
+are reapplied to a new use, e.g., upon sale of an asset purchased with
+borrowed funds.
+14.     Where borrowed money applied to a particular use is recouped
+and redirected to another use, it is necessary to examine that new
+application of those borrowed funds in considering the deductibility of
+interest. Where there are changes in the use of money borrowed under
+a line of credit facility, or in the amount of borrowed money used for a
+particular purpose, the deductibility of the interest accrued on that part
+of the outstanding debt will be determined by considering the
+advantages sought from that new application of those funds. Interest
+Taxation Ruling
+
+TR 2000/2
+Page 4 of 19                                   FOI status: may be released
+
+
+will be deductible under section 8-1 to the extent that it is incurred on
+that part of the outstanding borrowed money used at that time for an
+income producing purpose.
+15.     Where a taxpayer has a mixed purpose sub-account, the
+interest needs to be apportioned between the income producing and
+non-income producing purposes. Apportionment must be made on a
+fair and reasonable basis. One approach that we accept as fair and
+reasonable in relation to the apportionment of interest that has accrued
+on a daily basis on a mixed purpose account is set out in the following
+paragraphs. We accept that this approach to apportionment is not the
+only approach that is fair and reasonable.
+16.     Where interest accrues daily under a mixed purpose sub-
+account, a taxpayer is entitled to a deduction in respect of that part of
+the interest that has accrued on the portion of the outstanding daily
+loan balance attributable to an income producing purpose. In
+calculating the portion of the outstanding daily loan balance
+attributable to an income producing purpose, any repayment of
+principal is applied proportionately against the outstanding balance of
+amounts applied to income producing and non-income producing
+purposes respectively, at the time the repayment is made. However,
+there are two exceptions.
+
+
+First Exception - Borrowed money recouped and repaid
+17.      Where money borrowed and applied to a particular use (the
+‘relevant use’) is recouped in whole or in part, in the sense that the
+amount or some part of it is recovered ( e.g., on the sale of an asset
+purchased with borrowed funds) that part of the outstanding balance
+of the mixed purpose line of credit debt which had been applied to the
+relevant use can no longer be regarded as continuing to be applied to
+that use. Where borrowed funds recouped are repaid to the mixed
+purpose sub-account in reduction of the outstanding balance, those
+funds have ceased to be outstanding funds used for any purpose. The
+effect of the repayment of the recouped funds to the mixed purpose
+sub-account is to reduce only that part of the outstanding line of credit
+debt applied to the previous use of those funds. The use of the
+balance of borrowed funds still outstanding is unaffected by the
+recoupment and repayment in these circumstances unless the amount
+of the sale proceeds paid into the mixed purpose sub-account exceeds
+the amount drawn down and applied to the relevant use (the ‘relevant
+debt portion’). This would occur, for example, where the asset is sold
+at a profit and part or all of the recouped borrowed funds and profit
+are paid into the mixed purpose sub-account. To the extent that the
+payment exceeds the relevant debt portion, such excess amount
+(i.e., the profit component) will be taken to have reduced prorata the
+amounts borrowed and applied to uses other than the relevant use.
+                                                              Taxation Ruling
+
+                                                 TR 2000/2
+FOI status: may be released                                      Page 5 of 19
+
+
+
+
+Second Exception - Refinancing mixed purpose debt
+18.     A taxpayer may choose to refinance a debt outstanding on a
+mixed purpose sub-account by borrowing an equivalent amount under
+two separate accounts or sub-accounts. If the sums borrowed under
+those two separate accounts are equivalent to the respective income
+producing and non-income producing parts of the existing outstanding
+debt, we accept that interest accrued on the debt incurred in
+refinancing the income producing portion of the mixed purpose debt
+will be deductible.
+
+
+Apportionment calculations
+19.      Where interest on borrowed money accrues daily, we accept
+that it would be unnecessarily onerous to require a manual daily
+apportionment calculation. We accept that the interest accrued in a
+month is deductible under section 8-1 where it is calculated using an
+apportionment approach based on the average outstanding principal
+used that month for income producing purposes. The deductible
+portion of interest accruing in each month is calculated as follows:
+
+
+      total interest accrued      X     deductible interest
+      for the month                     percentage figure
+
+
+20.    The deductible interest percentage figure is calculated as
+follows:
+            (A + B)
+                           x       100
+            (C + D)
+where
+A = opening balance (beginning of month) of outstanding principal
+used for income producing purposes;
+B = closing balance (end of month) of outstanding principal used for
+income producing purposes;
+C = opening balance of total outstanding principal;
+D = closing balance of total outstanding principal;
+Note: the closing balance for one month is the opening balance for
+the next month.
+21.    Where a taxpayer makes repayments over and above the
+required minimum payment and the line of credit facility comprises
+one mixed purpose sub-account only, the taxpayer cannot choose to
+Taxation Ruling
+
+TR 2000/2
+Page 6 of 19                                   FOI status: may be released
+
+
+notionally allocate the repayments to a particular portion of the total
+debt, e.g., the non-income producing portion.
+
+
+Redraw facilities
+22.    The deductibility of interest on a further borrowing of money
+under a redraw facility depends upon the use to which the redrawn
+funds are put.
+23.     Where the original borrowing is for non-income producing
+purposes and the taxpayer uses the redrawn funds wholly or partly for
+income producing purposes, that part of the accrued interest
+attributable to the redrawn funds used for income producing purposes
+is deductible.
+24.     Similarly, where the original borrowing is for income
+producing purposes and the taxpayer uses the redrawn funds wholly or
+partly for non-income producing purposes, that part of the accrued
+interest attributable to the redrawn funds used for non-income
+producing purposes is not deductible.
+25.     Where a taxpayer uses redrawn funds for a different purpose to
+the original borrowing in circumstances described in paragraphs 23
+or 24, the loan account becomes a mixed purpose account and the
+same principles discussed above in relation to mixed purpose line of
+credit sub-accounts will apply to the mixed purpose loan account.
+There is an ongoing need to apportion interest on a mixed purpose
+loan account. That apportionment needs to be made on a fair and
+reasonable basis. Subsequent repayments are apportioned between the
+outstanding debt used at that time for income producing and non-
+income producing purposes. However, the two exceptions for
+borrowed money recouped and repaid and for the refinancing of a
+mixed purpose debt, discussed above at paragraphs 17 and 18 in
+relation to mixed purpose line of credit sub-accounts, are equally
+applicable to mixed purpose loan accounts.
+
+
+Date of effect
+26.      This Ruling applies to years commencing both before and after
+its date of issue. However, the Ruling does not apply to taxpayers to
+the extent that it conflicts with the terms of settlement of a dispute
+agreed to before the date of issue of the Ruling (see paragraphs 21
+and 22 of Taxation Ruling TR 92/20).
+                                                          Taxation Ruling
+
+                                                TR 2000/2
+FOI status: may be released                                  Page 7 of 19
+
+
+
+
+Explanations
+27.     The nature of an interest expense was recently considered by
+the Full High Court in Steele v. DC of T 99 ATC 4242; 41 ATR 139.
+The Court said, at 99 ATC 4242 at 4248; (1999) 41 ATR 139 at 148,
+that:
+        ‘… interest is ordinarily a recurrent or periodic payment which
+       secures, not an enduring advantage, but, rather, the use of
+       borrowed money during the term of the loan. According to the
+       criteria noted by Dixon J in Sun Newspapers Ltd and
+       Associated Newspapers Ltd v FC of T it is therefore ordinarily
+       a revenue item.’
+28.     Although interest is ordinarily a revenue expense, it will only
+be deductible under subsection 8-1 if the expense can be characterised
+as an outgoing that is incurred in gaining or producing assessable
+income or is necessarily incurred in carrying on a business for the
+purpose of gaining or producing assessable income and must not
+otherwise be excluded from being deductible, e.g. an outgoing of a
+private or domestic nature.
+29.     The character of interest is determined by the purpose of the
+borrowing. Generally, the purpose of a borrowing can be determined
+from the use of borrowed funds and outgoings of interest ordinarily
+draw their character from that use (see Fletcher & Ors v. FC of T 91
+ATC 4950; (1991) 22 ATR 613). It is recognised that it may be
+appropriate to distinguish between the purpose of the taxpayer in
+borrowing the money and the use to which the borrowed funds are put
+in an appropriate case (see Steele v. DC of T 99 ATC 4242, at 4251;
+(1999) 41 ATR 139, at 150).
+30.      The term ‘use’ in this context does not necessarily require a
+strict tracing approach to the application of the borrowed money (see
+FC of T v. JD Roberts; FC of T v. Smith 92 ATC 4380; (1992) 23
+ATR 494). Rather, the characterisation of interest on borrowed
+money (and the purpose of the borrowing) is ascertained by reference
+to the advantages sought from the use of the borrowed funds. In
+Kidston Goldmines Ltd v. FC of T 91 ATC 4538 at 4545-6; (1991) 22
+ATR 168 at 176-7, Hill J. stated:
+       ‘In most cases, the purpose of the borrowing will be
+       ascertained from the use to which the borrowed funds were
+       put…
+       To be deductible the outgoing, or in a case of apportionment a
+       part of an indivisible outgoing, must be seen to be incidental
+       and relevant to the activity which is directed to the gaining or
+       production of assessable income. In the normal case, the fact
+       that funds borrowed have been borrowed for the purpose of
+Taxation Ruling
+
+TR 2000/2
+Page 8 of 19                                   FOI status: may be released
+
+
+        that activity and can still, in the year of income in which the
+        deduction is claimed, be seen as having that purpose, will lead
+        readily to the conclusion that the interest will be incidental and
+        relevant to the income producing activity. Again, in the usual
+        case the application of funds for an income producing purpose
+        will demonstrate the relevant connection between the outgoing
+        and the income producing activity. Indeed there is much to be
+        said for the view that the tests of purpose and application of
+        funds are but two sides of the one matter.’
+31.      However, the original purpose of the borrowing and use of the
+borrowed funds will not always determine the deductibility of interest.
+Where borrowed money has been used to purchase an income
+producing asset and that asset subsequently has been sold, the original
+use of that money will not necessarily determine the character of the
+interest expense accruing on those borrowed funds. In such a case the
+question of the deductibility of interest ‘… must be resolved by
+determining whether the essential character of the interest outgoings
+after the sale … was such that it can be said that those outgoings were
+incurred by the respondent in the course of the gaining or production
+of assessable income or, having regard to the business then carried on
+by it, they were necessarily incurred by the respondent in carrying on
+that business.’ (F.C. of T. v. Riverside Road Pty. Ltd. (in liq.) 90 ATC
+4567 at 4576; 21 ATR 499 at 509).
+32.     In some circumstances, for example where the loan contract
+imposes a continuing obligation to pay interest for a specified period,
+the sale of income producing assets purchased with those borrowed
+funds may not necessarily result in the immediate cessation of the
+relevant connection with the income earning activity. For example, in
+Riverside Road the Full Federal Court held at 90 ATC 4567 at 4576;
+(1990) 21 ATR 499 at 509 that:
+        ‘ It seems to us that it does not follow from De Bavay’s case…
+        that the mere fact that the land and buildings were sold
+        necessarily results in the conclusion that as and from the date
+        of sale the whole of the interest incurred was not deductible.
+        The respondent, pursuant to the contractual arrangements it
+        had entered into, was obliged … to pay interest until 1 May
+        1979. Had it sought to discharge its obligation to the
+        mortgagee, it could have been required to pay interest to this
+        date.’
+33.     In the circumstances of that case, the contractual obligation to
+pay interest for a fixed period meant that the sale of the assets did not
+alter the essential character of the interest payments incurred until that
+loan was discharged.
+34.    The deductibility of interest under the loan agreement
+considered by the Court in Riverside Road is distinguishable from the
+                                                             Taxation Ruling
+
+                                                  TR 2000/2
+FOI status: may be released                                     Page 9 of 19
+
+
+
+deductibility of interest under a line of credit facility.
+The observations of the Full Federal Court in FC of T v. Brown
+99 ATC 4600 at 4608; (1999) 43 ATR 1 at 10 provide support for this
+view. The Full Federal Court stated at 99 ATC 4608; 43 ATR 10 that:
+        ‘Had the loan agreement in question been a “roll over”
+        business loan facility which entitled the taxpayer conducting
+        the business, on the date of each monthly payment, to elect to
+        repay the principal and thereby avoid incurring liability for
+        interest or to “roll over” the loan and continue to be liable for
+        interest, that may have been a different situation. In that
+        circumstance there may be considerable force in the contention
+        that the occasion of the liability was the election to “roll over”
+        the loan on each monthly payment date, rather than any
+        liability arising under the terms of the original loan agreement
+        establishing the terms of the “roll over” facility. In such a case
+        the cessation of business or sale of the income-producing asset
+        acquired with the borrowed funds might properly be regarded
+        as breaking the nexus in much the same way as certain post
+        cessation interest payments were not allowed in Riverside
+        Road.’
+35.      While the Full Federal Court did not express a concluded view
+on this issue, their comments suggest that in determining the
+deductibility of interest under a ‘roll over’ debt facility, the ‘occasion’
+of the liability to pay interest was to be found in the circumstances
+concurrent with the accrual of the liability to pay interest which arose
+on each recurring monthly interest date.
+36.      We believe the same principle will apply to a line of credit
+facility where interest accrues daily and the outstanding debt can be
+repaid at any time. The obligation to pay interest under the terms of,
+and for the period of, the original borrowing can not be regarded as
+the ‘occasion’ of the interest liability which accrues in a subsequent
+period after a taxpayer has made an election not to repay the
+outstanding principal under a line of credit facility. A line of credit
+debt has a continuing opportunity for repayment which distinguishes it
+from the type of loan debt considered in Brown.
+37.    Where the funds borrowed under a line of credit remain
+outstanding, we believe the deductibility of interest is to be
+determined by considering the ongoing application of those borrowed
+funds. Interest is considered to be the cost of retaining the use of the
+outstanding line of credit funds in the period in which that interest
+accrues. Where borrowed funds are recouped from the sale of an
+income producing asset purchased with that money, the connection
+between the interest expense and the income producing use of that
+asset will be broken when the asset is sold. Interest on those borrowed
+funds will only be deductible after that time if it can be established
+Taxation Ruling
+
+TR 2000/2
+Page 10 of 19                                 FOI status: may be released
+
+
+that the accrued interest continues to be incurred in the course of
+deriving assessable income or in carrying on a business. For this to be
+the case under a line of credit, there would need to be a sufficient
+connection between the accrual of interest in a period and any new
+application for income producing purposes of those recouped
+borrowed funds. Deductibility of interest on those borrowed funds
+will be determined by a consideration of the advantages sought from
+that new use to which those funds are redirected.
+38.     Taxation Ruling TR 95/25 also outlines some general
+principles governing deductibility of interest.
+
+
+Further borrowings
+39.    Where a loan facility allows for redraws of extra repayments,
+we consider those redraws constitute new borrowings of funds that
+cannot be traced to the extra repayments. In this regard the term
+'redraw' is a misnomer. It is in effect a new borrowing of funds.
+Similarly, a draw down on a line of credit that has not been fully
+drawn is a new borrowing of funds.
+40.     In our view, it is not correct to characterise the reduced loan
+balance as comprising the previous loan balance with a notional offset
+credit available in respect of extra repayments as if those extra
+repayments were standing to the credit of the borrower in a separate
+account in the books of the lender. The extra repayments do not
+create a debt due by the lender to the borrower. Those funds used to
+make extra repayments simply cease to exist as an asset of the
+borrower after being used to discharge part of the loan debt. In our
+view, the redraw facility does not involve separate loan and deposit
+accounts of the type discussed in paragraphs 6 to 8 of TR 93/6.
+41.     In the case of a repayment of principal on a line of credit, the
+borrower acquires a contractual right to borrow a further amount equal
+to the difference between the reduced drawn-down amount and the
+available credit limit. That right to borrow further funds is a
+contractual right under the loan agreement permitting the borrower to
+draw down funds up to the agreed credit limit. The available credit is
+not an asset of the borrower and the available credit limit can be
+varied by the lender upon review.
+42.     Similarly, under a redraw facility, the loan agreement gives the
+borrower the right, subject to restrictions in some cases, to borrow a
+further amount up to the balance of the loan debt that would have been
+outstanding if the minimum loan repayments required under the loan
+agreement had been made. The extra repayments do not create a debt
+payable by the lender to the borrower and are not an asset of the
+borrower after they have been used to discharge part of the loan debt.
+                                                          Taxation Ruling
+
+                                                TR 2000/2
+FOI status: may be released                                 Page 11 of 19
+
+
+
+43.     We consider a draw-down from a line of credit account or sub-
+account, or a redraw from a loan account, is a separate borrowing.
+Therefore, the deductibility of the interest on that separate borrowing
+depends on whether the interest is incurred in gaining or producing
+assessable income or is necessarily incurred in carrying on a business
+for the purpose of gaining or producing assessable income. To the
+extent borrowings are used for income producing purposes, that part
+of the accrued interest attributable to those borrowings is deductible.
+Conversely, that part of the accrued interest attributable to borrowings
+used for non-income producing purposes is not deductible.
+44.     The balance outstanding on a mixed purpose line of credit sub-
+account or a mixed purpose loan account is an undivided single debt
+owed by the borrower to the lender. When repayments of principal
+are made, it is not considered possible to direct those payments to only
+that part of the borrowed funds used for a particular purpose as if it
+were a separate debt. While it may be possible to trace the uses to
+which different parts of the borrowed funds are put, it is considered
+repayments of principal need to be applied proportionately to reduce
+the balance of the outstanding principal attributable to income
+producing use and non-income producing use respectively, e.g., if
+70% of an outstanding line of credit sub-account debt is used for
+income producing purposes, 70% of any repayment would be in
+respect of that part of the outstanding debt. However, there are two
+exceptions.
+
+
+First Exception – Borrowed money recouped and repaid
+45.     Where money borrowed and applied to a particular use is
+recouped, e.g., on the sale of an asset purchased with borrowed funds,
+that part of the outstanding balance of the mixed purpose debt can no
+longer be regarded as applied to that use. Where the borrowed funds
+recouped are paid into the mixed purpose account or sub-account,
+those funds have ceased to be outstanding funds used for any purpose.
+The effect of the repayment of the recouped funds to the mixed
+purpose sub-account is to reduce only that part of the outstanding line
+of credit debt applied to the previous use of those funds. Example
+four, at paragraph 66 of this ruling, outlines the practical
+application of these principles.
+
+
+Second Exception – Refinancing mixed purpose debt
+46.    A taxpayer may choose to refinance a mixed purpose debt by
+borrowing an equivalent amount under two separate accounts or sub-
+accounts. Where a mixed purpose line of credit sub-account debt is
+replaced by two new debts and the advantage sought by these
+borrowings is the refinancing of the respective parts of the previous
+Taxation Ruling
+
+TR 2000/2
+Page 12 of 19                                 FOI status: may be released
+
+
+debt used at that time for income producing and non-income
+producing purposes, we consider that a strict tracing approach is not
+appropriate. It is relevant to bear in mind the comments of Dixon CJ.
+in Hallstroms Pty. Ltd. v. FC of T (1946) 72 CLR 634, cited with
+approval by Hill J in FC of T v. JD Roberts; FC of T v. Smith 92 ATC
+4380, at 4391; (1992) 23 ATR 494, at 507, that the question of
+characterisation depends on:
+        ‘… what the expenditure is calculated to effect from a practical
+        and business point of view, rather than upon the juristic
+        classification of legal rights…’
+47.     The sole purpose of the borrowing used to refinance money
+used at that time for income producing purposes is to continue to have
+the use of those funds for income producing purposes. Similarly, the
+sole purpose of the borrowing used to refinance money used at that
+time for non-income producing purposes is to continue to have the use
+of those funds for non-income producing purposes. Therefore, we
+accept that interest accrued on the debt incurred in refinancing the
+income related portion of the previous mixed purpose debt will be
+deductible.
+
+
+Alternative views
+48.     It has been suggested that if funds were originally borrowed
+for income producing purposes and there is no requirement to repay
+those funds, the occasion of the interest liability remains the income
+producing activities of the taxpayer. The decision in FC of T v. Brown
+99 ATC 4600; 43 ATR 1 is cited in support of this proposition.
+However, the comments made in that case in relation to ‘roll over’
+loan facilities support our view of the law outlined above.
+49.     It has also been suggested that funds withdrawn from a loan
+account or a line of credit account which can be attributed to the extra
+repayments made, simply represent a withdrawal of funds temporarily
+‘parked in the loan’. This view depends upon a characterisation of the
+extra repayments as effectively remaining an asset of the borrower,
+available to the borrower by virtue of the contractual right to redraw
+them. As discussed above, we believe this view is not correct. The
+extra repayments have been used to discharge part of the loan or line
+of credit debt and the subsequent redraw or draw down is funded by a
+subsequent increasing of the loan or line of credit debt. In our view,
+the redraw or draw down is a new borrowing of money. The
+deductibility of the interest payable on those new borrowings depends
+upon the advantages sought from the use of those funds.
+50.    It has been further suggested that the taxpayer can allocate a
+repayment to that portion of borrowed moneys used for a particular
+purpose. The decision in FC of T v. Carberry 88 ATC 5005; (1988)
+                                                         Taxation Ruling
+
+                                               TR 2000/2
+FOI status: may be released                                Page 13 of 19
+
+
+
+20 ATR 151, is cited in support of this view. In Carberry a husband
+and wife borrowed money to acquire undivided real estate comprising
+a private residence and a kindergarten business and premises. The
+taxpayers applied the proceeds of sale of a previous private residence
+towards the purchase of the new property. The proceeds from the sale
+of the previous residence exceeded the cost attributable to the
+purchase of the new residence. In the circumstances, the
+Administrative Appeals Tribunal held at first instance that the whole
+of the funds borrowed to finance the acquisition of the property was
+used by the partnership to purchase the kindergarten.
+51.     The decision in Carberry is relevant to establishing the
+original use of the borrowed funds. On the facts of that case it was
+open to the tribunal to conclude that the whole of the borrowed funds
+were applied to an income producing use. In reaching this conclusion,
+the Tribunal did not apply a strict tracing approach to the borrowed
+funds. However, as recognised by Davies J in that case on appeal to
+the Federal Court, an apportionment of interest would have been
+required if the Tribunal had found as a matter of fact that the
+borrowed funds had been applied to both income producing and
+private purposes.
+52.    The decision in Carberry is not inconsistent with the basis of
+apportionment outlined in this ruling in relation to cases involving
+borrowed funds applied to both income producing and non-income
+producing purposes.
+
+
+Examples
+Example one
+53.     Barry has a line of credit with the XYZ Bank. His credit limit
+is $100,000 and when that facility is established on 1 April he draws
+down $80,000 to invest in income producing shares. Barry's net
+salary of $4,000 per month is paid directly into the line of credit
+account on the last day of the month and interest and charges are
+debited on the same day. Barry redraws $2,000 per month on the first
+day of the month for living expenses. On 30 April, Barry makes a
+lump sum repayment of $20,000 from the proceeds of the sale of a
+private yacht, in addition to the $4,000 repayment from his salary. On
+1 June, Barry draws down a further $20,000 for home renovations, in
+addition to the $2,000 draw down for living expenses.
+Taxation Ruling
+
+TR 2000/2
+Page 14 of 19                                 FOI status: may be released
+
+
+Barry's transactions are summarised below:
+  Date      Borrowings Payments         Account      Income       Non-
+            and Interest                Balance      Portion     income
+                                                       (see      Portion
+                                                     below)        (see
+                                                                 below)
+1 Apr             80,000               80,000        80,000       NIL
+30 Apr              400    24,000      56,400        56,400       NIL
+1 May              2,000               58,400        56,400      2,000
+31 May              292      4,000     54,692        52,819      1,873
+1 Jun             22,000               76,692        52,819     23,873
+30 Jun              383      4,000     73,075        50,328     22,747
+
+
+54.    The repayments of $20,000 and $4,000 made on 30 April first
+pay the accrued interest of $400 and then reduce the outstanding
+principal used at that time for income producing purposes to $56,400.
+55.     The interest of $400 accrued in April is wholly attributable to
+borrowed funds used for income producing purposes and is therefore
+fully deductible.
+56.     The $4,000 repayment on 31 May first pays the accrued
+interest of $292 and then proportionately reduces the outstanding
+principal used at that time for income producing purposes and for non-
+income producing purposes. The proportionate reduction in the
+outstanding principal attributable to income producing purposes will
+be $3,708 x 56,400/58,400 = $3,581, giving a balance of the
+outstanding principal used for income producing purposes at that time
+of $52,819. The proportionate reduction of principal attributed to
+non-income producing purposes will be $3,708 x 2,000/58,400 =
+$127. The balance of the outstanding principal used for non-income
+producing purposes at that time, therefore, will be reduced by $127 to
+$1,873.
+57.    The interest of $292 accrued in May is related partly to the
+outstanding principal used that month for income producing purposes
+and partly to the outstanding principal used that month for non-income
+producing purposes. The amount of interest Barry can claim as a
+deduction for May is calculated as:
+                                                         Taxation Ruling
+
+                                                  TR 2000/2
+FOI status: may be released                                Page 15 of 19
+
+
+
+          292           x      Deductible interest
+                                  percentage
+
+         = 292          x     (56,400 + 52,819)      x     100
+                              (56,400 + 54,692)
+
+         = 292          x         98.3%
+
+         = 287
+Barry can claim a deduction of $287 for interest for the month of May.
+58.    The borrowings on 1 June of $20,000 for home renovations
+and $2,000 for living expenses were for non-income producing
+purposes. The outstanding principal used for non-income producing
+purposes at 1 June will, therefore, be $1,873 (see paragraph 33 above)
++ $22,000 = $23,873.
+59.     The $4,000 repayment on 30 June first pays the interest
+accrued that month of $383 and then proportionately reduces the
+outstanding principal used at that time for income producing purposes
+and for non-income producing purposes. The proportionate reduction
+in the outstanding principal used at that time for income producing
+purposes will be $3,617 x 52,819/76,692 = $2,491, giving a balance of
+the outstanding principal used at 30 June for income producing
+purposes of $50,328. The balance of the outstanding principal used
+for non-income producing purposes at 30 June will, therefore, be
+reduced by $1,126 to $22,747.
+60.    The interest of $383 accrued in June is related partly to the
+outstanding principal used that month for income producing purposes
+and partly to the outstanding principal used that month for non-income
+producing purposes. The amount of interest Barry can claim as a
+deduction for June is calculated as:
+          383           x      Deductible interest
+                                  percentage
+
+
+          =383          x     (52,819 + 50,328)      x   100
+                              (54,692 + 73,075)
+
+
+          =383          x         80.7%
+
+
+          =309
+Barry can claim a deduction of $309 for interest for the month of June.
+Taxation Ruling
+
+TR 2000/2
+Page 16 of 19                                 FOI status: may be released
+
+
+Example two
+61.    Bill is a computer programmer. He is offered a job in Darwin
+and decides to relocate his family there. He borrows $200,000 from
+the bank and purchases a house in Darwin. He makes the minimum
+monthly payment of $1650. After two years the balance on Bill's
+home loan is $186,000.
+62.     Bill receives a $50,000 windfall and decides to pay this money
+off his home loan. This reduces the balance to $136,000.
+63.    Bill is then offered a job in Perth. He decides to take the job
+and relocate his family. He decides to rent out the house in Darwin
+and borrow to purchase a new residential property in Perth. Bill
+redraws $50,000 from the Darwin loan and uses this as a deposit for
+the new home in Perth.
+64.     Bill can deduct the interest accrued on the outstanding loan
+principal of $136,000 that is related to the Darwin house from the date
+that property is available for rental. Those borrowed funds are used at
+that time for income producing purposes. As the new borrowing of
+$50,000 is used as a deposit on the residence in Perth, the interest on
+that borrowing will not be deductible as it is incurred for a non-
+income producing purpose.
+
+
+Example three
+65.     Rod has a mixed purpose line of credit debt comprising $5,000
+used for investments in income producing shares and $5,000 used for
+holidays. Rod refinances the income producing and non-income
+producing components of this mixed purpose debt with borrowings
+under two new line of credit sub-accounts. The interest accrued on
+the line of credit sub-account used solely to refinance the borrowed
+money used for investments in income producing shares will be fully
+deductible. The interest accrued on the line of credit sub-account used
+solely to refinance the borrowed money used for holidays will not be
+deductible.
+
+
+Example four
+66.     Bob has a mixed purpose line of credit sub-account debt of
+$30,000 with $20,000 applied to the purchase of a private vehicle and
+$10,000 applied to purchase income producing shares in company
+XYZ. Bob sells half the XYZ shares for $6,000 and pays that amount
+into the mixed purpose sub-account.
+67.   The debt outstanding after the repayment is related to the
+$20,000 applied to the purchase of the private vehicle and $5,000 of
+                                                            Taxation Ruling
+
+                                                  TR 2000/2
+FOI status: may be released                                   Page 17 of 19
+
+
+
+borrowed funds applied to purchase that half of the income producing
+XYZ shares still held by Bob.
+68.     The $5,000 of borrowed funds previously applied to purchase
+that half of the XYZ shares that were sold is no longer applied to that
+use after being recouped and repaid on the sale of those shares. The
+previously outstanding debt related to the XYZ shares is therefore
+reduced to $5,000 when that portion of the borrowed money recouped
+is repaid to the mixed purpose sub-account.
+69.     When the additional amount of $1,000 obtained from the sale
+of half the XYZ shares is paid into the mixed purpose sub-account, it
+is apportioned between the outstanding funds used for income
+producing and non-income producing purposes. That is, the payment
+into the mixed purpose sub-account of $1,000, in addition to that
+portion of the borrowed funds recouped on the sale of half the XYZ
+shares, reduces the outstanding debt applied to the XYZ shares still
+held by $200 to $4,800 and reduces the debt applied to the private
+vehicle by $800 to $19,200.
+
+
+Example five
+70.    All facts are the same as in example four except Bob sells all
+the XYZ shares for $8,000 and pays that amount into the mixed
+purpose sub-account.
+71.     For a line of credit, the deductibility of interest depends upon
+the continued use of borrowed funds for income producing purposes.
+After the sale of the XYZ shares, there are no longer any outstanding
+funds then used for income producing purposes. Therefore, there
+would be no deduction allowed for interest accruing on the
+outstanding line of credit debt after the sale of the XYZ shares.
+72.     The $22,000 outstanding after the sale of the shares and
+repayment of the sale proceeds, comprises $20,000 of borrowed funds
+that continue to be applied to the purchase of a private vehicle and
+$2,000 of borrowed funds still outstanding that was lost on the sale of
+the income producing shares. After the sale of those shares, the
+outgoing of interest on that $2,000 ceases to be for the purpose of
+retaining the use of those funds for income producing purposes.
+The interest incurred after the sale relates to financing the capital loss
+made on the sale of those shares. The connection with the previous
+income producing use of the funds invested in the XYZ shares is
+broken on the sale of those shares. The ‘occasion’ of the incurring of
+that interest is no longer the obligation to pay interest under the terms
+and conditions applicable to the previous period of the borrowing
+arrangement.
+Taxation Ruling
+
+TR 2000/2
+Page 18 of 19                                    FOI status: may be released
+
+
+73.     No deduction would be allowable under s 8-1 ITAA 1997 in
+respect of interest on the borrowed funds lost on the sale of the
+income producing XYZ shares.
+
+
+Detailed contents list
+74.      Below is a detailed contents list for this draft Ruling:
+                                                               Paragraph
+What this Ruling is about                                              1
+Class of persons/arrangement                                           1
+Line of credit facilities                                              4
+Redraw facilities                                                      9
+Ruling                                                                12
+Line of credit facilities                                             12
+   First Exception – Borrowed money recouped and repaid               17
+   Second Exception – Refinancing mixed purpose debt                  18
+   Apportionment calculations                                         19
+Redraw facilities                                                     22
+Date of effect                                                        26
+Explanations                                                          27
+Further borrowings                                                    39
+   First Exception – Borrowed money recouped and repaid               45
+   Second Exception – Refinancing mixed purpose debt                  46
+Alternative views                                                     48
+Examples                                                              53
+Example one                                                           53
+Example two                                                           61
+Example three                                                         65
+Example four                                                          66
+Example five                                                          70
+Detailed contents list                                                74
+                                                            Taxation Ruling
+
+                                                 TR 2000/2
+FOI status: may be released                                   Page 19 of 19
+
+
+
+
+Commissioner of Taxation
+1 March 2000
+
+Previous draft:                      -   Fletcher and Ors v. FC of T 91
+Previously issued in draft form as       ATC 4950; (1991) 22 ATR 613
+TR 1999/D3                           -   FC of T v. JD Roberts; FC of T v.
+                                         Smith 92 ATC 4380; (1992) 23
+Related Rulings/Determinations:          ATR 494
+TR 93/6; TR 95/25; TR 98/22          -   Kidston Goldmines Ltd v. FC of T
+                                         91 ATC 4538; (1991) 22 ATR 168
+Subject references:                  -   FC of T v. Riverside Road Pty. Ltd.
+- accrued interest                       (in liq.) 90 ATC 4567; (1990) 21
+- home loan interest expenses            ATR 499
+- interest expenses                  -   FC of T v. Brown 99 ATC 4600;
+- negative gearing                       (1999) 43 ATR 1
+- rental property loan interest      -   Hallstroms Pty. Ltd. v. FC of T
+   expenses                              (1946) 72 CLR 634
+                                     -   FC of T v. Carberry 88 ATC 5005;
+Legislative references:                  (1988) 20 ATR 151.
+- ITAA 36 51(1)
+- ITAA 97 8-1
+
+Case references:
+- Steele v. DC of T 99 ATC 4242;
+   (1999) 41 ATR 139
+
+ATO references:
+NO        98/11078-1
+BO
+FOI number: I 102018
+ISSN: 1039-0731
+
