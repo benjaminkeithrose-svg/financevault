@@ -1246,6 +1246,39 @@ model Settings {
   // mirrorDir null = the data folder's "Readable documents" folder.
   mirrorEnabled             Boolean   @default(true)
   mirrorDir                 String?
+  // Sending layout records (see LayoutRecord) to the owner's own private
+  // GitHub repository, once a day. Off until a repository and a key are set.
+  // The key is encrypted (fieldCrypto) and never returned by the API.
+  layoutShareOn             Boolean   @default(false)
+  layoutShareRepo           String?
+  layoutShareToken          String?
+  layoutShareLastAt         DateTime?
+  layoutShareError          String?
+}
+
+// ---------------------------------------------------------------------------
+// Layout records — how each PDF that comes in is laid out, to improve the
+// readers (bank statements especially). Never an amount, description, name,
+// account number or transaction date: for a statement, its column headings
+// (only words from a fixed list), where the columns sit, the date and amount
+// formats, and whether it read and added up — or where it didn't. For any
+// other PDF, its type, its page count and which of a fixed list of headings
+// appear. The file hash is only to avoid recording a file twice; it isn't
+// sent anywhere.
+// ---------------------------------------------------------------------------
+
+model LayoutRecord {
+  id            String    @id @default(cuid())
+  fileHash      String    @unique
+  createdAt     DateTime  @default(now())
+  kind          String // the document type, e.g. "Bank Statement"; "Unclassified PDF" if none
+  issuer        String? // a bank or the ATO, from a fixed list — never any other name
+  pages         Int
+  textLayer     Boolean
+  readerVersion Int
+  result        String? // statements: ADDS_UP | DOESNT_ADD_UP | NOTHING_TO_CHECK | NOT_READ
+  layout        String // JSON
+  sentAt        DateTime?
 }
 
 // ---------------------------------------------------------------------------
