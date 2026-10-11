@@ -56,3 +56,30 @@ describe("classification", () => {
     expect(result.entityId).toBe("e1");
   });
 });
+
+describe("statements with a table of transactions", () => {
+  // Cells run together, as the PDF text reader gives them.
+  const rows = [
+    "01/01/23OPENING BALANCE2,000.00",
+    "03/01/23DIRECT DEBIT AHM HEALTH INSURANCE 9988776665.731,934.27",
+    "05/01/23BPAY ORANGE CITY COUNCIL RATES412.001,522.27",
+    "09/01/23DEPOSIT SALARY ACME PTY LTD2,500.004,022.27",
+    "12/01/23EFTPOS WOOLWORTHS 1234 ORANGE45.203,977.07",
+    "15/01/23VISA DEBIT PURCHASE NRMA CAR INSURANCE88.103,888.97",
+    "31/01/23CLOSING BALANCE3,888.97",
+  ].join("\n");
+  const statement = (letterhead: string) => `${letterhead}\nStatement Period 01/01/2023 - 31/01/2023\nDATETRANSACTION DESCRIPTIONDEBITCREDITBALANCE\n${rows}`;
+
+  it("goes by what's above the table, not the transactions in it", () => {
+    expect(classifyDocument({ filename: "stmt.pdf", text: statement("Westpac Banking Corporation\nWestpac Choice"), entities: [] }).documentType).toBe("Bank Statement");
+    expect(classifyDocument({ filename: "stmt.pdf", text: statement("Westpac\nHome loan statement"), entities: [] }).documentType).toBe("Loan Statement");
+    expect(classifyDocument({ filename: "stmt.pdf", text: statement("Ray White Orange\nRental statement for 12 Smith St"), entities: [] }).documentType).toBe("Rental Statement");
+  });
+
+  it("leaves other documents as they were", () => {
+    const policy = "AHM Health Insurance\nYour policy schedule\nHospital and extras cover\nPremium $210.00 a month";
+    const kind = classifyDocument({ filename: "ahm.pdf", text: policy, entities: [] }).documentType;
+    expect(kind).not.toBe("Bank Statement");
+    expect(kind).toBeTruthy();
+  });
+});

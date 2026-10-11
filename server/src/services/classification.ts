@@ -1,4 +1,4 @@
-import { findDocumentTypeByKeyword } from "./documentTypes.js";
+import { DOCUMENT_TYPES, findDocumentTypeByKeyword } from "./documentTypes.js";
 import { financialYearLabelForDate } from "./financialYear.js";
 import { detectReferenceCode, isTaxReference } from "./taxReference.js";
 
@@ -124,6 +124,32 @@ export function financialYearLabelFromText(text: string): string | null {
   return null;
 }
 
+const MONTH = "jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec";
+const DATED_LINE = new RegExp(`^\\s*(\\d{1,2}[/.-]\\d{1,2}([/.-]\\d{2,4})?|\\d{1,2}[ -](${MONTH})|(${MONTH})[a-z]*\\.? \\d{1,2})`, "i");
+const MONEY = /\d\.\d{2}/;
+
+/**
+ * The line where a bank or card statement's table of transactions starts
+ * (its heading row: Date, then the money columns), or -1. Statements list
+ * transactions like "AHM HEALTH INSURANCE" or "ORANGE CITY COUNCIL RATES",
+ * so what kind of document it is has to come from above the table.
+ */
+export function transactionTableStart(text: string): number {
+  if (!/(opening|closing) balance|balance (brought|carried) forward|statement period/i.test(text)) return -1;
+  const lines = text.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i].toLowerCase();
+    if (!l.includes("date") || l.length > 140 || MONEY.test(l)) continue;
+    const columns = [/debit|withdrawal|money out|paid out/, /credit|deposit|money in|paid in/, /balance/, /amount/, /description|details|particulars|narrative|transaction/].filter(
+      (re) => re.test(l)
+    ).length;
+    if (columns < 2) continue;
+    const below = lines.slice(i + 1, i + 200);
+    if (below.filter((x) => DATED_LINE.test(x)).length >= 5 && below.filter((x) => MONEY.test(x)).length >= 5) return i;
+  }
+  return -1;
+}
+
 export function classifyDocument(input: ClassificationInput): ClassificationResult {
   const { filename, text, entities, folderPath } = input;
   // Real filenames separate words with underscores and hyphens
@@ -134,7 +160,13 @@ export function classifyDocument(input: ClassificationInput): ClassificationResu
   const haystack = `${folderPath ? normalisePath(folderPath) + "\n" : ""}${normalisePath(filename)}\n${text}`;
   let signals = 0;
 
-  const typeDef = findDocumentTypeByKeyword(haystack);
+  let typeDef = findDocumentTypeByKeyword(haystack);
+  const table = transactionTableStart(text);
+  if (table >= 0) {
+    // Only the part above the transactions says what it is (a loan or rental statement says so there); otherwise it's a bank statement.
+    const head = `${folderPath ? normalisePath(folderPath) + "\n" : ""}${normalisePath(filename)}\n${text.split("\n").slice(0, table).join("\n")}`;
+    typeDef = findDocumentTypeByKeyword(head) ?? DOCUMENT_TYPES.find((d) => d.name === "Bank Statement") ?? null;
+  }
   if (typeDef) signals++;
 
   // A ruling or guide is general — no owner, no amount, not a claim.

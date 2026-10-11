@@ -187,6 +187,14 @@ describe("bringing statements in on a bank account", () => {
     expect(await prisma.transaction.count({ where: { accountId: savings } })).toBe(24);
   });
 
+  it("files a statement uploaded through Documents as a bank statement, whatever its transactions mention", async () => {
+    const res = await agent
+      .post("/api/documents/upload")
+      .attach("file", pdf("stgeorge"), { filename: "stgeorge.pdf", contentType: "application/pdf" });
+    expect(res.status).toBeLessThan(300);
+    expect(res.body.document.documentType).toBe("Bank Statement");
+  });
+
   it("warns when a statement may be another account's", async () => {
     const card = (
       await post("/banking/accounts", {

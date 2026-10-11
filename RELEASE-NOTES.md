@@ -3,6 +3,9 @@
 Each version's notes are shown in the app straight after it's installed.
 Newest first.
 
+## 1.19.1 — 11 October 2026
+- A bank or credit card statement imported through Documents or Import a folder is filed as a Bank Statement, not as Insurance (or rates, or anything else its transactions happen to mention). What kind of document it is now comes from the top of the statement, above the transactions — so a loan or rental statement is still filed as one.
+
 ## 1.19.0 — 11 October 2026
 - Transactions from PDF statements: on a bank account's page, choose as many statement PDFs as you like (or ones already in Documents). Each is read and checked against the balances it prints before anything is saved — you see which add up, and where any don't. Transactions already on the account (from an overlapping statement or the bank's CSV) aren't added again, and each PDF is filed under the account.
 - Statement layouts (Settings): a record of how each PDF that comes in is laid out — never its figures, descriptions, names or account numbers — to help improve the reader. If you set it up, they're sent once a day to your own private GitHub repository.
