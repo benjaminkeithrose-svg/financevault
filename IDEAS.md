@@ -806,3 +806,39 @@ and policy numbers, and documents are. A backup left in Downloads can be read.
 goes becomes a setting.
 
 **Status:** idea only — "not now" (11 October 2026).
+
+## 23. Using Financial Vault on a Chromebook
+
+**Why:** to run the program on a Chromebook. ChromeOS itself only runs web
+apps and Android apps; the program runs on Linux, which a Chromebook can run
+(Settings → About ChromeOS → Developers → Linux development environment).
+
+**A. Install it in the Chromebook's Linux** (one release, moderate):
+- A Linux installer (`.deb`) beside the Windows Setup. It installs with a
+  double-click and appears in the Chromebook's launcher. Today the Linux
+  build (`desktop/build.mjs --linux`) is only an unpacked test folder.
+- Built for both Intel/AMD (x64) and ARM (arm64) Chromebooks — Electron and
+  the Prisma database engine for each (Prisma `binaryTargets`).
+- Updates: the update check downloads the Windows Setup today; on Linux it
+  would download the new installer and ask to open it (or use a
+  self-updating format such as AppImage).
+- GitHub builds the Linux installers alongside the Windows one each release.
+- Help: setting up Linux on the Chromebook, and "Share with Linux" on
+  Downloads / Google Drive so statements can be picked (Linux can't see
+  them otherwise). Moving records across: Download full backup on Windows,
+  Restore on the Chromebook.
+- To know: can't be tested on a real Chromebook here — the first install is
+  the test. School/work Chromebooks may have Linux switched off. 4 GB
+  Chromebooks will be slow at scanned documents and big statement batches.
+  No OneDrive on ChromeOS; Google Drive shared with Linux instead.
+
+**C. Use the Chromebook as a screen for the Windows PC** (no changes):
+Chrome Remote Desktop from the Chromebook to the PC running the program.
+Works today; the PC has to be on and online. (Letting the Chromebook's
+browser reach the PC's copy directly was ruled out: the program deliberately
+only answers its own computer.)
+
+**Not chosen:** B, a true ChromeOS web or Android app — rewriting the
+behind-the-scenes half of the program to run in the browser.
+
+**Status:** idea only (18 October 2026).
