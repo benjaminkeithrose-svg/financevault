@@ -842,3 +842,47 @@ only answers its own computer.)
 behind-the-scenes half of the program to run in the browser.
 
 **Status:** idea only (18 October 2026).
+
+## 24. A hosted website with a Supabase back end — add (and maybe view) from any device
+
+**Why:** to load things in from the Chromebook (or a phone, or any browser)
+and have them reach the Financial Vault on the PC, without installing anything
+on the Chromebook.
+
+**Preferred direction (owner, 19 October 2026):** if this is done, do it as a
+hosted website with a Supabase database behind it — signed in to from any
+browser.
+
+**In plain words:** a sign-in website for adding statements, receipts and quick
+notes ("Paid $420 to plumber, 12 Oct, rental"). Whatever is added is sent to
+the PC's Financial Vault the next time it's open and unlocked, and filed there
+as usual (statements through the statement reader; everything into To Review
+to confirm).
+
+**Levels discussed:**
+1. **Drop box (add only).** Sign in with email, password and a code from the
+   phone. Files and notes are encrypted in the browser with a key only the PC
+   holds, stored in Supabase, collected and unlocked by the PC, imported, then
+   deleted from Supabase. Nothing readable is ever online; the PC stays the
+   only full copy. Moderate build. Can't *view* records from the website.
+2. **Drop box + read-only view.** The PC also uploads an encrypted summary
+   (net worth, balances, reminders, recent transactions) that the website
+   unlocks in the browser with the passcode, to *see* where things stand.
+   Changes still happen on the PC. Medium–large build.
+3. **Full two-way sync.** The whole app on the website and the PC, both
+   editing the same records through Supabase. Very large build (a web version
+   of the whole app, plus keeping two copies in step); records online and
+   readable unless every field is encrypted.
+
+**Notes:**
+- The website holds no secrets, so it can be hosted cheaply or free (e.g.
+  GitHub Pages, or a host like Vercel/Netlify); Supabase provides sign-in,
+  storage and the database (Sydney region available).
+- Supabase's free plan suits level 1 (files only pass through), but idle
+  projects pause after about a week — may need waking, or the paid plan
+  (~US$25/month, check).
+- Shares the Supabase account, keys and encryption with idea 22 (encrypted
+  backups to Supabase), so the two fit together.
+- Changes the "nothing goes online" rule (owner's call).
+
+**Status:** idea only (19 October 2026).
