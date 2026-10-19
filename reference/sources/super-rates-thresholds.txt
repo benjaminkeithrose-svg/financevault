@@ -1,0 +1,3283 @@
+                                                  Print whole section
+
+
+
+Key super rates and thresholds
+Rates and thresholds apply to contributions, employment
+termination payments, super guarantee and co-
+contributions.
+
+Last updated 27 August 2025
+
+
+
+
+   Contributions caps
+   Contributing more than the caps to your super may mean having
+   to pay extra tax.
+
+
+
+
+   Division 293 tax
+   Division 293 tax may reduce the tax concession on super
+   contributions for individuals.
+
+
+
+
+   Payments from super
+   What you need to be aware of when receiving payments from
+   your super.
+
+
+
+
+   Super income stream tax tables
+   A summary of the taxation of a super income stream paid with an
+   element taxed and untaxed in the fund.
+  Employment termination payments
+  Find out what an employment termination payment (ETP) is and
+  what the cap amounts are.
+
+
+
+
+  Super guarantee
+  Find out about the rates and the maximum contribution base.
+
+
+
+
+  Government contributions
+  You may be eligible for the government's super co-contribution.
+
+
+
+
+  Transfer balance cap
+  Find out about the limit on the total amount of superannuation
+  that can be transferred into the retirement phase.
+
+
+
+
+  Division 296 tax thresholds and interest
+  Division 296 reduces tax concessions for people with total super
+  balances exceeding the large super balance threshold.
+
+
+
+
+  Other super rates and thresholds
+  Find out about what other super rates and thresholds you need
+  to be aware of.
+
+
+
+
+QC 18123
+
+
+
+Contributions caps
+Contributing more than the caps to your super may mean
+having to pay extra tax.
+Last updated 11 September 2026
+
+
+
+
+Concessional contributions cap
+Concessional contributions include:
+
+   employer contributions (including contributions made under a salary
+   sacrifice arrangement)
+
+   personal contributions claimed as a tax deduction.
+
+If you have more than one fund, all concessional contributions made to
+all of your funds are added together and counted towards your
+concessional contributions cap.
+
+General concessional contributions cap
+From 1 July 2026, the general concessional contributions cap is
+$32,500 as a result of indexation in line with average weekly ordinary
+time earnings (AWOTE).
+
+From:
+
+   1 July 2024 to 30 June 2026, the general concessional
+   contributions cap was $30,000.
+
+   1 July 2021 to 30 June 2024, the general concessional contributions
+   cap was $27,500.
+
+   1 July 2017 to 30 June 2021, the general concessional contributions
+   cap was $25,000.
+
+From the 2017–18 financial year, the general concessional
+contributions cap isn't calculated based on age.
+
+
+Table 1.1: Concessional contributions caps
+
+                                 Your age
+  Income                                        Your concessional
+                  Date             at this
+  year                                           contribution cap
+                                     date
+
+
+  2026–27         n/a             All ages                  $32,500
+
+  2025–26         n/a             All ages                  $30,000
+  2024–25       n/a             All ages                  $30,000
+
+  2023–24       n/a             All ages                  $27,500
+
+  2022–23       n/a             All ages                  $27,500
+
+  2021–22       n/a             All ages                  $27,500
+
+  2020–21       n/a             All ages                  $25,000
+
+  2019–20       n/a             All ages                  $25,000
+
+  2018–19       n/a             All ages                  $25,000
+
+  2017–18       n/a             All ages                  $25,000
+
+  2016–17       30 June             <49                   $30,000
+                2016
+
+  2016–17       30 June             49+                   $35,000
+                2016
+
+  2015–16       30 June             <49                   $30,000
+                2015
+
+  2015–16       30 June             49+                   $35,000
+                2015
+
+  2014–15       30 June             <49                   $30,000
+                2014
+
+  2014–15       30 June             49+                   $35,000
+                2014
+
+  2013–14       30 June             <59                   $25,000
+                2013
+
+  2013–14       30 June             59+                   $35,000
+                2013
+
+Excess concessional contributions are the amount of concessional
+contributions you make over your cap in a financial year.
+From 2013–14 onwards, the excess contributions are included as
+'taxable income' and taxed at the marginal tax rate.
+
+
+Table 1.2: Concessional contributions caps for 2012–13
+and earlier years
+
+                                Your age
+  Income                                        Your concessional
+                Date              at this
+  year                                           contribution cap
+                                    date
+
+
+  2012–13       n/a               All ages                  $25,000
+
+  2011–12       30 June              <50                    $25,000
+                2012
+
+  2011–12       30 June              +50                    $50,000
+                2012
+
+  2010–11       30 June              <50                    $25,000
+                2011
+
+  2010–11       30 June              +50                    $50,000
+                2011
+
+  2009–10       30 June              <50                    $25,000
+                2010
+
+  2009–10       30 June              +50                    $50,000
+                2010
+
+  2008–09       30 June              <50                    $50,000
+                2009
+
+  2008–09       30 June              +50                   $100,000
+                2009
+
+  2007–08       30 June              <50                    $50,000
+                2008
+
+  2007–08       30 June              +50                   $100,000
+                2008
+
+
+For 2012–13 and earlier financial years, excess concessional
+contributions were taxed at 46.5% (15% levied in the super fund, with
+an additional 31.5% payable).
+
+
+Unused concessional cap carry forward
+From 1 July 2018, if you have a total superannuation balance of less
+than $500,000 on 30 June of the previous financial year, you may be
+entitled to contribute more than the general concessional
+contributions cap and make additional concessional contributions for
+any unused amounts.
+
+The first year you will be entitled to carry forward unused amounts is
+the 2019–20 financial year. Unused amounts are available for a
+maximum of 5 years, after which they will expire. For example, a 2019–
+20 unused cap amount that isn't used by the end of 2024–25 financial
+year will expire.
+
+
+Table 2: Unused concessional cap carry forward
+
+                        2017–
+  Description                       2018–19       2019–20       2020–
+                           18
+
+
+  General             $25,000        $25,000       $25,000       $25,0
+  contributions
+  cap
+
+  Total unused              n/a           $0       $22,000       $44,0
+  available cap
+  accrued
+
+  Maximum cap         $25,000        $25,000       $47,000       $25,0
+  available
+
+  Superannuation            n/a    $480,000      $490,000       $505,0
+  balance
+  30 June prior
+  year
+
+  Concessional              nil       $3,000        $3,000
+  contributions
+
+  Unused                    $0      $22,000        $22,000       $25,0
+  concessional
+  cap amount
+  accrued in the
+  relevant
+  financial year
+
+
+Higher concessional contributions cap for the
+2013–14 and later financial years
+The concessional contributions cap was temporarily increased to
+$35,000:
+
+  for the 2013–14 financial year if you were aged 59 years or over on
+  30 June 2013
+
+  from the 2014–15 to the 2016–17 financial years if you were aged
+  49 years or over on the last day of the previous financial year.
+
+
+Higher concessional contributions cap for the
+2012–13 year
+For the 2012–13 financial year, the higher concessional contributions
+cap was equal to the general concessional contributions cap of
+$25,000.
+
+
+Higher concessional contributions cap for the 2011–
+12 and earlier financial years
+An increased concessional contributions cap applied until 30 June
+2012 for people aged 50 years or over:
+
+  If you were 50 years or over, your annual cap for the 2007–08 and
+  2008–09 financial years was $100,000.
+
+  If you were 50 years or over, your annual cap for the 2009–10,
+  2010–11 and 2011–12 financial years was $50,000.
+
+
+Excess concessional contribution charge
+The excess concessional contributions (ECC) charge is applied to the
+additional income tax liability that comes from including excess
+concessional contributions in your income tax return as 'taxable
+income'.
+
+Individuals who make contributions on or after 1 July 2021 that exceed
+their cap, will no longer be liable to pay the ECC charge.
+The ECC charge period was previously calculated from the start of the
+income year in which the excess concessional contributions were
+made and ends the day before the tax is due to be paid under your
+first income tax assessment for that year.
+
+The intent of the ECC charge is to acknowledge that the tax is
+collected later than normal income tax.
+
+The charge is:
+
+  payable for the year you make excess concessional contributions
+
+  applies from the 2013–14 financial year until the 2020–21 financial
+  year.
+
+The formula for calculating the ECC charge used a base interest rate
+for the day plus an uplift factor of 3%. The base interest rate is the
+monthly average yield of 90-day Bank Accepted Bills published by the
+Reserve Bank of Australia.
+
+This compounding interest formula was applied against the base
+amount (the additional income tax liability) for each day of the ECC
+charge period.
+
+The ECC charge rates prior to 1 July 2021 were updated quarterly and
+are listed in the following table.
+
+
+Table 3: Excess concessional contribution charge rates
+
+                                 Annual
+  Quarter                                                  Daily rate
+                                   rate
+
+
+  July – September                 7.43%      0.020356164383562%
+  2026
+
+  April – June 2026                6.96%      0.019068493150685%
+
+  January – March 2026             6.65%        0.018219178082191%
+
+  October – December               6.61%       0.018109589041095%
+  2025
+
+  July – September                 6.78%      0.018575342465753%
+  2025
+April – June 2025      7.17%   0.019643835616438%
+
+January – March 2025   7.42%   0.020328767123288%
+
+October – December     7.38%   0.020163934426230%
+2024
+
+July – September       7.36%   0.020109289617486%
+2024
+
+April – June 2024      7.34%   0.020054644808743%
+
+January – March 2024   7.38%   0.020163934426230%
+
+October – December     7.15%   0.019589041095890%
+2023
+
+July – September       6.90%   0.018904109589041%
+2023
+
+April – June 2023      6.46%   0.017698630136986%
+
+January – March 2023   6.06%   0.016602739726027%
+
+October – December     5.31%   0.014547945205480%
+2022
+
+July – September       4.00%   0.010958904109589%
+2022
+
+April – June 2022      3.07%   0.008410958904110%
+
+January – March 2022   3.04%   0.008328767123288%
+
+October – December     3.01%   0.008246575342466%
+2021
+
+July – September       3.04%   0.008328767123288%
+2021
+
+April – June 2021      3.01%   0.008246575342466%
+
+January – March 2021   3.02%   0.008273972602739%
+October – December     3.10%   0.008469945355191%
+2020
+
+July – September       3.10%   0.008469945355191%
+2020
+
+April – June 2020      3.89%   0.010628415300546%
+
+January – March 2020   3.91%   0.010683060109290%
+
+October – December     3.98%   0.010904109589041%
+2019
+
+July – September       4.54%   0.012438356164384%
+2019
+
+April – June 2019      4.96%   0.013589041095890%
+
+January – March 2019   4.94%   0.013534246575342%
+
+October – December     4.96%   0.013589041095890%
+2018
+
+July – September       4.96%   0.013589041095890%
+2018
+
+April – June 2018      4.77%   0.013068493150685%
+
+January – March 2018   4.72%   0.012931506849315%
+
+October – December     4.70%   0.012876712328767%
+2017
+
+July – September       4.73%   0.012958904109589%
+2017
+
+April – June 2017      4.78%   0.013095890410959%
+
+January – March 2017   4.76%   0.013041095890411%
+
+October – December     4.76%   0.013005464480874%
+2016
+  July – September                 5.01%      0.013688524590164%
+  2016
+
+  April – June 2016               5.28%       0.014426229508197%
+
+  January – March 2016            5.22%       0.014262295081967%
+
+  October – December               5.14%      0.014082191780822%
+  2015
+
+  July – September                 5.15%      0.014109589041096%
+  2015
+
+  April – June 2015               5.36%       0.014684931506849%
+
+  January – March 2015            5.75%       0.015753424657534%
+
+  October – December              5.63%       0.015424657534247%
+  2014
+
+  July – September                5.69%       0.015589041095890%
+  2014
+
+  April – June 2014               5.63%       0.015424657534247%
+
+  January – March 2014            5.59%       0.015315068493151%
+
+  October – December              5.60%      0.015342465753425%
+  2013
+
+  July – September                5.82%       0.015945205479452%
+  2013
+
+
+For more information, see Caps, limits and tax on super contributions.
+
+
+Non-concessional contributions cap
+Non-concessional contributions include personal contributions for
+which you don't claim or haven't been allowed to claim as an 'income
+tax deduction'.
+
+If you have more than one fund, all non-concessional contributions
+made to all of your funds are added together and counted towards the
+non-concessional contributions cap.
+Table 4: Non-concessional
+contributions cap
+
+ Income year        Amount of cap
+
+
+ 2026–27        $130,000 see Note 1
+
+
+ 2025–26       $120,000, see Note 1
+
+
+ 2024–25        $120,000 see Note 1
+
+
+ 2023–24        $110,000 see Note 1
+
+
+ 2022–23        $110,000 see Note 1
+
+ 2021–22        $110,000 see Note 1
+
+
+ 2020–21        $100,000 see Note 1
+
+ 2019–20        $100,000 see Note 1
+
+
+ 2018–19        $100,000 see Note 1
+
+
+ 2017–18        $100,000 see Note 1
+
+
+ 2016–17                  $180,000
+
+ 2015–16                  $180,000
+
+ 2014–15                  $180,000
+
+ 2013–14                  $150,000
+
+ 2012–13                  $150,000
+
+ 2011–12                  $150,000
+
+ 2010–11                  $150,000
+
+ 2009–10                  $150,000
+  2008–09                         $150,000
+
+  2007–08                         $150,000
+
+Note 1: The non-concessional cap for an income year is a multiple of
+the concessional contributions cap.
+
+From 1 July 2017, your non-concessional cap is nil for a financial year if,
+at the end of the previous financial year, you have a total
+superannuation balance greater than or equal to the general transfer
+balance cap. In this case, if you make non-concessional contributions
+in that year, they will be excess non-concessional contributions.
+
+Note: The general transfer balance cap is $2 million from 1 July 2025.
+
+From:
+
+  1 July 2025 to 30 June 2026, the general transfer balance cap was
+  $2 million.
+
+  1 July 2023 to 30 June 2025, the general transfer balance cap was
+  $1.9 million.
+
+  1 July 2021 to 30 June 2023, the general transfer balance cap was
+  $1.7 million.
+
+  1 July 2017 to 30 June 2021, the general transfer balance cap was
+  $1.6 million.
+
+From the 2022–23 financial year if you are under 75 years old (for the
+2020–21 and 2021–22 financial years, the age restriction was 67 and
+for years before that, the age restriction was 65), you may be able to
+make non-concessional contributions of up to 3 times the annual non-
+concessional contributions cap in a single year. If eligible, when you
+make contributions greater than the annual cap, you automatically gain
+access to future year caps. This is known as the ‘bring-forward’ option.
+
+If you enter a bring-forward arrangement in either the 2012–13 or
+2013–14 financial year you will have a $450,000 cap over 3 years;
+however, in the 2014–15 financial year, your bring-forward cap is
+$540,000.
+
+From 1 July 2017, the bring-forward amount and period depends on
+your total superannuation balance on the day before the financial year
+contributions that trigger the bring forward.
+Transitional period transitional arrangements apply if you triggered a
+bring forward in either the 2015–16 or 2016–17 financial years. If you
+have triggered a bring forward before 1 July 2017 and you have not
+fully used your bring-forward cap before 1 July 2017, your cap was
+reassessed on 1 July 2017 to reflect your new annual cap.
+
+During the transitional periods, contributions made prior to 1 July 2017
+will affect your total non-concessional contributions capacity over the
+following 2 years.
+
+Associated earnings rate (for excess non-
+concessional contributions)
+Individuals have the option of electing to release non-concessional
+superannuation contributions made from 1 July 2013 which are in
+excess of the non-concessional contributions cap for 2013–14 and
+future financial years.
+
+An associated earnings amount is calculated to approximate the
+amount earned while excess non-concessional contributions were held
+in the superannuation fund. This is included in the individual’s
+assessable income.
+
+
+Table 5: Associated earnings rates
+
+  Income               Annual           Associated earnings rate /
+  year                   rate                           daily rate
+
+
+  2025–26               10.75%                          0.02945205%
+
+  2024–25               11.33%                           0.03104110%
+
+  2023–24                11.19%                         0.03057377‬%
+
+  2022–23                9.46%                          0.02591781%
+
+  2021–22                7.04%                          0.01928767%
+
+  2020–21                7.06%                          0.01934247%
+
+  2019–20                8.08%                          0.02207650%
+
+  2018–19                8.96%                          0.02454795%
+  2017–18                8.73%                          0.02391780%
+
+  2016–17                8.83%                           0.02419178%
+
+  2015–16                9.20%                          0.02513661%
+
+  2014–15                9.61%                          0.02632876%
+
+  2013–14                9.66%                          0.02646575%
+
+
+Transitional arrangement for the non-concessional
+contributions cap between 10 May 2006 and 30
+June 2007
+Between 10 May 2006 and 30 June 2007, you could contribute up to
+$1 million of non-concessional contributions to your super fund. This
+limit was referred to as the 'transitional non-concessional contributions
+cap'.
+
+If you had more than one fund, all non-concessional contributions
+made to all your funds were added together and counted towards the
+cap.
+
+However, the following contributions were excluded from the $1 million
+transitional non-concessional contributions cap:
+
+  contributions arising from personal injury payments
+
+  up to $1 million of contributions derived from the disposal of certain
+  small business assets – these contributions were subject to the
+  capital gains tax (CGT) cap.
+
+
+CGT cap amount
+Under the CGT cap, you can during your lifetime, exclude non-
+concessional super contributions from your non-concessional
+contributions cap up to the CGT cap amount. The CGT cap applies to
+all excluded CGT contributions, whether they were made between
+10 May 2006 and 30 June 2007 or after 30 June 2007.
+
+
+Table 6: CGT cap amount
+Income year   Amount of cap
+
+
+2026–27          $1,935,000
+
+2025–26           $1,865,000
+
+2024–25           $1,780,000
+
+2023–24           $1,705,000
+
+2022–23           $1,650,000
+
+2021–22           $1,615,000
+
+2020–21           $1,565,000
+
+2019–20           $1,515,000
+
+2018–19          $1,480,000
+
+2017–18          $1,445,000
+
+2016–17           $1,415,000
+
+2015–16           $1,395,000
+
+2014–15           $1,355,000
+
+2013–14           $1,315,000
+
+2012–13           $1,255,000
+
+2011–12           $1,205,000
+
+2010–11           $1,155,000
+
+2009–10           $1,100,000
+
+2008–09           $1,045,000
+
+2007–08           $1,000,000
+The CGT cap amount is indexed in line with average weekly ordinary
+time earnings (AWOTE), in increments of $5,000 (rounded down). The
+new indexed amount is generally available each February.
+
+For more information about the contribution caps, see Caps, limits and
+tax on super contributions.
+
+
+
+
+QC 18123
+
+
+
+Division 293 tax
+Division 293 tax may reduce the tax concession on super
+contributions for individuals.
+
+Last updated 7 August 2026
+
+
+
+
+Division 293 threshold
+An individual's income is added to certain super contributions and
+compared to the Division 293 threshold. Division 293 tax is payable on
+the excess over the threshold, or on the super contributions,
+whichever is less. The rate of Division 293 tax is 15%.
+
+
+Table 7: Division 293 threshold
+
+      Income year            Threshold
+
+
+  2017–18 onwards            $250,000
+
+  2012–13 to 2016–17         $300,000
+
+For more information, see Division 293 tax on concessional
+contributions by high-income earners.
+
+
+End of year interest
+Where Division 293 tax relates to defined benefit interests, payment of
+the tax is deferred until a super benefit is paid from the interest. We
+must keep a debt account for each defined benefit interest where
+there is an amount of Division 293 tax that has been deferred.
+
+End of year interest is calculated (at the average 10-year Treasury
+bond rate for that year) on the amount by which the deferred debt
+account is in debit at the end of the income year.
+
+
+Table 8: Division 293 tax – end of year interest
+
+  Income year       Average 10-year Treasury bond rate
+
+
+    2025–26                                         4.6148%
+
+    2024–25                                         4.2906%
+
+    2023–24                                         4.2482%
+
+    2022–23                                         3.6096%
+
+    2021–22                                         2.1124%
+
+    2020–21                                          1.1816%
+
+    2019–20                                         1.0333%
+
+     2018–19                                        2.2547%
+
+     2017–18                                        2.7021%
+
+     2016–17                                        2.4157%
+
+     2015–16                                        2.6139%
+
+     2014–15                                        2.9978%
+
+     2013–14                                n/a (see Note 1)
+
+
+Note 1: end of year interest was not applied to deferred debt accounts
+for the 2013–14 income year.
+QC 18123
+
+
+
+Payments from super
+What you need to be aware of when receiving payments
+from your super.
+
+Last updated 16 September 2026
+
+
+
+Low rate cap amount
+There is a limit set on the amount of taxable components (taxed and
+untaxed elements) of a super lump sum that can receive a lower (or nil)
+rate of tax. This is called the low rate cap amount. It applies to
+members that are older than their preservation age but younger than
+60 years of age.
+
+The low rate cap is a lifetime cap which is reduced by any amount
+previously applied to the low rate threshold.
+
+From 1 July 2026, the low rate cap is $260,000.
+
+Before 1 July 2026, the low rate cap amount was indexed each year in
+increments of $5,000 (rounded down) based on Average weekly
+ordinary times earnings (AWOTE).
+
+Note: Following recent changes to the family law framework, from
+December 2024 the low rate cap amount no longer applies to family
+law arrangements.
+
+
+Table 9: Low rate cap amount
+
+  Income year         Amount of cap
+
+
+  2025–26                        $260,000
+
+  2024–25                        $245,000
+
+  2023–24                        $235,000
+
+  2022–23                    $230,000
+  2021–22                 $225,000
+
+  2020–21                 $215,000
+
+  2019–20                 $210,000
+
+  2018–19                 $205,000
+
+  2017–18                 $200,000
+
+  2016–17                 $195,000
+
+  2015–16                 $195,000
+
+  2014–15                 $185,000
+
+  2013–14                 $180,000
+
+  2012–13                 $175,000
+
+  2011–12                 $165,000
+
+  2010–11                 $160,000
+
+  2009–10                 $150,000
+
+  2008–09                 $145,000
+
+  2007–08                 $140,000
+
+
+
+Untaxed plan cap amount
+The untaxed plan cap amount limits the concessional tax treatment of
+benefits that include a part that has not been taxed within a super
+fund. It:
+
+  applies to each super plan from which a person receives super lump
+  sum member benefits
+
+  is used to determine whether the excess untaxed roll-over amount
+  arises.
+The untaxed plan cap amount is indexed in increments of $5,000
+(rounded down) based on AWOTE. The new indexed amount is
+generally available each February.
+
+
+Table 10: Untaxed plan cap
+amount
+
+  Income year      Amount of cap
+
+
+  2026–27               $1,935,000
+
+  2025–26               $1,865,000
+
+  2024–25               $1,780,000
+
+  2023–24               $1,705,000
+
+  2022–23               $1,650,000
+
+  2021–22               $1,615,000
+
+  2020–21               $1,565,000
+
+  2019–20               $1,515,000
+
+  2018–19               $1,480,000
+
+  2017–18               $1,445,000
+
+  2016–17               $1,415,000
+
+  2015–16               $1,395,000
+
+  2014–15               $1,355,000
+
+  2013–14               $1,315,000
+
+  2012–13               $1,255,000
+
+  2011–12               $1,205,000
+
+  2010–11                $1,155,000
+  2009–10                $1,100,000
+
+  2008–09               $1,045,000
+
+  2007–08               $1,000,000
+
+
+
+Minimum annual payments for super
+income streams
+A minimum amount must be paid each year from pensions or annuities
+that started on or after 1 July 2007.
+
+For certain pensions and annuities, the minimum payment amounts
+were temporarily reduced by:
+
+  50% for the 2008–09, 2009–10 and 2010–11 years
+
+  25% for the 2011–12 and 2012–13 years.
+
+The minimum payment amount returned to normal in 2013–14.
+
+The reductions in these years apply only to account-based pensions
+and annuities (allocated pensions and annuities and market-linked
+pensions and annuities).
+
+
+Table 11: Minimum percentage factor for certain pensions a
+(indicative only) for each age group
+
+                2008–09         2011–12 to      2013–14         2019
+                to 2010–        2012–13         to 2018–        to 20
+  Age           11 income       income          19 income       23 in
+                years           years           years           year
+                (inclusive)     (inclusive)     (inclusive)     (incl
+
+
+  Under 65             2.0%            3.0%           4.0%
+
+
+  65–74                2.5%           3.75%           5.0%
+
+
+
+  75–79                3.0%            4.5%           6.0%
+  80–84                 3.5%           5.25%             7.0%
+
+
+
+  85–89                 4.5%           6.75%             9.0%
+
+
+
+  90–94                 5.5%           8.25%            11.0%
+
+
+
+  95 or                 7.0%           10.5%            14.0%
+  more
+
+
+Note: These withdrawal factors are indicative only. To determine the
+precise minimum annual payment (especially for market linked income
+streams), refer to the pro-rating, rounding and other rules in the
+Superannuation Industry (Supervision) Regulations 1994.
+
+
+Temporarily reducing superannuation minimum
+payment amounts
+The government reduced the minimum annual payment required for
+account-based pensions and annuities, allocated pensions and
+annuities and market-linked pensions and annuities by 50% for the
+2019–20, 2020–21, 2021–22 and 2022–23 financial years. This
+reduction has not been extended for the 2023–24 income year and
+onwards.
+
+Superannuation and annuity providers calculate the minimum annual
+payment required as at 1 July each year, based on the account balance
+of the member or annuitant. The 50% reduction applied to this
+calculated minimum annual payment.
+
+Note: Pension payments for 2019–20 year that were above the
+reduced minimum withdrawal rate and were taken before 25 March
+2020, can't be re-categorised as a lump sum or commutation. This
+applies even if a valid minute or election from the member was in place
+before the government announced reduction.
+
+
+
+  Example: annual minimum pension payment
+  Robert is 67 years old. At 1 July 2019, Robert’s account-based
+  pension balance was $480,000. Robert’s minimum annual
+  payment was calculated at 5% (the percentage applicable to his
+  age) of his pension balance, which is $24,000. Following the law
+  change, Robert’s required annual minimum pension payment for
+  2019–20 is $12,000.
+
+  If Robert has already withdrawn more than $12,000 for 2019–20,
+  he isn't able to put the amount above $12,000 back into his
+  superannuation account unless he’s eligible to make
+  superannuation contributions. These would be subject to any
+  other rules or limits, such as contribution caps.
+
+
+
+Superannuation pensions and annuities that have
+already commenced
+For pensions and annuities that commence part-way through a
+financial year, the temporary 50% reduction applies to the minimum
+annual payment that is calculated proportionally on the account
+balance on commencement day.
+
+
+
+  Example: temporary reduction in minimum drawdown
+  amounts
+  Thomas commences an account-based pension on 1 January
+  2020 at age 66. His pension account balance on the
+  commencement day was $250,000.
+
+  Under current minimum drawdown requirements, his minimum
+  annual payment amount would be $12,500 (5% of $250,000).
+
+  As the pension commenced on 1 January 2020, the required
+  minimum amount is calculated proportionately from the
+  commencement day to the end of the financial year:
+
+      [$12,500 (minimum annual payment amount) × 182 (days
+      remaining)] ÷ 366 (2020 is a leap year) = $6,215.
+
+  Following the temporary reduction in minimum drawdown
+  requirements, Thomas is only required to drawdown 2.5% of his
+  account balance, which is $3,107 ($3,110 rounded up to the
+  nearest 10 whole dollars).
+
+  If Thomas has already withdrawn over $3,110 for 2019–20, he
+  can't put the amount above $3,110 back into his superannuation
+  account unless he’s eligible to make superannuation
+  contributions. These would be subject to any other rules or limits,
+  such as contribution caps.
+
+
+For more information on making contributions, see:
+
+  Caps, limits and tax on super contributions
+
+  Personal super contributions.
+
+Preservation age
+
+Generally, you must reach your preservation age and meet a condition
+of release before you can access your super. Use the following table to
+work out your preservation age.
+
+
+Table 12: Preservation age
+
+  Date of birth                   Preservation age
+
+
+  Before 1 July 1960                                 55
+
+  1 July 1960 – 30 June 1961                         56
+
+  1 July 1961 – 30 June 1962                         57
+
+  1 July 1962 – 30 June 1963                         58
+
+  1 July 1963 – 30 June 1964                         59
+
+  From 1 July 1964                                   60
+
+
+
+Super lump sums
+The table below shows the maximum tax rate that is applied to each
+component of a super lump sum you are paid, based on your age when
+you receive the payment.
+
+
+Table 13: Super lump sum tax table
+
+  Income             Age when             Amount           Maximum
+  component          payment is           subject to       rate of tax
+  derived in         received             tax              (excluding
+the income                                    Medicare
+year                                          levy)
+
+
+Member       Under              Whole               20%
+             preservation age   amount
+benefit –
+taxable
+component
+– taxed
+element
+
+
+Member       At or above        Up to the            Nil
+             preservation age   low rate
+benefit –
+             and under          cap
+taxable
+             60 years
+component                       amount
+– taxed
+element
+
+
+Member       At or above        Above the           15%
+             preservation age   low rate
+benefit –
+             and under          cap
+taxable
+             60 years
+component                       amount
+– taxed
+element
+
+
+Member       60 years or more   Nil –                n/a
+                                amount is
+benefit –
+                                non-
+taxable
+                                assessable,
+component                       non-
+– taxed                         exempt
+element                         income
+
+
+Member       Under              Up to               30%
+             preservation age   untaxed
+benefit –
+taxable                         plan cap
+component                       amount
+– untaxed
+element
+
+
+Member       Under              Above               45%
+             preservation age   untaxed
+benefit –
+taxable                         plan cap
+component                       amount
+– untaxed
+element
+
+
+Member      At or above        Up to the   15%
+            preservation age   low rate
+benefit –
+            and under          cap
+taxable     60 years
+component                      amount
+– untaxed
+element
+
+
+Member      At or above        Above the   30%
+            preservation age   low rate
+benefit –
+            and under          cap
+taxable
+            60 years
+component                      amount
+– untaxed                      and up to
+element                        the
+                               untaxed
+                               plan cap
+                               amount
+
+
+Member      At or above        Above the   45%
+            preservation age   untaxed
+benefit –
+            and under          plan cap
+taxable     60 years
+component                      amount
+– untaxed
+element
+
+
+Member      60 years or more   Up to the   15%
+benefit –                      untaxed
+taxable                        plan cap
+component                      amount
+– untaxed
+element
+
+
+Member      60 years or more   Above the   45%
+benefit –                      untaxed
+taxable                        plan cap
+component                      amount
+– untaxed
+element
+Death          Any   Whole         15%
+                     amount
+benefit
+lump sum
+benefit paid
+to non-
+dependants
+– taxable
+component
+– taxed
+element
+
+
+Death          Any   Whole         30%
+                     amount
+benefit
+lump sum
+benefit paid
+to non-
+dependants
+– taxable
+component
+– untaxed
+element
+
+
+Death          Any   None           Nil
+benefit
+lump sum
+benefit paid
+to
+dependants
+– taxable
+component
+– taxed and
+untaxed
+elements
+
+
+Rollover       Any   Nil –         n/a
+                     amount is
+super
+                     non-
+benefits –           assessable,
+taxable              non-
+component            exempt
+– taxed              income
+element
+  Rollover         Any                   Amounts                  n/a
+                                         under the
+  super
+                                         untaxed
+  benefits –
+  taxable                                plan cap
+  component                              amount are
+  – untaxed                              non-
+  element                                assessable,
+                                         non-
+                                         exempt
+                                         income
+
+
+  Rollover         Any                   Above the               45%
+  super                                  untaxed
+  benefits –                             plan cap
+  taxable                                amount
+  component
+  – untaxed
+  element
+
+
+  Super lump       Any                   None                      Nil
+  sum
+  benefits
+  less than
+  $200
+
+
+  Super lump       Any                   None                      Nil
+  sum benefit
+  (terminally
+  ill recipient)
+
+
+Notes:
+
+  A temporary budget repair levy of 2% applied for the 2014–15,
+  2015–16 and 2016–17 income years to individuals with a taxable
+  income of more than $180,000 per year. The levy was payable at a
+  rate of 2% of each dollar of a taxpayer’s taxable income over
+  $180,000. The levy ceased to apply from 1 July 2017.
+
+  The Medicare levy rate is 2% from 1 July 2014 onwards. It is applied
+  in addition to the maximum rate of tax for each income component.
+
+  The Medicare levy rate was 1.5% up to and including 30 June 2014
+  and is applied in addition to the maximum rate of tax for each
+  income component.
+  In the 2011–12 income year, the flood levy applied where an
+  individual's taxable income exceeds $50,000. We published
+  information to help you work out whether the flood levy applied to
+  you.
+
+
+Departing Australia superannuation
+payment
+This table covers Departing Australia superannuation payment (DASP)
+tax rates for lump sums and rollovers.
+
+If we hold temporary resident unclaimed super money for a former
+temporary resident, and they returned to Australia as a permanent
+resident, they have the option of rolling the money over to their super
+fund. This is the only time a rollover of DASP is an option. The rollover
+amount is still classified as a DASP and will be taxed at the rates
+shown in this table.
+
+
+Table 14: DASP tax rates (from 1 July 2017)
+
+                                                       DASP Working
+                                     DASP              holiday
+  Payment component                  ordinary          makers
+                                     tax rate          (WHM) tax
+                                                       rate
+
+
+  Tax-free component                           Nil                   Nil
+
+  Taxable component – taxed                  35%                   65%
+  element
+  Applies to taxed elements
+  whether taken as a lump
+  sum or rollover.
+
+  Taxable component –                        45%                   65%
+  untaxed element
+
+  Applies to both lump sums
+  and roll-over amounts up to
+  the untaxed roll-over plan
+  cap amount.
+  Any part of a rollover that
+  exceeds the untaxed roll-
+  over plan cap amount is
+  subject to a 47% tax rate
+  under the Superannuation
+  (Excess Untaxed Roll-over
+  Amounts Tax) Act 2007
+  rather than at DASP tax
+  rates.
+
+
+The temporary budget repair levy applied in the 2014–15, 2015–16 and
+2016–17 income years. For those years, the DASP tax rates were as
+follows:
+
+   tax free component – Nil
+
+   taxable component taxed element – 38%
+
+   taxable component untaxed element – 47%.
+
+During these years, any part of a rollover that exceeded the untaxed
+roll-over plan cap amount was subject to a 49% tax under the
+Superannuation (Excess Untaxed Roll-over Amounts Tax) Act 2007
+rather than at DASP tax rates.
+
+
+
+
+QC 18123
+
+
+
+Super income stream tax tables
+A summary of the taxation of a super income stream paid
+with an element taxed and untaxed in the fund.
+
+Last updated 11 September 2024
+
+
+
+
+Element taxed in the fund of a super
+income stream
+The following table summarises the taxation of a super income stream
+paid with an element taxed in the fund.
+
+The tax-free component isn't included. This component is non-
+assessable non-exempt income in all cases.
+
+
+Table 15: Element taxed – super income stream tax rates
+  Age of recipient             Income stream
+
+
+  Age 60 years or more         Not assessable, not exempt income
+
+  At or above                  Taxed at marginal tax rates – Tax
+  preservation age and         offset of 15% is available
+  under 60 years
+
+  Under preservation age       Taxed at marginal tax rates, with no
+                               tax offset – Tax offset of 15% is
+                               available if a disability super benefit
+
+
+Medicare levy will apply if amounts are assessable.
+
+Note:
+
+  A temporary 2% levy applies for the 2014–15, 2015–16 and 2016–17
+  income years to individuals with a taxable income of more than
+  $180,000 per year. The levy is payable at a rate of 2% of each dollar
+  of a taxpayer’s taxable income over $180,000. This will cease to
+  apply from 1 July 2017.
+
+  The Medicare levy rate is 2% from 1 July 2014 for the 2014–15
+  income year and later income years, it is applied in addition to the
+  maximum rate of tax for each income component.
+
+  The Medicare levy rate is 1.5% up to and including 30 June 2014
+  and is applied in addition to the maximum rate of tax for each
+  income component.
+
+  In the 2011–12 income year the flood levy may apply where an
+  individual's taxable income exceeds $50,000. We have published
+  information to help you work out if the flood levy applies to you.
+
+
+Element untaxed in the fund of a super
+income stream
+The following table summarises the taxation of a super member
+income stream paid with an element untaxed in the fund.
+
+The tax-free component isn't included. This component isn't
+assessable and not exempt income in all cases.
+Table 16: Element untaxed – super income stream tax
+rates
+
+  Age of recipient                      Income stream
+
+
+  60 years or more                      Taxed at marginal rates, with
+                                        a 10% tax offset
+
+  At or above preservation age          Taxed at marginal rates, with
+  and under 60 years                    no tax offset
+
+  Under preservation age                Taxed at marginal rates, with
+                                        no tax offset
+
+Medicare levy will apply if amounts are assessable.
+
+Note:
+
+  A temporary 2% levy applies for the 2014–15, 2015–16 and 2016–17
+  income years to individuals with a taxable income of more than
+  $180,000 per year. The levy is payable at a rate of 2% of each dollar
+  of a taxpayer’s taxable income over $180,000. This will cease to
+  apply from 1 July 2017.
+
+  The Medicare levy rate is 2% from 1 July 2014 for the 2014–15
+  income year and later income years, it is applied in addition to the
+  maximum rate of tax for each income component.
+
+  The Medicare levy rate is 1.5% up to and including 30 June 2014
+  and is applied in addition to the maximum rate of tax for each
+  income component.
+
+  In the 2011–12 income year the flood levy may apply where an
+  individual's taxable income exceeds $50,000. We have published
+  information to help you work out if the flood levy applies to you.
+
+
+Annuities and life expectancy factors
+The prescribed life tables referred to in section 27H of the Income Tax
+Assessment Act 1936 can be obtained from the Australian
+Government Actuary website .
+QC 18123
+
+
+
+Employment termination
+payments
+Find out what an employment termination payment (ETP) is
+and what the cap amounts are.
+
+Last updated 17 April 2026
+
+
+
+
+About employment termination payments
+An employment termination payment (ETP) is a concessionally-taxed
+payment you receive from your employer when you terminate your
+employment.
+
+
+ETP cap amount
+An employment termination payment (ETP) is a payment made in
+consequence of the termination of employment. It can include:
+
+   amounts for unused rostered days off
+
+   amounts in lieu of notice
+
+   a gratuity or 'golden handshake'
+
+   an employee’s invalidity payment (for permanent disability, other
+   than compensation for personal injury)
+
+   certain payments after the death of an employee.
+
+ETPs don't include:
+
+   a payment for unused annual leave or unused long service leave
+
+   the tax-free part of a genuine redundancy payment or an early
+   retirement scheme payment.
+
+The amount up to the ETP cap amount will be taxed at a concessional
+rate. The amount in excess of the ETP cap amount will be taxed at the
+top marginal rate.
+Note: A temporary 2% levy applies for the 2014–15, 2015–16 and 2016–
+17 income years to individuals with a taxable income of more than
+$180,000 per year. The levy is payable at a rate of 2% of each dollar of
+a taxpayer’s taxable income over $180,000. This will cease to apply
+from 1 July 2017.
+
+For more information on the ETP caps that apply, see Taxation of
+termination payments.
+
+
+ETP cap for life benefit termination
+payments
+
+Table 17: Life benefit
+termination payments ETP cap
+
+  Income year       Amount of cap
+
+
+    2026–27             $270,000
+
+    2025–26             $260,000
+
+    2024–25             $245,000
+
+    2023–24             $235,000
+
+    2022–23             $230,000
+
+     2021–22            $225,000
+
+    2020–21             $215,000
+
+    2019–20             $210,000
+
+     2018–19            $205,000
+
+     2017–18            $200,000
+
+     2016–17            $195,000
+
+     2015–16            $195,000
+    2014–15           $185,000
+
+    2013–14           $180,000
+
+    2012–13           $175,000
+
+    2011–12           $165,000
+
+    2010–11           $160,000
+
+    2009–10           $150,000
+
+    2008–09           $145,000
+
+    2007–08           $140,000
+
+The ETP cap amount is indexed in line with average weekly ordinary
+time earnings (AWOTE), in increments of $5,000 (rounded down). The
+new indexed amount is generally available each February.
+
+
+ETP cap for death benefit termination
+payments
+
+Table 18: Death benefit
+termination payments ETP cap
+
+  Income year      Amount of cap
+
+
+    2026–27           $270,000
+
+    2025–26           $260,000
+
+    2024–25           $245,000
+
+    2023–24           $235,000
+
+    2022–23           $230,000
+
+    2021–22           $225,000
+    2020–21            $215,000
+
+    2019–20            $210,000
+
+     2018–19           $205,000
+
+     2017–18           $200,000
+
+     2016–17           $195,000
+
+     2015–16           $195,000
+
+     2014–15           $185,000
+
+    2013–14            $180,000
+
+     2012–13           $175,000
+
+     2011–12           $165,000
+
+     2010–11           $160,000
+
+    2009–10            $150,000
+
+    2008–09            $145,000
+
+    2007–08            $140,000
+
+The ETP cap amount is indexed in line with average weekly ordinary
+time earnings (AWOTE), in increments of $5,000 (rounded down). The
+new indexed amount is generally available each February.
+
+
+Transitional ETP cap (up to 30 June 2012)
+Transitional arrangements applied if at 9 May 2006, you were entitled
+to a payment made on the termination of employment under:
+
+  a written contract
+
+  an Australian or foreign law (or an instrument under such a law)
+
+  a workplace agreement under the Workplace Relations Act 1996.
+Employment termination payments made after 30 June 2007 (other
+than those made under the transitional arrangements) cannot be
+contributed to or rolled over into super.
+
+The taxable component of a transitional termination payment will be
+taxed at:
+
+  no more than 15% up to the lower cap amount (only where the
+  recipient has reached preservation age)
+
+  no more than 30% on the amount which exceeds the lower cap
+  amount but doesn't exceed the upper cap amount
+
+  the top marginal rate for amounts in excess of the upper cap
+  amount.
+
+
+Table 19: Lower and upper caps for transitional
+termination payments
+
+  Income          Lower cap             Upper cap amount (not
+  year            amount                indexed)
+
+
+  2011–12                 $165,000                         $1 million
+
+  2010–11                 $160,000                         $1 million
+
+  2009–10                 $150,000                         $1 million
+
+  2008–09                 $145,000                         $1 million
+
+  2007–08                 $140,000                         $1 million
+
+The lower cap amount for a transitional termination payment is the
+same as the ETP cap amount for the year (which is generally available
+each February).
+
+The upper cap amount in relation to a transitional termination payment
+received in an income year is $1 million.
+
+Both the lower cap amount and the $1 million upper cap amount are
+reduced by all amounts received by the person that have previously
+used the transitional termination payments concession. The lower cap
+amount doesn't apply where the recipient is under preservation age.
+Transitional arrangements for termination payments ceased to apply
+from 1 July 2012.
+
+
+Tax-free part of genuine redundancy and
+early retirement scheme payments
+This table shows the limit set for genuine redundancy and early
+retirement scheme payments from 1 July 2007 onwards.
+
+For earlier years, up until 30 June 2007, see Tax-free part of bona fide
+redundancy payments and approved early retirement scheme
+payments limits.
+
+
+Table 20: Genuine redundancy and early retirement
+scheme payment limits
+
+  Income              Base            For each complete year of
+  year                limit                    service
+
+
+  2026–27             $13,598                                  $6,801
+
+  2025–26              $13,100                                 $6,552
+
+  2024–25             $12,524                                  $6,264
+
+  2023–24              $11,985                                 $5,994
+
+  2022–23              $11,591                                 $5,797
+
+  2021–22              $11,341                                 $5,672
+
+  2020–21             $10,989                                  $5,496
+
+  2019–20             $10,638                                  $5,320
+
+  2018–19             $10,399                                  $5,200
+
+  2017–18              $10,155                                 $5,078
+
+  2016–17              $9,936                                  $4,969
+
+  2015–16              $9,780                                  $4,891
+  2014–15                    $9,514                           $4,758
+
+  2013–14                    $9,246                           $4,624
+
+  2012–13                    $8,806                           $4,404
+
+  2011–12                    $8,435                           $4,218
+
+  2010–11                    $8,126                           $4,064
+
+  2009–10                    $7,732                           $3,867
+
+  2008–09                    $7,350                           $3,676
+
+  2007–08                    $7,020                            $3,511
+
+The base limit and service amount is indexed in line with average
+weekly ordinary time earnings (AWOTE) each income year. The new
+indexed amount is generally available each February.
+
+Note: A temporary 2% levy applies for the 2014–15, 2015–16 and 2016–
+17 income years to individuals with a taxable income of more than
+$180,000 per year. The levy is payable at a rate of 2% of each dollar of
+a taxpayer’s taxable income over $180,000. This will cease to apply
+from 1 July 2017.
+
+
+
+
+QC 18123
+
+
+
+Super guarantee
+Find out about the rates and the maximum contribution
+base.
+
+Last updated 17 April 2026
+
+
+
+About the super guarantee
+With the introduction of Payday Super, employers must pay super
+guarantee for each payday. From 1 July 2026 the minimum super
+guarantee is calculated as a percentage of each eligible employee's
+qualifying earnings.
+
+For quarters ending on or before 30 June 2026, the minimum super
+guarantee is calculated as a percentage of each eligible employee’s
+earnings (ordinary time earnings).
+
+
+Super guarantee percentage
+
+Table 21: Super guarantee percentage
+
+                                         Super guarantee (%) for
+                    General super        Norfolk Island
+  Period
+                    guarantee (%)        (transitional rate)
+                                         (from 1 July 2016)
+
+
+  1 July 2027                  12.00                              12
+  onwards
+
+  1 July 2026 –                12.00                              11
+  30 June
+  2027
+
+  1 July 2025 –                12.00                              10
+  30 June
+  2026
+
+  1 July 2024 –                 11.50                                 9
+  30 June
+  2025
+
+  1 July 2023 –                 11.00                                 8
+  30 June
+  2024
+
+  1 July 2022 –                10.50                                  7
+  30 June
+  2023
+
+  1 July 2021 –                10.00                                  6
+  30 June
+  2022
+  1 July 2020 –                   9.50                               5
+  30 June 2021
+
+  1 July 2019 –                   9.50                               4
+  30 June
+  2020
+
+  1 July 2018 –                   9.50                               3
+  30 June 2019
+
+  1 July 2017 –                   9.50                               2
+  30 June 2018
+
+  1 July 2016 –                   9.50                               1
+  30 June 2017
+
+  1 July 2015 –                   9.50                               0
+  30 June 2016
+
+  1 July 2014 –                   9.50                               0
+  30 June 2015
+
+  1 July 2013 –                   9.25                               0
+  30 June 2014
+
+  1 July 2002 –                   9.00                               0
+  30 June 2013
+
+Note: If you need percentages for years prior to 2002–03, refer to
+former sections 20 and 21 of the Superannuation Guarantee
+(Administration) Act 1992, available from our Legal database.
+
+With the introduction of Payday Super, from 1 July 2026 you pay
+contributions for each payday.
+
+For quarterly periods ending on or before 30 June 2026, you pay
+contributions for each employee at least quarterly.
+
+
+Table 22: Contribution quarters
+prior to 1 July 2026
+
+  Quarter                Period
+
+
+      1           1 July – 30 September
+      2        1 October – 31 December
+
+      3          1 January – 31 March
+
+      4             1 April – 30 June
+
+
+
+Maximum super contribution base
+The maximum contribution base is the maximum of an employee's
+earnings for which the employer is required to pay super guarantee.
+Employers don't have to pay super guarantee for the part of an
+employee's earnings above this limit.
+
+
+From 1 July 2026
+With the introduction of Payday Super, employers must pay super
+guarantee for each payday.
+
+If your payments of qualifying earnings to your employee reach the
+maximum contribution base in a financial year, you can stop paying the
+minimum super guarantee contributions for the employee for that year.
+
+The maximum contribution base for a financial year is calculated using
+the following formula (rounded down to the nearest 10 dollar multiple):
+
+    Concessional contributions cap × 100 ÷ charge
+    percentage = maximum contribution base
+
+
+Table 23: Maximum contribution base from 1 July
+2026
+
+  Income year       Maximum contribution base (annual)
+
+
+  2026–27           $270,830
+
+
+
+
+Up to 30 June 2026
+For quarters up to and including the quarter ending 30 June 2026, the
+maximum contribution base is a quarterly earnings amount, as shown
+in Table 24.
+Table 24: Maximum contribution base up to 30 June 2026
+
+                    Maximum contribution          Maximum super
+   Income           base (maximum income             guarantee
+     year            per quarter for super        payment amount
+                     guarantee purposes)            per quarter
+
+
+  2025–26                           $62,500                 $7,500.00
+
+  2024–25                           $65,070                 $7,483.05
+
+  2023–24                           $62,270                 $6,849.70
+
+  2022–23                           $60,220                 $6,323.10
+
+   2021–22                          $58,920                $5,892.00
+
+The maximum contribution base is indexed in line with the average
+weekly ordinary time earnings issued by the Australian Bureau of
+Statistics each income year.
+
+
+
+
+QC 18123
+
+
+
+Government contributions
+You may be eligible for the government's super co-
+contribution.
+
+Last updated 27 April 2026
+
+
+
+
+About government contributions
+The government may add to your super if you are eligible for the super
+co-contribution or the low income superannuation tax offset (LISTO).
+
+You don't need to apply for government contributions. If you're eligible
+and your fund has your tax file number (TFN), we will pay it to your
+fund account automatically.
+Super co-contributions
+The super co-contribution is designed to assist eligible individuals to
+save for their retirement. If you are eligible and make personal super
+contributions during a financial year, the government will pay a super
+co-contribution up to certain limits.
+
+Co-contribution income thresholds
+
+Table 25: Co-contribution income thresholds
+
+                                       Lower               Higher
+                Maximum
+  Year                                income              income
+               entitlement
+                                     threshold           threshold
+
+
+  2026–                  $500            $49,293             $64,293
+  27
+
+  2025–                  $500             $47,488            $62,488
+  26
+
+  2024–                  $500            $45,400             $60,400
+  25
+
+  2023–                  $500            $43,445             $58,445
+  24
+
+  2022–                  $500             $42,016             $57,016
+  23
+
+  2021–                  $500              $41,112            $56,112
+  22
+
+  2020–                  $500            $39,837              $54,837
+  21
+
+  2019–                  $500            $38,564             $53,564
+  20
+
+  2018–                  $500             $37,697             $52,697
+  19
+
+  2017–                  $500             $36,813             $51,813
+  18
+  2016–                $500            $36,021            $51,021
+  17
+
+  2015–                $500           $35,454            $50,454
+  16
+
+  2014–                $500           $34,488            $49,488
+  15
+
+  2013–                $500            $33,516           $48,516
+  14
+
+  2012–                $500            $31,920           $46,920
+  13
+
+  2011–              $1,000            $31,920           $61,920
+  12
+
+  2010–              $1,000            $31,920           $61,920
+  11
+
+  2009–              $1,000            $31,920           $61,920
+  10
+
+  2008–              $1,500           $30,342            $60,342
+  09
+
+  2007–              $1,500           $28,980            $58,980
+  08
+
+  2006–              $1,500           $28,000            $58,000
+  07
+
+  2005–              $1,500           $28,000            $58,000
+  06
+
+  2004–              $1,500           $28,000            $58,000
+  05
+
+  2003–              $1,000            $27,500           $40,000
+  04
+
+
+The lower income threshold is indexed in line with average weekly
+ordinary time earnings (AWOTE) each income year. The new indexed
+amount is generally available each February. However, note that the
+thresholds were frozen between the 2010–11 and 2012–13 years.
+
+The following changes were also made for all contributions made from
+1 July 2012:
+
+  the maximum co-contribution entitlement was set at $500
+
+  the matching rate was set at 50%
+
+  the higher income threshold was set at $15,000 above the lower
+  income threshold.
+
+Additional eligibility requirements were added from 1 July 2017 which
+includes:
+
+  having a total superannuation balance less than the general transfer
+  balance cap on 30 June of the year before the year the
+  contributions are being made
+
+  having not exceeded your non-concessional contributions cap in
+  the relevant financial year.
+
+
+Low income super tax offset
+From 1 July 2017, the government introduced the low income super tax
+offset (LISTO) to assist low income earners to save for their retirement.
+
+If you earn an adjusted taxable income up to $37,000 you may be
+eligible to receive a refund into your superannuation account of the tax
+paid on your eligible concessional superannuation contributions, up to
+a cap of $500.
+
+You don't need to apply for LISTO. If you're eligible and your fund has
+your tax file number (TFN), we will pay it to your fund account
+automatically.
+
+
+
+
+QC 18123
+
+
+
+Transfer balance cap
+Find out about the limit on the total amount of
+superannuation that can be transferred into the retirement
+phase.
+
+Last updated 27 April 2026
+
+
+
+About the transfer balance cap
+The transfer balance cap applies from 1 July 2017. It is a limit on the
+total amount of superannuation that can be transferred into the
+retirement phase.
+
+You can make transfers into the retirement phase as long as you
+remain below the transfer balance cap.
+
+Special rules apply for defined benefit income streams.
+
+
+General transfer balance cap
+
+Table 26: General transfer balance cap
+
+  Year            General transfer balance cap ($m)
+
+
+  2026–27                                            2.1
+
+  2025–26                                              2
+
+  2024–25                                            1.9
+
+  2023–24                                            1.9
+
+  2022–23                                            1.7
+
+  2021–22                                            1.7
+
+  2020–21                                            1.6
+
+  2019–20                                            1.6
+
+  2018–19                                            1.6
+
+  2017–18                                            1.6
+Defined benefit income cap
+
+Table 27: Defined benefit income cap
+
+  Year           Defined benefit income cap
+
+
+  2026–27                          $131,250
+
+  2025–26                         $125,000
+
+  2024–25                          $118,750
+
+  2023–24                          $118,750
+
+  2022–23                         $106,250
+
+  2021–22                         $106,250
+
+  2020–21                         $100,000
+
+  2019–20                         $100,000
+
+  2018–19                         $100,000
+
+  2017–18                         $100,000
+
+
+
+
+QC 18123
+
+
+
+Division 296 tax thresholds and
+interest
+Division 296 reduces tax concessions for people with total
+super balances exceeding the large super balance
+threshold.
+
+Published 21 September 2026
+Division 296 thresholds
+From 1 July 2026, Division 296 tax reduces the tax concession for
+individuals whose TSB exceeds the large super balance threshold
+(LSBT).
+
+You may be liable for Division 296 tax if your total super balance (TSB)
+exceeds certain thresholds. Division 296 tax is imposed at a rate of:
+
+  15% on the proportion of your taxable super earnings relating to
+  your TSB that exceeds the LSBT, and
+
+  an additional 10% on the proportion of your taxable super earnings
+  relating to your TSB that exceeds the very large super balance
+  threshold (VLSBT).
+
+The thresholds are subject to indexation in line with the consumer
+price index, in increments of $150,000 for the LSBT and $500,000 for
+the VLSBT.
+
+For Division 296 tax purposes, limited recourse borrowing arrangement
+amounts are excluded from your TSB.
+
+
+Table 28: Division 296 thresholds
+
+  Income year              LSBT          VLSBT
+
+
+  2026–27            $3,000,000      10,000,000
+
+For more information, see Division 296 tax
+
+
+End of year interest
+Where Division 296 tax relates to defined benefit interests that you
+have not taken an end benefit from, payment of the tax is deferred
+until a super benefit is paid from the interest. We must keep a debt
+account for each defined benefit interest where there is an amount of
+Division 296 tax that has been deferred.
+
+At the end of each income year, interest is applied to Division 296
+deferred debt accounts at the long term bond rate (average 10-year
+Treasury bond rate).
+QC 18123
+
+
+
+Other super rates and thresholds
+Find out about what other super rates and thresholds you
+need to be aware of.
+
+Last updated 11 September 2026
+
+
+
+About other super rates and thresholds
+These rates and thresholds applied up to 30 June 2007 for super
+contributions and benefits, employment termination payments, super
+guarantee and co-contributions.
+
+
+Self-managed super fund supervisory levy
+Self-managed super funds (SMSFs) are required to pay a supervisory
+levy to us on an annual basis. You need to pay the supervisory levy
+with your SMSF annual return. The amount payable is stated on the
+return.
+
+
+SMSF limited recourse borrowing
+arrangements interest rates
+The following interest rates charged under a SMSF limited recourse
+borrowing arrangement (LRBA) would be consistent with the 'safe
+harbour terms' outlined in Practical Compliance Guidelines (PCG)
+2016/5 Income tax arm’s-length terms for limited recourse borrowing
+arrangements established by self-managed superannuation funds.
+
+
+Table 28: Self-managed super fund LRBA interest
+rates
+
+  Year           Real property     Listed shares or units
+
+
+  2026–27                  9.35%                   11.35%
+  2025–26               8.95%                       10.95%
+
+  2024–25               9.35%                       11.35%
+
+  2023–24               8.85%                       10.85%
+
+  2022–23               5.35%                        7.35%
+
+  2021–22               5.10%                        7.10%
+
+  2020–21               5.10%                        7.10%
+
+  2019–20               5.94%                        7.94%
+
+  2018–19               5.80%                        7.80%
+
+  2017–18               5.80%                        7.80%
+
+  2016–17               5.65%                        7.65%
+
+  2015–16               5.75%                        7.75%
+
+
+
+Deduction limits based on age
+Up to the 2006–07 income year, super contributions were deductible
+for income tax purposes in the year you made them, up to certain
+amounts called the age-based limits. The following limits apply to:
+
+  employers and their associates claiming deductions for
+  contributions made for the benefit of an employee
+
+  individuals claiming a deduction for personal super contributions.
+
+
+Table 29: Age based limits
+
+  Income                               Age 35 to        Age 50 to
+                  Under age 35
+  year                                    49               70
+
+
+  2006–07                $15,260          $42,385            $105,113
+
+  2005–06                $14,603          $40,560            $100,587
+  2004–05                 $13,934           $38,702          $95,980
+
+  2003–04                 $13,233           $36,754           $91,149
+
+  2002–03                 $12,651           $35,138            $87,141
+
+  2001–02                  $11,912         $33,086           $82,053
+
+  2000–01                 $11,388           $31,631          $78,445
+
+  1999–2000               $10,929          $30,356            $75,283
+
+  1998–99                 $10,600          $29,443            $73,019
+
+  1997–98                 $10,232          $28,420            $70,482
+
+  1996–97                  $9,782           $27,170           $67,382
+
+  1995–96                  $9,405           $26,125           $64,790
+
+  1994–95                  $9,000           $25,000          $62,000
+
+
+Deductibility could only be considered where the contribution was paid
+on or before the 28th day of the month following the month in which
+the relevant person turned 70 years old. ‘Age’ is the person’s age at the
+date the last contribution was made for them for the year.
+
+Contributions paid in any year, after 30 June but before the super
+guarantee contribution deadline (28 July) for the quarter ending
+30 June, can't be claimed as a deduction until the end of the next
+financial year. For example, super contributions made on 30 June 2005
+can be claimed as a deduction in the 2004–05 income year.
+Contributions made on 28 July 2005 can be claimed as a deduction in
+the 2005–06 income year.
+
+
+Allocated pension payments
+Up to 30 June 2007, the rules governing allocated pensions allowed for
+payments between the minimum and maximum limits. To obtain the
+limits, the pension account balance was divided by each of the
+maximum and the minimum pension valuation factors in the schedule
+matching the recipient's age.
+The following table is an extract from Schedule 1AAB of SISR which
+sets out the maximum and minimum pension valuation factors for
+pensions starting from 1 January 2006.
+
+
+Table 30: Allocated pension payment limits
+
+  Age of                Maximum pension            Minimum pension
+  beneficiary            valuation factor           valuation factor
+
+
+  63                                     10.3                       18.1
+
+  64                                     10.1                       17.7
+
+  65                                      9.9                       17.3
+
+  66                                      9.6                      16.8
+
+  67                                      9.3                      16.4
+
+  68                                      9.1                      16.0
+
+
+For pensions that started before 1 January 2006, different pension
+valuation factors apply. Transitional rules also applied for the period
+between 1 January 2006 and 30 June 2006.
+
+
+Pension valuation factors
+The following tables set out the maximum and minimum pension
+valuation factors used to calculate maximum and minimum payment
+limits for pensions and annuities.
+
+Note: Transitional rules apply to new pensions that start from
+1 January 2006 to 30 June 2006. During this time, funds may apply the
+new or the previous pension valuation factor rates (but only to new
+pensions).
+
+
+Table 31: Pension valuation factors for pensions that
+started on or after 1 January 2006
+
+  Age of                Maximum pension            Minimum pension
+  beneficiary            valuation factor           valuation factor
+20 or less   12.0   29.2
+
+21           12.0   29.0
+
+22           12.0   28.9
+
+23           12.0   28.7
+
+24           12.0   28.6
+
+25           12.0   28.4
+
+26           12.0   28.3
+
+27           12.0   28.1
+
+28           12.0   27.9
+
+29           12.0   27.8
+
+30           12.0   27.6
+
+31           12.0   27.4
+
+32           12.0   27.2
+
+33           12.0   27.0
+
+34           12.0   26.8
+
+35           12.0   26.6
+
+36           12.0   26.4
+
+37           12.0   26.2
+
+38           12.0   26.0
+
+39           12.0   25.8
+
+40           12.0   25.5
+41   12.0   25.3
+
+42   12.0   25.0
+
+43   12.0   24.8
+
+44   12.0   24.5
+
+45   12.0   24.2
+
+46   12.0   24.0
+
+47   12.0   23.7
+
+48   12.0   23.4
+
+49   12.0   23.1
+
+50   12.0   22.8
+
+51   11.9   22.5
+
+52   11.8   22.2
+
+53   11.8   21.8
+
+54   11.7   21.5
+
+55   11.5   21.1
+
+56   11.4   20.8
+
+57   11.3   20.4
+
+58   11.2   20.1
+
+59   11.0   19.7
+
+60   10.9   19.3
+
+61   10.7   18.9
+62   10.5   18.5
+
+63   10.3   18.1
+
+64   10.1   17.7
+
+65   9.9    17.3
+
+66   9.6    16.8
+
+67   9.3    16.4
+
+68    9.1   16.0
+
+69    8.7   15.5
+
+70   8.4    15.1
+
+71   8.0    14.6
+
+72    7.6   14.2
+
+73    7.2   13.7
+
+74    6.7   13.3
+
+75   6.2    12.8
+
+76    5.7   12.3
+
+77    5.1   11.9
+
+78   4.5    11.4
+
+79   3.8    10.9
+
+80    3.1   10.5
+
+81   2.3    10.0
+
+82    1.4    9.6
+  83                                    1                     9.1
+
+  84                                    1                     8.7
+
+  85                                    1                     8.3
+
+  86                                    1                     7.9
+
+  87                                    1                     7.5
+
+  88                                    1                     7.2
+
+  89                                    1                     6.9
+
+  90                                    1                     6.6
+
+  91                                    1                     6.3
+
+  92                                    1                     6.0
+
+  93                                    1                     5.8
+
+  94                                    1                     5.5
+
+  95                                    1                     5.3
+
+  96                                    1                     5.1
+
+  97                                    1                     4.9
+
+  98                                    1                     4.7
+
+  99                                    1                     4.5
+
+  100 or more                           1                     4.4
+
+
+Source: Schedule 1AAB Superannuation Industry (Supervision)
+Amendment Regulations 1994
+
+
+Table 32: Pension valuation factors for pensions that
+started before 1 January 2006
+Age of        Maximum pension     Minimum pension
+beneficiary    valuation factor    valuation factor
+
+
+20 or less                   10                28.6
+
+21                           10                28.5
+
+22                           10                28.3
+
+23                           10                28.1
+
+24                           10                28.0
+
+25                           10                27.8
+
+26                           10                27.6
+
+27                           10                27.5
+
+28                           10                27.3
+
+29                           10                 27.1
+
+30                           10                26.9
+
+31                           10                26.7
+
+32                           10                26.5
+
+33                           10                26.3
+
+34                           10                26.0
+
+35                           10                25.8
+
+36                           10                25.6
+
+37                           10                25.3
+
+38                           10                 25.1
+
+39                           10                24.8
+40   10    24.6
+
+41   10    24.3
+
+42   10    24.0
+
+43   10    23.7
+
+44   10    23.4
+
+45   10    23.1
+
+46   10    22.8
+
+47   10    22.5
+
+48   10    22.2
+
+49   10    21.9
+
+50   9.9   21.5
+
+51   9.9   21.2
+
+52   9.8   20.9
+
+53   9.7   20.5
+
+54   9.7   20.1
+
+55   9.6   19.8
+
+56   9.5   19.4
+
+57   9.4   19.0
+
+58   9.3   18.6
+
+59   9.1   18.2
+
+60   9.0   17.8
+61   8.9   17.4
+
+62   8.7   17.0
+
+63   8.5   16.6
+
+64   8.3   16.2
+
+65   8.1   15.7
+
+66   7.9   15.3
+
+67   7.6   14.9
+
+68   7.3   14.4
+
+69   7.0   14.0
+
+70   6.6   13.5
+
+71   6.2   13.1
+
+72   5.8   12.6
+
+73   5.4   12.2
+
+74   4.8   11.7
+
+75   4.3   11.3
+
+76   3.7   10.8
+
+77   3.0   10.4
+
+78   2.2   10.0
+
+79   1.4    9.5
+
+80     1    9.1
+
+81     1    8.7
+  82                                    1                   8.3
+
+  83                                    1                   7.9
+
+  84                                    1                   7.5
+
+  85                                    1                   7.1
+
+  86                                    1                   6.8
+
+  87                                    1                   6.4
+
+  88                                    1                   6.1
+
+  89                                    1                   5.8
+
+  90                                    1                   5.5
+
+  91                                    1                   5.3
+
+  92                                    1                   5.0
+
+  93                                    1                   4.8
+
+  94                                    1                   4.6
+
+  95                                    1                   4.4
+
+  96                                    1                   4.2
+
+  97                                    1                   4.0
+
+  98                                    1                   3.8
+
+  99                                    1                   3.7
+
+  100 or more                           1                   3.5
+
+
+Source: Schedule 1A Superannuation Industry (Supervision)
+Amendment Regulations 1994
+Low rate threshold – post-June 1983
+components of eligible termination
+payments
+Up to 30 June 2007, if your benefits include eligible termination
+payments (ETPs) and you were aged 55 years or over when you
+received the ETP, then the cash amount of the post-June 1983
+component is taxed at lower rates until you reach your low rate
+threshold (LRT).
+
+The following table contains the LRT limits. The LRT is a lifetime limit,
+indexed each financial year.
+
+
+Table 33: Low rate
+threshold – post June 1983
+components of ETPs
+
+  Income year        Threshold
+
+
+     2006–07           $135,590
+
+    2005–06             $129,751
+
+    2004–05            $123,808
+
+    2003–04             $117,576
+
+    2002–03             $112,405
+
+     2001–02           $105,843
+
+     2000–01            $101,188
+
+   1999–2000             $97,109
+
+     1998–99             $94,189
+
+     1997–98             $90,916
+
+     1996–97             $86,917
+
+     1995–96            $83,574
+    1994–95            $79,975
+
+    1993–94            $77,796
+
+    1992–93            $76,949
+
+     1991–92           $73,776
+
+    1990–91            $68,628
+
+    1989–90            $64,500
+
+    1988–89            $60,000
+
+    1987–88            $55,000
+
+
+
+Tax free part of bona fide redundancy and
+approved early retirement scheme
+payments limits
+The following table shows the limit set for bona fide redundancy and
+early retirement payments that applied prior to 1 July 2007. The tax
+free amount is not an eligible termination payment.
+
+
+Table 34: Tax free limits for bona fide redundancy and
+early retirement scheme payments
+
+  Income year       Base limit     Per complete year of service
+
+
+  2006–07               $6,783                             $3,392
+
+  2005–06               $6,491                             $3,246
+
+  2004–05               $6,194                              $3,097
+
+  2003–04               $5,882                              $2,941
+
+  2002–03               $5,623                              $2,812
+
+  2001–02               $5,295                             $2,648
+  2000–01               $5,062                               $2,531
+
+  1999–2000             $4,858                               $2,429
+
+  1998–99               $4,712                               $2,356
+
+  1997–98               $4,548                               $2,274
+
+  1996–97               $4,348                               $2,174
+
+  1995–96               $4,180                               $2,090
+
+  1994–95               $4,000                               $2,000
+
+
+  For more information on preparing for retirement, see Planning to
+  retire.
+
+  Approved early retirement schemes.
+
+
+Reasonable benefit limits
+Up to 30 June 2007, the following table can be used to determine the
+concessional tax rates limits of a reasonable benefit limit (RBL) for a
+particular financial year. The table includes both the pension and lump
+sum RBL.
+
+
+Table 35: Reasonable benefit limits
+
+  Income year       Lump sum          Pension
+
+
+  2006–07              $678,149      $1,356,291
+
+  2005–06             $648,946       $1,297,886
+
+  2004–05             $619,223       $1,238,440
+
+  2003–04             $588,056        $1,176,106
+
+  2002–03              $562,195      $1,124,384
+
+  2001–02             $529,373       $1,058,742
+  2000–01             $506,092        $1,012,181
+
+  1999–2000           $485,692         $971,382
+
+  1998–99              $471,088        $942,175
+
+  1997–98              $454,718       $909,435
+
+  1996–97             $434,720        $869,440
+
+  1995–96             $418,000        $836,000
+
+  1994–95             $400,000        $800,000
+
+
+
+Transitional reasonable benefit limits
+indexation factors
+The information in the following table gives transitional RBL indexation
+factors and can be used to index a previous financial year's reasonable
+benefit limits to the current year in line with inflation.
+
+
+Table 36: Indexation factors for
+transitional reasonable benefit
+limits
+
+  Income year       Indexation factor
+
+
+    2006–07                       1.045
+
+    2005–06                       1.048
+
+    2004–05                       1.053
+
+    2003–04                       1.046
+
+    2002–03                       1.062
+
+    2001–02                       1.046
+
+    2000–01                       1.042
+   1999–2000                      1.031
+
+    1998–99                       1.036
+
+    1997–98                       1.046
+
+    1996–97                       1.040
+
+    1995–96                       1.045
+
+
+
+Super contributions surcharge
+Adjusted taxable income
+The surcharge rate varied and was calculated using a person’s
+adjusted taxable income (ATI). Before 1 July 2003, the maximum
+surcharge rate was 15%. From 1 July 2003, the maximum surcharge
+rate was reduced then phased out. The maximum surcharge rate was:
+
+  14.5% in 2003–04
+
+  12.5% in 2004–05
+
+  0% in 2005–06 and beyond.
+
+No surcharge is payable in respect of super contributions or
+termination payments made on or after 1 July 2005.
+
+For information on the super contributions surcharge, see:
+
+  Superannuation contributions surcharge – information for super
+  funds and professionals (NAT 15264).
+
+
+Table 37: For the 2003–04 to 2005–06 financial years
+
+                Lower        Higher
+  Income                                  A (as per          Indexation
+               income       income
+  year                                    formula)             factor
+               amount       amount
+
+
+  2005–            See          See       See Note 1         See Note 1
+  06             Note 1       Note 1
+  2004–        $99,710      $121,075      1709.20000             1.053
+  05
+
+
+  2003–        $94,691      $114,981      1399.31034            1.046
+  04
+
+
+Note 1: No surcharge is payable for super contributions or termination
+payments made on or after 1 July 2005.
+
+
+Table 38: For financial years before 1 July 2003
+
+  Income        Lower          Upper                    Indexation
+                                           Divisor
+  year           limit          limit                     factor
+
+
+  2002–         $90,527      $109,924        $1,295            1.062
+  03
+
+
+  2001–         $85,242      $103,507        $1,219            1.046
+  02
+
+
+  2000–         $81,493       $98,955        $1,165            1.042
+  01
+
+
+  1999–         $78,208       $94,966        $1,118             1.031
+  2000
+
+
+  1998–         $75,856        $92,111       $1,084            1.036
+  99
+
+
+  1997–         $73,220        $88,910      $1,046             1.046
+  98
+
+
+  1996–         $70,000       $85,000        $1,000                 –
+  97
+
+
+
+10-year Treasury bond rate
+The '10-year Treasury bond rate' is used by unfunded defined benefits
+providers to calculate and debit interest to their members' surcharge
+debt accounts where applicable. It is also used by us, where
+applicable, to calculate and debit interest to the surcharge debt
+accounts of members of constitutionally protected funds.
+
+
+Table 39: 10-year Treasury bond rate
+
+      As at         10-year Treasury bond rate
+
+
+  30 June 2026                              4.73%
+
+  30 June 2025                              4.16%
+
+  30 June 2024                              4.31%
+
+  30 June 2023                             4.03%
+
+  30 June 2022                              3.67%
+
+  30 June 2021                              1.49%
+
+  30 June 2020                              0.87%
+
+  30 June 2019                              1.32%
+
+  30 June 2018                              2.63%
+
+  30 June 2017                              2.60%
+
+  30 June 2016                              1.98%
+
+  30 June 2015                              3.01%
+
+  30 June 2014                             3.54%
+
+  30 June 2013                              3.76%
+
+  30 June 2012                             3.04%
+
+  30 June 2011                              5.21%
+  30 June 2010                               5.10%
+
+  30 June 2009                               5.52%
+
+  30 June 2008                              6.45%
+
+  30 June 2007                               6.26%
+
+  30 June 2006                               5.79%
+
+  30 June 2005                               5.11%
+
+  30 June 2004                               5.87%
+
+  30 June 2003                               5.01%
+
+  30 June 2002                               5.99%
+
+  30 June 2001                               6.04%
+
+  30 June 2000                               6.16%
+
+  30 June 1999                               6.27%
+
+  30 June 1998                               5.58%
+
+  30 June 1997                               7.05%
+
+Source: Reserve Bank of Australia, Interest Rates, Capital market
+yields – Government bonds daily
+
+The rate is determined as follows:
+
+  if any Treasury bonds with a 10-year term are issued on 30 June,
+  the rate is the annual yield on those bonds
+
+  if no Treasury bonds with a 10-year term are issued on 30 June, the
+  rate is the annual yield as published for that day on the Reserve
+  Bank of Australia website as Treasury bonds – Yields – 10-year
+  term.
+Average weekly ordinary time earnings
+(AWOTE)
+The AWOTE figure for the relevant quarter is used to index some of
+these thresholds.
+
+The index number used for a quarter is the original (not the trend or
+seasonally adjusted) estimate of full-time adult AWOTE for the middle
+month of the quarter, as first published by the Australian Statistician
+(refer to ABS catalogue number 6302.0).
+
+Note: First published AWOTE figures are used for the indexation of
+thresholds. The ABS revised their historical AWOTE figures from
+August 1996 to May 2008 to exclude all salary sacrificed amounts.
+However, this has no impact on super thresholds. For more information
+on the revised AWOTE figures, refer to the ABS website .
+
+
+Table 40: Average weekly ordinary time earnings
+
+            March          June         September         December
+  Year
+            quarter       quarter        quarter           quarter
+
+
+  2025            n/a     2,010.00                n/a         2,051.10
+
+  2024            n/a     1,923.40                n/a        1,975.80
+
+  2023            n/a      1,838.10               n/a        1,888.80
+
+  2022            n/a      1,769.80               n/a         1,807.70
+
+  2021            n/a      1,737.10               n/a        1,748.40
+
+  2020            n/a      1,713.90               n/a         1,711.60
+
+  2019            n/a     1,634.80                n/a        1,658.40
+
+  2018            n/a     1,585.30                n/a        1,605.50
+
+  2017            n/a     1,543.20                n/a        1,569.60
+
+  2016            n/a      1,516.00               n/a        1,533.40
+2015        n/a   1,483.10         n/a   1,500.50
+
+2014        n/a   1,454.10         n/a   1,477.00
+
+2013        n/a   1,420.90         n/a   1,437.00
+
+2012   1,348.10   1,349.20         n/a   1,396.00
+
+2011   1,291.30   1,304.70    1,324.90   1,330.10
+
+2010   1,243.90   1,250.10    1,258.80   1,275.20
+
+2009   1,183.40   1,195.60    1,204.20   1,226.80
+
+2008   1,124.80    1,131.10   1,151.40   1,165.30
+
+2007   1,073.80   1,090.00    1,105.10   1,108.50
+
+2006   1,037.50   1,041.60    1,053.00   1,058.60
+
+2005    992.90    1,006.70    1,023.20   1,025.70
+
+2004    947.80     949.50      962.90     976.40
+
+2003    900.40     921.00      929.60     938.40
+
+2002    860.50     866.80      879.40     889.60
+
+2001    810.60     824.10      838.50     848.70
+
+2000    774.80     784.20      796.10     800.40
+
+1999    743.80     747.30      753.00     764.20
+
+1998    721.30     725.20      735.40     742.70
+
+1997    696.10     697.60      704.30     710.90
+
+1996    665.80     671.20      674.60     685.50
+
+1995    639.90     647.20      653.10     661.00
+1994   612.30   616.90   620.00    629.90
+
+1993   595.50   598.00   600.80    603.50
+
+1992   588.80   587.30   585.70    586.90
+
+1991   564.30   560.20   567.50    580.10
+
+1990   524.80   534.50   541.70    554.40
+
+1989   493.40   501.40   509.70    516.80
+
+1988   458.80   465.60   470.10    484.50
+
+1987   429.60   435.60   446.00    450.00
+
+1986   404.90   408.30   419.80    428.40
+
+1985   378.00   383.10   388.80    397.10
+
+1984   353.60   364.90   369.40    375.20
+
+1983   335.20   336.50   339.80    351.70
+
+1982   293.50   306.00   317.70    331.50
+
+1981   270.70   295.10   304.00    285.20
+
+1980   245.70   256.70   268.10    289.10
+
+1979   222.70   232.80   238.30    248.00
+
+1978   205.20   215.50   218.90    229.10
+
+1977   182.90   198.70   203.90    213.60
+
+1976   165.30   180.70   184.70    195.50
+
+1975   143.80   156.40    157.10   172.40
+
+1974   105.60   119.90   129.00    143.90
+     1973          90.80        100.80             103.10           112.20
+
+     1972          83.40         90.60             90.50             97.30
+
+     1971          76.40         83.70             84.30             89.90
+
+
+  Note: From September 2012, the ABS no longer produces data for
+  March or September. ABS data used with permission from the
+  Australian Bureau of Statistics .
+
+
+
+
+  QC 18123
+
+
+
+
+Our commitment to you
+We are committed to providing you with accurate, consistent and clear
+information to help you understand your rights and entitlements and meet
+your obligations.
+
+If you follow our information and it turns out to be incorrect, or it is
+misleading and you make a mistake as a result, we will take that into
+account when determining what action, if any, we should take.
+
+Some of the information on this website applies to a specific financial year.
+This is clearly marked. Make sure you have the information for the right year
+before making decisions based on that information.
+
+If you feel that our information does not fully cover your circumstances, or
+you are unsure how it applies to you, contact us or seek professional
+advice.
+
+
+Copyright notice
+© Australian Taxation Office for the Commonwealth of Australia
+
+You are free to copy, adapt, modify, transmit and distribute this material as
+you wish (but not in any way that suggests the ATO or the Commonwealth
+endorses you or any of your services or products).
+

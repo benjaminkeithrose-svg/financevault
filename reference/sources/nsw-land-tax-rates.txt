@@ -1,0 +1,168 @@
+Land tax thresholds and rates
+  revenue.nsw.gov.au/taxes-duties-levies-royalties/land-tax/understanding-land-tax/thresholds-and-rates
+
+
+View general and premium thresholds from the past five years and the current rates. Find
+out if you owe land tax in New South Wales and how much you will pay.
+
+Last updated: 16 March 2026
+
+
+
+Threshold freeze
+
+The 2024-2025 State Budget announced a freeze on the general and premium rate
+thresholds for land tax years after 2024.
+
+On this page
+Land tax thresholdsLand tax ratesHow ownership types affect thresholdsHow thresholds
+and rates are applied to land valuesCalculate your land taxRelated informationNeed extra
+help?
+Land tax thresholds and rates are amounts that determine whether you owe land tax and
+how much you pay.
+
+When the combined land value of all your taxable property in New South Wales (NSW) is:
+
+     below the general threshold, you do not pay land tax, or
+     above the general threshold, you pay land tax on the land value above the
+     threshold.
+
+The threshold is not applied to the land value of each property individually, but to the
+combined land value of all property you own.
+
+All land is taxable unless it is eligible for an exemption. Generally, you do not pay land tax
+on:
+
+     your home (principal place of residence exemption), or
+     land used for primary production (primary production land exemption)
+
+Read more about other land tax exemptions and concessions.
+
+
+
+
+Thresholds and trusts
+The tax-free threshold does not apply to land owned as part of special or discretionary
+trusts. Read how trusts are assessed for land tax for more details.
+
+
+
+
+                                                                                                          1/4
+Land tax thresholds
+From 1 January 2025 land tax thresholds will be fixed as follows:
+
+     General threshold: A land value of $1,075,000.
+     Premium threshold: A land value of $6,571,000.
+
+ Open all
+View past thresholds
+Historically, the land tax threshold changed every year.
+
+ Tax year         General threshold     Premium threshold
+
+ 2024 onwards     $1,075,000            $6,571,000
+
+ 2023             $969,000              $5,925,000
+
+ 2022             $822,000              $5,026,000
+
+ 2021             $755,000              $4,616,000
+
+ 2020             $734,000              $4,488,000
+
+ 2019             $692,000              $4,231,000
+
+
+Land tax rates
+
+ Threshold    Land value                             Rate
+
+ General      More than $1,075,000 but less          $100 + 1.6% of the land value above
+              than $6,571,000                        $1,075,000
+
+ Premium      More than $6,571,000                   $88,036 + 2% of the land value
+                                                     above $6,571,000
+
+
+Surcharge land tax
+
+Surcharge land tax has its own rates, and the general and premium land tax thresholds
+do not apply.
+
+Learn more about surcharge land tax rates.
+
+How ownership types affect thresholds
+The way a property is owned can affect how the threshold is applied.
+
+
+
+
+                                                                                           2/4
+For example, when you own property with others, you can only claim one threshold for
+land owned together.
+
+If a property is held in certain types of trusts or by related companies, the owner may not
+qualify for the land tax threshold.
+
+Read types of owners for more details on how thresholds are applied to individual and
+joint owners, trusts, and companies.
+
+
+How thresholds and rates are applied to land values
+Revenue NSW uses unimproved land values provided annually by the NSW Valuer
+General.
+
+Unimproved value means the value of the land itself, excluding buildings or other
+improvements.
+
+Revenue NSW calculates your land tax liability by comparing the 3-year average of your
+land value against the applicable threshold.
+
+Example of 3-year average
+
+ Year   Value determined on      Your land value
+
+ 2024   1 July 2023              $1,050,000
+
+ 2025   1 July 2024              $1,100,000
+
+ 2026   1 July 2025              $1,150,000
+
+Your average land value for land tax purposes in the 2026 tax year is ($1,050,000 +
+$1,100,000 + $1,150,000) ÷ 3 = $1,100,000.
+
+When comparing the above average land value against the current land tax threshold, we
+would calculate your liability as follows:
+
+     $1,100,000 (average land value) - $1,075,000 (general threshold) = $25,000
+     (taxable land value).
+     $25,000 x 1.6% + $100 (general land tax rate) = $500 total land tax liability.
+
+Calculate your land tax
+Use the Land Tax Calculator to get an estimate of how much land tax or surcharge land
+tax you will pay in NSW.
+
+The Calculator cannot be used for land owned by related companies, discretionary trusts
+or special trusts.
+
+
+
+                                                                                              3/4
+Land Tax Calculator
+
+
+
+
+Related information
+     What is land tax?
+     Understand your assessment notice
+
+Need extra help?
+If you have a question about land tax contact the land tax team.
+
+
+
+
+                                                                   4/4
+
