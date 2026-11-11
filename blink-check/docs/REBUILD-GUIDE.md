@@ -431,7 +431,7 @@ These are deliberately middle-of-the-road, not optimistic.
 
 | key | default | note |
 |---|---|---|
-| cpi / wageGrowth | 2.75 / empty | % a year; empty pay rises = in line with CPI |
+| cpi / wageGrowth | 2.75 / empty | % a year. `cpi` is shown as "Inflation — cost of living" beside living costs on the first page and on Assumptions, with a hint showing what today's living costs become in 20 years. It raises living costs each year, pay (when `wageGrowth` is empty) and, for retirees, Age Pension rates and thresholds |
 | resGrowth / comGrowth | 5 / 3 | % a year, values |
 | resRentGrowth / comRentGrowth | 3.5 / 3 | % a year |
 
@@ -495,7 +495,7 @@ The page is reachable by `#hash` (e.g. `#check`).
 
 1. **You:**
    - one or two people (name, income, super);
-   - living costs a month, credit card limits, and other loan repayments and years left;
+   - living costs a month and inflation (cost of living), credit card limits, and other loan repayments and years left;
    - goal and risk chips, and a look-ahead of 10/15/20/25/30 years;
    - notes ("What we're trying to work out").
 2. **What you own:**

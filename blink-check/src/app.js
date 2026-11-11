@@ -64,6 +64,7 @@
     superPension: ["Super pension (account-based)", "Once retired, super can pay you a regular income. Earnings in the pension are tax-free, and payments are tax-free from 60. There's a minimum you must take each year — 4% of the balance under 65, 5% at 65–74, 6% at 75–79, 7% at 80–84, 9% at 85–89, 11% at 90–94 and 14% from 95. You can take more, including lump sums (for example to buy a home)."],
     homeEquityAccess: ["Home Equity Access Scheme", "A government loan for people of Age Pension age, secured on their home, paid as a fortnightly income or small lump sums. It's repaid when the home is sold. A fallback if money runs short — not something to plan on."],
     lastUntil: ["How long the money must last", "Blink Check runs to age 100 and flags a plan in red if savings and super run out before the age you pick. About 1 in 4 women aged 65 today will live past 95."],
+    inflation: ["Inflation (cost of living)", "How fast prices rise each year. Blink Check raises your living costs by this every year, and your pay too unless you set your own pay rises; Age Pension rates and thresholds rise with it as well. Australia's long-run average is about 2.5–3% (the Reserve Bank aims for 2–3%); 2.75% is the starting figure. Try 3.5% to see a plan with dearer living."],
     living: ["Living costs", "What the household spends each month on everything except loan repayments — food, bills, school, cars, holidays. The tool works out the loan repayments itself."],
   };
 
@@ -364,6 +365,17 @@
     ${navButtons(null, "own")}`;
   }
 
+  // Inflation: how fast living costs rise. Shown beside living costs, with what it does to them.
+  function inflationField() {
+    const rate = +A("cpi") || 0;
+    const years = Math.min(20, horizon());
+    const later = (state.livingMonthly || 0) * Math.pow(1 + rate / 100, years);
+    const hint = state.livingMonthly
+      ? `At ${rate}% a year, ${money(state.livingMonthly)} a month today becomes about ${money(later)} a month in ${years} years.`
+      : "Living costs rise by this much every year.";
+    return numField("assumptions.cpi", "Inflation — cost of living (% a year)", { placeholder: String(D.cpi), hint, help: "inflation" });
+  }
+
   function pageYouRetired(two) {
     return `<div class="card">
       <div class="card-head"><h3>Who</h3>${two ? "" : `<button type="button" class="btn quiet" data-act="add-person">+ Add a partner</button>`}</div>
@@ -383,6 +395,7 @@
       <h3>Money in and out</h3>
       <div class="grid">
         ${moneyField("livingMonthly", "Living costs a month", { hint: "Everything except rent, and the rates and upkeep of a home bought in a plan — those are added for you.", help: "living" })}
+        ${inflationField()}
         ${state.home && state.home.has ? "" : moneyField("rentWeekly", "Rent a week now", { hint: "Stops when a plan buys a home." })}
         ${moneyField("cash", "Savings in the bank")}
       </div>
@@ -415,6 +428,7 @@
       <h3>Each month</h3>
       <div class="grid">
         ${moneyField("livingMonthly", "Living costs a month", { hint: "Everything except loan repayments — the tool works those out.", help: "living" })}
+        ${inflationField()}
         ${moneyField("cardLimits", "Credit card limits, all cards", { hint: "Lenders count about 3.8% of the limit a month, even if it's paid off.", help: "serviceability" })}
         ${moneyField("otherRepayMonthly", "Car or personal loan repayments a month")}
         ${numField("otherRepayYears", "Years left on those loans")}
@@ -1232,7 +1246,7 @@
     <div class="card"><h3>Growth</h3><div class="grid">
       ${pctF("resGrowth", "Residential values (% a year)")}${pctF("comGrowth", "Commercial values (% a year)")}
       ${pctF("resRentGrowth", "Residential rents (% a year)")}${pctF("comRentGrowth", "Commercial rents (% a year)")}
-      ${numField("assumptions.wageGrowth", "Pay rises (% a year)", { placeholder: `Same as prices: ${A("cpi")}%`, hint: "Leave empty to keep pay in line with prices (CPI). Australian wages have grown about 3–3.5% a year over the long run." })}${pctF("cpi", "Living costs (% a year)")}
+      ${numField("assumptions.wageGrowth", "Pay rises (% a year)", { placeholder: `Same as prices: ${A("cpi")}%`, hint: "Leave empty to keep pay in line with prices (CPI). Australian wages have grown about 3–3.5% a year over the long run." })}${inflationField()}
       ${pctF("shareGrowth", "Share prices (% a year)")}${pctF("shareYield", "Dividends (% a year)")}${pctF("franking", "Franked (% of dividends)", "", "franking")}
       ${pctF("superReturn", "Super returns after fees and tax (%)")}${pctF("superGuarantee", "Employer super (% of pay)")}
     </div></div>
