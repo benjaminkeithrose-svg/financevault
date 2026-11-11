@@ -159,3 +159,59 @@ test("pay rises with prices (CPI) unless a wage growth figure is set", () => {
   assert.equal(own.years[1].income, 260000);
   assert.ok(base.years[0].takeHome > 0 && base.years[0].takeHome < 250000);
 });
+
+// --- Retirement -----------------------------------------------------------------
+const retiree = (steps, extra = {}) => ({
+  stage: "RETIRED",
+  people: [{ name: "Mum", age: 72, salary: 0, super: 750000 }],
+  livingMonthly: 4000,
+  cash: 450000,
+  rentWeekly: 550,
+  home: { has: false },
+  rentals: [],
+  assumptions: Object.assign({}, extra.assumptions || {}),
+  scenarios: [
+    { id: "base", name: "Keep renting", baseline: true, steps: [] },
+    { id: "s", name: "Buy a home", steps },
+  ],
+});
+
+test("Age Pension: full rate on small assets, nothing on large, the home doesn't count", () => {
+  const full = E.agePension({ couple: false, eligible: 1, homeowner: true, assets: 100000, financial: 60000, otherIncome: 0 });
+  assert.equal(Math.round(full), E.AGE_PENSION.maxSingle);
+  assert.equal(E.agePension({ couple: false, eligible: 1, homeowner: true, assets: 2000000, financial: 2000000, otherIncome: 0 }), 0);
+  const renter = E.agePension({ couple: false, eligible: 1, homeowner: false, assets: 700000, financial: 680000, otherIncome: 0 });
+  const owner = E.agePension({ couple: false, eligible: 1, homeowner: true, assets: 700000, financial: 680000, otherIncome: 0 });
+  assert.ok(renter > owner, "non-homeowners get a higher assets threshold");
+  assert.equal(E.agePension({ couple: false, eligible: 0, homeowner: true, assets: 0, financial: 0 }), 0);
+});
+
+test("super pension minimums go up with age", () => {
+  assert.equal(E.minDrawRate(60), 0.04);
+  assert.equal(E.minDrawRate(72), 0.05);
+  assert.equal(E.minDrawRate(96), 0.14);
+});
+
+test("a retiree buying a home: paid from savings then super, rent stops, Age Pension goes up", () => {
+  const r = E.runAll(retiree([{ id: "h", type: "HOME", year: 1, price: 800000 }]));
+  const base = r.base;
+  const buy = r.runs[1];
+  const c = buy.chains[0];
+  assert.equal(c.total, 800000 + E.nswDuty(800000, true) + 4000);
+  assert.ok(c.fromSuper > 0, "super tops up what savings can't cover");
+  assert.equal(c.cash + c.fromSuper, c.total);
+  assert.ok(base.years[0].rentPaid > 0 && buy.years[1].rentPaid === 0);
+  assert.ok(buy.years[1].agePension > base.years[1].agePension, "money moved into the home raises the pension");
+  assert.ok(buy.years[0].homeEquity > 0);
+  assert.ok(buy.years.length >= 28, "runs to age 100");
+  assert.ok(typeof buy.maxHomePrice === "number" && buy.maxHomePrice > 0);
+});
+
+test("a home that's too dear raises a red flag, and the highest safe price is below it", () => {
+  const r = E.runAll(retiree([{ id: "h", type: "HOME", year: 1, price: 1150000 }], { assumptions: { pensionReturn: 4, resGrowth: 3 } }));
+  const buy = r.runs[1];
+  assert.equal(buy.verdict.level, "STOP");
+  assert.ok(buy.maxHomePrice < 1150000);
+  const ok = E.runAll(retiree([{ id: "h", type: "HOME", year: 1, price: buy.maxHomePrice }], { assumptions: { pensionReturn: 4, resGrowth: 3 } })).runs[1];
+  assert.notEqual(ok.verdict.level, "STOP");
+});

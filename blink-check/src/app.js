@@ -58,6 +58,11 @@
     moneyChain: ["Where the money comes from", "How each purchase is paid for: the loan on the new property, any borrowing against equity in what you own, and your own cash — against the price, stamp duty and buying costs."],
     rateCycle: ["The rate cycle", "Instead of guessing, rates rise and fall the way the Reserve Bank's cash rate did since 2000 (the 2008 peak, the 2020 low and the 2022–23 rises), added to today's rates. Year 1 is always today's rate."],
     netWorth: ["Net worth", "Everything you own (property, shares, savings, offsets, super) less everything you owe. 'Outside super' leaves super out, because you can't use it until retirement."],
+    agePension: ["Age Pension", "The government pension from age 67, means-tested. It's the lower of two tests: the assets test (savings, super, shares, investment property, car and contents — but not your home) and the income test (pay, rent, and 'deemed' income on savings, super and shares). Blink Check estimates it each year; Services Australia works out the real amount."],
+    deeming: ["Deeming", "For the Age Pension income test, savings, super and shares are assumed to earn a set rate (about 0.75% on the first $64,200 for a single, 2.75% above), whatever they really earn."],
+    superPension: ["Super pension (account-based)", "Once retired, super can pay you a regular income. Earnings in the pension are tax-free, and payments are tax-free from 60. There's a minimum you must take each year — 4% of the balance under 65, 5% at 65–74, 6% at 75–79, 7% at 80–84, 9% at 85–89, 11% at 90–94 and 14% from 95. You can take more, including lump sums (for example to buy a home)."],
+    homeEquityAccess: ["Home Equity Access Scheme", "A government loan for people of Age Pension age, secured on their home, paid as a fortnightly income or small lump sums. It's repaid when the home is sold. A fallback if money runs short — not something to plan on."],
+    lastUntil: ["How long the money must last", "Blink Check runs to age 100 and flags a plan in red if savings and super run out before the age you pick. About 1 in 4 women aged 65 today will live past 95."],
     living: ["Living costs", "What the household spends each month on everything except loan repayments — food, bills, school, cars, holidays. The tool works out the loan repayments itself."],
   };
 
@@ -106,6 +111,36 @@
           ],
         },
         { id: "s3", name: "Debt recycle $80k into shares", spare: "HOME_OFFSET", steps: [{ id: uid(), type: "SHARES", year: 1, amount: 80000, funding: "RECYCLE", loanType: "IO" }] },
+      ],
+    };
+  }
+
+  // A made-up retiree: sold her home, money in super and savings, renting, thinking about buying.
+  function exampleRetired() {
+    return {
+      example: true,
+      stage: "RETIRED",
+      people: [{ id: "p1", name: "Pat", age: 72, salary: 0, super: 750000 }],
+      livingMonthly: 4000,
+      cardLimits: 0,
+      otherRepayMonthly: 0,
+      otherRepayYears: 0,
+      rentWeekly: 550,
+      superDrawMode: "MIN",
+      superDrawYearly: 0,
+      goal: "GROWTH",
+      risk: "CAREFUL",
+      cash: 450000,
+      home: { has: false, value: 0, loan: { balance: 0, rate: D.homeRate, type: "PI", ioYears: 0, yearsLeft: 25, offset: 0 } },
+      rentals: [],
+      shares: { value: 0, costBase: 0 },
+      smsf: { has: false, open: false },
+      assumptions: {},
+      notes: "Should I buy a home, and how much can I spend so the money lasts?",
+      scenarios: [
+        { id: "base", name: "Keep renting", baseline: true, spare: "HOME_OFFSET", steps: [] },
+        { id: "s1", name: "Buy a $900k home", spare: "HOME_OFFSET", steps: [{ id: uid(), type: "HOME", year: 1, price: 900000, name: "Home" }] },
+        { id: "s2", name: "Buy a $650k unit", spare: "HOME_OFFSET", steps: [{ id: uid(), type: "HOME", year: 1, price: 650000, name: "Unit" }] },
       ],
     };
   }
@@ -175,7 +210,9 @@
   const unsaved = () => (state.updatedAt || 0) > (state.savedAt || 0);
 
   const A = (k) => (state.assumptions[k] ?? D[k]);
-  const horizon = () => Math.max(5, Math.min(30, Number(A("horizon")) || 20));
+  const retired = () => state.stage === "RETIRED";
+  const youngestAge = () => Math.min(...state.people.map((p) => +p.age || 67));
+  const horizon = () => (retired() ? Math.max(10, Math.min(40, 100 - youngestAge() + 1)) : Math.max(5, Math.min(30, Number(A("horizon")) || 20)));
   const plans = () => state.scenarios.filter((s) => !s.baseline);
 
   function compute() {
@@ -310,8 +347,9 @@
 
   function exampleBanner() {
     if (!state.example) return "";
-    return `<div class="banner example"><span><b>These are example figures</b> for a made-up household. Change them to yours, or start with empty boxes.</span>
-      <button type="button" class="btn secondary" data-act="ask" data-key="fresh">Start with empty boxes</button></div>${confirmBox("fresh", "Clear every figure and plan?", "fresh")}`;
+    return `<div class="banner example"><span><b>These are example figures</b> for a made-up ${retired() ? "retiree" : "household"}. Change them to yours, or start with empty boxes.</span>
+      <span class="row"><button type="button" class="btn secondary" data-act="${retired() ? "example-working" : "example-retired"}">${retired() ? "Show the working example" : "Show a retiree example"}</button>
+      <button type="button" class="btn secondary" data-act="ask" data-key="fresh">Start with empty boxes</button></span></div>${confirmBox("fresh", "Clear every figure and plan?", "fresh")}`;
   }
 
   function pageYou() {
@@ -319,6 +357,48 @@
     return `${exampleBanner()}
     <div class="intro"><h2>You</h2><p class="muted">Type or use your phone's microphone in any box — "145 thousand", "$145k" and "145,000" all work.</p></div>
     <div class="card">
+      <div class="field"><span class="label">Stage of life</span>${chips("stage", [["WORKING", "Working"], ["RETIRED", "Retired — living on super, savings and the Age Pension"]])}</div>
+    </div>
+    ${retired() ? pageYouRetired(two) : pageYouWorking(two)}
+    ${navButtons(null, "own")}`;
+  }
+
+  function pageYouRetired(two) {
+    return `<div class="card">
+      <div class="card-head"><h3>Who</h3>${two ? "" : `<button type="button" class="btn quiet" data-act="add-person">+ Add a partner</button>`}</div>
+      ${state.people
+        .map(
+          (p, i) => `<div class="grid">
+            ${textField(`people.${i}.name`, "Name", { placeholder: i ? "Partner" : "You" })}
+            ${numField(`people.${i}.age`, "Age now", { placeholder: "67" })}
+            ${moneyField(`people.${i}.super`, "Super", { hint: "Paid out as a pension (account-based). Tax-free from 60.", help: "superPension" })}
+            ${moneyField(`people.${i}.salary`, "Other income a year, before tax", { placeholder: "0", hint: "Part-time work, for example." })}
+            ${i ? `<div class="field" style="align-self:end">${binButton("person-" + i, "Remove this person")}</div>` : ""}
+          </div>${confirmBox("person-" + i, `Remove ${p.name || "this person"}?`, "remove-person")}`
+        )
+        .join("")}
+    </div>
+    <div class="card">
+      <h3>Money in and out</h3>
+      <div class="grid">
+        ${moneyField("livingMonthly", "Living costs a month", { hint: "Everything except rent, and the rates and upkeep of a home bought in a plan — those are added for you.", help: "living" })}
+        ${state.home && state.home.has ? "" : moneyField("rentWeekly", "Rent a week now", { hint: "Stops when a plan buys a home." })}
+        ${moneyField("cash", "Savings in the bank")}
+      </div>
+      <div class="field"><span class="label">Take from super each year</span>${chips("superDrawMode", [["MIN", "The minimum (4–14% by age)"], ["SET", "A set amount"]])}</div>
+      ${state.superDrawMode === "SET" ? `<div class="grid">${moneyField("superDrawYearly", "Amount a year (at least the minimum)", { help: "superPension" })}</div>` : ""}
+      <p class="small muted">The Age Pension is worked out for you each year from age 67 — the home doesn't count in the assets test.</p>
+    </div>
+    <div class="card">
+      <h3>What you're after</h3>
+      <div class="field"><span class="label">The money must last until age</span>${chips("assumptions.lastUntil", [90, 95, 100].map((y) => [y, String(y)]), "num")}</div>
+      <p class="small muted">Blink Check looks ahead to age 100 (${horizon()} years) and shows how long the money lasts.</p>
+      ${notesField("notes", "What I'm trying to work out", "In your own words — it goes in the summary for an adviser or accountant.")}
+    </div>`;
+  }
+
+  function pageYouWorking(two) {
+    return `<div class="card">
       <div class="card-head"><h3>Who's buying</h3>${two ? "" : `<button type="button" class="btn quiet" data-act="add-person">+ Add a second person</button>`}</div>
       ${state.people
         .map(
@@ -345,8 +425,7 @@
       <div class="field"><span class="label">How much risk feels right</span>${chips("risk", [["CAREFUL", "Careful"], ["MIDDLE", "In the middle"], ["ADVENTUROUS", "Adventurous"]])}</div>
       <div class="field"><span class="label">Look ahead</span>${chips("assumptions.horizon", [10, 15, 20, 25, 30].map((y) => [y, `${y} years`]), "num")}</div>
       ${notesField("notes", "What we're trying to work out", "In your own words — it goes in the summary for your accountant or broker.")}
-    </div>
-    ${navButtons(null, "own")}`;
+    </div>`;
   }
 
   function loanFields(base, opts = {}) {
@@ -409,14 +488,14 @@
     <div class="row"><button type="button" class="btn secondary" data-act="add-rental" data-kind="RES">+ Add a rental property</button>
       <button type="button" class="btn secondary" data-act="add-rental" data-kind="COM">+ Add a commercial property</button></div>
     <div class="card">
-      <h3>Savings, shares and super</h3>
+      <h3>${retired() ? "Shares" : "Savings, shares and super"}</h3>
       <div class="grid">
-        ${moneyField("cash", "Savings not in an offset")}
+        ${retired() ? "" : moneyField("cash", "Savings not in an offset")}
         ${moneyField("shares.value", "Shares and ETFs, worth")}
         ${moneyField("shares.costBase", "What you paid for them")}
-        ${state.people.map((p, i) => moneyField(`people.${i}.super`, `${p.name || (i ? "Partner" : "Your")}'s super`)).join("")}
+        ${retired() ? "" : state.people.map((p, i) => moneyField(`people.${i}.super`, `${p.name || (i ? "Partner" : "Your")}'s super`)).join("")}
       </div>
-      <div class="row">${toggle("smsf.has", "Our super is in an SMSF", "smsf")}${toggle("smsf.open", "Open to investing through super")}</div>
+      ${retired() ? `<p class="small muted">Savings and super are on the first page.</p>` : `<div class="row">${toggle("smsf.has", "Our super is in an SMSF", "smsf")}${toggle("smsf.open", "Open to investing through super")}</div>`}
     </div>
     ${navButtons("you", "plans")}`;
   }
@@ -483,6 +562,13 @@
       title = "Put cash in an offset";
       body = `<div class="grid">${yearField}${moneyField(b + ".amount", "Amount from savings")}
         ${selectField(b + ".to", "Which loan's offset", [["home", "Home loan"]].concat(propertyChoices(plan, 99)))}</div>`;
+    } else if (s.type === "HOME") {
+      title = `Buy a home to live in${s.name ? ` — ${esc(s.name)}` : ""}`;
+      const owns = state.home && state.home.has;
+      body = `<div class="grid">${textField(b + ".name", "Name")}${yearField}
+        ${moneyField(b + ".price", "Price")}
+        ${moneyField(b + ".keep", "Keep at least this much in the bank", { placeholder: money(Math.max(20000, (state.livingMonthly || 0) * 3)), hint: "Paid from savings above this, then super, then the rest of savings." })}</div>
+        <p class="small muted">${owns ? "Your current home is sold first. " : "Rent stops once it's bought. "}Stamp duty and buying costs are added; rates, insurance and upkeep (about ${A("homeRunPct")}% of its value a year) come out of the budget.</p>`;
     } else if (s.type === "PI") {
       title = "Switch to principal and interest";
       body = `<div class="grid">${yearField}${selectField(b + ".target", "Which property's loans", propertyChoices(plan, 99).concat([["home", "Home"]]))}</div>`;
@@ -501,7 +587,10 @@
       .join("");
     let body;
     if (plan.baseline) {
-      body = `<div class="card"><h3>The yardstick: cash stays in the offset</h3>
+      body = retired()
+        ? `<div class="card"><h3>The yardstick: keep things as they are</h3>
+        <p>Nothing new is bought. ${state.home && state.home.has ? "You stay in your home" : "You keep renting"}; super pays a pension, savings earn interest, and the Age Pension is worked out each year. Each plan is compared with this.</p></div>`
+        : `<div class="card"><h3>The yardstick: cash stays in the offset</h3>
         <p>Nothing new is bought. Your savings and every spare dollar go into the home loan offset (then the next loan that isn't tax-deductible), which cuts interest and pays the loans off sooner. Each plan is compared with this.</p></div>`;
     } else {
       const sorted = plan.steps.slice().sort((a, b) => a.year - b.year);
@@ -516,7 +605,8 @@
       </div>
       <div class="steps">${sorted.length ? sorted.map((s) => stepCard(plan, idx, s)).join("") : `<p class="note-box">No steps yet — add one below.</p>`}</div>
       <div class="card no-print"><h4>Add a step</h4><div class="add-steps">
-        <button type="button" class="btn secondary" data-add="BUY" data-kind="RES">Buy residential</button>
+        ${retired() ? `<button type="button" class="btn secondary" data-add="HOME">Buy a home to live in</button>` : ""}
+        <button type="button" class="btn secondary" data-add="BUY" data-kind="RES">Buy ${retired() ? "a rental" : "residential"}</button>
         <button type="button" class="btn secondary" data-add="BUY" data-kind="COM">Buy commercial</button>
         <button type="button" class="btn secondary" data-add="SELL">Sell a property</button>
         <button type="button" class="btn secondary" data-add="SHARES">Buy shares</button>
@@ -534,6 +624,13 @@
 
   // ---------------------------------------------------------------- results
 
+  const METRICS_RETIRED = [
+    ["spendable", "Cash and super", (y) => y.spendable, "Savings and super — the money there is to live on."],
+    ["homeEquity", "Home equity", (y) => y.homeEquity, "What the home is worth, less anything owing on it."],
+    ["nw", "Net worth", (y) => y.nw, "Everything owned, less anything owed."],
+    ["agePension", "Age Pension", (y) => y.agePension, "The estimated Age Pension each year (from age 67)."],
+    ["leftOver", "Left over each year", (y) => y.leftOver, "Money coming in less money going out. Below zero is drawn from savings and super."],
+  ];
   const METRICS = [
     ["nw", "Net worth", (y) => y.nw, "Everything you own (super included) less what you owe."],
     ["nwExSuper", "Net worth outside super", (y) => y.nwExSuper, "What you could get at before retirement."],
@@ -608,7 +705,34 @@
     return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p;
   }
 
+  function verdictCardRetired(r, i, base) {
+    const s = r.summary;
+    const v = r.verdict;
+    const H = r.years.length;
+    const at = Math.min(20, H);
+    const y = r.years[at - 1];
+    const lasts = s.runsOutAge === null ? "Past 100" : `About age ${s.runsOutAge}`;
+    const rows = [
+      [`Home equity in ${at} years (age ${y.age})`, money(y.homeEquity)],
+      [`Cash and super in ${at} years`, money(y.spendable)],
+      ["Age Pension, first year", money(r.years[0].agePension)],
+      ["From super, first year", money(r.years[0].superDraw)],
+      ["Rent, first year", money(r.years[0].rentPaid)],
+    ];
+    if (r.maxHomePrice !== undefined) rows.push([`Most to spend on the home (money lasts to ${A("lastUntil")})`, r.maxHomePrice === null ? "None works" : money(r.maxHomePrice)]);
+    return `<div class="card verdict" style="--c:${SERIES[i]}">
+      <div class="card-head"><h3 style="display:flex;gap:8px;align-items:center"><span class="dot" style="background:${SERIES[i]}"></span>${esc(r.baseline ? "Yardstick: keep things as they are" : r.name)}</h3></div>
+      <span class="pill ${v.level}">${v.level === "STOP" ? FLAG : ""}${esc(v.label)}</span>
+      ${(v.stops || []).length ? `<div class="red-flag" role="alert"><div class="red-flag-head">${FLAG}<b>${r.baseline ? "Even without a change, this doesn't last" : "This probably won't work"}</b></div><ul>${v.stops.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>` : ""}
+      ${(v.warnings || []).length ? `<div class="amber-flag">${v.warnings.map((t) => `<p>${esc(t)}</p>`).join("")}</div>` : ""}
+      <div><div class="big">${esc(lasts)}</div><p class="small muted">How long the money (savings and super) lasts, for the younger person.</p></div>
+      <dl class="kv">${rows.map(([k, val]) => `<dt>${esc(k)}</dt><dd>${esc(val)}</dd>`).join("")}</dl>
+      ${v.notes.length ? `<ul class="notes">${v.notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
+    </div>`;
+  }
+
   function verdictCard(r, i, base) {
+    if (retired()) return verdictCardRetired(r, i, base);
     const s = r.summary;
     const H = r.years.length;
     const v = r.verdict;
@@ -651,7 +775,7 @@
     if (c.short) sources.push(["Shortfall — not covered", c.short]);
     const uses = c.kind === "SHARES" ? [["Shares and ETFs", c.price]] : [["Price", c.price], ["Stamp duty", c.duty], ["Legal and other buying costs", c.other]];
     const borrow = c.borrow
-      ? `<span class="pill ${c.borrow.result === "LIKELY" ? "YES" : "MAYBE"}">${c.borrow.result === "LIKELY" ? "Loan looks likely" : c.borrow.result === "TIGHT" ? "Loan looks tight" : "Loan looks unlikely"}</span>
+      ? `<span class="pill ${c.borrow.result === "LIKELY" ? "YES" : c.borrow.result === "TIGHT" ? "MAYBE" : "STOP"}">${c.borrow.result === "LIKELY" ? "Loan looks likely" : c.borrow.result === "TIGHT" ? "Loan looks tight" : "Loan looks unlikely"}</span>
          <span class="small muted">${c.borrow.surplus >= 0 ? money(c.borrow.surplus) + " a year spare" : money(-c.borrow.surplus) + " a year short"} at a lender's test rate (cards and other loans included).</span>`
       : "";
     return `<div class="card" style="gap:10px">
@@ -681,12 +805,23 @@
     const d = y.drawnFrom;
     if (d.cash) parts.push(`savings ${compact(d.cash)}`);
     if (d.offsets) parts.push(`offsets ${compact(d.offsets)}`);
+    if (d.super) parts.push(`super ${compact(d.super)}`);
     if (d.overdrawn) parts.push(`short ${compact(d.overdrawn)}`);
     return parts.join(", ") || "—";
   }
 
   function yearTable(r) {
     const cell = (n) => `<td class="num${n < 0 ? " neg" : ""}">${money(n)}</td>`;
+    if (retired())
+      return `<div class="table-wrap"><table>
+      <thead><tr><th>Year</th><th>Age</th><th>Age Pension</th><th>From super</th><th>Interest + pay</th><th>Living costs</th><th>Rent + home costs</th><th>Left over</th><th>Taken from</th><th>Cash</th><th>Super</th><th>Home equity</th></tr></thead>
+      <tbody>${r.years
+        .map(
+          (y) => `<tr class="${y.events.length ? "event" : ""}"><td>${y.year}${y.events.length ? `<div class="small muted">${esc(y.events.join("; "))}</div>` : ""}</td><td class="num">${y.age}</td>
+          ${cell(y.agePension)}${cell(y.superDraw)}${cell(y.moneyIn - y.agePension - y.superDraw)}${cell(y.living)}${cell(y.rentPaid + y.homeCosts)}${cell(y.leftOver)}
+          <td>${esc(takenFrom(y))}</td>${cell(y.cash + y.offsets)}${cell(y.superTotal)}${cell(y.homeEquity)}</tr>`
+        )
+        .join("")}</tbody></table></div>`;
     return `<div class="table-wrap"><table>
       <thead><tr><th>Year</th><th>Rate</th><th>Rent</th><th>Costs + land tax</th><th>Interest</th><th>Write-offs</th><th>Tax (− = back)</th><th>Investments after tax</th><th>Spare money went to</th><th>Money taken from</th><th>Debt</th><th>Net worth</th></tr></thead>
       <tbody>${r.years
@@ -718,10 +853,45 @@
     if (s.type === "SHARES") return `invest ${money(s.amount)} in shares or ETFs, ${s.funding === "RECYCLE" ? "using debt recycling from the home loan" : s.funding === "EQUITY" ? "borrowing against property equity" : "from savings and offset cash"}`;
     if (s.type === "OFFSET") return `put ${money(s.amount)} of savings into an offset account`;
     if (s.type === "PI") return "switch the loans to principal and interest";
+    if (s.type === "HOME") return `buy a home to live in for about ${money(s.price)}${state.home && state.home.has ? ", after selling the current home" : ""}, paid from savings and then super`;
     return "";
   }
 
+  function plainWordsRetired(R) {
+    const lines = [];
+    const two = state.people.length > 1;
+    const names = state.people.map((p, i) => p.name || `Person ${i + 1}`);
+    const until = A("lastUntil");
+    lines.push(two ? "ABOUT US" : "ABOUT ME");
+    lines.push(state.people.map((p, i) => `${names[i]} is ${p.age || "—"}, with ${money(p.super)} in super${p.salary ? ` and ${money(p.salary)} a year of other income` : ""}.`).join(" "));
+    lines.push(`${two ? "We have" : "I have"} ${money(state.cash)} in savings; living costs are about ${money(state.livingMonthly)} a month${state.home && state.home.has ? `, and ${two ? "we own our" : "I own my"} home (worth about ${money(state.home.value)})` : state.rentWeekly ? `, plus rent of ${money(state.rentWeekly)} a week` : ""}.`);
+    lines.push(`Super is taken as ${state.superDrawMode === "SET" ? `${money(state.superDrawYearly)} a year (at least the minimum)` : "the minimum pension each year"}. The money needs to last until age ${until}.`);
+    if (state.notes) lines.push(`What ${two ? "we're" : "I'm"} trying to work out: ${state.notes}`);
+    const base = R.base;
+    lines.push("");
+    lines.push("KEEPING THINGS AS THEY ARE");
+    lines.push(`Money lasts ${base.summary.runsOutAge === null ? "past 100" : `until about age ${base.summary.runsOutAge}`}; Age Pension in the first year about ${money(base.years[0].agePension)}.`);
+    for (const r of R.runs.filter((x) => !x.baseline)) {
+      const sc = state.scenarios.find((x) => x.id === r.id);
+      const at = Math.min(20, r.years.length);
+      const y = r.years[at - 1];
+      lines.push("");
+      lines.push(`IDEA: ${r.name.toUpperCase()}`);
+      for (const st of sc.steps.slice().sort((a, b) => a.year - b.year)) lines.push(`• Year ${st.year}: ${stepWords(st)}.`);
+      lines.push(`Rough result: money lasts ${r.summary.runsOutAge === null ? "past 100" : `until about age ${r.summary.runsOutAge}`} (${r.verdict.label.toLowerCase()}).`);
+      lines.push(`In year ${at} (age ${y.age}): home equity about ${money(y.homeEquity)}, cash and super about ${money(y.spendable)}. Age Pension in the first year about ${money(r.years[0].agePension)}.`);
+      if (r.maxHomePrice !== undefined && r.maxHomePrice !== null) lines.push(`The most this plan could spend on the home and still have money at ${until}: about ${money(r.maxHomePrice)}.`);
+      for (const t of r.verdict.stops || []) lines.push(`RED FLAG: ${t}`);
+      for (const t of r.verdict.warnings || []) lines.push(`Watch: ${t}`);
+      if (sc.notes) lines.push(`Questions: ${sc.notes}`);
+    }
+    lines.push("");
+    lines.push("These are broad estimates from Blink Check (general information, not advice). Age Pension figures are estimates — Services Australia works out the real amount.");
+    return lines.join("\n");
+  }
+
   function plainWords(R) {
+    if (retired()) return plainWordsRetired(R);
     const H = R.base.years.length;
     const two = state.people.length > 1;
     const lines = [];
@@ -763,8 +933,11 @@
   function stopBanner(runs) {
     const bad = runs.filter((r) => r.verdict && r.verdict.level === "STOP");
     if (!bad.length) return "";
-    return `<div class="red-flag big" role="alert"><div class="red-flag-head">${FLAG}<b>${bad.length === 1 ? `"${esc(bad[0].name)}" probably won't work on this income` : `${bad.length} plans probably won't work on this income`}</b></div>
-      <p>${bad.map((r) => esc(r.name)).join("; ")} — see the red flags on ${bad.length === 1 ? "its card" : "their cards"} below. A smaller purchase, a later year, more income or less other debt might change that.</p></div>`;
+    const why = retired() ? `the money doesn't last to ${A("lastUntil")}` : "probably won't work on this income";
+    return `<div class="red-flag big" role="alert"><div class="red-flag-head">${FLAG}<b>${bad.length === 1 ? `"${esc(bad[0].name)}": ${why}` : `${bad.length} plans: ${why}`}</b></div>
+      <p>${bad.map((r) => esc(r.name)).join("; ")} — see the red flags on ${bad.length === 1 ? "its card" : "their cards"} below. ${
+        retired() ? "A cheaper home, a later purchase or lower spending might change that — each card shows the most that plan could spend on the home." : "A smaller purchase, a later year, more income or less other debt might change that."
+      }</p></div>`;
   }
 
   // Short money for sentences: $1.71m, $310k.
@@ -785,9 +958,27 @@
     `<svg width="28" height="10" aria-hidden="true"><line x1="1" x2="27" y1="5" y2="5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"${style === "dashed" ? ' stroke-dasharray="7 5"' : style === "dotted" ? ' stroke-dasharray="1 5"' : ""}/></svg>`;
 
   // Facts about one plan, by year `at` (1-based).
+  const FULL_MEASURES_RETIRED = [
+    ["homeEquity", "Home equity", "solid"],
+    ["spendable", "Cash and super", "dashed"],
+    ["moneyIn", "Money coming in", "dotted"],
+    ["leftOver", "Left over each year", "solid"],
+  ];
+
   function factsAt(r, at) {
     const ys = r.years.slice(0, at);
     const y = r.years[at - 1];
+    if (retired())
+      return {
+        homeEquity: y.homeEquity,
+        spendable: y.spendable,
+        moneyIn: y.moneyIn,
+        agePension: y.agePension,
+        moneyOut: y.moneyOut,
+        leftOver: y.leftOver,
+        shortYears: ys.filter((x) => x.leftOver < 0).length,
+        lasts: r.summary.runsOutAge,
+      };
     return {
       nw: y.nw,
       debt: y.debt,
@@ -803,12 +994,13 @@
     const R = compute();
     const runs = R.runs;
     const H = R.base.years.length;
-    const at = Math.min(ui.atYear || H, H);
+    const at = Math.min(ui.atYear || (retired() ? Math.min(20, H) : H), H);
     const mi = Math.min(ui.fullMain, runs.length - 1);
     const main = runs[mi];
     const others = runs.filter((r, i) => i !== mi && ui.fullCompare[r.id]);
     const m = factsAt(main, at);
     const yearsText = (n) => `${n} year${n === 1 ? "" : "s"}`;
+    if (retired()) return fullDiffRetired(runs, main, mi, others, m, at, H);
     const sentences = others.map((o) => {
       const f = factsAt(o, at);
       const parts = [];
@@ -838,16 +1030,80 @@
         .join("")}</tbody></table></div>`;
   }
 
+  function fullDiffRetired(runs, main, mi, others, m, at, H) {
+    const lastsText = (x) => (x === null ? "past 100" : `to about age ${x}`);
+    const age = main.years[at - 1].age;
+    const sentences = others.map((o) => {
+      const f = factsAt(o, at);
+      const dE = f.homeEquity - m.homeEquity;
+      const dS = f.spendable - m.spendable;
+      const p1 = Math.abs(dE) < 1000 ? "about the same home equity" : `${approx(dE)} ${dE > 0 ? "more" : "less"} home equity`;
+      const p2 = Math.abs(dS) < 1000 ? "about the same cash and super" : `${approx(dS)} ${dS > 0 ? "more" : "less"} cash and super`;
+      return `<li>By year ${at} (age ${age}), compared with <b>${esc(runName(main))}</b>, <b>${esc(runName(o))}</b> leaves ${p1} and ${p2}; its money lasts ${lastsText(f.lasts)} instead of ${lastsText(m.lasts)}.</li>`;
+    });
+    const rows = [
+      [`Home equity in year ${at}`, (f) => money(f.homeEquity), (f) => f.homeEquity - m.homeEquity],
+      [`Cash and super in year ${at}`, (f) => money(f.spendable), (f) => f.spendable - m.spendable],
+      [`Coming in, year ${at}`, (f) => money(f.moneyIn), (f) => f.moneyIn - m.moneyIn],
+      [`…of which Age Pension`, (f) => money(f.agePension), (f) => f.agePension - m.agePension],
+      [`Going out, year ${at}`, (f) => money(f.moneyOut), (f) => f.moneyOut - m.moneyOut],
+      [`Left over, year ${at}`, (f) => money(f.leftOver), (f) => f.leftOver - m.leftOver],
+      ["Money lasts", (f) => (f.lasts === null ? "Past 100" : `To about ${f.lasts}`), () => null],
+    ];
+    const facts = others.map((o) => factsAt(o, at));
+    const diffText = (d) => (d === null || Math.abs(d) < 500 ? "" : `${approx(d)} ${d > 0 ? "more" : "less"}`);
+    return `${sentences.length ? `<ul class="diff-words">${sentences.join("")}</ul>` : `<p class="small muted">Tick a plan under "Compare with" to see the differences.</p>`}
+      <div class="table-wrap"><table class="diff-table"><thead><tr><th>Year ${at} (age ${age})</th><th><span class="dot" style="background:${SERIES[mi]}"></span> ${esc(runName(main))}</th>${others
+        .map((o) => `<th><span class="dot" style="background:${SERIES[runs.indexOf(o)]}"></span> ${esc(runName(o))}</th>`)
+        .join("")}</tr></thead><tbody>${rows
+        .map(([label, val, diff]) => `<tr><td>${esc(label)}</td><td class="num">${esc(val(m))}</td>${facts.map((f) => `<td class="num">${esc(val(f))}${diffText(diff(f)) ? `<div class="small muted">${esc(diffText(diff(f)))}</div>` : ""}</td>`).join("")}</tr>`)
+        .join("")}</tbody></table></div>`;
+  }
+
+  function fullCardRetired(R, runs, H, at, mi, main, shown, on) {
+    const top = [];
+    const bottom = [];
+    for (const r of shown) {
+      const i = runs.indexOf(r);
+      const width = r === main ? 3 : 2;
+      const nm = runName(r);
+      if (on.homeEquity !== false) top.push({ name: `Home equity — ${nm}`, color: SERIES[i], values: r.years.map((y) => y.homeEquity), width });
+      if (on.spendable !== false) top.push({ name: `Cash and super — ${nm}`, color: SERIES[i], values: r.years.map((y) => y.spendable), width, dash: "7 5", noDot: true });
+      if (on.moneyIn !== false) bottom.push({ name: `Coming in — ${nm}`, color: SERIES[i], values: r.years.map((y) => y.moneyIn), width: 2, dash: "1 5", noDot: true });
+      if (on.leftOver !== false) bottom.push({ name: `Left over — ${nm}`, color: SERIES[i], values: r.years.map((y) => y.leftOver), width });
+    }
+    const ageAt = main.years[at - 1].age;
+    return `<div class="card">
+      <div class="card-head"><h3>Home equity against cash and super</h3></div>
+      <p class="small muted">One plan in full, with any others laid over it. Pick the plan, tick what to compare it with, and slide to a year. Ages are the younger person's.</p>
+      <div class="field"><span class="label">Plan</span><div class="chips">${runs
+        .map((r, i) => `<button type="button" class="chip" data-pick="fullMain" data-value="${i}" aria-pressed="${i === mi}"><span class="dot" style="background:${SERIES[i]};margin-right:6px"></span>${esc(runName(r))}</button>`)
+        .join("")}</div></div>
+      <div class="field"><span class="label">Compare with</span><div class="chips">${runs
+        .map((r, i) => (i === mi ? "" : `<label class="chip legend-chip"><input type="checkbox" data-cmp="${esc(r.id)}"${ui.fullCompare[r.id] ? " checked" : ""} style="accent-color:${SERIES[i]};width:18px;height:18px"> ${esc(runName(r))}</label>`))
+        .join("")}</div></div>
+      <div class="field"><span class="label">Show</span><div class="chips">${FULL_MEASURES_RETIRED.map(
+        ([k, label, style]) => `<label class="chip legend-chip"><input type="checkbox" data-measure="${k}"${on[k] !== false ? " checked" : ""} style="width:18px;height:18px"> ${lineKey(style)} ${esc(label)}</label>`
+      ).join("")}</div></div>
+      <div class="at-row"><label for="at-year">Compare at</label><input type="range" id="at-year" data-at min="1" max="${H}" value="${at}"><output id="at-label">Year ${at} · age ${ageAt}</output></div>
+      ${top.length ? `<h4>What you own</h4>${chart("full-top", top, H, "money", { group: "full", at, noNote: true, label: "Home equity and cash and super over the years" })}` : ""}
+      ${bottom.length ? `<h4>Money each year</h4>${chart("full-bottom", bottom, H, "money", { group: "full", at, noNote: true, shadeNegative: on.leftOver !== false ? "Below the line: drawing on savings and super" : "", label: "Money coming in and left over each year" })}` : ""}
+      <p class="small muted">Top: home equity (solid) and cash and super (dashed). Bottom: money coming in — Age Pension, super pension, interest and any pay (dotted) — and what's left after living costs, rent and the home's running costs (solid). Years along the bottom; year 1 is age ${main.years[0].age}.</p>
+      <div id="full-diff">${fullDiff()}</div>
+    </div>`;
+  }
+
   function fullCard(R) {
     const runs = R.runs;
     const H = R.base.years.length;
-    const at = Math.min(ui.atYear || H, H);
+    const at = Math.min(ui.atYear || (retired() ? Math.min(20, H) : H), H);
     const mi = Math.min(ui.fullMain, runs.length - 1);
     const main = runs[mi];
     const shown = runs.filter((r, i) => i === mi || ui.fullCompare[r.id]);
     const on = ui.fullShow;
     const top = [];
     const bottom = [];
+    if (retired()) return fullCardRetired(R, runs, H, at, mi, main, shown, on);
     for (const r of shown) {
       const i = runs.indexOf(r);
       const width = r === main ? 3 : 2;
@@ -883,7 +1139,8 @@
     const R = compute();
     const H = R.base.years.length;
     const runs = R.runs;
-    const metric = METRICS.find((m) => m[0] === ui.metric) || METRICS[0];
+    const LIST = retired() ? METRICS_RETIRED : METRICS;
+    const metric = LIST.find((m) => m[0] === ui.metric) || LIST[0];
     const series = runs
       .map((r, i) => ({ r, i }))
       .filter(({ r }) => !ui.hidden[r.id])
@@ -896,14 +1153,14 @@
     const tt = runs[ti];
     const spareText = SPARE.find((x) => x[0] === (tt.spare || "HOME_OFFSET"))[1];
     return `${exampleBanner()}
-    <div class="intro"><h2>Blink check</h2><p class="muted">Each plan against leaving the cash in the offset, over ${H} years. Broad numbers — enough to tell whether an idea is worth researching properly.</p></div>
+    <div class="intro"><h2>Blink check</h2><p class="muted">${retired() ? `Each plan against keeping things as they are, to age 100 (${H} years). Does the money last, and what's left in the home and in the bank?` : `Each plan against leaving the cash in the offset, over ${H} years.`} Broad numbers — enough to tell whether an idea is worth researching properly.</p></div>
     ${stopBanner(runs)}
     <div class="verdicts">${runs.map((r, i) => verdictCard(r, i, R.base)).join("")}</div>
     ${fullCard(R)}
     <div class="card">
       <div class="card-head"><h3>Compare one measure: ${esc(metric[1].toLowerCase())}</h3></div>
       <div class="chart-controls">
-        <div class="chips">${METRICS.map((m) => `<button type="button" class="chip" data-metric="${m[0]}" aria-pressed="${m[0] === metric[0]}">${esc(m[1])}</button>`).join("")}</div>
+        <div class="chips">${LIST.map((m) => `<button type="button" class="chip" data-metric="${m[0]}" aria-pressed="${m[0] === metric[0]}">${esc(m[1])}</button>`).join("")}</div>
         <div class="chips">${runs
           .map((r, i) => `<label class="chip legend-chip" style="display:inline-flex;align-items:center"><input type="checkbox" data-show="${r.id}"${ui.hidden[r.id] ? "" : " checked"} style="accent-color:${SERIES[i]};width:18px;height:18px"> ${esc(r.baseline ? "Yardstick" : r.name)}</label>`)
           .join("")}</div>
@@ -917,7 +1174,7 @@
       ${ct.chains.length ? ct.chains.map(chainView).join("") : `<p class="note-box">${ct.baseline ? "The yardstick buys nothing." : "This plan doesn't buy anything."}</p>`}
     </div>
     <div class="card">
-      <div class="card-head"><h3>In plain words — for your accountant or broker</h3><button type="button" class="btn secondary" data-act="copy-words">Copy the words</button></div>
+      <div class="card-head"><h3>In plain words — for ${retired() ? "an adviser or accountant" : "your accountant or broker"}</h3><button type="button" class="btn secondary" data-act="copy-words">Copy the words</button></div>
       <p class="small muted">What you're thinking about, written out. Copy it into an email, or ${STANDALONE ? "save a copy of this file and send that" : "copy your figures to share them"}.</p>
       <div id="plain-words" class="note-box" style="white-space:pre-wrap;max-width:75ch">${esc(plainWords(R))}</div>
     </div>
@@ -987,6 +1244,12 @@
       </div>
       <p class="small muted">Resident tax rates for 2026-27 (15% bracket) and from 1 July 2027 (14%), with the 2% Medicare levy. Capital gains get the 50% discount after a year. Your home is exempt.</p>
     </div>
+    ${retired() ? `<div class="card"><h3>Retirement</h3><div class="grid">
+      ${pctF("pensionReturn", "Super pension returns after fees (%)", "Earnings in a super pension are tax-free.", "superPension")}
+      ${pctF("homeRunPct", "A bought home's running costs (% of its value a year)", "Council rates, insurance, strata and upkeep.")}
+      ${moneyField("assumptions.personalAssets", "Car, contents and other personal assets", { hint: "Counted in the Age Pension assets test.", help: "agePension" })}
+    </div>
+    <p class="small muted">Age Pension rates and thresholds are approximate figures from September 2025, rising with prices in later years; super pension minimums are 4% under 65, rising to 14% from 95. The home is never counted in the assets test.</p></div>` : ""}
     <div class="card"><h3>The lender's test</h3><div class="grid">
       ${pctF("assessBuffer", "Test rate: actual rate plus (%)", "", "serviceability")}${pctF("resShade", "Residential rent counted (%)")}${pctF("comShade", "Commercial rent counted (%)")}
       ${pctF("cardServicing", "Card limits counted (% a month)")}${moneyField("assumptions.smsfBuffer", "Cash to keep in the SMSF after buying")}
@@ -1034,6 +1297,8 @@
         <dt>Marginal</dt><dd>Ahead, but not by enough to be worth the extra risk and effort unless it suits your goals.</dd>
         <dt>Doesn't beat leaving the cash in the offset</dt><dd>Ends behind the yardstick.</dd>
         <dt>Amber note: spends more than it earns</dt><dd>In some years the household spends more than it earns and dips into savings and offsets, but doesn't run out within the plan.</dd>
+        <dt>Retired: money doesn't last (red flag)</dt><dd>Savings and super run out before the age you picked. The card shows the age, what's coming in and going out that year, and the most that plan could spend on a home and still have money at that age.</dd>
+        <dt>Retired: home equity against cash and super</dt><dd>The top chart compares what's tied up in the home with the money there is to live on; the bottom one shows money coming in (Age Pension, super pension, interest) and what's left after living costs, rent and the home's running costs. Below the line means drawing on savings and super.</dd>
         <dt>Wealth, debt and cash flow</dt><dd>Two charts for one plan, with any others laid over it. The top one is what you own and owe (wealth solid, debt dashed). The bottom one is money each year: income before tax (dotted) and what the investments put in your pocket or cost you after tax (solid) — below the line costs you money. Slide to a year to compare the plans in words and in a table.</dd>
         <dt>Net worth compared with the yardstick</dt><dd>How much better or worse off the plan leaves you at the end, against doing nothing new.</dd>
         <dt>Cash put in at purchase</dt><dd>Your own money used for deposits, stamp duty and costs.</dd>
@@ -1222,7 +1487,8 @@
     if (el.dataset && el.dataset.at !== undefined) {
       // Slide to a year: move the cursors and refresh the comparison, without redrawing the page (the slider keeps working mid-drag).
       ui.atYear = Number(el.value);
-      document.getElementById("at-label").textContent = `Year ${el.value}`;
+      const run0 = compute().runs[0];
+      document.getElementById("at-label").textContent = retired() ? `Year ${el.value} · age ${run0.years[el.value - 1].age}` : `Year ${el.value}`;
       document.querySelectorAll('.chart-wrap[data-group="full"]').forEach((w) => {
         w.dataset.at = el.value - 1;
         placeCursor(w, el.value - 1);
@@ -1247,6 +1513,7 @@
     if (type === "SELL") Object.assign(s, { target: (propertyChoices(plan, year)[0] || [""])[0], then: "PAY_DEBT" });
     if (type === "SHARES") Object.assign(s, { amount: 50000, funding: "CASH", loanType: "IO" });
     if (type === "OFFSET") Object.assign(s, { amount: 20000, to: "home" });
+    if (type === "HOME") Object.assign(s, { price: 700000, name: "Home" });
     if (type === "PI") Object.assign(s, { target: (propertyChoices(plan, 99)[0] || ["home"])[0] });
     plan.steps.push(s);
   }
@@ -1374,8 +1641,18 @@
     if (!act) return;
     if (act === "ask") ui.confirm = d.key;
     else if (act === "cancel-confirm") ui.confirm = null;
-    else if (act === "fresh") {
+    else if (act === "example-retired" || act === "example-working") {
+      state = act === "example-retired" ? exampleRetired() : example();
+      state.updatedAt = Date.now();
+      ui.plan = 1;
+      ui.fullMain = 1;
+      ui.fullCompare = { base: true };
+      ui.atYear = 0;
+      save();
+    } else if (act === "fresh") {
+      const stage = state.stage;
       state = blank();
+      state.stage = stage;
       state.updatedAt = Date.now();
       ui.plan = 1;
       ui.confirm = null;

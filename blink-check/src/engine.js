@@ -78,6 +78,59 @@
     return 88036 + (v - 6571000) * 0.02;
   }
 
+  // ---------------------------------------------------------------------
+  // Retirement: Age Pension (Services Australia), super pension minimum
+  // drawdowns and the seniors tax offset. Approximate rates as at
+  // September 2025 — check them each year. Indexed with CPI in the plan.
+  // ---------------------------------------------------------------------
+
+  const AGE_PENSION = {
+    pensionAge: 67,
+    maxSingle: 30646, // a year: $1,178.70 a fortnight with supplements
+    maxCouple: 46202, // a year, combined: $1,777.00 a fortnight
+    assetsHomeowner: [321500, 481500], // [single, couple]
+    assetsNonHomeowner: [579500, 739500],
+    assetsTaper: 78, // $ a year less for each $1,000 over ($3 a fortnight)
+    incomeFree: [5668, 9880], // $218 / $380 a fortnight
+    incomeTaper: 0.5, // 50c in the dollar (single; couple combined)
+    deemLow: 0.0075,
+    deemHigh: 0.0275,
+    deemThreshold: [64200, 106200],
+  };
+
+  /**
+   * Age Pension a year (combined for a couple). eligible = how many people are pension age.
+   * assets: assessable assets (not the home). financial: the deemed part (cash, offsets, super, shares).
+   * otherIncome: work and net rent a year. index: CPI growth since today (1 = today's rates).
+   */
+  function agePension(o) {
+    if (!o.eligible) return 0;
+    const k = o.couple ? 1 : 0;
+    const ix = o.index || 1;
+    const P = AGE_PENSION;
+    const max = (o.couple ? P.maxCouple : P.maxSingle) * ix;
+    const threshold = (o.homeowner ? P.assetsHomeowner : P.assetsNonHomeowner)[k] * ix;
+    const byAssets = max - (Math.max(0, o.assets - threshold) / 1000) * P.assetsTaper;
+    const deemTop = P.deemThreshold[k] * ix;
+    const deemed = Math.min(o.financial, deemTop) * P.deemLow + Math.max(0, o.financial - deemTop) * P.deemHigh;
+    const byIncome = max - Math.max(0, deemed + (o.otherIncome || 0) - P.incomeFree[k] * ix) * P.incomeTaper;
+    const rate = Math.max(0, Math.min(max, byAssets, byIncome));
+    return o.couple ? (rate * Math.min(2, o.eligible)) / 2 : rate;
+  }
+
+  // Minimum yearly payment from a super pension, by age (% of the balance on 1 July).
+  const MIN_DRAW = [[65, 4], [75, 5], [80, 6], [85, 7], [90, 9], [95, 11], [Infinity, 14]];
+  function minDrawRate(age) {
+    for (const [under, pct] of MIN_DRAW) if (age < under) return pct / 100;
+    return 0.14;
+  }
+
+  /** Seniors and pensioners tax offset (SAPTO), for one person of pension age. */
+  function sapto(taxable, couple) {
+    const [max, from] = couple ? [1602, 30994] : [2230, 34919];
+    return Math.max(0, max - Math.max(0, taxable - from) * 0.125);
+  }
+
   /** Monthly repayment on a principal-and-interest loan. */
   function pmt(annualRate, months, balance) {
     if (!(balance > 0) || !(months > 0)) return 0;
@@ -183,6 +236,11 @@
     buildingPctRes: 40, // construction cost as % of price, for the 2.5% building write-off
     buildingPctCom: 50,
     fittingsPct: 1, // new-build fittings write-off, % of price in year 1, falling 20% a year
+    // Retirement
+    lastUntil: 95, // money should last until this age (the younger person's)
+    pensionReturn: 6.5, // super in pension phase, after fees (earnings are tax-free)
+    homeRunPct: 1, // a home bought in the plan: rates, insurance, upkeep, % of value a year
+    personalAssets: 20000, // car, contents — counted in the Age Pension assets test
   };
 
   /** The yearly tax write-off (depreciation) for a property: none, building only, or building + fittings (new). */
@@ -206,7 +264,11 @@
 
   function simulate(plan, scenario) {
     const a = Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {});
-    const H = Math.max(5, Math.min(30, Number(a.horizon) || 20));
+    const retired = plan.stage === "RETIRED";
+    const ages0 = (plan.people || []).filter((p) => p && p.name !== undefined).map((p) => +p.age || (retired ? 67 : 40));
+    const youngest0 = ages0.length ? Math.min(...ages0) : retired ? 67 : 40;
+    // Retired: run until the younger person is 100 (10–40 years), to see how long the money lasts.
+    const H = retired ? Math.max(10, Math.min(40, 100 - youngest0 + 1)) : Math.max(5, Math.min(30, Number(a.horizon) || 20));
     const shifts = rateShifts(a, H);
     const wageGrowth = a.wageGrowth === null || a.wageGrowth === undefined || a.wageGrowth === "" ? a.cpi : +a.wageGrowth;
     const people = (plan.people || []).filter((p) => p && p.name !== undefined);
@@ -273,6 +335,20 @@
     const otherRepayYears = +plan.otherRepayYears || 0;
     const cardLimits = +plan.cardLimits || 0;
     const carried = people.map(() => 0); // rental losses carried forward when negative gearing is off
+    const ages = people.map((p) => +p.age || (retired ? 67 : 40));
+    const ageOf = (i) => ages[i] + year - 1;
+    const couple = nP > 1;
+    let renting = retired && !(home.has && home.value > 0);
+    let rentYear = (+plan.rentWeekly || 0) * 52;
+    let drawYear = people.map(() => 0); // this year's super pension payments, per person
+    let pensionYear = 0; // this year's Age Pension, combined
+    const superTotalNow = () => superBal.reduce((s, b) => s + b, 0);
+    function takeFromSuper(amount) {
+      const t = superTotalNow();
+      const take = Math.min(Math.max(0, t), amount);
+      if (take > 0) superBal.forEach((b, i) => (superBal[i] -= (take * b) / t));
+      return take;
+    }
 
     // --- Helpers ---------------------------------------------------------------
     const debtOn = (propId) => loans.filter((L) => L.prop === propId && active(L)).reduce((s, L) => s + L.balance, 0);
@@ -289,7 +365,8 @@
       return {
         interest: 0, interestSaved: 0, rent: 0, costs: 0, landTax: 0, propCash: {}, shareCash: 0, dividends: 0, savingsInterest: 0,
         takeHome: 0, living: 0, payg: 0, homePay: 0, gains: people.map(() => 0), sentTo: { homeOffset: 0, ownOffset: 0, otherOffset: 0, cash: 0, payDown: 0 },
-        drawnFrom: { cash: 0, offsets: 0, overdrawn: 0 }, upfrontCash: 0, events: [], taxSettle: 0, smsfIncome: 0,
+        drawnFrom: { cash: 0, offsets: 0, super: 0, overdrawn: 0 }, upfrontCash: 0, events: [], taxSettle: 0, smsfIncome: 0,
+        agePension: 0, superDraw: 0, rentPaid: 0, homeCosts: 0,
       };
     }
 
@@ -341,6 +418,11 @@
         need -= take;
         yr.drawnFrom.offsets += take;
       }
+      if (need > 0 && retired) {
+        const take = takeFromSuper(need);
+        need -= take;
+        yr.drawnFrom.super += take;
+      }
       if (need > 0 && !(opts && opts.noOverdraw)) {
         cash -= need;
         yr.drawnFrom.overdrawn += need;
@@ -375,9 +457,13 @@
       const smsfProp = live.filter((p) => p.smsf).reduce((s, p) => s + p.value, 0);
       const smsfDebt = loans.filter((L) => L.smsf && active(L)).reduce((s, L) => s + L.balance, 0);
       const superTotal = superBal.reduce((s, b) => s + b, 0) + smsfProp - smsfDebt;
-      const liquid = cash + offsets;
+      // Money that can be spent: savings and offsets, plus super once retired.
+      const liquid = cash + offsets + (retired ? superBal.reduce((s, b) => s + b, 0) : 0);
+      const homes = live.filter((p) => p.home);
+      const homeValue = homes.reduce((s, p) => s + p.value, 0);
+      const homeDebt = loans.filter((L) => !L.smsf && active(L) && homes.some((p) => p.id === L.prop)).reduce((s, L) => s + L.balance - Math.min(L.offset, L.balance), 0);
       const nwExSuper = value + shares.value + cash + offsets - debt;
-      return { value, debt, offsets, cash, liquid, shares: shares.value, superTotal, nwExSuper, nw: nwExSuper + superTotal, equity: value - debt + offsets };
+      return { value, debt, offsets, cash, liquid, shares: shares.value, superTotal, nwExSuper, nw: nwExSuper + superTotal, equity: value - debt + offsets, homeValue, homeEquity: homeValue - homeDebt };
     }
 
     // Borrowing check, as a lender might: rates plus a buffer, rents shaded, every loan at P&I.
@@ -589,9 +675,60 @@
       yr.events.push("Buy shares");
     }
 
+    /** Buy a home to live in: sells the current home first (if any), then pays from savings above the cash to keep, then super (retired), then the rest of savings. */
+    function stepHome(s) {
+      const price = +s.price || 0;
+      if (!(price > 0)) return;
+      const cur = props.find((p) => p.home && !p.sold);
+      if (cur) {
+        let proceeds = cur.value * (1 - a.sellCostsPct / 100);
+        for (const L of loans.filter((x) => x.prop === cur.id && active(x))) {
+          proceeds -= L.balance - L.offset;
+          L.balance = 0;
+          L.offset = 0;
+          L.paidOff = { year, why: "sold" };
+        }
+        cur.sold = true;
+        cur.soldYear = year;
+        if (proceeds >= 0) cash += proceeds;
+        else draw(-proceeds);
+        yr.events.push(`Sell ${cur.name.toLowerCase()}`);
+      }
+      const duty = a.state === "NSW" ? nswDuty(price, true) : round((price * a.dutyPctOther) / 100);
+      const other = a.buyCostsRes;
+      const total = price + duty + other;
+      const name = s.name || "New home";
+      props.push({ id: s.id, name, kind: "RES", home: true, bought: true, value: price, costBase: total, owners: evenOwners, growth: s.growth ?? a.resGrowth, landPct: a.landPctRes, boughtMonth: month });
+      renting = false;
+      const keep = s.keep !== undefined && s.keep !== null && s.keep !== "" ? +s.keep : reserve();
+      const chain = { id: s.id, year, name, kind: "HOME", price, duty, other, total, mainLoan: 0, equity: [], cash: 0, fromSuper: 0, short: 0 };
+      let need = total;
+      const first = Math.min(need, positive(cash + offsetsTotal() - keep));
+      if (first > 0) draw(first);
+      need -= first;
+      chain.cash += first;
+      if (need > 0 && retired) {
+        const t = takeFromSuper(need);
+        chain.fromSuper = round(t);
+        need -= t;
+      }
+      const last = Math.min(need, positive(cash + offsetsTotal()));
+      if (last > 0) draw(last);
+      need -= last;
+      chain.cash = round(chain.cash + last);
+      if (need > 1) {
+        chain.short = round(need);
+        draw(need);
+        flags.push({ year, text: `Not enough savings${retired ? " and super" : ""} to buy ${name.toLowerCase()} in year ${year} — about $${round(need).toLocaleString("en-AU")} short.` });
+      }
+      chains.push(chain);
+      yr.events.push(`Buy ${name.toLowerCase()}`);
+    }
+
     function applySteps(salaries) {
       for (const s of (scenario.steps || []).filter((x) => +x.year === year)) {
         if (s.type === "BUY" || s.type === "SMSF") stepBuy(s, salaries);
+        else if (s.type === "HOME") stepHome(s);
         else if (s.type === "SELL") stepSell(s);
         else if (s.type === "SHARES") stepShares(s);
         else if (s.type === "OFFSET") {
@@ -634,6 +771,28 @@
         for (const L of loans.filter(active)) repriceLoan(L);
         applySteps(salaries);
         for (const p of props) if (p.rentNow === undefined && !p.home) p.rentNow = (p.rentWeekly || 0) * 52;
+        if (year > 1) rentYear *= 1 + a.resRentGrowth / 100;
+        if (retired) {
+          // Super pension: at least the minimum for each person's age, or the set amount if that's more.
+          const set = plan.superDrawMode === "SET" ? +plan.superDrawYearly || 0 : 0;
+          const t = superTotalNow();
+          drawYear = superBal.map((b, i) => Math.min(b, Math.max(b * minDrawRate(ageOf(i)), t > 0 ? (set * b) / t : 0)));
+          // Age Pension, from this year's assets and income.
+          const T = totalsNow();
+          const investProps = liveProps().filter((p) => !p.home && !p.smsf);
+          const assets = T.cash + T.offsets + T.superTotal + T.shares + investProps.reduce((x, p) => x + p.value, 0) + a.personalAssets;
+          const financial = T.cash + T.offsets + T.superTotal + T.shares;
+          const netRent = investProps.reduce((x, p) => x + (p.rentNow || 0) * (1 - (p.costPct || 0) / 100), 0);
+          pensionYear = agePension({
+            couple,
+            eligible: people.filter((p, i) => ageOf(i) >= AGE_PENSION.pensionAge).length,
+            homeowner: !renting && liveProps().some((p) => p.home),
+            assets: Math.max(0, assets),
+            financial: Math.max(0, financial),
+            otherIncome: salaries.reduce((x, v) => x + v, 0) + netRent,
+            index: Math.pow(1 + a.cpi / 100, year - 1),
+          });
+        }
         // Land tax this year: each person's share of the taxable land they hold (NSW; not the home or SMSF).
         const landTax = {};
         if (a.state === "NSW") {
@@ -668,7 +827,27 @@
       // Growth.
       for (const p of liveProps()) p.value *= Math.pow(1 + p.growth / 100, 1 / 12);
       shares.value *= Math.pow(1 + a.shareGrowth / 100, 1 / 12);
-      superBal.forEach((b, i) => (superBal[i] = b * Math.pow(1 + a.superReturn / 100, 1 / 12)));
+      superBal.forEach((b, i) => (superBal[i] = b * Math.pow(1 + (retired ? a.pensionReturn : a.superReturn) / 100, 1 / 12)));
+      if (retired) {
+        // Super pension payments and the Age Pension come in; rent and a bought home's running costs go out.
+        drawYear.forEach((d, i) => {
+          const pay = Math.min(Math.max(0, superBal[i]), d / 12);
+          superBal[i] -= pay;
+          salaryPart += pay;
+          yr.superDraw += pay;
+        });
+        salaryPart += pensionYear / 12;
+        yr.agePension += pensionYear / 12;
+        if (renting) {
+          salaryPart -= rentYear / 12;
+          yr.rentPaid += rentYear / 12;
+        }
+        for (const p of liveProps().filter((x) => x.home && x.bought)) {
+          const c = (p.value * a.homeRunPct) / 100 / 12;
+          salaryPart -= c;
+          yr.homeCosts += c;
+        }
+      }
 
       // Rents and running costs.
       const parts = {};
@@ -756,10 +935,18 @@
         const taxable = people.map((p, i) => salaries[i]);
         const taxableExInvest = people.map((p, i) => salaries[i]);
         const savingsShare = yr.savingsInterest / nP;
+        const eligibleNow = people.map((p, i) => ageOf(i) >= AGE_PENSION.pensionAge);
+        const nEligible = eligibleNow.filter(Boolean).length;
         people.forEach((p, i) => {
-          taxable[i] += savingsShare;
-          taxableExInvest[i] += savingsShare;
+          // Super pensions are tax-free from 60; the Age Pension is taxable.
+          const ap = nEligible && eligibleNow[i] ? yr.agePension / nEligible : 0;
+          taxable[i] += savingsShare + ap;
+          taxableExInvest[i] += savingsShare + ap;
         });
+        const taxOf = (t, i) => {
+          const tax = individualTax(t, calYear);
+          return retired && eligibleNow[i] ? Math.max(0, tax - sapto(t, couple)) : tax;
+        };
         const invest = people.map(() => 0);
         let writeOffs = 0;
         for (const p of props.filter((x) => !x.home && !x.smsf)) {
@@ -792,10 +979,10 @@
           taxable[i] += result;
         });
         yr.writeOffs = writeOffs;
-        const tax = taxable.map((t) => individualTax(t, calYear));
+        const tax = taxable.map((t, i) => taxOf(t, i));
         const credits = grossUp;
         const totalTax = tax.reduce((s, t) => s + t, 0) - credits;
-        const taxEx = taxableExInvest.reduce((s, t) => s + individualTax(t, calYear), 0);
+        const taxEx = taxableExInvest.reduce((s, t, i) => s + taxOf(t, i), 0);
         const settle = yr.payg - totalTax; // refund (+) or bill (−)
         yr.taxSettle = settle;
         if (settle >= 0) putAway(settle, null);
@@ -830,6 +1017,18 @@
           income: round(salaries.reduce((s, x) => s + x, 0)),
           takeHome: round(yr.takeHome),
           homeLoanPay: round(yr.homePay),
+          age: youngest0 + year - 1,
+          agePension: round(yr.agePension),
+          superDraw: round(yr.superDraw),
+          rentPaid: round(yr.rentPaid),
+          homeCosts: round(yr.homeCosts),
+          homeValue: round(T.homeValue),
+          homeEquity: round(T.homeEquity),
+          spendable: round(T.liquid),
+          // Retired view: what comes in (pay after tax, pensions, interest) and what goes out (living, rent, home, home loan).
+          moneyIn: round(yr.takeHome + yr.agePension + yr.superDraw + yr.savingsInterest),
+          moneyOut: round(yr.living + yr.rentPaid + yr.homeCosts + yr.homePay),
+          leftOver: round(yr.takeHome + yr.agePension + yr.superDraw + yr.savingsInterest - yr.living - yr.rentPaid - yr.homeCosts - yr.homePay + investCashBefore + settle),
           living: round(yr.living),
           interest: round(yr.interest),
           interestSaved: round(yr.interestSaved),
@@ -842,7 +1041,7 @@
           investCashAfter: round(investCashAfter),
           topUp: round(positive(-investCashAfter)),
           upfrontCash: round(yr.upfrontCash),
-          householdSpare: round(yr.takeHome - yr.living - yr.homePay + investCashBefore + yr.savingsInterest + settle),
+          householdSpare: round(yr.takeHome - yr.living - yr.homePay - yr.rentPaid - yr.homeCosts + yr.agePension + yr.superDraw + investCashBefore + yr.savingsInterest + settle),
           sentTo: Object.fromEntries(Object.entries(yr.sentTo).map(([k, v]) => [k, round(v)])),
           drawnFrom: Object.fromEntries(Object.entries(yr.drawnFrom).map(([k, v]) => [k, round(v)])),
           props: props
@@ -893,6 +1092,9 @@
         debtFreeYear: debtFree ? debtFree.year : null,
         minLiquid: round(minLiquid),
         runsOut,
+        runsOutAge: runsOut ? youngest0 + runsOut - 1 : null,
+        retired,
+        startAge: youngest0,
       },
     };
   }
@@ -903,7 +1105,58 @@
 
   const money = (n) => (n < 0 ? "−$" : "$") + Math.abs(Math.round(n)).toLocaleString("en-AU");
 
+  /** Retired households: does the money last, and what's left at year 20? */
+  function retiredVerdict(r, base, plan) {
+    const a = Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {});
+    const s = r.summary;
+    const H = r.years.length;
+    const until = +a.lastUntil || 95;
+    const at = Math.min(20, H);
+    const y = r.years[at - 1];
+    const notes = [];
+    const stops = [];
+    const warnings = [];
+    if (s.runsOutAge !== null && s.runsOutAge <= until) {
+      const w = r.years[s.runsOut - 1];
+      stops.push(
+        `Money runs out at about age ${s.runsOutAge} — before ${until}. That year about ${money(w.moneyIn)} comes in (Age Pension ${money(w.agePension)}, super ${money(w.superDraw)}, interest and pay), ` +
+          `against about ${money(w.moneyOut)} going out (living costs${w.rentPaid ? ", rent" : ""}${w.homeCosts ? ", the home's running costs" : ""}${w.homeLoanPay ? ", the home loan" : ""}), and savings and super are used up.`
+      );
+      if (w.homeEquity > 100000)
+        stops.push(`The home would be worth about ${money(w.homeEquity)} then. Selling it, or borrowing against it (for example the government's Home Equity Access Scheme), is a fallback — not a plan.`);
+    } else if (s.runsOutAge !== null) {
+      warnings.push(`Money lasts until about age ${s.runsOutAge} — past ${until}, but not much past it.`);
+    }
+    for (const c of r.chains) if (c.short > 0) stops.push(`About ${money(c.short)} short of the price and costs for ${c.name.toLowerCase()} in year ${c.year}.`);
+    if (r.maxHomePrice !== undefined) {
+      if (r.maxHomePrice === null) notes.push(`Even a very cheap home wouldn't make the money last to ${until} on these figures.`);
+      else notes.push(`The most this plan could spend on the home and still have money at ${until}: about ${money(r.maxHomePrice)} (plus stamp duty and costs).`);
+    }
+    notes.push(`In year ${at} (age ${y.age}): home equity about ${money(y.homeEquity)}; cash and super about ${money(y.spendable)}.`);
+    const ap1 = r.years[0].agePension;
+    const apBase = base.years[0].agePension;
+    if (!r.baseline && Math.abs(ap1 - apBase) > 500) notes.push(`Age Pension in year 1: about ${money(ap1)} a year, compared with ${money(apBase)} on the yardstick.`);
+    else if (ap1 > 0) notes.push(`Age Pension in year 1: about ${money(ap1)} a year.`);
+    for (const f of r.flags) notes.push(f.text);
+    if (r.baseline) return { level: "BASE", label: "The yardstick", stops, warnings, notes: ["Nothing new is bought; money stays in savings and super.", ...notes] };
+    const gain = s.nwEnd - base.summary.nwEnd;
+    let level;
+    let label;
+    if (stops.length) {
+      level = "STOP";
+      label = "Money doesn't last";
+    } else if (warnings.length) {
+      level = "MAYBE";
+      label = `Lasts to ${until}, only just`;
+    } else {
+      level = "YES";
+      label = s.runsOutAge === null ? "Money lasts past 100" : `Money lasts to about ${s.runsOutAge}`;
+    }
+    return { level, label, gain: round(gain), notes, stops, warnings, horizon: H };
+  }
+
   function verdictFor(r, base, plan) {
+    if (plan.stage === "RETIRED") return retiredVerdict(r, base, plan);
     const notes = [];
     const s = r.summary;
     const risk = plan.risk || "MIDDLE";
@@ -971,12 +1224,39 @@
     return { level, label, gain: round(gain), perDollar: s.moneyIn > 0 ? gain / s.moneyIn : null, notes, stops, warnings, horizon: H };
   }
 
+  /** Retired: the highest price for a plan's home purchase that still leaves money at the target age (to $5,000), or null. */
+  function maxHomePrice(plan, scenario) {
+    const step = (scenario.steps || []).find((x) => x.type === "HOME");
+    if (!step) return undefined;
+    const until = +Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {}).lastUntil || 95;
+    const lasts = (price) => {
+      const sc = Object.assign({}, scenario, { steps: scenario.steps.map((x) => (x === step ? Object.assign({}, x, { price }) : x)) });
+      const r = simulate(plan, sc);
+      return (r.summary.runsOutAge === null || r.summary.runsOutAge > until) && !r.chains.some((c) => c.short > 0);
+    };
+    let lo = 0;
+    let hi = Math.max(3000000, (+step.price || 0) * 3);
+    if (!lasts(50000)) return null;
+    lo = 50000;
+    if (lasts(hi)) return hi;
+    for (let k = 0; k < 18 && hi - lo > 5000; k++) {
+      const mid = (lo + hi) / 2;
+      if (lasts(mid)) lo = mid;
+      else hi = mid;
+    }
+    return Math.floor(lo / 5000) * 5000;
+  }
+
   function runAll(plan) {
     const scenarios = plan.scenarios || [];
-    const base = scenarios.find((s) => s.baseline) || { id: "base", name: "Cash stays in the offset", baseline: true, steps: [] };
+    const base = scenarios.find((s) => s.baseline) || { id: "base", name: plan.stage === "RETIRED" ? "Keep things as they are" : "Cash stays in the offset", baseline: true, steps: [] };
     const baseRun = simulate(plan, base);
     const runs = scenarios.map((s) => (s === base ? baseRun : simulate(plan, s)));
     if (!scenarios.includes(base)) runs.unshift(baseRun);
+    if (plan.stage === "RETIRED") scenarios.forEach((s, i) => {
+      const m = maxHomePrice(plan, s);
+      if (m !== undefined) runs[scenarios.includes(base) ? i : i + 1].maxHomePrice = m;
+    });
     for (const r of runs) r.verdict = verdictFor(r, baseRun, plan);
     return { runs, base: baseRun, shifts: rateShifts(Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {}), baseRun.years.length) };
   }
@@ -1037,7 +1317,7 @@
     return seen ? total + current : null;
   }
 
-  const api = { writeOff, simulate, runAll, rateShifts, individualTax, nswDuty, nswLandTax, pmt, monthsToClear, parseAmount, DEFAULT_ASSUMPTIONS, CASH_RATE };
+  const api = { agePension, minDrawRate, sapto, maxHomePrice, AGE_PENSION, writeOff, simulate, runAll, rateShifts, individualTax, nswDuty, nswLandTax, pmt, monthsToClear, parseAmount, DEFAULT_ASSUMPTIONS, CASH_RATE };
   root.BlinkEngine = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

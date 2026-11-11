@@ -15,6 +15,12 @@ Blink Check runs each plan forward 10 to 30 years with interest rates rising and
 - charts of net worth, debt, equity and cash flow, with the plans overlaid;
 - a summary in plain words to send to your accountant or broker.
 
+**For retirees too.** Switch the first page to **Retired** to see:
+- how long savings and super last when living on a super pension and the Age Pension;
+- whether buying a home (or downsizing) leaves enough to live on;
+- the most a plan could spend on the home and still have money at 90, 95 or 100;
+- home equity against cash and super at year 20.
+
 It counts:
 - P&I and interest-only loans, with an offset on every loan;
 - stamp duty, land tax, negative gearing, building and fittings write-offs, capital gains tax and franking credits;

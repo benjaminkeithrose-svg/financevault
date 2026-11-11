@@ -17,6 +17,7 @@ Blink Check is a quick check, or "blink", on one question: **is the next move wo
   - how much of their own money each plan needs, every year;
   - where the money for each purchase comes from;
   - a summary in plain words they can send to an accountant or broker.
+- **Retirees too:** a "Retired" switch asks a different question: does the money last, and how much can I spend on a home? It covers a super pension, the Age Pension estimate, rent, buying or downsizing a home, and how long savings and super last. See "Retired households" in section 4.
 - **What it isn't:** advice. It gives broad estimates to decide what's worth taking to a professional.
 
 ### Design goals (from the person who asked for it)
@@ -291,6 +292,51 @@ The notes list:
 | "580 dollars" | 580 |
 | "6.2%" | 6.2 |
 
+### Retired households (`stage: "RETIRED"`)
+
+A "Retired" switch on the first page turns Blink Check into a retirement tool. The example is a single 72-year-old who sold her home, has super and savings, rents, and is thinking about buying a home.
+
+**What changes:**
+- **Time frame.** Ages are entered per person (`people[].age`). The plan runs until the younger person is 100 (10–40 years), to see how long the money lasts. Charts and results still compare at year 20 by default.
+- **Super.** Super is in pension phase:
+  - it grows at `pensionReturn` (tax-free) with no contributions;
+  - each year it pays at least the minimum for each person's age (`minDrawRate`: 4% under 65, 5% at 65–74, 6% at 75–79, 7% at 80–84, 9% at 85–89, 11% at 90–94, 14% from 95), or a set amount if more (`superDrawMode: "SET"`, `superDrawYearly`);
+  - payments are tax-free;
+  - when savings and offsets run out, shortfalls are taken from super.
+- **The Age Pension** is estimated each year by `agePension()`, from age 67:
+  - the lower of the assets test and the income test (with deeming);
+  - single or couple; homeowner or not;
+  - the home is never counted, but other property, savings, super, shares and `personalAssets` are;
+  - rates rise with CPI;
+  - it's taxable, and the seniors' offset (`sapto`) applies.
+- **Rent:** `rentWeekly` is paid while not owning a home. It grows with residential rents.
+- **The new step `HOME`** ("Buy a home to live in": `year, price, name, keep`) does the following:
+  - sells the current home first, if any, clearing its loans;
+  - pays price + NSW duty + buying costs from savings above `keep` (default: three months of living costs, at least $20,000), then a lump sum from super, then the rest of savings;
+  - flags any shortfall;
+  - stops rent;
+  - from then on, adds running costs of `homeRunPct`% of the home's value a year.
+- **Money that can be spent** (`spendable`, which is also `liquid`) includes super. "Runs out" means savings, offsets and super are all used up.
+- **New year fields:** `age`, `agePension`, `superDraw`, `rentPaid`, `homeCosts`, `homeValue`, `homeEquity`, `spendable`, `moneyIn`, `moneyOut` and `leftOver`.
+- **New summary fields:** `runsOutAge` (null = lasts past the end), `retired` and `startAge`.
+
+**The verdict (`retiredVerdict`):**
+- **"Money doesn't last" (STOP, red flag):** money runs out at or before `lastUntil` (90/95/100, default 95). The flag gives the figures for that year, and notes the home's value as a fallback, not a plan.
+- **"Lasts to 95, only just" (MAYBE):** it lasts past the target, but not to 100.
+- **"Money lasts past 100" (YES):** it lasts past 100.
+
+**The most a plan can spend on the home:** `maxHomePrice()` searches, by halving the gap between a price that works and one that doesn't, for the highest `HOME` price that still lasts past `lastUntil`, to the nearest $5,000. Each card shows it.
+
+**On the page (retired):**
+- **You:** age, super, other income, living costs, rent, savings, how much to take from super, and "must last until".
+- **Plans:** a "Buy a home to live in" button.
+- **Results:**
+  - "Home equity against cash and super": home equity (solid) and cash and super (dashed) on top; money coming in (dotted) and left over (solid) below;
+  - a slider showing year and age;
+  - sentences comparing plans;
+  - a table: home equity, cash and super, coming in, Age Pension, going out, left over, and how long the money lasts.
+- **Year table:** age, Age Pension, from super, interest and pay, living costs, rent and home costs, left over, where money was taken from, cash, super and home equity.
+
 ---
 
 ## 5. Figures and where they come from
@@ -333,6 +379,23 @@ Check these each year. They are all near the top of `engine.js`.
 - **Exemptions:** the home and SMSF property are left out.
 - **Land value:** a share of the property's value (residential 55%, commercial 45%).
 - **Source:** Revenue NSW. The general threshold has been frozen since 2025.
+
+### Age Pension (approximate, September 2025 — check yearly with Services Australia)
+
+| item | single | couple (combined) |
+|---|---|---|
+| Maximum rate a year, with supplements | $30,646 ($1,178.70 a fortnight) | $46,202 ($1,777.00 a fortnight) |
+| Assets test free area — homeowner | $321,500 | $481,500 |
+| Assets test free area — not a homeowner | $579,500 | $739,500 |
+| Assets taper | $78 a year less per $1,000 over ($3 a fortnight) | same |
+| Income test free area | $5,668 a year ($218 a fortnight) | $9,880 ($380 a fortnight) |
+| Income taper | 50c per $1 | 50c per $1 combined |
+| Deeming | 0.75% up to $64,200, 2.75% above | 0.75% up to $106,200, 2.75% above |
+
+- **Pension age:** 67.
+- **Rates in the plan:** in later years, the dollar figures rise with CPI.
+- **Seniors and pensioners tax offset (SAPTO):** up to $2,230 single, or $1,602 each for a couple. It shades out at 12.5c per $1 above $34,919 (single) or $30,994 (couple each).
+- **Not modelled:** Rent Assistance, the Pension Loans/Home Equity Access Scheme, gifting rules, and the Commonwealth Seniors Health Card.
 
 ### Interest rate cycle
 
@@ -393,6 +456,10 @@ These are deliberately middle-of-the-road, not optimistic.
 
 | key | default | note |
 |---|---|---|
+| lastUntil | 95 | retired: money should last until this age |
+| pensionReturn | 6.5 | retired: super pension returns after fees, tax-free |
+| homeRunPct | 1 | retired: a bought home's running costs, % of value a year |
+| personalAssets | $20,000 | retired: counted in the Age Pension assets test |
 | shareGrowth / shareYield / franking | 4.5 / 3.5 / 70 | % |
 | superReturn / superGuarantee | 6.5 / 12 | % after fees and tax / % of pay |
 | smsfBuffer | $30,000 | cash to keep in an SMSF after buying |
@@ -589,6 +656,10 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 13. **A plan that can't be funded:** its verdict is STOP, with a red flag.
 14. **Two quick purchases on $200k:** buying in year 8 and again in year 10 raises a red flag.
 15. **Pay rises:** pay rises with CPI by default, or by the wage growth figure when one is set; `income` and `takeHome` are recorded.
+16. **Age Pension:** full rate on small assets and none on large; non-homeowners get the higher threshold; no pension under 67.
+17. **Super pension minimums:** they rise with age.
+18. **A retiree buying a home:** it's paid from savings then super, rent stops, the Age Pension rises, the plan runs to age 100, and the highest safe price is found.
+19. **A home that's too dear:** it raises a red flag, and the highest safe price is below it and passes.
 
 **Browser checks** (by hand, or with Playwright):
 - every page on desktop and on a phone (light and dark), with no sideways scroll and no console errors;
@@ -603,7 +674,11 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 **Known limits:**
 - NSW duty and land tax only; other states use a flat duty %, and land tax isn't estimated.
 - No lenders mortgage insurance, fixed rates, offset sweeps between people, trusts, companies, or the Division 293 tax.
-- Super can't be accessed (no retirement drawdown phase); SMSF rules are simplified.
+- For working households, super can't be accessed. Retired households draw it as a pension. SMSF rules are simplified.
+- The retirement figures are approximate:
+  - the Age Pension is an estimate (no Rent Assistance, gifting or work bonus);
+  - one person's super can't be moved to the other;
+  - there's no aged care and no transfer balance cap.
 - Values and rents move smoothly; real markets don't.
 
 **Ideas for later:**
