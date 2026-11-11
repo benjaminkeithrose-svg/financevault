@@ -119,6 +119,13 @@
     };
   }
 
+  const monthsAgo = (n) => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - n);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  };
+
   // A made-up retiree: sold her home, money in super and savings, renting, thinking about buying.
   // A made-up retiree: sold her home, money in super and the bank, renting, thinking about buying again.
   function exampleRetired() {
@@ -133,7 +140,7 @@
       otherRepayYears: 0,
       rentWeekly: 1000,
       saleExempt: 900000,
-      saleExemptMonths: 24,
+      saleDate: monthsAgo(6), // the example's sale settled six months ago
       goal: "GROWTH",
       risk: "CAREFUL",
       cash: 900000,
@@ -384,6 +391,20 @@
     ${navButtons(null, "own")}`;
   }
 
+  // A month picker (phones show a calendar); stored as "YYYY-MM".
+  function monthField(path, label, hint) {
+    const id = fid(path);
+    return `<div class="field">${labelRow(id, label, "saleExempt")}
+      <input type="month" id="${id}" data-path="${path}" data-kind="text" value="${esc(valueOf(path) || "")}" placeholder="2026-03">
+      ${hint ? `<span class="hint">${hint}</span>` : ""}${helpPop("saleExempt", id)}</div>`;
+  }
+  function saleDateHint() {
+    if (!state.saleDate) return "Enter the month it settled, to see exactly when the 24 months end.";
+    const s = compute().base.summary;
+    if (!(s.exemptMonths > 0)) return "More than 24 months ago — the money already counts for the Age Pension.";
+    return `The 24 months end in <b>${esc(s.exemptEndLabel)}</b> — ${s.exemptMonths} month${s.exemptMonths === 1 ? "" : "s"} from now.`;
+  }
+
   // Inflation: how fast living costs rise. Shown beside living costs, with what it does to them.
   function inflationField() {
     const rate = +A("cpi") || 0;
@@ -424,7 +445,7 @@
         state.home && state.home.has
           ? ""
           : `<div class="grid">${moneyField("saleExempt", "Money from selling a home, kept to buy another", { placeholder: "0", hint: "Left out of the Age Pension assets test for up to 24 months after the sale, while you rent.", help: "saleExempt" })}
-        ${state.saleExempt ? numField("saleExemptMonths", "Months of that left", { placeholder: "24" }) : ""}</div>`
+        ${state.saleExempt ? monthField("saleDate", "When did the sale settle?", saleDateHint()) : ""}</div>`
       }
       <p class="small muted">The Age Pension is worked out for you each year from age 67 — the home doesn't count in the assets test. How much to take from super is chosen in each plan.</p>
     </div>
@@ -622,6 +643,14 @@
       ${confirmBox(key, "Remove this step?", "remove-step")}${body}</div>`;
   }
 
+  function buyByHint(R) {
+    const s = compute().base.summary;
+    if (!(s.exemptMonths > 0) || (state.home && state.home.has)) return "Year 1 is now.";
+    const lastYear = Math.ceil(s.exemptMonths / 12);
+    const ok = (+R.year || 1) <= lastYear;
+    return `Year 1 is now. To buy before the 24-month mark (${esc(s.exemptEndLabel)}), buy in year ${lastYear === 1 ? "1" : `1–${lastYear}`}${ok ? "." : ` — year ${R.year} is after it, so the Age Pension drops while you wait.`}`;
+  }
+
   // A retiree's plan: four short questions instead of a list of steps.
   function retirePlanCard(plan, idx) {
     if (!plan.retire) plan.retire = newRetirePlan();
@@ -643,7 +672,7 @@
       ${chips(b + ".home", [["NO", owns ? "No — stay in this home" : "No — keep renting"], ["YES", owns ? "Yes — sell this one and buy another" : "Yes — buy a home"]], "yesno")}
       ${
         R.home
-          ? `<div class="grid">${moneyField(b + ".price", "Price", { hint: "Stamp duty and buying costs are added." })}${numField(b + ".year", `In year (1–${H})`, { placeholder: "1" })}</div>
+          ? `<div class="grid">${moneyField(b + ".price", "Price", { hint: "Stamp duty and buying costs are added." })}${numField(b + ".year", `In year (1–${H})`, { placeholder: "1", hint: buyByHint(R) })}</div>
         <div class="field"><span class="label">Pay for it from</span>${chips(b + ".payFrom", [["SAVINGS", "Savings first, then super"], ["SUPER", "Super first, then savings"]])}</div>
         <p class="small muted">${owns ? "This home is sold first. " : "Rent stops once it's bought. "}Rates, insurance and upkeep (about ${A("homeRunPct")}% of its value a year) are added to the budget. The home doesn't count for the Age Pension, so putting money into it can raise the pension.</p>`
           : ""
@@ -785,6 +814,15 @@
       })
       .join("");
     const at = opts.at ? Math.min(H, opts.at) - 1 : null;
+    // Markers: a dated event, e.g. the 24-month mark. i is in years from the start (year-end points sit at 1, 2, …).
+    const marks = (opts.markers || [])
+      .map((m) => {
+        const mx = x(Math.max(0, Math.min(H - 1, m.i - 1)));
+        return `<line x1="${mx}" x2="${mx}" y1="${pt}" y2="${Ht - pb}" stroke="var(--warn)" stroke-width="2" stroke-dasharray="4 3"/>
+          <text x="${mx + 6}" y="${pt + 12}" style="fill:var(--warn);font-weight:600">${esc(m.label)}</text>`;
+      })
+      .join("");
+    grid += marks;
     chartData[id] = { series, H, fmt, x, pl, pr, W, Ht };
     return `<div class="chart-wrap" data-chart="${id}"${opts.group ? ` data-group="${opts.group}"` : ""}${at !== null ? ` data-at="${at}"` : ""}>
       <svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="${esc(opts.label || `Chart over ${H} years`)}">
@@ -983,7 +1021,11 @@
     lines.push(two ? "ABOUT US" : "ABOUT ME");
     lines.push(state.people.map((p, i) => `${names[i]} is ${p.age || "—"}, with ${money(p.super)} in super${p.salary ? ` and ${money(p.salary)} a year of other income` : ""}.`).join(" "));
     lines.push(`${two ? "We have" : "I have"} ${money(state.cash)} in savings; living costs are about ${money(state.livingMonthly)} a month${state.home && state.home.has ? `, and ${two ? "we own our" : "I own my"} home (worth about ${money(state.home.value)})` : state.rentWeekly ? `, plus rent of ${money(state.rentWeekly)} a week` : ""}.`);
-    if (state.saleExempt && !(state.home && state.home.has)) lines.push(`${money(state.saleExempt)} of that is from selling ${two ? "our" : "my"} home and is set aside to buy another (left out of the Age Pension assets test for up to ${state.saleExemptMonths || 24} months).`);
+    if (state.saleExempt && !(state.home && state.home.has)) {
+      const es = R.base.summary;
+      lines.push(`${money(state.saleExempt)} of that is from selling ${two ? "our" : "my"} home${state.saleDate ? ` (settled ${state.saleDate})` : ""} and is set aside to buy another, so it's left out of the Age Pension assets test${es.exemptMonths > 0 ? ` until ${es.exemptEndLabel}` : " — but the 24 months are up"}.`);
+      if (es.exemption) lines.push(`If ${two ? "we're" : "I'm"} still renting in ${es.exemption.label}, the Age Pension drops from about ${money(es.exemption.before)} to ${money(es.exemption.after)} a year.`);
+    }
     lines.push(`The money needs to last until age ${until}.`);
     if (state.notes) lines.push(`What ${two ? "we're" : "I'm"} trying to work out: ${state.notes}`);
     const base = R.base;
@@ -1048,6 +1090,21 @@
   }
 
   const runName = (r) => (r.baseline ? BASE_NAME : r.name);
+
+  // Retired: the 24-month mark for home-sale money, and what it does to the Age Pension.
+  function exemptionBanner(R) {
+    if (!retired()) return "";
+    const s = R.base.summary;
+    if (!(s.exemptMonths > 0)) return "";
+    const e = s.exemption;
+    const keeps = R.runs.filter((r) => !r.baseline && !r.summary.exemption && r.chains.some((c) => c.kind === "HOME")).map((r) => r.name);
+    return `<div class="amber-flag big-amber" role="note"><p><b>${esc(s.exemptEndLabel)}: the 24-month mark</b> (${s.exemptMonths} month${s.exemptMonths === 1 ? "" : "s"} from now).</p>
+      <p>${
+        e
+          ? `The home-sale money starts to count for the Age Pension. Still renting then, the pension drops from about <b>${money(e.before)}</b> to <b>${money(e.after)}</b> a year.`
+          : "The home-sale money starts to count for the Age Pension if it's still in the bank."
+      }${keeps.length ? ` Buying before then avoids that: ${keeps.map(esc).join("; ")}.` : ""}${state.saleDate ? "" : " (Add the month the sale settled on the first page for the exact date.)"}</p></div>`;
+  }
 
   function stopBanner(runs) {
     const bad = runs.filter((r) => r.verdict && r.verdict.level === "STOP");
@@ -1179,6 +1236,8 @@
         .join("")}</tbody></table></div>`;
   }
 
+  const exemptMarks = (R) => (R.base.summary.exemptMonths > 0 && !(state.home && state.home.has) ? [{ i: R.base.summary.exemptMonths / 12, label: "24-month mark" }] : []);
+
   function fullCardRetired(R, runs, H, at, mi, main, shown, on) {
     const top = [];
     const bottom = [];
@@ -1205,8 +1264,8 @@
         ([k, label, style]) => `<label class="chip legend-chip"><input type="checkbox" data-measure="${k}"${on[k] !== false ? " checked" : ""} style="width:18px;height:18px"> ${lineKey(style)} ${esc(label)}</label>`
       ).join("")}</div></div>
       <div class="at-row"><label for="at-year">Compare at</label><input type="range" id="at-year" data-at min="1" max="${H}" value="${at}"><output id="at-label">Year ${at} · age ${ageAt}</output></div>
-      ${top.length ? `<h4>What you own</h4>${chart("full-top", top, H, "money", { group: "full", at, noNote: true, label: "Home equity and cash and super over the years" })}` : ""}
-      ${bottom.length ? `<h4>Money each year</h4>${chart("full-bottom", bottom, H, "money", { group: "full", at, noNote: true, shadeNegative: on.leftOver !== false ? "Below the line: drawing on savings and super" : "", label: "Money coming in and left over each year" })}` : ""}
+      ${top.length ? `<h4>What you own</h4>${chart("full-top", top, H, "money", { group: "full", at, noNote: true, markers: exemptMarks(R), label: "Home equity and cash and super over the years" })}` : ""}
+      ${bottom.length ? `<h4>Money each year</h4>${chart("full-bottom", bottom, H, "money", { group: "full", at, noNote: true, shadeNegative: on.leftOver !== false ? "Below the line: drawing on savings and super" : "", markers: exemptMarks(R), label: "Money coming in and left over each year" })}` : ""}
       <p class="small muted">Coming in: Age Pension, super pension, interest and any pay. Left over: after living costs, rent and the home's running costs. Year 1 is age ${main.years[0].age}.</p>
       <div id="full-diff">${fullDiff()}</div>
     </div>`;
@@ -1278,6 +1337,7 @@
         ? `you buy nothing new and stay as you are (${state.home && state.home.has ? "in your home" : "renting"}), living on super, savings and the Age Pension.`
         : "you buy nothing new; savings and every spare dollar go into the home loan offset."
     } Every plan is measured against it: a plan has to end up ahead of ${BASE_NAME} to be worth the risk.</div>
+    ${exemptionBanner(R)}
     ${stopBanner(runs)}
     <div class="verdicts">${runs.map((r, i) => verdictCard(r, i, R.base)).join("")}</div>
     ${fullCard(R)}

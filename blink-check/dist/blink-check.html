@@ -236,6 +236,9 @@ pre.guide { white-space: pre-wrap; word-break: break-word; max-height: 60vh; ove
 .legend-item { display: inline-flex; align-items: center; gap: 6px; }
 .legend-item svg { flex: none; }
 .base-explain { line-height: 1.55; }
+
+.amber-flag.big-amber { border: 2px solid var(--warn); display: grid; gap: 4px; margin-bottom: 14px; }
+.amber-flag.big-amber b { color: var(--fg); }
 </style>
 
 </head>
@@ -605,7 +608,7 @@ The four questions are:
 
 **Other retirement details:**
 - **No change, for a retiree:** stay as you are, with super paying the minimum and savings in the bank.
-- **Home-sale money:** `saleExempt` (dollars) and `saleExemptMonths` (default 24). Money from selling a home that's kept to buy another is left out of the Age Pension assets test, and deemed only at the lower rate, while renting and within those months. This is why a recent seller can get a high pension that drops when the window ends, and the card notes that drop.
+- **Home-sale money:** `saleExempt` (dollars) and `saleDate` ("YYYY-MM", the month the sale settled; a month picker on the first page). The engine works out the months left as 24 − months since the sale (`plan.today` overrides today's date, for tests); `saleExemptMonths` is the fallback with no date. The Age Pension is recalculated in the exact month the exemption ends. The summary records `exemptMonths`, `exemptEndLabel` (e.g. "May 2028") and, if still renting then, `exemption {month, before, after}`. The results page shows an amber "24-month mark" banner with the pension before and after, the retirement charts mark the date, and the plan form says which years to buy in to beat it. Money from selling a home that's kept to buy another is left out of the Age Pension assets test, and deemed only at the lower rate, while renting and within those months. This is why a recent seller can get a high pension that drops when the window ends, and the card notes that drop.
 - **Credit card or loan repayments a month** (`otherRepayMonthly`) can be entered for retirees too.
 - **The built-in retiree example is made up** ("Pat"): 72, $500k super, $900k from a home sale, $2,500 a month living costs, $1,000 a week rent. Never ship a real person's figures as the example. Give them a saved copy of the file instead.
 
@@ -1377,6 +1380,46 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     let drawYear = people.map(() => 0); // this year's super pension payments, per person
     let pensionYear = 0; // this year's Age Pension, combined
     const superTotalNow = () => superBal.reduce((s, b) => s + b, 0);
+    // Home-sale money kept to buy another home: left out of the Age Pension assets test for 24 months from the sale
+    // (while renting). From the sale date and today's date, work out how many months of that are left.
+    const ym = (v) => {
+      const m = /^(\d{4})-(\d{1,2})/.exec(String(v || ""));
+      return m ? { y: +m[1], m: +m[2] } : null;
+    };
+    const now = new Date();
+    const today = ym(plan.today) || { y: now.getFullYear(), m: now.getMonth() + 1 };
+    const sold = ym(plan.saleDate);
+    const exemptMonths = !(+plan.saleExempt > 0) ? 0 : sold ? Math.max(0, 24 - ((today.y - sold.y) * 12 + (today.m - sold.m))) : +plan.saleExemptMonths || 0;
+    const exemptEnd = new Date(today.y, today.m - 1 + exemptMonths, 1);
+    const exemptEndLabel = exemptEnd.toLocaleString("en-AU", { month: "long", year: "numeric" });
+    let exemption = null; // { month, before, after } once it has ended while still renting
+
+    function updatePension() {
+      const T = totalsNow();
+      const investProps = liveProps().filter((p) => !p.home && !p.smsf);
+      const assets = T.cash + T.offsets + T.superTotal + T.shares + investProps.reduce((x, p) => x + p.value, 0) + a.personalAssets;
+      let financial = T.cash + T.offsets + T.superTotal + T.shares;
+      const exempt = renting && month < exemptMonths ? Math.min(+plan.saleExempt || 0, Math.max(0, T.cash + T.offsets)) : 0;
+      financial -= exempt;
+      const netRent = investProps.reduce((x, p) => x + (p.rentNow || 0) * (1 - (p.costPct || 0) / 100), 0);
+      pensionYear = agePension({
+        couple,
+        eligible: people.filter((p, i) => ageOf(i) >= AGE_PENSION.pensionAge).length,
+        homeowner: !renting && liveProps().some((p) => p.home),
+        assets: Math.max(0, assets - exempt),
+        financial: Math.max(0, financial),
+        lowDeemed: exempt, // deemed at the lower rate only
+        otherIncome: salaries.reduce((x, v) => x + v, 0) + netRent,
+        index: Math.pow(1 + a.cpi / 100, year - 1),
+      });
+    }
+    function noteExemptionEnd(before) {
+      if (exemptMonths > 0 && renting && !exemption) {
+        exemption = { month: exemptMonths, label: exemptEndLabel, before: round(before), after: round(pensionYear) };
+        yr.events.push("Home-sale money starts to count for the Age Pension");
+      }
+    }
+
     function takeFromSuper(amount) {
       const t = superTotalNow();
       const take = Math.min(Math.max(0, t), amount);
@@ -1872,24 +1915,9 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
             return Math.min(b, Math.max(min, want));
           });
           // Age Pension, from this year's assets and income.
-          const T = totalsNow();
-          const investProps = liveProps().filter((p) => !p.home && !p.smsf);
-          const assets = T.cash + T.offsets + T.superTotal + T.shares + investProps.reduce((x, p) => x + p.value, 0) + a.personalAssets;
-          let financial = T.cash + T.offsets + T.superTotal + T.shares;
-          // Money from selling a home, kept to buy another, is left out of the assets test for up to 24 months (while renting).
-          const exempt = renting && (year - 1) * 12 < (+plan.saleExemptMonths || 0) ? Math.min(+plan.saleExempt || 0, Math.max(0, T.cash + T.offsets)) : 0;
-          financial -= exempt;
-          const netRent = investProps.reduce((x, p) => x + (p.rentNow || 0) * (1 - (p.costPct || 0) / 100), 0);
-          pensionYear = agePension({
-            couple,
-            eligible: people.filter((p, i) => ageOf(i) >= AGE_PENSION.pensionAge).length,
-            homeowner: !renting && liveProps().some((p) => p.home),
-            assets: Math.max(0, assets - exempt),
-            financial: Math.max(0, financial),
-            lowDeemed: exempt,
-            otherIncome: salaries.reduce((x, v) => x + v, 0) + netRent,
-            index: Math.pow(1 + a.cpi / 100, year - 1),
-          });
+          const before = pensionYear;
+          updatePension();
+          if (month === exemptMonths) noteExemptionEnd(before);
         }
         // Land tax this year: each person's share of the taxable land they hold (NSW; not the home or SMSF).
         const landTax = {};
@@ -1905,6 +1933,11 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         yr.landTaxBy = landTax;
       }
 
+      if (retired && month === exemptMonths && month % 12 !== 0) {
+        const before = pensionYear;
+        updatePension();
+        noteExemptionEnd(before);
+      }
       const living = (living0 / 12) * Math.pow(1 + a.cpi / 100, year - 1);
       let salaryPart = 0;
       people.forEach((p, i) => {
@@ -2191,6 +2224,9 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         minLiquid: round(minLiquid),
         runsOut,
         runsOutAge: runsOut ? youngest0 + runsOut - 1 : null,
+        exemptMonths,
+        exemptEndLabel,
+        exemption,
         retired,
         startAge: youngest0,
       },
@@ -2235,8 +2271,14 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const apBase = base.years[0].agePension;
     if (!r.baseline && Math.abs(ap1 - apBase) > 500) notes.push(`Age Pension in year 1: about ${money(ap1)} a year, compared with ${money(apBase)} with no change.`);
     else if (ap1 > 0) notes.push(`Age Pension in year 1: about ${money(ap1)} a year.`);
-    // A big drop in the Age Pension (for example when home-sale money starts to count after 24 months).
-    for (let k = 1; k < r.years.length; k++) {
+    if (s.exemption)
+      notes.unshift(
+        `${s.exemption.label} — 24 months after the sale — the home-sale money starts to count for the Age Pension. Still renting then, the pension drops from about ${money(s.exemption.before)} to ${money(s.exemption.after)} a year.`
+      );
+    else if (s.exemptMonths > 0 && !r.baseline && r.chains.some((c) => c.kind === "HOME" && (c.year - 1) * 12 < s.exemptMonths))
+      notes.push(`Buying before ${s.exemptEndLabel} means the home-sale money goes into the home before the 24 months are up.`);
+    // A big drop in the Age Pension for another reason.
+    for (let k = 1; k < r.years.length && !s.exemption; k++) {
       const prev = r.years[k - 1].agePension;
       const now = r.years[k].agePension;
       if (prev > 5000 && now < prev * 0.5) {
@@ -2557,6 +2599,13 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     };
   }
 
+  const monthsAgo = (n) => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - n);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  };
+
   // A made-up retiree: sold her home, money in super and savings, renting, thinking about buying.
   // A made-up retiree: sold her home, money in super and the bank, renting, thinking about buying again.
   function exampleRetired() {
@@ -2571,7 +2620,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       otherRepayYears: 0,
       rentWeekly: 1000,
       saleExempt: 900000,
-      saleExemptMonths: 24,
+      saleDate: monthsAgo(6), // the example's sale settled six months ago
       goal: "GROWTH",
       risk: "CAREFUL",
       cash: 900000,
@@ -2822,6 +2871,20 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     ${navButtons(null, "own")}`;
   }
 
+  // A month picker (phones show a calendar); stored as "YYYY-MM".
+  function monthField(path, label, hint) {
+    const id = fid(path);
+    return `<div class="field">${labelRow(id, label, "saleExempt")}
+      <input type="month" id="${id}" data-path="${path}" data-kind="text" value="${esc(valueOf(path) || "")}" placeholder="2026-03">
+      ${hint ? `<span class="hint">${hint}</span>` : ""}${helpPop("saleExempt", id)}</div>`;
+  }
+  function saleDateHint() {
+    if (!state.saleDate) return "Enter the month it settled, to see exactly when the 24 months end.";
+    const s = compute().base.summary;
+    if (!(s.exemptMonths > 0)) return "More than 24 months ago — the money already counts for the Age Pension.";
+    return `The 24 months end in <b>${esc(s.exemptEndLabel)}</b> — ${s.exemptMonths} month${s.exemptMonths === 1 ? "" : "s"} from now.`;
+  }
+
   // Inflation: how fast living costs rise. Shown beside living costs, with what it does to them.
   function inflationField() {
     const rate = +A("cpi") || 0;
@@ -2862,7 +2925,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         state.home && state.home.has
           ? ""
           : `<div class="grid">${moneyField("saleExempt", "Money from selling a home, kept to buy another", { placeholder: "0", hint: "Left out of the Age Pension assets test for up to 24 months after the sale, while you rent.", help: "saleExempt" })}
-        ${state.saleExempt ? numField("saleExemptMonths", "Months of that left", { placeholder: "24" }) : ""}</div>`
+        ${state.saleExempt ? monthField("saleDate", "When did the sale settle?", saleDateHint()) : ""}</div>`
       }
       <p class="small muted">The Age Pension is worked out for you each year from age 67 — the home doesn't count in the assets test. How much to take from super is chosen in each plan.</p>
     </div>
@@ -3060,6 +3123,14 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       ${confirmBox(key, "Remove this step?", "remove-step")}${body}</div>`;
   }
 
+  function buyByHint(R) {
+    const s = compute().base.summary;
+    if (!(s.exemptMonths > 0) || (state.home && state.home.has)) return "Year 1 is now.";
+    const lastYear = Math.ceil(s.exemptMonths / 12);
+    const ok = (+R.year || 1) <= lastYear;
+    return `Year 1 is now. To buy before the 24-month mark (${esc(s.exemptEndLabel)}), buy in year ${lastYear === 1 ? "1" : `1–${lastYear}`}${ok ? "." : ` — year ${R.year} is after it, so the Age Pension drops while you wait.`}`;
+  }
+
   // A retiree's plan: four short questions instead of a list of steps.
   function retirePlanCard(plan, idx) {
     if (!plan.retire) plan.retire = newRetirePlan();
@@ -3081,7 +3152,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       ${chips(b + ".home", [["NO", owns ? "No — stay in this home" : "No — keep renting"], ["YES", owns ? "Yes — sell this one and buy another" : "Yes — buy a home"]], "yesno")}
       ${
         R.home
-          ? `<div class="grid">${moneyField(b + ".price", "Price", { hint: "Stamp duty and buying costs are added." })}${numField(b + ".year", `In year (1–${H})`, { placeholder: "1" })}</div>
+          ? `<div class="grid">${moneyField(b + ".price", "Price", { hint: "Stamp duty and buying costs are added." })}${numField(b + ".year", `In year (1–${H})`, { placeholder: "1", hint: buyByHint(R) })}</div>
         <div class="field"><span class="label">Pay for it from</span>${chips(b + ".payFrom", [["SAVINGS", "Savings first, then super"], ["SUPER", "Super first, then savings"]])}</div>
         <p class="small muted">${owns ? "This home is sold first. " : "Rent stops once it's bought. "}Rates, insurance and upkeep (about ${A("homeRunPct")}% of its value a year) are added to the budget. The home doesn't count for the Age Pension, so putting money into it can raise the pension.</p>`
           : ""
@@ -3223,6 +3294,15 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       })
       .join("");
     const at = opts.at ? Math.min(H, opts.at) - 1 : null;
+    // Markers: a dated event, e.g. the 24-month mark. i is in years from the start (year-end points sit at 1, 2, …).
+    const marks = (opts.markers || [])
+      .map((m) => {
+        const mx = x(Math.max(0, Math.min(H - 1, m.i - 1)));
+        return `<line x1="${mx}" x2="${mx}" y1="${pt}" y2="${Ht - pb}" stroke="var(--warn)" stroke-width="2" stroke-dasharray="4 3"/>
+          <text x="${mx + 6}" y="${pt + 12}" style="fill:var(--warn);font-weight:600">${esc(m.label)}</text>`;
+      })
+      .join("");
+    grid += marks;
     chartData[id] = { series, H, fmt, x, pl, pr, W, Ht };
     return `<div class="chart-wrap" data-chart="${id}"${opts.group ? ` data-group="${opts.group}"` : ""}${at !== null ? ` data-at="${at}"` : ""}>
       <svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="${esc(opts.label || `Chart over ${H} years`)}">
@@ -3421,7 +3501,11 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     lines.push(two ? "ABOUT US" : "ABOUT ME");
     lines.push(state.people.map((p, i) => `${names[i]} is ${p.age || "—"}, with ${money(p.super)} in super${p.salary ? ` and ${money(p.salary)} a year of other income` : ""}.`).join(" "));
     lines.push(`${two ? "We have" : "I have"} ${money(state.cash)} in savings; living costs are about ${money(state.livingMonthly)} a month${state.home && state.home.has ? `, and ${two ? "we own our" : "I own my"} home (worth about ${money(state.home.value)})` : state.rentWeekly ? `, plus rent of ${money(state.rentWeekly)} a week` : ""}.`);
-    if (state.saleExempt && !(state.home && state.home.has)) lines.push(`${money(state.saleExempt)} of that is from selling ${two ? "our" : "my"} home and is set aside to buy another (left out of the Age Pension assets test for up to ${state.saleExemptMonths || 24} months).`);
+    if (state.saleExempt && !(state.home && state.home.has)) {
+      const es = R.base.summary;
+      lines.push(`${money(state.saleExempt)} of that is from selling ${two ? "our" : "my"} home${state.saleDate ? ` (settled ${state.saleDate})` : ""} and is set aside to buy another, so it's left out of the Age Pension assets test${es.exemptMonths > 0 ? ` until ${es.exemptEndLabel}` : " — but the 24 months are up"}.`);
+      if (es.exemption) lines.push(`If ${two ? "we're" : "I'm"} still renting in ${es.exemption.label}, the Age Pension drops from about ${money(es.exemption.before)} to ${money(es.exemption.after)} a year.`);
+    }
     lines.push(`The money needs to last until age ${until}.`);
     if (state.notes) lines.push(`What ${two ? "we're" : "I'm"} trying to work out: ${state.notes}`);
     const base = R.base;
@@ -3486,6 +3570,21 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
   }
 
   const runName = (r) => (r.baseline ? BASE_NAME : r.name);
+
+  // Retired: the 24-month mark for home-sale money, and what it does to the Age Pension.
+  function exemptionBanner(R) {
+    if (!retired()) return "";
+    const s = R.base.summary;
+    if (!(s.exemptMonths > 0)) return "";
+    const e = s.exemption;
+    const keeps = R.runs.filter((r) => !r.baseline && !r.summary.exemption && r.chains.some((c) => c.kind === "HOME")).map((r) => r.name);
+    return `<div class="amber-flag big-amber" role="note"><p><b>${esc(s.exemptEndLabel)}: the 24-month mark</b> (${s.exemptMonths} month${s.exemptMonths === 1 ? "" : "s"} from now).</p>
+      <p>${
+        e
+          ? `The home-sale money starts to count for the Age Pension. Still renting then, the pension drops from about <b>${money(e.before)}</b> to <b>${money(e.after)}</b> a year.`
+          : "The home-sale money starts to count for the Age Pension if it's still in the bank."
+      }${keeps.length ? ` Buying before then avoids that: ${keeps.map(esc).join("; ")}.` : ""}${state.saleDate ? "" : " (Add the month the sale settled on the first page for the exact date.)"}</p></div>`;
+  }
 
   function stopBanner(runs) {
     const bad = runs.filter((r) => r.verdict && r.verdict.level === "STOP");
@@ -3617,6 +3716,8 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         .join("")}</tbody></table></div>`;
   }
 
+  const exemptMarks = (R) => (R.base.summary.exemptMonths > 0 && !(state.home && state.home.has) ? [{ i: R.base.summary.exemptMonths / 12, label: "24-month mark" }] : []);
+
   function fullCardRetired(R, runs, H, at, mi, main, shown, on) {
     const top = [];
     const bottom = [];
@@ -3643,8 +3744,8 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         ([k, label, style]) => `<label class="chip legend-chip"><input type="checkbox" data-measure="${k}"${on[k] !== false ? " checked" : ""} style="width:18px;height:18px"> ${lineKey(style)} ${esc(label)}</label>`
       ).join("")}</div></div>
       <div class="at-row"><label for="at-year">Compare at</label><input type="range" id="at-year" data-at min="1" max="${H}" value="${at}"><output id="at-label">Year ${at} · age ${ageAt}</output></div>
-      ${top.length ? `<h4>What you own</h4>${chart("full-top", top, H, "money", { group: "full", at, noNote: true, label: "Home equity and cash and super over the years" })}` : ""}
-      ${bottom.length ? `<h4>Money each year</h4>${chart("full-bottom", bottom, H, "money", { group: "full", at, noNote: true, shadeNegative: on.leftOver !== false ? "Below the line: drawing on savings and super" : "", label: "Money coming in and left over each year" })}` : ""}
+      ${top.length ? `<h4>What you own</h4>${chart("full-top", top, H, "money", { group: "full", at, noNote: true, markers: exemptMarks(R), label: "Home equity and cash and super over the years" })}` : ""}
+      ${bottom.length ? `<h4>Money each year</h4>${chart("full-bottom", bottom, H, "money", { group: "full", at, noNote: true, shadeNegative: on.leftOver !== false ? "Below the line: drawing on savings and super" : "", markers: exemptMarks(R), label: "Money coming in and left over each year" })}` : ""}
       <p class="small muted">Coming in: Age Pension, super pension, interest and any pay. Left over: after living costs, rent and the home's running costs. Year 1 is age ${main.years[0].age}.</p>
       <div id="full-diff">${fullDiff()}</div>
     </div>`;
@@ -3716,6 +3817,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         ? `you buy nothing new and stay as you are (${state.home && state.home.has ? "in your home" : "renting"}), living on super, savings and the Age Pension.`
         : "you buy nothing new; savings and every spare dollar go into the home loan offset."
     } Every plan is measured against it: a plan has to end up ahead of ${BASE_NAME} to be worth the risk.</div>
+    ${exemptionBanner(R)}
     ${stopBanner(runs)}
     <div class="verdicts">${runs.map((r, i) => verdictCard(r, i, R.base)).join("")}</div>
     ${fullCard(R)}

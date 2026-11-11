@@ -265,3 +265,22 @@ test("retiree form: the most to spend on the home is found for the form too", ()
   const r = E.runAll(mum({ home: true, price: 900000, year: 1, leftover: "SUPER", keep: 50000 })).runs[1];
   assert.ok(typeof r.maxHomePrice === "number" && r.maxHomePrice > 0);
 });
+
+test("home-sale exemption ends 24 months after the sale date: the pension drops then, unless a home is bought first", () => {
+  const p = mum({ home: true, price: 900000, year: 1, leftover: "BANK", keep: 50000 });
+  Object.assign(p, { cash: 950000, saleExempt: 950000, saleDate: "2026-03", today: "2026-11" }); // 16 months left
+  const r = E.runAll(p);
+  const base = r.base;
+  assert.equal(base.summary.exemptMonths, 16);
+  assert.equal(base.summary.exemption.month, 16);
+  assert.match(base.summary.exemption.label, /March 2028/);
+  assert.ok(base.summary.exemption.before > 15000 && base.summary.exemption.after < base.summary.exemption.before / 2);
+  assert.ok(base.years[1].agePension < base.years[0].agePension, "year 2 has four months of the old rate, then less");
+  assert.ok(base.years[0].events.length === 0 && base.years[1].events.some((e) => /starts to count/.test(e)));
+  const buy = r.runs[1];
+  assert.equal(buy.summary.exemption, null, "bought in year 1, so nothing is lost at the 24-month mark");
+  assert.match(buy.verdict.notes.join(" "), /Buying before March 2028/);
+  // Sold more than 24 months ago: no exemption at all.
+  const old = E.runAll(Object.assign(mum({ home: false }), { saleExempt: 950000, saleDate: "2024-01", today: "2026-11" })).base;
+  assert.equal(old.summary.exemptMonths, 0);
+});

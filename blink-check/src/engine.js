@@ -359,6 +359,46 @@
     let drawYear = people.map(() => 0); // this year's super pension payments, per person
     let pensionYear = 0; // this year's Age Pension, combined
     const superTotalNow = () => superBal.reduce((s, b) => s + b, 0);
+    // Home-sale money kept to buy another home: left out of the Age Pension assets test for 24 months from the sale
+    // (while renting). From the sale date and today's date, work out how many months of that are left.
+    const ym = (v) => {
+      const m = /^(\d{4})-(\d{1,2})/.exec(String(v || ""));
+      return m ? { y: +m[1], m: +m[2] } : null;
+    };
+    const now = new Date();
+    const today = ym(plan.today) || { y: now.getFullYear(), m: now.getMonth() + 1 };
+    const sold = ym(plan.saleDate);
+    const exemptMonths = !(+plan.saleExempt > 0) ? 0 : sold ? Math.max(0, 24 - ((today.y - sold.y) * 12 + (today.m - sold.m))) : +plan.saleExemptMonths || 0;
+    const exemptEnd = new Date(today.y, today.m - 1 + exemptMonths, 1);
+    const exemptEndLabel = exemptEnd.toLocaleString("en-AU", { month: "long", year: "numeric" });
+    let exemption = null; // { month, before, after } once it has ended while still renting
+
+    function updatePension() {
+      const T = totalsNow();
+      const investProps = liveProps().filter((p) => !p.home && !p.smsf);
+      const assets = T.cash + T.offsets + T.superTotal + T.shares + investProps.reduce((x, p) => x + p.value, 0) + a.personalAssets;
+      let financial = T.cash + T.offsets + T.superTotal + T.shares;
+      const exempt = renting && month < exemptMonths ? Math.min(+plan.saleExempt || 0, Math.max(0, T.cash + T.offsets)) : 0;
+      financial -= exempt;
+      const netRent = investProps.reduce((x, p) => x + (p.rentNow || 0) * (1 - (p.costPct || 0) / 100), 0);
+      pensionYear = agePension({
+        couple,
+        eligible: people.filter((p, i) => ageOf(i) >= AGE_PENSION.pensionAge).length,
+        homeowner: !renting && liveProps().some((p) => p.home),
+        assets: Math.max(0, assets - exempt),
+        financial: Math.max(0, financial),
+        lowDeemed: exempt, // deemed at the lower rate only
+        otherIncome: salaries.reduce((x, v) => x + v, 0) + netRent,
+        index: Math.pow(1 + a.cpi / 100, year - 1),
+      });
+    }
+    function noteExemptionEnd(before) {
+      if (exemptMonths > 0 && renting && !exemption) {
+        exemption = { month: exemptMonths, label: exemptEndLabel, before: round(before), after: round(pensionYear) };
+        yr.events.push("Home-sale money starts to count for the Age Pension");
+      }
+    }
+
     function takeFromSuper(amount) {
       const t = superTotalNow();
       const take = Math.min(Math.max(0, t), amount);
@@ -854,24 +894,9 @@
             return Math.min(b, Math.max(min, want));
           });
           // Age Pension, from this year's assets and income.
-          const T = totalsNow();
-          const investProps = liveProps().filter((p) => !p.home && !p.smsf);
-          const assets = T.cash + T.offsets + T.superTotal + T.shares + investProps.reduce((x, p) => x + p.value, 0) + a.personalAssets;
-          let financial = T.cash + T.offsets + T.superTotal + T.shares;
-          // Money from selling a home, kept to buy another, is left out of the assets test for up to 24 months (while renting).
-          const exempt = renting && (year - 1) * 12 < (+plan.saleExemptMonths || 0) ? Math.min(+plan.saleExempt || 0, Math.max(0, T.cash + T.offsets)) : 0;
-          financial -= exempt;
-          const netRent = investProps.reduce((x, p) => x + (p.rentNow || 0) * (1 - (p.costPct || 0) / 100), 0);
-          pensionYear = agePension({
-            couple,
-            eligible: people.filter((p, i) => ageOf(i) >= AGE_PENSION.pensionAge).length,
-            homeowner: !renting && liveProps().some((p) => p.home),
-            assets: Math.max(0, assets - exempt),
-            financial: Math.max(0, financial),
-            lowDeemed: exempt,
-            otherIncome: salaries.reduce((x, v) => x + v, 0) + netRent,
-            index: Math.pow(1 + a.cpi / 100, year - 1),
-          });
+          const before = pensionYear;
+          updatePension();
+          if (month === exemptMonths) noteExemptionEnd(before);
         }
         // Land tax this year: each person's share of the taxable land they hold (NSW; not the home or SMSF).
         const landTax = {};
@@ -887,6 +912,11 @@
         yr.landTaxBy = landTax;
       }
 
+      if (retired && month === exemptMonths && month % 12 !== 0) {
+        const before = pensionYear;
+        updatePension();
+        noteExemptionEnd(before);
+      }
       const living = (living0 / 12) * Math.pow(1 + a.cpi / 100, year - 1);
       let salaryPart = 0;
       people.forEach((p, i) => {
@@ -1173,6 +1203,9 @@
         minLiquid: round(minLiquid),
         runsOut,
         runsOutAge: runsOut ? youngest0 + runsOut - 1 : null,
+        exemptMonths,
+        exemptEndLabel,
+        exemption,
         retired,
         startAge: youngest0,
       },
@@ -1217,8 +1250,14 @@
     const apBase = base.years[0].agePension;
     if (!r.baseline && Math.abs(ap1 - apBase) > 500) notes.push(`Age Pension in year 1: about ${money(ap1)} a year, compared with ${money(apBase)} with no change.`);
     else if (ap1 > 0) notes.push(`Age Pension in year 1: about ${money(ap1)} a year.`);
-    // A big drop in the Age Pension (for example when home-sale money starts to count after 24 months).
-    for (let k = 1; k < r.years.length; k++) {
+    if (s.exemption)
+      notes.unshift(
+        `${s.exemption.label} — 24 months after the sale — the home-sale money starts to count for the Age Pension. Still renting then, the pension drops from about ${money(s.exemption.before)} to ${money(s.exemption.after)} a year.`
+      );
+    else if (s.exemptMonths > 0 && !r.baseline && r.chains.some((c) => c.kind === "HOME" && (c.year - 1) * 12 < s.exemptMonths))
+      notes.push(`Buying before ${s.exemptEndLabel} means the home-sale money goes into the home before the 24 months are up.`);
+    // A big drop in the Age Pension for another reason.
+    for (let k = 1; k < r.years.length && !s.exemption; k++) {
       const prev = r.years[k - 1].agePension;
       const now = r.years[k].agePension;
       if (prev > 5000 && now < prev * 0.5) {
