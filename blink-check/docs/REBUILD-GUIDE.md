@@ -343,6 +343,13 @@ The four questions are:
 - **Credit card or loan repayments a month** (`otherRepayMonthly`) can be entered for retirees too.
 - **The built-in retiree example is made up** ("Pat"): 72, $500k super, $900k from a home sale, $2,500 a month living costs, $1,000 a week rent. Never ship a real person's figures as the example. Give them a saved copy of the file instead.
 
+**Keep Retired mode simple.** A retiree is deciding about one home and where their money sits, so nothing about investment purchases is shown:
+- **Results:** No change, the plans' cards (with the home's cost and how it's paid for), the 24-month banner, "Home equity against cash and super", the plain words and the year table. "Compare one measure" and "Where the money comes from" are hidden.
+- **Assumptions (`pageAssumeRetired`):** inflation, savings interest, super returns, home values and running costs, stamp duty, buying costs, rent rises and personal assets. Share rates appear only if a plan invests in shares; the home loan rate only if a plan borrows.
+- **Help (`pageHelpRetired`):** retirement-only results and glossary words (`RETIRED_WORDS`), and a retiree footer.
+- **Red flags:** the only one is "money doesn't last" (or not enough to buy the home).
+- **Rentals:** no "add a rental" button.
+
 **The verdict (`retiredVerdict`):**
 - **"Money doesn't last" (STOP, red flag):** money runs out at or before `lastUntil` (90/95/100, default 95). The flag gives the figures for that year, and notes the home's value as a fallback, not a plan.
 - **"Lasts to 95, only just" (MAYBE):** it lasts past the target, but not to 100.

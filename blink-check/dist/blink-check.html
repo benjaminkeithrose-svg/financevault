@@ -260,7 +260,7 @@ pre.guide { white-space: pre-wrap; word-break: break-word; max-height: 60vh; ove
   <section data-page="assume" hidden></section>
   <section data-page="help" hidden></section>
 </main>
-<footer class="foot">
+<footer class="foot" id="foot">
   General information only — broad estimates to decide whether an idea is worth researching, not financial, tax or credit advice.
   Rates, growth, rents, tax and lending rules all change; check any plan with a licensed adviser, your accountant and a broker
   before acting. Your figures stay in this browser.
@@ -611,6 +611,13 @@ The four questions are:
 - **Home-sale money:** `saleExempt` (dollars) and `saleDate` ("YYYY-MM", the month the sale settled; a month picker on the first page). The engine works out the months left as 24 − months since the sale (`plan.today` overrides today's date, for tests); `saleExemptMonths` is the fallback with no date. The Age Pension is recalculated in the exact month the exemption ends. The summary records `exemptMonths`, `exemptEndLabel` (e.g. "May 2028") and, if still renting then, `exemption {month, before, after}`. The results page shows an amber "24-month mark" banner with the pension before and after, the retirement charts mark the date, and the plan form says which years to buy in to beat it. Money from selling a home that's kept to buy another is left out of the Age Pension assets test, and deemed only at the lower rate, while renting and within those months. This is why a recent seller can get a high pension that drops when the window ends, and the card notes that drop.
 - **Credit card or loan repayments a month** (`otherRepayMonthly`) can be entered for retirees too.
 - **The built-in retiree example is made up** ("Pat"): 72, $500k super, $900k from a home sale, $2,500 a month living costs, $1,000 a week rent. Never ship a real person's figures as the example. Give them a saved copy of the file instead.
+
+**Keep Retired mode simple.** A retiree is deciding about one home and where their money sits, so nothing about investment purchases is shown:
+- **Results:** No change, the plans' cards (with the home's cost and how it's paid for), the 24-month banner, "Home equity against cash and super", the plain words and the year table. "Compare one measure" and "Where the money comes from" are hidden.
+- **Assumptions (`pageAssumeRetired`):** inflation, savings interest, super returns, home values and running costs, stamp duty, buying costs, rent rises and personal assets. Share rates appear only if a plan invests in shares; the home loan rate only if a plan borrows.
+- **Help (`pageHelpRetired`):** retirement-only results and glossary words (`RETIRED_WORDS`), and a retiree footer.
+- **Red flags:** the only one is "money doesn't last" (or not enough to buy the home).
+- **Rentals:** no "add a rental" button.
 
 **The verdict (`retiredVerdict`):**
 - **"Money doesn't last" (STOP, red flag):** money runs out at or before `lastUntil` (90/95/100, default 95). The flag gives the figures for that year, and notes the home's value as a fallback, not a plan.
@@ -3028,7 +3035,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       .join("")}
     ${
       retired()
-        ? `<div class="row"><button type="button" class="btn quiet" data-act="add-rental" data-kind="RES">+ Add a rental property you own</button></div>`
+        ? ""
         : `<div class="row"><button type="button" class="btn secondary" data-act="add-rental" data-kind="RES">+ Add a rental property</button>
       <button type="button" class="btn secondary" data-act="add-rental" data-kind="COM">+ Add a commercial property</button></div>`
     }
@@ -3343,6 +3350,13 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       ["From super, first year", money(r.years[0].superDraw)],
       ["Rent, first year", money(r.years[0].rentPaid)],
     ];
+    const home = r.chains.find((c) => c.kind === "HOME");
+    if (home) {
+      rows.unshift(["Paid from super", money(home.fromSuper)]);
+      rows.unshift(["Paid from savings", money(home.cash)]);
+      if (home.mainLoan) rows.unshift(["Borrowed", money(home.mainLoan)]);
+      rows.unshift([`Home in year ${home.year}, with stamp duty and costs`, money(home.total)]);
+    }
     if (r.maxHomePrice !== undefined) rows.push([`Most to spend on the home (money lasts to ${A("lastUntil")})`, r.maxHomePrice === null ? "None works" : money(r.maxHomePrice)]);
     return `<div class="card verdict" style="--c:${SERIES[i]}">
       <div class="card-head"><h3 style="display:flex;gap:8px;align-items:center"><span class="dot" style="background:${SERIES[i]}"></span>${esc(r.baseline ? `${BASE_NAME}: ${state.home && state.home.has ? "stay in your home" : "keep renting"}` : r.name)}</h3></div>
@@ -3816,12 +3830,12 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       retired()
         ? `you buy nothing new and stay as you are (${state.home && state.home.has ? "in your home" : "renting"}), living on super, savings and the Age Pension.`
         : "you buy nothing new; savings and every spare dollar go into the home loan offset."
-    } Every plan is measured against it: a plan has to end up ahead of ${BASE_NAME} to be worth the risk.</div>
+    } ${retired() ? "Each plan is compared with it." : `Every plan is measured against it: a plan has to end up ahead of ${BASE_NAME} to be worth the risk.`}</div>
     ${exemptionBanner(R)}
     ${stopBanner(runs)}
     <div class="verdicts">${runs.map((r, i) => verdictCard(r, i, R.base)).join("")}</div>
     ${fullCard(R)}
-    <div class="card">
+    ${retired() ? "" : `<div class="card">
       <div class="card-head"><h3>Compare one measure: ${esc(metric[1].toLowerCase())}</h3></div>
       <div class="chart-controls">
         <div class="chips">${LIST.map((m) => `<button type="button" class="chip" data-metric="${m[0]}" aria-pressed="${m[0] === metric[0]}">${esc(m[1])}</button>`).join("")}</div>
@@ -3836,22 +3850,64 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       <div class="card-head"><h3>Where the money comes from ${helpButton("moneyChain", "h-chain")}</h3></div>${helpPop("moneyChain", "h-chain")}
       ${planChips("chainPlan", ci)}
       ${ct.chains.length ? ct.chains.map(chainView).join("") : `<p class="note-box">${ct.baseline ? "No change buys nothing." : "This plan doesn't buy anything."}</p>`}
-    </div>
+    </div>`}
     <div class="card">
       <div class="card-head"><h3>In plain words — for ${retired() ? "an adviser or accountant" : "your accountant or broker"}</h3><button type="button" class="btn secondary" data-act="copy-words">Copy the words</button></div>
       <p class="small muted">What you're thinking about, written out. Copy it into an email, or ${STANDALONE ? "save a copy of this file and send that" : "copy your figures to share them"}.</p>
       <div id="plain-words" class="note-box" style="white-space:pre-wrap;max-width:75ch">${esc(plainWords(R))}</div>
     </div>
     <div class="card">
-      <div class="card-head"><h3>Year by year ${helpButton("topUp", "h-topup")}</h3></div>${helpPop("topUp", "h-topup")}
+      <div class="card-head"><h3>Year by year ${retired() ? "" : helpButton("topUp", "h-topup")}</h3></div>${retired() ? "" : helpPop("topUp", "h-topup")}
       ${planChips("tablePlan", ti)}
-      <p class="small muted">Spare money: ${esc(spareText.charAt(0).toLowerCase() + spareText.slice(1))}. Money that's needed comes from savings, then the offsets.</p>
+      <p class="small muted">${retired() ? "Money left over stays in the bank; money that's needed comes from the bank first, then super." : `Spare money: ${esc(spareText.charAt(0).toLowerCase() + spareText.slice(1))}. Money that's needed comes from savings, then the offsets.`}</p>
       ${yearTable(tt)}
     </div>
     ${navButtons("plans", "assume")}`;
   }
 
+  // Retired: only the assumptions that bear on a home-or-not, super-and-savings decision.
+  function pageAssumeRetired() {
+    const pctF = (k, label, hint, help) => numField("assumptions." + k, label, { hint, help });
+    const forms = plans().map((p) => p.retire || {});
+    const usesShares = forms.some((f) => f.leftover === "SHARES") || (state.shares && state.shares.value > 0);
+    const usesLoan = forms.some((f) => f.home && f.leftover === "OFFSET" && f.loan > 0);
+    const buys = forms.some((f) => f.home);
+    return `<div class="intro"><h2>Assumptions</h2><p class="muted">Sensible starting points, not forecasts. Change any of them; ${BASE_NAME} and every plan use the same ones.</p></div>
+    <div class="card"><h3>Living costs and money</h3><div class="grid">
+      ${inflationField()}
+      ${pctF("savingsRate", "Interest on savings (% a year)")}
+      ${pctF("pensionReturn", "Super returns after fees (% a year)", "Earnings in a super pension are tax-free.", "superPension")}
+      ${usesShares ? pctF("shareGrowth", "Share prices (% a year)") + pctF("shareYield", "Dividends (% a year)") : ""}
+      ${usesLoan ? pctF("homeRate", "Home loan rate (%)") : ""}
+    </div></div>
+    ${
+      buys || (state.home && state.home.has)
+        ? `<div class="card"><h3>The home</h3><div class="grid">
+      ${pctF("resGrowth", "Home values (% a year)")}
+      ${pctF("homeRunPct", "Running costs (% of its value a year)", "Council rates, insurance, strata and upkeep.")}
+      ${selectField("assumptions.state", "Stamp duty", [["NSW", "NSW rates"], ["OTHER", "Another state (enter duty %)"]], { help: "duty" })}
+      ${A("state") === "OTHER" ? pctF("dutyPctOther", "Stamp duty (% of price)") : ""}
+      ${moneyField("assumptions.buyCostsRes", "Legal and other buying costs")}
+      ${state.home && state.home.has ? pctF("sellCostsPct", "Selling costs (% of price)") : ""}
+    </div></div>`
+        : ""
+    }
+    ${
+      state.home && state.home.has
+        ? ""
+        : `<div class="card"><h3>Rent</h3><div class="grid">${pctF("resRentGrowth", "Rent rises (% a year)")}</div></div>`
+    }
+    <div class="card"><h3>Age Pension</h3><div class="grid">
+      ${moneyField("assumptions.personalAssets", "Car, contents and other personal assets", { hint: "Counted in the assets test.", help: "agePension" })}
+    </div>
+    <p class="small muted">Age Pension rates and limits are approximate figures from September 2025, rising with inflation; Services Australia works out the real amount. The home never counts in the assets test. Super pension minimums are 4% of the balance under 65, rising to 14% from 95.</p></div>
+    <div class="row"><button type="button" class="btn secondary" data-act="ask" data-key="assume">Go back to the starting assumptions</button></div>
+    ${confirmBox("assume", "Undo every change on this page?", "reset-assume")}
+    ${navButtons("check", null)}`;
+  }
+
   function pageAssume() {
+    if (retired()) return pageAssumeRetired();
     const R = compute();
     const H = R.base.years.length;
     const rateSeries = [{ name: "Home loan rate", color: "var(--accent)", values: R.base.years.map((y) => y.homeRate) }];
@@ -3930,9 +3986,78 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     return el ? el.textContent.replace(/<\\\/script/gi, "<\/script").trim() : "";
   }
 
-  function pageHelp() {
-    const words = Object.entries(HELP).sort((a, b) => a[1][0].localeCompare(b[1][0]));
+  const RETIRED_WORDS = ["yardstick", "agePension", "deeming", "superPension", "saleExempt", "downsizer", "homeEquityAccess", "lastUntil", "inflation", "living", "offset", "duty", "netWorth"];
+
+  function savingHelp() {
+    return `<p><b>Talking it in:</b> tap a box, then the microphone on your phone's keyboard, and say the amount — "six hundred and fifty thousand" or "1.2 million" both work.</p>
+      <p><b>Saving:</b> ${STANDALONE ? "your figures are kept in this browser as you go. To keep them in the file itself, or to send it to someone, use <b>Save a copy</b> at the top — it saves a new copy of this page with the figures inside. Untick names or notes first if you'd rather leave them out. <b>Start again</b> clears the plans or everything." : "in this view, use <b>Copy my figures</b> to keep them, and <b>Load figures</b> to bring them back. For a file you can keep and send, open the Blink Check HTML file instead."}</p>
+      <p><b>Privacy:</b> nothing you type leaves this device. There are no accounts, no tracking and no uploads — the only thing the page loads from the internet is its fonts.</p>`;
+  }
+
+  function pageHelpRetired() {
+    const words = RETIRED_WORDS.filter((k) => HELP[k]).map((k) => [k, HELP[k]]).sort((a, b) => a[1][0].localeCompare(b[1][0]));
+    return `<div class="intro"><h2>Help</h2><p class="muted">How to use Blink Check in retirement, what the results mean, and the words explained.</p></div>
+    <div class="card help">
+      <h3>What it's for</h3>
+      <p>For someone retired, living on super, savings and the Age Pension, deciding whether to buy a home — and how much to spend — or to keep renting. It runs the figures forward to age 100 and shows how long the money lasts, what's left in the home and in the bank, and what happens to the Age Pension.</p>
+      <p>It's broad estimates, not advice. Take any plan to a licensed financial adviser, and check the Age Pension with Services Australia.</p>
+    </div>
+    <div class="card help">
+      <h3>How to use it</h3>
+      <ol class="steps-list">
+        <li><b>You</b> — age, super, savings, living costs, rent, and any money from selling a home (with the month it settled).</li>
+        <li><b>What you own</b> — a home you already own, if any.</li>
+        <li><b>Plans</b> — up to three plans, each four questions: buy a home or not; what to do with money left over; how much to take from super.</li>
+        <li><b>Blink check</b> — how long the money lasts in each plan, the 24-month mark for home-sale money, home equity against cash and super, and a summary in plain words.</li>
+        <li><b>Assumptions</b> — inflation, interest, super returns, home prices and costs. Change any of them to see what happens.</li>
+      </ol>
+      ${savingHelp()}
+    </div>
+    <div class="card help">
+      <h3>What the results mean</h3>
+      <dl class="kv help-kv">
+        <dt>${BASE_NAME}</dt><dd>Staying as you are — ${state.home && state.home.has ? "in your home" : "renting"}, super paying the minimum, savings in the bank. Each plan is compared with it.</dd>
+        <dt>Money lasts past 100</dt><dd>Savings and super don't run out.</dd>
+        <dt>Lasts to ${A("lastUntil")}, only just</dt><dd>The money lasts past the age you picked, but not to 100.</dd>
+        <dt>Money doesn't last (red flag)</dt><dd>Savings and super run out before the age you picked. The card shows the age, what's coming in and going out that year, and the most that plan could spend on a home and still have money at that age.</dd>
+        <dt>The 24-month mark</dt><dd>${esc(HELP.saleExempt[1])}</dd>
+        <dt>Most to spend on the home</dt><dd>The highest home price in that plan that still leaves money at the age you picked (plus stamp duty and costs).</dd>
+        <dt>Home equity against cash and super</dt><dd>The top chart compares what's tied up in the home with the money there is to live on; the bottom one shows money coming in (Age Pension, super pension, interest) and what's left after living costs, rent and the home's running costs. Below the line means drawing on savings and super. Slide to a year to compare the plans.</dd>
+        <dt>Year by year</dt><dd>Each year's Age Pension, super payments, interest, living costs, rent and home costs, what's left over, and the cash, super and home equity at the end of the year.</dd>
+      </dl>
+    </div>
+    <div class="card help">
+      <h3>Words explained</h3>
+      <dl class="kv help-kv">${words.map(([k, [t, d]]) => `<dt id="word-${k}">${esc(t)}</dt><dd>${esc(d)}</dd>`).join("")}</dl>
+    </div>
+    <div class="card help">
+      <h3>What it doesn't cover</h3>
+      <ul>
+        <li>It isn't financial advice, and it doesn't know your full situation.</li>
+        <li>The Age Pension is an estimate: no Rent Assistance, gifting rules, Work Bonus or concession cards.</li>
+        <li>No aged care costs, and no move into care.</li>
+        <li>Stamp duty is worked out at NSW rates unless you change it under Assumptions.</li>
+        <li>Returns, prices and inflation follow the assumptions smoothly — real life is lumpier.</li>
+      </ul>
+    </div>
+    ${rebuildCard()}
+    ${navButtons("assume", null)}`;
+  }
+
+  function rebuildCard() {
     const guide = rebuildGuide();
+    return `<div class="card help">
+      <h3>Rebuilding or changing Blink Check</h3>
+      <p>This page is a single file with everything inside it — the working-out, the pages and a full guide to how it's built. Anyone can use it, share it, or ask their own AI assistant (such as Claude) to change or rebuild it: give the assistant this file and the rebuild guide below.</p>
+      ${guide ? `<div class="row">${STANDALONE ? `<button type="button" class="btn secondary" data-act="save-guide">Save the rebuild guide</button>` : ""}
+        <button type="button" class="btn secondary" data-act="show-guide">${ui.showGuide ? "Hide the rebuild guide" : "Show the rebuild guide"}</button></div>
+        ${ui.showGuide ? `<pre class="guide">${esc(guide)}</pre>` : ""}` : ""}
+    </div>`;
+  }
+
+  function pageHelp() {
+    if (retired()) return pageHelpRetired();
+    const words = Object.entries(HELP).sort((a, b) => a[1][0].localeCompare(b[1][0]));
     return `<div class="intro"><h2>Help</h2><p class="muted">How to use Blink Check, what the results mean, and the words explained.</p></div>
     <div class="card help">
       <h3>What it's for</h3>
@@ -3949,9 +4074,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         <li><b>Blink check</b> — each plan's verdict, the charts, where the money comes from, and a summary in plain words for your accountant or broker.</li>
         <li><b>Assumptions</b> — rates, growth, costs, tax and the lender's test. Change any of them to see what happens.</li>
       </ol>
-      <p><b>Talking it in:</b> tap a box, then the microphone on your phone's keyboard, and say the amount — "six hundred and fifty thousand", "1.2 million" or "580 a week" all work.</p>
-      <p><b>Saving:</b> ${STANDALONE ? "your figures are kept in this browser as you go. To keep them in the file itself, or to send it to someone, use <b>Save a copy</b> at the top — it saves a new copy of this page with the figures inside. Untick names or notes first if you'd rather leave them out. <b>Start again</b> clears the plans or everything." : "in this view, use <b>Copy my figures</b> to keep them, and <b>Load figures</b> to bring them back. For a file you can keep and send, open the Blink Check HTML file instead."}</p>
-      <p><b>Privacy:</b> nothing you type leaves this device. There are no accounts, no tracking and no uploads — the only thing the page loads from the internet is its fonts.</p>
+      ${savingHelp()}
     </div>
     <div class="card help">
       <h3>What the results mean</h3>
@@ -3961,8 +4084,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         <dt>Marginal</dt><dd>Ahead, but not by enough to be worth the extra risk and effort unless it suits your goals.</dd>
         <dt>Doesn't beat leaving the cash in the offset</dt><dd>Ends behind No change.</dd>
         <dt>Amber note: spends more than it earns</dt><dd>In some years the household spends more than it earns and dips into savings and offsets, but doesn't run out within the plan.</dd>
-        <dt>Retired: money doesn't last (red flag)</dt><dd>Savings and super run out before the age you picked. The card shows the age, what's coming in and going out that year, and the most that plan could spend on a home and still have money at that age.</dd>
-        <dt>Retired: home equity against cash and super</dt><dd>The top chart compares what's tied up in the home with the money there is to live on; the bottom one shows money coming in (Age Pension, super pension, interest) and what's left after living costs, rent and the home's running costs. Below the line means drawing on savings and super.</dd>
+        <dt>Retired?</dt><dd>Switch the first page to Retired: Blink Check then asks whether to buy a home, shows how long the money lasts, and estimates the Age Pension. Its Help changes to match.</dd>
         <dt>Wealth, debt and cash flow</dt><dd>Two charts for one plan, with any others laid over it. The top one is what you own and owe (wealth solid, debt dashed). The bottom one is money each year: income before tax (dotted) and what the investments put in your pocket or cost you after tax (solid) — below the line costs you money. Slide to a year to compare the plans in words and in a table.</dd>
         <dt>Net worth compared with No change</dt><dd>How much better or worse off the plan leaves you at the end, against doing nothing new.</dd>
         <dt>Cash put in at purchase</dt><dd>Your own money used for deposits, stamp duty and costs.</dd>
@@ -3992,13 +4114,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         <li>Tax uses today's resident rates and rules. Negative gearing and the capital gains discount can change — untick negative gearing under Assumptions to see a plan without it.</li>
       </ul>
     </div>
-    <div class="card help">
-      <h3>Rebuilding or changing Blink Check</h3>
-      <p>This page is a single file with everything inside it — the working-out, the pages and a full guide to how it's built. Anyone can use it, share it, or ask their own AI assistant (such as Claude) to change or rebuild it: give the assistant this file and the rebuild guide below.</p>
-      ${guide ? `<div class="row">${STANDALONE ? `<button type="button" class="btn secondary" data-act="save-guide">Save the rebuild guide</button>` : ""}
-        <button type="button" class="btn secondary" data-act="show-guide">${ui.showGuide ? "Hide the rebuild guide" : "Show the rebuild guide"}</button></div>
-        ${ui.showGuide ? `<pre class="guide">${esc(guide)}</pre>` : ""}` : ""}
-    </div>
+    ${rebuildCard()}
     ${navButtons("assume", null)}`;
   }
 
@@ -4006,7 +4122,13 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 
   const RENDER = { you: pageYou, own: pageOwn, plans: pagePlans, check: pageCheck, assume: pageAssume, help: pageHelp };
 
+  const FOOT_WORKING = document.getElementById("foot") ? document.getElementById("foot").innerHTML : "";
   function renderTools() {
+    const foot = document.getElementById("foot");
+    if (foot)
+      foot.innerHTML = retired()
+        ? "General information only — broad estimates, not financial advice. The Age Pension figures are estimates. Check any plan with a licensed financial adviser and with Services Australia before acting. Your figures stay in this browser."
+        : FOOT_WORKING;
     const tools = document.getElementById("tools");
     tools.innerHTML = `
       ${STANDALONE ? `<button type="button" class="btn" data-act="save-panel">Save a copy</button>` : `<button type="button" class="btn secondary" data-act="copy">Copy my figures</button>`}
