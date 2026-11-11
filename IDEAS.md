@@ -886,3 +886,31 @@ to confirm).
 - Changes the "nothing goes online" rule (owner's call).
 
 **Status:** idea only (19 October 2026).
+
+## 25. Helping people gather their paperwork (for rolling the app out)
+
+**Why:** the big lift for anyone starting out is getting years of paperwork
+out of email accounts, bank websites and old computer folders, sorted well
+enough to import. Most people won't know where to start.
+
+**The idea — three pieces in the app:**
+1. **A "Getting your paperwork together" checklist:** where documents usually
+   live and how to get them out — myGov/ATO (notices of assessment, income
+   statements), each bank's statement downloads (CSV and PDF, how far back
+   each allows), the super fund's portal, insurers, council and water rates,
+   the property manager, the broker, and each email account.
+2. **A "Create my folder template" button:** makes an empty folder tree on the
+   computer (owner → financial year → document type, plus Permanent, Identity
+   documents, _Not sure) named so Import a folder recognises it. The app
+   already uses folder names to decide type and year.
+3. **An optional "use an AI assistant" brief:** instructions people can copy
+   into Claude Cowork (or similar) to search their email and folders, copy and
+   rename documents into that template, and keep a log. Off to one side — the
+   checklist and template work without any AI.
+
+**Already there:** Import from Gmail (several Gmail accounts, rules for which
+emails), Import a folder (uses folder names), the PDF statement reader, and the
+Cowork brief written for my own setup (`COWORK-BRIEF.md`) — a starting point
+for piece 3.
+
+**Status:** idea only (11 November 2026).
