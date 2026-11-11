@@ -24,6 +24,40 @@
   const BIN =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>';
 
+  // ---------------------------------------------------------------- words explained
+
+  const HELP = {
+    offset: ["Offset account", "A savings account linked to a loan. Its balance is taken off the loan before interest is charged, so $60,000 in the offset of a $420,000 loan means interest on $360,000. Same effect as paying the loan down — but you can take the money out again."],
+    pi: ["Principal and interest (P&I)", "Repayments cover the interest and part of the loan itself, so the loan shrinks to nothing by the end of the term."],
+    io: ["Interest only (IO)", "Repayments cover only the interest for a set number of years — the loan doesn't shrink. Common for investment loans to keep cash flow up. Repayments jump when the interest-only years end."],
+    equity: ["Equity", "What a property is worth less what's owed on it. Lenders will usually lend against it up to 80% of the value in total — that's how a deposit is 'borrowed from equity'."],
+    lvr: ["LVR (loan to value ratio)", "The loan as a share of the property's value. 80% LVR on a $700,000 property is a $560,000 loan. Over 80% usually means lenders mortgage insurance; commercial lenders usually stop at 65–70%."],
+    yield: ["Rental yield", "A year's rent as a share of the price. Gross yield is before costs; net yield is after the owner's costs. $600 a week on a $700,000 property is a 4.5% gross yield."],
+    caprate: ["Cap rate (capitalisation rate)", "The commercial word for net yield: a year's net rent (after the owner's costs) divided by the price. An $800,000 property at a 6.5% cap rate earns about $52,000 a year. A higher cap rate means more income per dollar, but often more risk or slower growth."],
+    netlease: ["Net lease and outgoings", "Outgoings are a property's running costs — council and water rates, insurance, strata, maintenance. In most commercial leases the tenant pays most of them on top of the rent (a net lease). Residential owners pay their own."],
+    wale: ["WALE (weighted average lease expiry)", "How many years, on average, the tenants are locked in for. A longer WALE is safer — the income is contracted. Worth asking about for any commercial property."],
+    vacancy: ["Weeks empty", "Time with no tenant. Residential is often a couple of weeks a year between tenants. Commercial can sit empty for six to twelve months — keep a cash buffer."],
+    negativeGearing: ["Negative gearing", "When a rental costs more than it earns (interest, running costs and write-offs), the loss is taken off your other income, so you pay less tax. You still lose money — the tax back only softens it. Positively geared means it earns more than it costs, and that extra is taxed."],
+    depreciation: ["Tax write-offs (depreciation)", "Owners can claim the building's wear: 2.5% a year of the construction cost for buildings started after September 1987. Fittings (carpets, blinds, appliances) can be claimed too, but for residential only in new or near-new properties. A quantity surveyor's report gives the exact figures; this tool uses a cautious estimate unless you enter one."],
+    duty: ["Stamp duty", "The state's tax on buying property, paid at settlement. Worked out here at NSW rates (premium duty for residential over $3.87m); for other states enter a percentage under Assumptions."],
+    landTax: ["Land tax", "A yearly NSW tax on investment land once an owner's total land value passes $1,075,000. Your home is exempt. Worked out here per person, on the land value share of each property."],
+    cgt: ["Capital gains tax", "Tax on the profit when an investment is sold. Held over a year, only half the gain is added to your income. Your home is exempt."],
+    serviceability: ["Borrowing check (serviceability)", "Lenders test whether your income covers every repayment at about 3% above the actual rate, counting only part of the rent (about 80% for residential) and about 3.8% of your credit card limits each month — even if the cards are paid off. This is a rough version of that test."],
+    debtRecycling: ["Debt recycling", "Paying the home loan down with cash (often from the offset), then borrowing the same amount back as a separate loan split to invest. The total owed doesn't change, but the interest on the new split is tax-deductible because it's used to invest. Talk to your accountant before doing it — it has to be set up correctly."],
+    smsf: ["SMSF", "A self-managed super fund. It can buy property, but the fund and the property must stay separate from you: no living in it, and no renting residential property to family. Commercial property can be leased to your own business at market rent."],
+    lrba: ["SMSF loan (LRBA)", "A limited recourse borrowing arrangement — the only way an SMSF can borrow to buy property. Lenders usually lend 60–70%, at higher rates, and the fund needs cash left over afterwards."],
+    franking: ["Franking credits", "Tax an Australian company has already paid on its profits, passed on with its dividends. It counts towards your tax, so franked dividends are taxed less."],
+    costBase: ["What you paid (cost base)", "The price plus stamp duty and buying costs. Used to work out capital gains tax if it's sold."],
+    yardstick: ["The yardstick", "Doing nothing new: your savings and every spare dollar go into the home loan offset. Each plan is compared with this, because it's the safe, tax-free return any plan has to beat."],
+    spare: ["Where spare money goes", "When the year leaves money over, this decides where it goes: the home loan offset (usually best — that interest isn't tax-deductible), a positive property's own loan offset, the dearest loan, or savings. When a plan needs money, it comes from savings first, then the offsets."],
+    topUp: ["Top-ups", "What the investments cost you each year after tax — rent and dividends, less running costs, loan repayments and the tax effect. This is the money that has to come out of your pay or savings."],
+    worstYear: ["Worst year", "The year the investments need the most from you, usually when interest rates peak. Check you could carry this."],
+    moneyChain: ["Where the money comes from", "How each purchase is paid for: the loan on the new property, any borrowing against equity in what you own, and your own cash — against the price, stamp duty and buying costs."],
+    rateCycle: ["The rate cycle", "Instead of guessing, rates rise and fall the way the Reserve Bank's cash rate did since 2000 (the 2008 peak, the 2020 low and the 2022–23 rises), added to today's rates. Year 1 is always today's rate."],
+    netWorth: ["Net worth", "Everything you own (property, shares, savings, offsets, super) less everything you owe. 'Outside super' leaves super out, because you can't use it until retirement."],
+    living: ["Living costs", "What the household spends each month on everything except loan repayments — food, bills, school, cars, holidays. The tool works out the loan repayments itself."],
+  };
+
   // ---------------------------------------------------------------- state
 
   const uid = () => Math.random().toString(36).slice(2, 9);
@@ -124,7 +158,7 @@
   }
 
   let state = load();
-  const ui = { page: "you", plan: 1, metric: "nw", hidden: {}, chainPlan: 1, tablePlan: 1, confirm: null, panel: null, message: "" };
+  const ui = { openHelp: {}, page: "you", plan: 1, metric: "nw", hidden: {}, chainPlan: 1, tablePlan: 1, confirm: null, panel: null, message: "" };
   let results = null;
 
   function save() {
@@ -188,14 +222,24 @@
     if (kind === "money") return money(v);
     return String(v);
   }
+  function helpButton(key, id) {
+    if (!key || !HELP[key]) return "";
+    return `<button type="button" class="info" data-help="${esc(id)}" aria-expanded="${!!ui.openHelp[id]}" aria-label="What's ${esc(HELP[key][0])}?" title="What's this?">?</button>`;
+  }
+  function helpPop(key, id) {
+    if (!key || !HELP[key] || !ui.openHelp[id]) return "";
+    return `<div class="help-pop"><b>${esc(HELP[key][0])}.</b> ${esc(HELP[key][1])} <button type="button" class="btn quiet small" data-go="help">More in Help</button></div>`;
+  }
+  const labelRow = (id, label, help) => `<div class="label-row"><label for="${id}">${esc(label)}</label>${helpButton(help, id)}</div>`;
+
   function field(kind, path, label, opts = {}) {
     const v = valueOf(path);
     const id = fid(path);
     return `<div class="field"${opts.wide ? ' style="grid-column: 1 / -1"' : ""}>
-      <label for="${id}">${esc(label)}</label>
+      ${labelRow(id, label, opts.help)}
       <input type="text" id="${id}" data-path="${path}" data-kind="${kind}" inputmode="${kind === "text" ? "text" : "decimal"}" autocomplete="off"
         value="${esc(shown(kind, v))}" placeholder="${esc(opts.placeholder || "")}">
-      ${opts.hint ? `<span class="hint">${opts.hint}</span>` : ""}
+      ${opts.hint ? `<span class="hint">${opts.hint}</span>` : ""}${helpPop(opts.help, id)}
     </div>`;
   }
   function notesField(path, label, hint) {
@@ -211,16 +255,16 @@
     const v = valueOf(path);
     const id = fid(path);
     return `<div class="field"${opts.wide ? ' style="grid-column: 1 / -1"' : ""}>
-      <label for="${id}">${esc(label)}</label>
+      ${labelRow(id, label, opts.help)}
       <select id="${id}" data-path="${path}" data-kind="${opts.kind || "select"}">
         ${options.map(([val, text]) => `<option value="${esc(val)}"${String(v) === String(val) ? " selected" : ""}>${esc(text)}</option>`).join("")}
       </select>
-      ${opts.hint ? `<span class="hint">${opts.hint}</span>` : ""}
+      ${opts.hint ? `<span class="hint">${opts.hint}</span>` : ""}${helpPop(opts.help, id)}
     </div>`;
   }
-  function toggle(path, label) {
+  function toggle(path, label, help) {
     const id = fid(path);
-    return `<label class="toggle" for="${id}"><input type="checkbox" id="${id}" data-path="${path}" data-kind="bool"${valueOf(path) ? " checked" : ""}> ${esc(label)}</label>`;
+    return `<div><div class="label-row"><label class="toggle" for="${id}"><input type="checkbox" id="${id}" data-path="${path}" data-kind="bool"${valueOf(path) ? " checked" : ""}> ${esc(label)}</label>${helpButton(help, id)}</div>${helpPop(help, id)}</div>`;
   }
   function chips(path, options, kind = "select") {
     const v = valueOf(path);
@@ -241,6 +285,17 @@
       <button type="button" class="btn secondary" data-act="cancel-confirm">Keep it</button></div>`;
   }
   const binButton = (key, label) => `<button type="button" class="btn icon secondary" data-act="ask" data-key="${esc(key)}" aria-label="${esc(label)}" title="${esc(label)}">${BIN}</button>`;
+
+  // Rent hint: a typical rent for the price, or — once rent is entered — the yield (cap rate for commercial).
+  function rentHint(price, rentWeekly, costPct, kind) {
+    const com = kind === "COM";
+    if (!(price > 0)) return "";
+    if (!(rentWeekly > 0)) return `About ${money(Math.round((price * (com ? 0.065 : 0.04)) / 52))} at a ${com ? "6.5% cap rate" : "4% yield"}.`;
+    const gross = (rentWeekly * 52) / price;
+    const cost = (costPct != null && costPct !== "" ? +costPct : com ? A("comCostPct") : A("resCostPct")) / 100;
+    const net = gross * (1 - cost);
+    return com ? `Cap rate about ${(net * 100).toFixed(1)}% (${(gross * 100).toFixed(1)}% before the owner's costs).` : `Gross yield about ${(gross * 100).toFixed(1)}%, about ${(net * 100).toFixed(1)}% after costs.`;
+  }
 
   // ---------------------------------------------------------------- pages
 
@@ -275,8 +330,8 @@
     <div class="card">
       <h3>Each month</h3>
       <div class="grid">
-        ${moneyField("livingMonthly", "Living costs a month", { hint: "Everything except loan repayments — the tool works those out." })}
-        ${moneyField("cardLimits", "Credit card limits, all cards", { hint: "Lenders count about 3.8% of the limit a month, even if it's paid off." })}
+        ${moneyField("livingMonthly", "Living costs a month", { hint: "Everything except loan repayments — the tool works those out.", help: "living" })}
+        ${moneyField("cardLimits", "Credit card limits, all cards", { hint: "Lenders count about 3.8% of the limit a month, even if it's paid off.", help: "serviceability" })}
         ${moneyField("otherRepayMonthly", "Car or personal loan repayments a month")}
         ${numField("otherRepayYears", "Years left on those loans")}
       </div>
@@ -296,10 +351,10 @@
     return `<div class="grid">
       ${moneyField(base + ".balance", "Loan owing")}
       ${numField(base + ".rate", "Interest rate (% a year)")}
-      ${selectField(base + ".type", "Repayments", [["PI", "Principal and interest"], ["IO", "Interest only"]])}
+      ${selectField(base + ".type", "Repayments", [["PI", "Principal and interest"], ["IO", "Interest only"]], { help: type === "IO" ? "io" : "pi" })}
       ${type === "IO" ? numField(base + ".ioYears", "Interest-only years left") : ""}
       ${numField(base + ".yearsLeft", "Years left on the loan")}
-      ${moneyField(base + ".offset", opts.offsetLabel || "Money in its offset")}
+      ${moneyField(base + ".offset", opts.offsetLabel || "Money in its offset", { help: "offset" })}
     </div>`;
   }
 
@@ -329,7 +384,6 @@
     ${state.rentals
       .map((r, i) => {
         const b = `rentals.${i}`;
-        const suggested = Math.round(((r.value || 0) * ((r.kind === "COM" ? 6.5 : 4) / 100)) / 52);
         return `<div class="card">
           <div class="card-head"><h3>${esc(r.name || "Rental property")}</h3>${binButton("rental-" + i, "Remove this property")}</div>
           ${confirmBox("rental-" + i, `Remove ${r.name || "this property"}? Plans that sell it will skip that step.`, "remove-rental")}
@@ -337,10 +391,10 @@
             ${textField(b + ".name", "Name")}
             ${selectField(b + ".kind", "Kind", [["RES", "Residential"], ["COM", "Commercial"]])}
             ${moneyField(b + ".value", "What it's worth")}
-            ${moneyField(b + ".costBase", "What you paid, with stamp duty and costs", { hint: "For capital gains tax if it's sold." })}
-            ${moneyField(b + ".rentWeekly", "Rent a week", { hint: suggested ? `About ${money(suggested)} at a ${r.kind === "COM" ? "6.5" : "4"}% yield.` : "" })}
-            ${numField(b + ".costPct", "Running costs (% of rent)", { hint: r.kind === "COM" ? "Net lease: owner pays about 12%." : "Rates, insurance, repairs, management: about 25%." })}
-            ${selectField(b + ".writeOff", "Tax write-off (depreciation)", [["NONE", "None"], ["BUILDING", "Building only (built after 1987)"], ["NEW", "Building + fittings (new or near-new)"]])}
+            ${moneyField(b + ".costBase", "What you paid, with stamp duty and costs", { hint: "For capital gains tax if it's sold.", help: "costBase" })}
+            ${moneyField(b + ".rentWeekly", "Rent a week", { hint: rentHint(r.value, r.rentWeekly, r.costPct, r.kind), help: r.kind === "COM" ? "caprate" : "yield" })}
+            ${numField(b + ".costPct", "Running costs (% of rent)", { hint: r.kind === "COM" ? "Net lease: owner pays about 12%." : "Rates, insurance, repairs, management: about 25%.", help: r.kind === "COM" ? "netlease" : "" })}
+            ${selectField(b + ".writeOff", "Tax write-off (depreciation)", [["NONE", "None"], ["BUILDING", "Building only (built after 1987)"], ["NEW", "Building + fittings (new or near-new)"]], { help: "depreciation" })}
             ${moneyField(b + ".writeOffAmount", "Or your depreciation report's figure a year", { placeholder: "Optional" })}
             ${two ? numField(b + ".owners.0", `${state.people[0].name || "Person 1"}'s share (%)`, { hint: `${state.people[1].name || "Person 2"} owns the rest.` }) : ""}
           </div>
@@ -359,7 +413,7 @@
         ${moneyField("shares.costBase", "What you paid for them")}
         ${state.people.map((p, i) => moneyField(`people.${i}.super`, `${p.name || (i ? "Partner" : "Your")}'s super`)).join("")}
       </div>
-      <div class="row">${toggle("smsf.has", "Our super is in an SMSF")}${toggle("smsf.open", "Open to investing through super")}</div>
+      <div class="row">${toggle("smsf.has", "Our super is in an SMSF", "smsf")}${toggle("smsf.open", "Open to investing through super")}</div>
     </div>
     ${navButtons("you", "plans")}`;
   }
@@ -388,18 +442,17 @@
     if (s.type === "BUY") {
       const com = s.kind === "COM";
       title = `Buy ${com ? "commercial" : "residential"}${s.name ? ` — ${esc(s.name)}` : ""}`;
-      const yieldRent = Math.round(((s.price || 0) * ((com ? 6.5 : 4) / 100)) / 52);
       body = `<div class="grid">
         ${textField(b + ".name", "Name")}
         ${yearField}
         ${moneyField(b + ".price", "Price")}
-        ${moneyField(b + ".rentWeekly", "Rent a week", { hint: yieldRent ? `About ${money(yieldRent)} at a ${com ? "6.5" : "4"}% yield.` : "" })}
-        ${selectField(b + ".funding", "Deposit and costs", [["EQUITY", "Borrow from equity — keep your cash"], ["CASH", "Use savings and offset cash first"], ["MIX", "Use a set amount of cash"]])}
+        ${moneyField(b + ".rentWeekly", "Rent a week", { hint: rentHint(s.price, s.rentWeekly, null, s.kind), help: com ? "caprate" : "yield" })}
+        ${selectField(b + ".funding", "Deposit and costs", [["EQUITY", "Borrow from equity — keep your cash"], ["CASH", "Use savings and offset cash first"], ["MIX", "Use a set amount of cash"]], { help: "equity" })}
         ${s.funding === "MIX" ? moneyField(b + ".cashAmount", "Cash to put in") : ""}
-        ${numField(b + ".lvr", "Bank lends (% of price)", { placeholder: String(com ? A("comLvr") : A("resLvr")) })}
-        ${selectField(b + ".loanType", "Repayments", [["PI", "Principal and interest"], ["IO", "Interest only"]])}
+        ${numField(b + ".lvr", "Bank lends (% of price)", { placeholder: String(com ? A("comLvr") : A("resLvr")), help: "lvr" })}
+        ${selectField(b + ".loanType", "Repayments", [["PI", "Principal and interest"], ["IO", "Interest only"]], { help: s.loanType === "IO" ? "io" : "pi" })}
         ${s.loanType === "IO" ? numField(b + ".ioYears", "Interest-only years", { placeholder: "5" }) : ""}
-        ${selectField(b + ".writeOff", "Tax write-off (depreciation)", [["NONE", "None"], ["BUILDING", "Building only (built after 1987)"], ["NEW", "Building + fittings (new or near-new)"]])}
+        ${selectField(b + ".writeOff", "Tax write-off (depreciation)", [["NONE", "None"], ["BUILDING", "Building only (built after 1987)"], ["NEW", "Building + fittings (new or near-new)"]], { help: "depreciation" })}
         ${moneyField(b + ".writeOffAmount", "Or a depreciation estimate a year", { placeholder: "Optional" })}
         ${two ? numField(b + ".owners.0", `${state.people[0].name || "Person 1"}'s share (%)`, { placeholder: "50" }) : ""}
       </div>`;
@@ -407,8 +460,8 @@
       title = `SMSF purchase${s.name ? ` — ${esc(s.name)}` : ""}`;
       body = `<div class="grid">${textField(b + ".name", "Name")}${yearField}
         ${selectField(b + ".kind", "Kind", [["COM", "Commercial"], ["RES", "Residential"]])}
-        ${moneyField(b + ".price", "Price")}${moneyField(b + ".rentWeekly", "Rent a week")}
-        ${numField(b + ".lvr", "Bank lends (% of price)", { placeholder: String(A("smsfLvr")) })}</div>
+        ${moneyField(b + ".price", "Price")}${moneyField(b + ".rentWeekly", "Rent a week", { hint: rentHint(s.price, s.rentWeekly, null, s.kind), help: s.kind === "COM" ? "caprate" : "yield" })}
+        ${numField(b + ".lvr", "Bank lends (% of price)", { placeholder: String(A("smsfLvr")), help: "lrba" })}</div>
         <p class="small muted">Deposit and costs come out of super; rent and repayments stay inside the fund. Super can't be touched until retirement age.</p>`;
     } else if (s.type === "SELL") {
       title = "Sell a property";
@@ -420,7 +473,7 @@
     } else if (s.type === "SHARES") {
       title = "Buy shares or ETFs";
       body = `<div class="grid">${yearField}${moneyField(b + ".amount", "Amount")}
-        ${selectField(b + ".funding", "Paid for by", [["CASH", "Savings and offset cash"], ["EQUITY", "Borrowing against property equity"], ["RECYCLE", "Debt recycling — pay the home loan down, borrow it back to invest"]])}
+        ${selectField(b + ".funding", "Paid for by", [["CASH", "Savings and offset cash"], ["EQUITY", "Borrowing against property equity"], ["RECYCLE", "Debt recycling — pay the home loan down, borrow it back to invest"]], { help: "debtRecycling" })}
         ${s.funding !== "CASH" ? selectField(b + ".loanType", "Loan repayments", [["IO", "Interest only"], ["PI", "Principal and interest"]]) : ""}</div>
         ${s.funding === "RECYCLE" ? `<p class="small muted">Your offset cash pays down the home loan, and the same amount is borrowed back as a separate split to buy the shares — so that interest becomes tax-deductible. Talk to your accountant before doing it.</p>` : ""}`;
     } else if (s.type === "OFFSET") {
@@ -455,7 +508,7 @@
           <div class="row">${plans().length < 3 ? `<button type="button" class="btn secondary" data-act="copy-plan">Copy this plan</button>` : ""}${binButton("plan-" + plan.id, "Delete this plan")}</div></div>
         ${confirmBox("plan-" + plan.id, `Delete "${plan.name || "this plan"}"?`, "remove-plan")}
         <div class="grid wide">${textField(`scenarios.${idx}.name`, "Plan name")}
-          ${selectField(`scenarios.${idx}.spare`, "Where spare money goes", SPARE, { wide: true, hint: "When the plan needs money, it comes from savings first, then the offsets (home loan first)." })}</div>
+          ${selectField(`scenarios.${idx}.spare`, "Where spare money goes", SPARE, { wide: true, hint: "When the plan needs money, it comes from savings first, then the offsets (home loan first).", help: "spare" })}</div>
         ${notesField(`scenarios.${idx}.notes`, "Notes and questions about this plan", "For example: “Would buying in the trust be better?” or “Can we borrow this much?”")}
       </div>
       <div class="steps">${sorted.length ? sorted.map((s) => stepCard(plan, idx, s)).join("") : `<p class="note-box">No steps yet — add one below.</p>`}</div>
@@ -557,7 +610,7 @@
       ["Interest paid, all loans", money(s.totalInterest)],
     ];
     return `<div class="card verdict" style="--c:${SERIES[i]}">
-      <div class="card-head"><h3 style="display:flex;gap:8px;align-items:center"><span class="dot" style="background:${SERIES[i]}"></span>${esc(r.baseline ? "Yardstick: cash in the offset" : r.name)}</h3></div>
+      <div class="card-head"><h3 style="display:flex;gap:8px;align-items:center"><span class="dot" style="background:${SERIES[i]}"></span>${esc(r.baseline ? "Yardstick: cash in the offset" : r.name)}${r.baseline ? helpButton("yardstick", "h-yard") : ""}</h3></div>${r.baseline ? helpPop("yardstick", "h-yard") : ""}
       <span class="pill ${v.level}">${esc(v.label)}</span>
       ${
         r.baseline
@@ -718,7 +771,7 @@
       ${series.length ? chart("main", series, H, metric[0] === "homeRate" ? "rate" : "money") : `<p class="note-box">Tick a plan to show it.</p>`}
     </div>
     <div class="card">
-      <div class="card-head"><h3>Where the money comes from</h3></div>
+      <div class="card-head"><h3>Where the money comes from ${helpButton("moneyChain", "h-chain")}</h3></div>${helpPop("moneyChain", "h-chain")}
       ${planChips("chainPlan", ci)}
       ${ct.chains.length ? ct.chains.map(chainView).join("") : `<p class="note-box">${ct.baseline ? "The yardstick buys nothing." : "This plan doesn't buy anything."}</p>`}
     </div>
@@ -728,7 +781,7 @@
       <div id="plain-words" class="note-box" style="white-space:pre-wrap;max-width:75ch">${esc(plainWords(R))}</div>
     </div>
     <div class="card">
-      <div class="card-head"><h3>Year by year</h3></div>
+      <div class="card-head"><h3>Year by year ${helpButton("topUp", "h-topup")}</h3></div>${helpPop("topUp", "h-topup")}
       ${planChips("tablePlan", ti)}
       <p class="small muted">Spare money: ${esc(spareText.charAt(0).toLowerCase() + spareText.slice(1))}. Money that's needed comes from savings, then the offsets.</p>
       ${yearTable(tt)}
@@ -741,12 +794,12 @@
     const H = R.base.years.length;
     const rateSeries = [{ name: "Home loan rate", color: "var(--accent)", values: R.base.years.map((y) => y.homeRate) }];
     const years = Object.keys(E.CASH_RATE);
-    const pctF = (k, label, hint) => numField("assumptions." + k, label, { hint });
+    const pctF = (k, label, hint, help) => numField("assumptions." + k, label, { hint, help });
     return `<div class="intro"><h2>Assumptions</h2><p class="muted">Sensible starting points for Australia, not forecasts. Change any of them; the yardstick and every plan use the same ones.</p></div>
     <div class="card">
       <h3>Interest rates</h3>
       <div class="grid wide">
-        ${selectField("assumptions.rateModel", "Rates over the years", [["CYCLE", "Rise and fall like the cycle since 2000"], ["FLAT", "Stay where they are"]])}
+        ${selectField("assumptions.rateModel", "Rates over the years", [["CYCLE", "Rise and fall like the cycle since 2000"], ["FLAT", "Stay where they are"]], { help: "rateCycle" })}
         ${A("rateModel") === "CYCLE" ? selectField("assumptions.cycleStart", "Start the cycle as at", years.map((y) => [y, y]), { kind: "num" }) : ""}
         ${A("rateModel") === "CYCLE" ? selectField("assumptions.cycleScale", "How big the swings are", [[0.5, "Half of history"], [0.75, "Three-quarters"], [1, "Same as history"], [1.25, "A quarter bigger"], [1.5, "Half again bigger"]], { kind: "num" }) : ""}
       </div>
@@ -766,35 +819,35 @@
       ${pctF("resGrowth", "Residential values (% a year)")}${pctF("comGrowth", "Commercial values (% a year)")}
       ${pctF("resRentGrowth", "Residential rents (% a year)")}${pctF("comRentGrowth", "Commercial rents (% a year)")}
       ${pctF("wageGrowth", "Wages (% a year)")}${pctF("cpi", "Living costs (% a year)")}
-      ${pctF("shareGrowth", "Share prices (% a year)")}${pctF("shareYield", "Dividends (% a year)")}${pctF("franking", "Franked (% of dividends)")}
+      ${pctF("shareGrowth", "Share prices (% a year)")}${pctF("shareYield", "Dividends (% a year)")}${pctF("franking", "Franked (% of dividends)", "", "franking")}
       ${pctF("superReturn", "Super returns after fees and tax (%)")}${pctF("superGuarantee", "Employer super (% of pay)")}
     </div></div>
     <div class="card"><h3>Running a property</h3><div class="grid">
-      ${pctF("resVacancyWeeks", "Residential: weeks empty a year")}${pctF("comVacancyWeeks", "Commercial: weeks empty a year")}
+      ${pctF("resVacancyWeeks", "Residential: weeks empty a year", "", "vacancy")}${pctF("comVacancyWeeks", "Commercial: weeks empty a year")}
       ${pctF("resCostPct", "Residential running costs (% of rent)")}${pctF("comCostPct", "Commercial running costs (% of rent)")}
-      ${pctF("landPctRes", "Residential land value (% of price)", "For land tax.")}${pctF("landPctCom", "Commercial land value (% of price)")}
+      ${pctF("landPctRes", "Residential land value (% of price)", "For land tax.", "landTax")}${pctF("landPctCom", "Commercial land value (% of price)")}
     </div></div>
     <div class="card"><h3>Buying and selling</h3><div class="grid">
-      ${selectField("assumptions.state", "Stamp duty and land tax", [["NSW", "NSW rates"], ["OTHER", "Another state (enter duty %)"]])}
+      ${selectField("assumptions.state", "Stamp duty and land tax", [["NSW", "NSW rates"], ["OTHER", "Another state (enter duty %)"]], { help: "duty" })}
       ${A("state") === "OTHER" ? pctF("dutyPctOther", "Stamp duty (% of price)", "Land tax isn't estimated outside NSW.") : ""}
       ${moneyField("assumptions.buyCostsRes", "Residential buying costs (legal, inspections)")}
       ${pctF("buyCostsComPct", "Commercial buying costs (% of price)")}
       ${pctF("sellCostsPct", "Selling costs (% of price)")}
       ${pctF("resLvr", "Bank lends on residential (% of price)")}${pctF("comLvr", "Bank lends on commercial (% of price)")}${pctF("smsfLvr", "Bank lends in an SMSF (% of price)")}
-      ${pctF("maxLvr", "Most you'd borrow against a property (% of value)", "Used when borrowing the deposit from equity.")}
+      ${pctF("maxLvr", "Most you'd borrow against a property (% of value)", "Used when borrowing the deposit from equity.", "lvr")}
     </div></div>
     <div class="card"><h3>Tax</h3>
-      ${toggle("assumptions.negativeGearing", "Rental losses reduce tax on wages (negative gearing, today's rules)")}
+      ${toggle("assumptions.negativeGearing", "Rental losses reduce tax on wages (negative gearing, today's rules)", "negativeGearing")}
       <p class="small muted">Untick to see a plan if that changed: losses are then carried forward to use against later rental profit and capital gains.</p>
       <div class="grid">
-        ${pctF("buildingPctRes", "Residential building cost (% of price)", "The building write-off is 2.5% of this a year.")}
+        ${pctF("buildingPctRes", "Residential building cost (% of price)", "The building write-off is 2.5% of this a year.", "depreciation")}
         ${pctF("buildingPctCom", "Commercial building cost (% of price)")}
         ${pctF("fittingsPct", "New-build fittings write-off (% of price, first year)", "Falls 20% a year. Second-hand residential fittings can't be claimed.")}
       </div>
       <p class="small muted">Resident tax rates for 2026-27 (15% bracket) and from 1 July 2027 (14%), with the 2% Medicare levy. Capital gains get the 50% discount after a year. Your home is exempt.</p>
     </div>
     <div class="card"><h3>The lender's test</h3><div class="grid">
-      ${pctF("assessBuffer", "Test rate: actual rate plus (%)")}${pctF("resShade", "Residential rent counted (%)")}${pctF("comShade", "Commercial rent counted (%)")}
+      ${pctF("assessBuffer", "Test rate: actual rate plus (%)", "", "serviceability")}${pctF("resShade", "Residential rent counted (%)")}${pctF("comShade", "Commercial rent counted (%)")}
       ${pctF("cardServicing", "Card limits counted (% a month)")}${moneyField("assumptions.smsfBuffer", "Cash to keep in the SMSF after buying")}
     </div></div>
     <div class="row"><button type="button" class="btn secondary" data-act="ask" data-key="assume">Go back to the starting assumptions</button></div>
@@ -802,9 +855,85 @@
     ${navButtons("check", null)}`;
   }
 
+  // ---------------------------------------------------------------- help
+
+  function rebuildGuide() {
+    const el = document.getElementById("rebuild-guide");
+    return el ? el.textContent.replace(/<\\\/script/gi, "</script").trim() : "";
+  }
+
+  function pageHelp() {
+    const words = Object.entries(HELP).sort((a, b) => a[1][0].localeCompare(b[1][0]));
+    const guide = rebuildGuide();
+    return `<div class="intro"><h2>Help</h2><p class="muted">How to use Blink Check, what the results mean, and the words explained.</p></div>
+    <div class="card help">
+      <h3>What it's for</h3>
+      <p>A quick check — a "blink" — on whether the next move is worth researching properly, or whether you're better off leaving the cash in the home loan offset.
+        It runs your figures forward ${horizon()} years, month by month, with interest rates rising and falling, and compares each plan with doing nothing new.</p>
+      <p>It's broad estimates, not advice. A plan that looks good here is one to take to your accountant, a broker and a licensed adviser — not one to sign up for.</p>
+    </div>
+    <div class="card help">
+      <h3>How to use it</h3>
+      <ol class="steps-list">
+        <li><b>You</b> — incomes, living costs, credit card limits and other loan repayments. Rough round figures are fine.</li>
+        <li><b>What you own</b> — your home and its loan and offset, any rentals, savings, shares and super.</li>
+        <li><b>Plans</b> — up to three plans, each a list of steps: buy residential or commercial, buy through an SMSF, sell, buy shares, move money to an offset, switch a loan to principal and interest. Give each step a year.</li>
+        <li><b>Blink check</b> — each plan's verdict, the charts, where the money comes from, and a summary in plain words for your accountant or broker.</li>
+        <li><b>Assumptions</b> — rates, growth, costs, tax and the lender's test. Change any of them to see what happens.</li>
+      </ol>
+      <p><b>Talking it in:</b> tap a box, then the microphone on your phone's keyboard, and say the amount — "six hundred and fifty thousand", "1.2 million" or "580 a week" all work.</p>
+      <p><b>Saving:</b> ${STANDALONE ? "your figures are kept in this browser as you go. To keep them in the file itself, or to send it to someone, use <b>Save a copy</b> at the top — it saves a new copy of this page with the figures inside. Untick names or notes first if you'd rather leave them out. <b>Start again</b> clears the plans or everything." : "in this view, use <b>Copy my figures</b> to keep them, and <b>Load figures</b> to bring them back. For a file you can keep and send, open the Blink Check HTML file instead."}</p>
+      <p><b>Privacy:</b> nothing you type leaves this device. There are no accounts, no tracking and no uploads — the only thing the page loads from the internet is its fonts.</p>
+    </div>
+    <div class="card help">
+      <h3>What the results mean</h3>
+      <dl class="kv help-kv">
+        <dt>Worth a closer look</dt><dd>The plan ends well ahead of the yardstick (by more than $50,000 or 5% of the yardstick's net worth, whichever is bigger), never runs out of cash, and the borrowing check doesn't say "unlikely".</dd>
+        <dt>Worth a look — if the loan is approved</dt><dd>Well ahead, but a lender would probably say no to the borrowing as it stands.</dd>
+        <dt>Marginal</dt><dd>Ahead, but not by enough to be worth the extra risk and effort unless it suits your goals.</dd>
+        <dt>Doesn't beat leaving the cash in the offset</dt><dd>Ends behind the yardstick.</dd>
+        <dt>Runs out of spare cash</dt><dd>Savings and offsets would be used up in that year — the plan needs more income, a smaller purchase or a later year.</dd>
+        <dt>Net worth compared with the yardstick</dt><dd>How much better or worse off the plan leaves you at the end, against doing nothing new.</dd>
+        <dt>Cash put in at purchase</dt><dd>Your own money used for deposits, stamp duty and costs.</dd>
+        <dt>Yearly top-ups</dt><dd>${esc(HELP.topUp[1])}</dd>
+        <dt>Worst year</dt><dd>${esc(HELP.worstYear[1])}</dd>
+        <dt>Investments pay for themselves</dt><dd>The first year the investments put money in your pocket after tax, instead of needing top-ups.</dd>
+        <dt>Borrowing peaks at</dt><dd>The highest total loans as a share of total property value. Above about 80% gets hard to refinance.</dd>
+        <dt>Borrowing check</dt><dd>${esc(HELP.serviceability[1])} <i>Likely</i> means $6,000 a year or more to spare under that test; <i>tight</i> means just; <i>unlikely</i> means a lender would probably say no.</dd>
+        <dt>Where the money comes from</dt><dd>${esc(HELP.moneyChain[1])}</dd>
+        <dt>Year by year</dt><dd>Each year's values, loans, rent, costs, tax effect, top-ups, and where spare money went or needed money came from. "Overdrawn" means savings and offsets ran out — the plan can't be carried.</dd>
+      </dl>
+    </div>
+    <div class="card help">
+      <h3>Words explained</h3>
+      <dl class="kv help-kv">${words.map(([k, [t, d]]) => `<dt id="word-${k}">${esc(t)}</dt><dd>${esc(d)}</dd>`).join("")}</dl>
+    </div>
+    <div class="card help">
+      <h3>What it doesn't cover</h3>
+      <ul>
+        <li>It isn't financial, tax or credit advice, and it doesn't know your full situation.</li>
+        <li>Stamp duty and land tax are NSW rules. For another state, enter a duty percentage under Assumptions; land tax isn't estimated there.</li>
+        <li>No lenders mortgage insurance — keep borrowing at 80% or less of a property's value.</li>
+        <li>Variable rates only — no fixed-rate periods.</li>
+        <li>People own things in their own names. Trusts and companies aren't modelled.</li>
+        <li>Super can't be spent before retirement; it's shown in net worth but never used to pay for anything outside an SMSF.</li>
+        <li>Rents, growth and rates follow the assumptions smoothly — real life is lumpier, especially for commercial vacancies.</li>
+        <li>Tax uses today's resident rates and rules. Negative gearing and the capital gains discount can change — untick negative gearing under Assumptions to see a plan without it.</li>
+      </ul>
+    </div>
+    <div class="card help">
+      <h3>Rebuilding or changing Blink Check</h3>
+      <p>This page is a single file with everything inside it — the working-out, the pages and a full guide to how it's built. Anyone can use it, share it, or ask their own AI assistant (such as Claude) to change or rebuild it: give the assistant this file and the rebuild guide below.</p>
+      ${guide ? `<div class="row">${STANDALONE ? `<button type="button" class="btn secondary" data-act="save-guide">Save the rebuild guide</button>` : ""}
+        <button type="button" class="btn secondary" data-act="show-guide">${ui.showGuide ? "Hide the rebuild guide" : "Show the rebuild guide"}</button></div>
+        ${ui.showGuide ? `<pre class="guide">${esc(guide)}</pre>` : ""}` : ""}
+    </div>
+    ${navButtons("assume", null)}`;
+  }
+
   // ---------------------------------------------------------------- drawing
 
-  const RENDER = { you: pageYou, own: pageOwn, plans: pagePlans, check: pageCheck, assume: pageAssume };
+  const RENDER = { you: pageYou, own: pageOwn, plans: pagePlans, check: pageCheck, assume: pageAssume, help: pageHelp };
 
   function renderTools() {
     const tools = document.getElementById("tools");
@@ -815,7 +944,7 @@
       ${STANDALONE ? `<button type="button" class="btn secondary" data-act="print">Print</button>` : ""}`;
     document.getElementById("tabs").innerHTML = PAGES.map(
       ([id, label], i) => `<button type="button" class="tab" role="tab" data-go="${id}" aria-selected="${ui.page === id}"><b>${i + 1}</b>${label}</button>`
-    ).join("");
+    ).join("") + `<button type="button" class="tab help-tab" role="tab" data-go="help" aria-selected="${ui.page === "help"}"><b>?</b>Help</button>`;
   }
 
   const tick = (id, label, on = true) => `<label class="toggle" for="${id}"><input type="checkbox" id="${id}"${on ? " checked" : ""}> ${label}</label>`;
@@ -855,7 +984,7 @@
     const focusId = active && active.id;
     const sel = active && "selectionStart" in active ? [active.selectionStart, active.selectionEnd] : null;
     renderTools();
-    for (const [id] of PAGES) {
+    for (const id of Object.keys(RENDER)) {
       const el = document.querySelector(`section[data-page="${id}"]`);
       el.hidden = id !== ui.page;
       if (id === ui.page) el.innerHTML = panel() + RENDER[id]();
@@ -1001,8 +1130,12 @@
       /<script id="saved-figures" type="application\/json">[\s\S]*?<\/script>/,
       `<script id="saved-figures" type="application/json">${figures === null ? "null" : JSON.stringify(figures).replace(/</g, "\\u003c")}</script>`
     );
+    saveBlob(html, "text/html", filename);
+  }
+
+  function saveBlob(text, type, filename) {
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+    a.href = URL.createObjectURL(new Blob([text], { type }));
     a.download = filename;
     document.body.appendChild(a);
     a.click();
@@ -1043,6 +1176,10 @@
     if (!t) return;
     const d = t.dataset;
     if (d.go) return go(d.go);
+    if (d.help) {
+      ui.openHelp[d.help] = !ui.openHelp[d.help];
+      return render(true);
+    }
     if (d.chip) {
       setPath(d.chip, d.kind === "num" ? Number(d.value) : d.value);
       edited();
@@ -1181,6 +1318,8 @@
       ui.panel = null;
       edited();
     } else if (act === "print") return window.print();
+    else if (act === "save-guide") return saveBlob(rebuildGuide() + "\n", "text/markdown", "Blink Check - rebuild guide.md");
+    else if (act === "show-guide") ui.showGuide = !ui.showGuide;
     render(act === "ask" || act === "cancel-confirm");
   });
 

@@ -1,0 +1,3251 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blink Check</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Is the next property, shares or super move worth researching? Compare plans with leaving the cash in the offset.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: a sticky header with the five steps, one working column (max 1080px), results as cards then charts then tables. */
+:root {
+  --bg: #f6f6f9;
+  --surface: #ffffff;
+  --surface-2: #eeedf4;
+  --fg: #1d1b2c;
+  --muted: #5d5a73;
+  --line: #dcdae6;
+  --accent: #5b3fd1;
+  --accent-ink: #ffffff;
+  --accent-soft: #ece8fd;
+  --good: #1d7a4f;
+  --good-bg: #e3f4ea;
+  --warn: #9a5b00;
+  --warn-bg: #fdf0d9;
+  --danger: #b42318;
+  --danger-bg: #fde7e5;
+  --s0: #7a7891;
+  --s1: #5b3fd1;
+  --s2: #0f8a8a;
+  --s3: #c2410c;
+  --grid: #e7e5ef;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-head: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14131c; --surface: #1d1c28; --surface-2: #262534; --fg: #ecebf5; --muted: #a9a6bd; --line: #343247;
+    --accent: #9d8bff; --accent-ink: #14131c; --accent-soft: #2c2652; --good: #5fd39b; --good-bg: #173326; --warn: #f2b45a; --warn-bg: #3a2b12;
+    --danger: #ff8a7d; --danger-bg: #3d1a17; --s0: #a09db8; --s1: #9d8bff; --s2: #4fd1c5; --s3: #fb923c; --grid: #2a2938; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14131c; --surface: #1d1c28; --surface-2: #262534; --fg: #ecebf5; --muted: #a9a6bd; --line: #343247;
+  --accent: #9d8bff; --accent-ink: #14131c; --accent-soft: #2c2652; --good: #5fd39b; --good-bg: #173326; --warn: #f2b45a; --warn-bg: #3a2b12;
+  --danger: #ff8a7d; --danger-bg: #3d1a17; --s0: #a09db8; --s1: #9d8bff; --s2: #4fd1c5; --s3: #fb923c; --grid: #2a2938; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.5; margin: 0; }
+h1, h2, h3, h4 { font-family: var(--font-head); line-height: 1.2; text-wrap: balance; margin: 0; }
+h2 { font-size: 22px; }
+h3 { font-size: 17px; }
+h4 { font-size: 15px; }
+p { margin: 0; }
+.num, td.num, .figure { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line);
+}
+.top-inner, main, .foot {
+  max-width: 1080px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.top-inner { padding-block: 10px 0; display: grid; gap: 8px; }
+.brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand h1 { font-size: 20px; letter-spacing: -0.01em; }
+.brand h1 span { color: var(--accent); }
+.brand .tools { display: flex; gap: 8px; flex-wrap: wrap; }
+.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin: 0 -4px; padding: 0 4px; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 0 0 auto; min-height: 44px; padding: 0 14px; border: 0; background: none; color: var(--muted); font: 500 14px var(--font-body);
+  border-bottom: 3px solid transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+}
+.tab b { font: 600 12px var(--font-head); width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; background: var(--surface-2); color: var(--muted); }
+.tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.tab[aria-selected="true"] b { background: var(--accent); color: var(--accent-ink); }
+.tab:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+main { padding-block: 20px 40px; display: grid; gap: 18px; }
+section[data-page] { display: grid; gap: 18px; }
+.intro { display: grid; gap: 6px; max-width: 70ch; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 14px; min-width: 0; }
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+.grid.wide { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field label, .label { font-size: 13px; font-weight: 500; color: var(--muted); }
+.field .hint { font-size: 12px; color: var(--muted); }
+.field .err { font-size: 12px; color: var(--danger); }
+input[type="text"], select, textarea {
+  width: 100%; min-height: 42px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg);
+  font: 15px var(--font-body); font-variant-numeric: tabular-nums;
+}
+input.bad { border-color: var(--danger); }
+textarea { min-height: 120px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+.btn {
+  min-height: 42px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink);
+  font: 600 14px var(--font-body); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+}
+.btn.secondary { background: var(--surface); color: var(--fg); border-color: var(--line); }
+.btn.quiet { background: none; border-color: transparent; color: var(--accent); padding: 0 8px; }
+.btn.danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn.icon { width: 42px; padding: 0; }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+  font: 500 14px var(--font-body); cursor: pointer;
+}
+.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--fg); }
+.toggle { display: flex; align-items: center; gap: 10px; min-height: 40px; cursor: pointer; }
+.toggle input { width: 20px; height: 20px; accent-color: var(--accent); }
+.banner { border-radius: var(--radius); padding: 12px 14px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.banner.example { background: var(--accent-soft); }
+.banner.warn { background: var(--warn-bg); color: var(--warn); }
+.note-box { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+.confirm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; background: var(--danger-bg); color: var(--danger); padding: 8px 10px; border-radius: 8px; }
+.nav { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+
+/* Plans */
+.plan-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.plan-tab { min-height: 42px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: 500 14px var(--font-body); cursor: pointer; }
+.plan-tab[aria-selected="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.dot { width: 12px; height: 12px; border-radius: 50%; flex: none; display: inline-block; }
+.steps { display: grid; gap: 12px; }
+.step { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 12px; background: var(--surface); }
+.step-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.step-head h4 { display: flex; align-items: center; gap: 10px; }
+.yr { font: 600 12px var(--font-head); background: var(--surface-2); border-radius: 6px; padding: 3px 8px; color: var(--muted); }
+.add-steps { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Results */
+.verdicts { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.verdict { border-top: 4px solid var(--c, var(--accent)); align-content: start; }
+.verdict .pill { justify-self: start; align-self: start; }
+.pill { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 999px; font: 600 13px var(--font-body); }
+.pill.YES { background: var(--good-bg); color: var(--good); }
+.pill.MAYBE, .pill.NO { background: var(--warn-bg); color: var(--warn); }
+.pill.BASE { background: var(--surface-2); color: var(--muted); }
+.big { font: 600 26px var(--font-head); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 14px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+.notes { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+.chart-controls { display: grid; gap: 10px; }
+.chart-wrap { position: relative; }
+.chart-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart-wrap svg text { fill: var(--muted); font: 12px var(--font-body); }
+.tip {
+  position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+  font-size: 13px; box-shadow: 0 6px 20px rgba(0,0,0,.12); min-width: 170px; z-index: 2; font-variant-numeric: tabular-nums;
+}
+.tip div { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+.legend-chip { display: inline-flex; align-items: center; gap: 8px; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: var(--surface); }
+th { font-weight: 600; color: var(--muted); background: var(--surface-2); }
+thead th:first-child { background: var(--surface-2); }
+tr.event td { background: var(--accent-soft); }
+tr.event td:first-child { background: var(--accent-soft); }
+td.neg { color: var(--warn); }
+.chain { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; }
+.chain .col { display: grid; gap: 6px; }
+.chain .box { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; gap: 10px; font-size: 14px; background: var(--surface); }
+.chain .box b { font-variant-numeric: tabular-nums; }
+.chain .arrow { font: 600 22px var(--font-head); color: var(--accent); }
+.chain .total { background: var(--accent-soft); border-color: var(--accent); }
+details > summary { cursor: pointer; min-height: 40px; display: flex; align-items: center; font-weight: 600; }
+.foot { padding-block: 0 32px; color: var(--muted); font-size: 13px; max-width: 1080px; }
+@media (max-width: 640px) {
+  .chain { grid-template-columns: 1fr; }
+  .chain .arrow { transform: rotate(90deg); justify-self: center; }
+  .big { font-size: 22px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+@media print {
+  .top, .nav, .no-print, .btn, .add-steps { display: none !important; }
+  body { background: #fff; }
+  section[data-page] { display: grid !important; }
+  section[data-page][hidden] { display: none !important; }
+  .card { break-inside: avoid; }
+}
+
+/* help */
+.label-row { display: flex; align-items: center; gap: 6px; min-height: 24px; }
+.label-row label { flex: 0 1 auto; }
+.info { position: relative; flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted);
+  font: 600 12px/1 var(--font-body); cursor: pointer; padding: 0; display: inline-grid; place-items: center; }
+.info::after { content: ""; position: absolute; inset: -10px; } /* 42px tap area */
+.info[aria-expanded="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+h3 .info { vertical-align: middle; margin-left: 6px; }
+.help-pop { background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 6px; padding: 10px 12px; font-size: 14px; line-height: 1.5; color: var(--text); font-weight: 400; }
+.help-pop .btn { margin-top: 6px; display: flex; }
+.btn.small { min-height: 40px; padding: 6px 10px; font-size: 13px; }
+.help p, .help li { line-height: 1.6; max-width: 75ch; }
+.help ul, .help ol { padding-left: 20px; margin: 0; display: grid; gap: 6px; }
+.help-kv { grid-template-columns: minmax(140px, 220px) 1fr; gap: 10px 16px; }
+.help-kv dt { color: var(--text); font-weight: 600; }
+.help-kv dd { text-align: left; font-weight: 400; line-height: 1.55; font-variant-numeric: normal; }
+@media (max-width: 560px) { .help-kv { grid-template-columns: 1fr; gap: 2px; } .help-kv dd { margin-bottom: 10px; } }
+pre.guide { white-space: pre-wrap; word-break: break-word; max-height: 60vh; overflow: auto; background: var(--surface-2); border-radius: 8px; padding: 12px; font-size: 12.5px; line-height: 1.5; }
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <h1>Blink <span>Check</span></h1>
+      <div class="tools" id="tools"></div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Steps" id="tabs"></nav>
+  </div>
+</header>
+<main id="main">
+  <section data-page="you" hidden></section>
+  <section data-page="own" hidden></section>
+  <section data-page="plans" hidden></section>
+  <section data-page="check" hidden></section>
+  <section data-page="assume" hidden></section>
+  <section data-page="help" hidden></section>
+</main>
+<footer class="foot">
+  General information only — broad estimates to decide whether an idea is worth researching, not financial, tax or credit advice.
+  Rates, growth, rents, tax and lending rules all change; check any plan with a licensed adviser, your accountant and a broker
+  before acting. Your figures stay in this browser.
+</footer>
+<script id="saved-figures" type="application/json">null</script>
+<!-- The full rebuild guide (docs/REBUILD-GUIDE.md), carried inside the file so it travels with it. -->
+<script id="rebuild-guide" type="text/plain"># Blink Check — rebuild guide
+
+This guide explains how Blink Check works and how it's built, in enough detail for a person or an AI assistant (such as Claude) to rebuild it, change it, or move it somewhere else. You don't need the original conversation, code or developer to do this.
+
+If you're an AI assistant reading this, the code is the source of truth. Use this guide to understand it, and keep the guide up to date when you change the code. Read section 14 ("Rules to keep") before you change anything.
+
+---
+
+## 1. What it is
+
+Blink Check is a quick check, or "blink", on one question: **is the next move worth researching properly, or are we better off leaving the cash in the home loan offset?**
+
+- **Who it's for:** an ordinary Australian household (one or two people) that owns a home and maybe a rental or two, and is thinking about what to do next. Examples are buying another residential or commercial property, buying through an SMSF, selling, buying shares or debt recycling.
+- **What it gives them:**
+  - a verdict for each plan, compared with doing nothing new;
+  - charts with the plans overlaid;
+  - how much of their own money each plan needs, every year;
+  - where the money for each purchase comes from;
+  - a summary in plain words they can send to an accountant or broker.
+- **What it isn't:** advice. It gives broad estimates to decide what's worth taking to a professional.
+
+### Design goals (from the person who asked for it)
+
+1. **Simple to use, sophisticated underneath.** It has five short pages and works well on a phone. Amounts can be spoken with the phone's microphone ("six hundred and fifty thousand").
+2. **The yardstick is the offset.** Every plan is compared with keeping cash in the home loan offset, because that's the safe, tax-free return any plan has to beat.
+3. **It looks 10 to 30 years ahead (20 by default)** and follows 2–3 properties deep, for example buy now, buy again in year 7–8, and sell or consolidate in year 10.
+4. **Rates move.** Interest rates rise and fall the way the RBA cash rate did since 2000, starting from today's rates.
+5. **It covers P&I and interest-only loans, and an offset on every loan.** The offset shortens the loan: $100k in the offset of a $400k, 30-year loan pays it off in about 16–17 years.
+6. **Tax is counted, cautiously.** This means negative gearing, building and fittings write-offs, CGT with the discount, franking credits, land tax and stamp duty, with conservative figures.
+7. **Lenders' rules are counted.** Credit card limits and personal loans count against borrowing, the way a lender would count them.
+8. **It's very clear about money in and out.** It shows how much extra cash the household puts in each year. When an investment makes money, it shows where that money goes: its own offset, the home loan offset, paying debt down, or savings.
+9. **It's one HTML file that works offline.** Figures are saved into the file itself, so it can be kept, emailed to an accountant or broker, or opened fresh to start again. Nothing is uploaded or published.
+10. **It explains itself.** A "?" button sits beside every non-obvious box, and there's a Help page with a glossary (offset, LVR, cap rate, WALE, negative gearing and more).
+
+---
+
+## 2. Files
+
+```
+blink-check/
+  README.md               short overview for people
+  docs/REBUILD-GUIDE.md   this guide (also built into the page — see section 11)
+  src/engine.js           all the money working-out: pure functions, no page code
+  src/app.js              the page: state, five pages + Help, charts, saving, events
+  src/head.html           <title>, fonts, all CSS (light and dark)
+  src/body.html           the page skeleton: header, tabs, page sections, footer,
+                          the saved-figures and rebuild-guide script tags
+  build.mjs               joins everything into one file
+  test/engine.test.mjs    engine tests (Node's built-in test runner)
+  dist/blink-check.html   the built file to keep and send (Save a copy works here)
+  dist/artifact.html      the same page without <html>/<head> wrappers, for hosts
+                          that add their own (e.g. a claude.ai artifact)
+```
+
+### Commands
+
+These need Node 18 or later. Nothing to install: there are no dependencies.
+
+```
+node blink-check/build.mjs                      # builds dist/
+node --test blink-check/test/engine.test.mjs    # runs the engine tests
+```
+
+To use it, open `dist/blink-check.html` in any modern browser.
+
+### Libraries
+
+There are none, on purpose:
+- the charts are hand-drawn SVG;
+- the only outside request is Google Fonts (Inter and Space Grotesk), which falls back to system fonts offline.
+
+This keeps the file small (about 150 KB), private, and working for years without updates.
+
+---
+
+## 3. The data (one JSON object)
+
+Everything the person enters is one plain object, called `state` in `app.js` and `plan` in `engine.js`. The engine reads exactly this object. The page saves exactly this object.
+
+```js
+{
+  people: [{ id, name, salary, super }],          // 1 or 2 people; salary = income a year before tax
+  livingMonthly,                                  // living costs a month, excluding loan repayments
+  cardLimits,                                     // total credit card limits
+  otherRepayMonthly, otherRepayYears,             // car/personal loan repayments and years left
+  goal: "GROWTH" | "CASHFLOW" | "HOMEFIRST" | "RETIRE",
+  risk: "CAREFUL" | "MIDDLE" | "ADVENTUROUS",
+  cash,                                           // savings not in an offset
+  home: { has, value, loan: Loan },
+  rentals: [{ id, name, kind: "RES" | "COM", value, costBase, rentWeekly, costPct,
+              writeOff: "NONE" | "BUILDING" | "NEW", writeOffAmount, owners: [pct1, pct2], loan: Loan }],
+  shares: { value, costBase },
+  smsf: { has, open },
+  assumptions: { ...overrides of DEFAULT_ASSUMPTIONS },   // only the ones changed
+  notes,                                          // free text, goes into the plain-words summary
+  scenarios: [Scenario],                          // the yardstick + up to 3 plans
+  example,                                        // true while the made-up example figures are showing
+  fileId, savedAt, updatedAt                      // saving bookkeeping (section 10)
+}
+
+Loan = { balance, rate, type: "PI" | "IO", ioYears, yearsLeft, offset }
+
+Scenario = { id, name, baseline?: true, spare: SpareRule, notes, steps: [Step] }
+SpareRule = "HOME_OFFSET" | "OWN_OFFSET" | "HIGHEST_RATE" | "CASH"
+```
+
+### Steps (what a plan does, and in which year)
+
+| type | fields | what happens |
+|---|---|---|
+| `BUY` | `year, kind (RES/COM), name, price, rentWeekly, funding (EQUITY/CASH/MIX), cashAmount, lvr, loanType (PI/IO), ioYears, loanYears, writeOff, writeOffAmount, owners` | Buys a property. The main loan is the price × LVR. The rest (deposit, duty, costs) comes from equity in other properties, cash, or both, depending on `funding`. |
+| `SMSF` | `year, kind, name, price, rentWeekly, lvr` | Buys a property inside super, with an SMSF loan (LRBA). The deposit comes out of super, not household cash. |
+| `SELL` | `year, target (property id), then (PAY_DEBT/OFFSET)` | Sells the property, clears its loans, adds CGT, and uses what's left to pay down other loans or go into the offset. |
+| `SHARES` | `year, amount, funding (CASH/EQUITY/RECYCLE), loanType` | Buys shares or ETFs from cash, from borrowing against equity, or by debt recycling. |
+| `OFFSET` | `year, amount, to ("home" or a property id)` | Moves savings into a loan's offset. |
+| `PI` | `year, target` | Switches a property's interest-only loans to P&I. |
+
+The yardstick scenario (`baseline: true`) has no steps. It always exists, and it can't be deleted.
+
+---
+
+## 4. The engine (`src/engine.js`)
+
+### Exports
+
+```
+writeOff, simulate, runAll, rateShifts, individualTax, nswDuty, nswLandTax,
+pmt, monthsToClear, parseAmount, DEFAULT_ASSUMPTIONS, CASH_RATE
+```
+
+- **Wrapper:** a UMD-style IIFE, so it works both in the page (`window.BlinkEngine`) and in Node (`module.exports`).
+- **`runAll(plan)`:** runs every scenario. It returns `{ runs, base, shifts }`. Each run has a `verdict` attached.
+- **`simulate(plan, scenario)`:** runs one scenario.
+
+### How a simulation runs
+
+The simulation runs month by month for `horizon × 12` months. Each year is recorded at its last month.
+
+**At the start of each year:**
+1. Wages grow by `wageGrowth`, and rents grow by their growth rates.
+2. PAYG tax is withheld on the new salaries.
+3. Every loan is repriced: `rate = max(minRate, rateToday + shift[year])`. P&I repayments are recalculated over the term left.
+4. The plan's steps for this year run.
+5. NSW land tax is worked out per person, on their share of the land value of non-home, non-SMSF properties. It's split back to each property in proportion.
+
+**Every month:**
+1. **Pay and living costs:**
+   - take-home pay is added; living costs (growing with CPI) and other loan repayments are taken off;
+   - employer super goes into super, less the 15% contributions tax: `salary × SG% × 0.85`.
+2. **Growth:**
+   - property values grow at `(1 + growth)^(1/12)`; residential and commercial have separate rates;
+   - shares and super grow the same way.
+3. **Each rental:**
+   - rent × (1 − vacancy weeks / 52);
+   - less running costs (`costPct` of rent) and its land tax share.
+   - SMSF properties put their net rent into super instead.
+4. **Each loan:**
+   - interest is charged on `max(0, balance − offset) × rate / 12`;
+   - interest-only loans pay just the interest until `ioLeft` reaches 0, then become P&I over the term left;
+   - P&I loans pay `pmt`;
+   - a loan is cleared when `balance − offset ≤ 0`, and any offset money left over goes on via the spare-money rule;
+   - repayments are charged to whoever the loan is for (`forProp`): the household (home loan), a property's cash flow (including equity loans secured on other property), shares, or super (SMSF loans).
+5. **Dividends:** `shares × yield / 12`, added to the shares' cash flow.
+6. **Savings interest:** `cash × savingsRate / 12`.
+7. **Spare money or a shortfall:**
+   - if the month's total (household + each property + shares) is positive, each positive part goes where the **spare rule** sends it, in proportion;
+   - if it's negative, the money is **drawn** from savings first, then from offsets (home loan offset first, then the cheapest loan's);
+   - if both run out, the amount shows as "overdrawn" and the plan **runs out of cash**.
+
+**At year end — tax:**
+1. **Taxable income, for each person:**
+   - salary, plus their share of savings interest;
+   - plus their ownership share of each property's result;
+   - plus their share of the shares' result, with franking gross-up;
+   - plus any taxable capital gains.
+2. **A property's result for tax** is its cash flow with the principal added back (only interest is deductible), less the write-off.
+3. **Negative gearing on (default):** losses reduce tax on wages. **Off:** losses carry forward against later investment income and gains.
+4. **Tax** is `individualTax(taxable)` less franking credits. It's settled against PAYG withheld: a refund goes out under the spare rule; a bill is drawn like any shortfall.
+5. **Tax effect** is the tax with the investments less the tax without them. Below 0 means the investments save tax.
+6. **SMSF net income** is taxed at 15% inside super.
+
+**Each year records** the following fields:
+- rates and values: `homeRate`, `value`, `debt`, `offsets`, `cash`, `liquid`, `shares`, `superTotal`, `equity`, `nw`, `nwExSuper`;
+- the year's flows: `interest`, `interestSaved`, `rent`, `costs`, `landTax`, `taxEffect`, `writeOffs`;
+- investment cash: `investCashBefore`, `investCashAfter` (after the tax effect); `topUp` = what the household had to put in;
+- other money: `upfrontCash`, `householdSpare`;
+- where money went and came from: `sentTo {homeOffset, ownOffset, otherOffset, cash, payDown}` and `drawnFrom {cash, offsets, overdrawn}`;
+- detail: `props[]` and `events[]`.
+
+**The summary** has these fields:
+- `nwEnd`, `nwExSuperEnd`, `peakDebt`, `peakLvr`, `totalInterest`;
+- `upfrontCash`, `topUps`, `moneyIn` (= upfront + top-ups);
+- `worstYear {year, amount}`, `positiveFrom`;
+- `homeLoanPaidOff`, `debtFreeYear`, `minLiquid`, `runsOut`.
+
+### Buying (`BUY`)
+
+1. **Costs:**
+   - price + stamp duty (NSW function, or `dutyPctOther`% elsewhere) + buying costs (`buyCostsRes` dollars for residential, `buyCostsComPct`% for commercial);
+   - the cost base is that total.
+2. **Main loan:** price × LVR. The defaults are 80% residential, 70% commercial and 70% SMSF.
+3. **Main loan rate:**
+   - investment rate (residential) or commercial rate, plus `ioPremium` if interest-only;
+   - for an SMSF, the investment rate + `lrbaPremium`, P&I over 20 years.
+4. **The rest of the cost:**
+   - **`EQUITY` (default):** borrow against other properties first (the home first, then the most usable equity). Usable equity = `value × maxLvr − debt on it`. Equity under $1,000 is skipped. Any remainder comes from cash.
+   - **`CASH`:** use cash first, then equity.
+   - **`MIX`:** a set cash amount, then equity.
+   - Equity loans are tax-deductible, because they're used for the investment, and their repayments are charged to the new property.
+   - Anything still uncovered is a **shortfall**: it's drawn anyway and flagged.
+5. **Rent:** if no rent is given, it's assumed from a 4% (residential) or 6.5% (commercial) yield.
+6. **SMSF:** the deposit comes out of super, in proportion to balances. It's flagged if super is left with less than `smsfBuffer`.
+7. **The money chain:** each purchase records `{price, duty, other, total, mainLoan, equity[{from, amount}], cash, fromSuper, short, lvrAfter, borrow}` for the "Where the money comes from" view.
+
+### Borrowing check (serviceability)
+
+This is a rough version of a lender's test. It's run at each purchase.
+
+- **Income:** gross income = salaries + rents × shading (80% residential, 75% commercial), split by ownership. Net income = gross less tax.
+- **Repayments:** each loan is counted at P&I, at `rate + assessBuffer` (3%), over its remaining P&I term.
+- **Other costs:** living costs (with CPI), other loan repayments, and `cardLimits × 3.8% × 12`.
+- **Surplus** = net income − repayments − living − others:
+  - **LIKELY** if ≥ $6,000 a year;
+  - **TIGHT** if ≥ 0;
+  - otherwise **UNLIKELY**.
+
+### Selling (`SELL`)
+
+1. **Proceeds:** price − selling costs (`sellCostsPct`), less the loans secured on it, net of their offsets.
+2. **Equity loans that paid for it but are secured elsewhere:** these are paid down from the proceeds (unless `then: OFFSET`). They stop being deductible.
+3. **CGT:** gain = price − costs − cost base. Half the gain is taxable if held 12 months or more. It's split by ownership.
+4. **What's left:**
+   - with `PAY_DEBT`, it pays down non-deductible loans first, then the dearest;
+   - with `OFFSET`, or when anything is left over, it follows the spare rule.
+5. **SMSF sales** go back into super.
+
+### Shares (`SHARES`)
+
+- **`CASH`:** drawn from savings, then offsets.
+- **`EQUITY`:** a deductible share loan against the property with the most usable equity, interest-only for 5 years by default.
+- **`RECYCLE` (debt recycling):** the amount is drawn from savings and offsets and paid off the home loan. The same amount is then borrowed back as a separate, tax-deductible "investment split" to buy the shares. Total debt is unchanged, but interest on that split becomes deductible.
+
+### Spare-money rules
+
+| rule | spare money goes to |
+|---|---|
+| `HOME_OFFSET` (default) | the home loan offset; with no home loan, the non-deductible loans first, then the dearest |
+| `OWN_OFFSET` | a positive property's money goes to its own loan's offset; everything else as HOME_OFFSET |
+| `HIGHEST_RATE` | the offset of the dearest loan |
+| `CASH` | savings |
+
+### Verdicts (`verdictFor`)
+
+`gain` is the plan's net worth at the end, less the yardstick's.
+
+| verdict | when |
+|---|---|
+| "Runs out of spare cash in year N" (NO) | savings and offsets are used up in some year |
+| "Worth a closer look" (YES) | gain > max($50,000, 5% of the yardstick's net worth), and no purchase is UNLIKELY to be approved |
+| "Worth a look — if the loan is approved" (MAYBE) | the same gain, but a purchase is UNLIKELY |
+| "Marginal" (MAYBE) | 0 < gain ≤ that threshold |
+| "Doesn't beat leaving the cash in the offset" (NO) | gain ≤ 0 |
+
+The notes list:
+- borrowing results and shortfalls;
+- the worst year, as a yearly and weekly amount;
+- the year the investments pay for themselves;
+- an LVR over 80%;
+- whether a careful risk profile is at odds with the plan;
+- commercial vacancy risk;
+- whether a cash-flow goal is met.
+
+### Reading spoken or typed amounts (`parseAmount`)
+
+`parseAmount` accepts these forms, and returns `null` for anything that isn't a number:
+
+| input | result |
+|---|---|
+| "$650k" | 650,000 |
+| "1.2m" | 1,200,000 |
+| "four hundred and twenty thousand" | 420,000 |
+| "one point five million" | 1,500,000 |
+| "580 dollars" | 580 |
+| "6.2%" | 6.2 |
+
+---
+
+## 5. Figures and where they come from
+
+Check these each year. They are all near the top of `engine.js`.
+
+### Income tax, resident individuals
+
+| from | 2026-27 (rate above) | from 1 July 2027 (rate above) |
+|---|---|---|
+| $18,200 | 15% | 14% |
+| $45,000 | 30% (tax at that point $4,020) | 30% ($3,752) |
+| $135,000 | 37% ($31,020) | 37% ($30,752) |
+| $190,000 | 45% ($51,370) | 45% ($51,102) |
+
+- **Medicare levy:** 2%, phased in above $27,222 (10% of the excess until it reaches 2%).
+- **Source:** the ATO's resident tax rates, and the legislated cuts to the 16% rate (15% from 1 July 2026, 14% from 1 July 2027).
+- **Simplification:** the engine switches tables on the calendar year (2027 and later uses the 14% table).
+
+### NSW transfer (stamp) duty, 2026-27
+
+| over | duty |
+|---|---|
+| $0 | $1.25 per $100 |
+| $18,000 | $225 + $1.50 per $100 over |
+| $38,000 | $525 + $1.75 per $100 over |
+| $103,000 | $1,662 + $3.50 per $100 over |
+| $387,000 | $11,602 + $4.50 per $100 over |
+| $1,290,000 | $52,237 + $5.50 per $100 over |
+| $3,870,000 (residential only — premium) | $194,137 + $7.00 per $100 over |
+
+- The minimum duty is $20.
+- **Check:** $700,000 residential comes to $25,687.
+- **Source:** Revenue NSW. The thresholds are indexed every 1 July.
+
+### NSW land tax
+
+- **Rate:** $100 + 1.6% of each owner's taxable land value over $1,075,000.
+- **Premium rate:** above $6,571,000, it's $88,036 + 2%.
+- **Exemptions:** the home and SMSF property are left out.
+- **Land value:** a share of the property's value (residential 55%, commercial 45%).
+- **Source:** Revenue NSW. The general threshold has been frozen since 2025.
+
+### Interest rate cycle
+
+- **Data:** RBA cash rate yearly averages from 2000 to 2025 (approximate), in `CASH_RATE`.
+- **Detrending:** the long downward drift is removed with a straight-line (least squares) fit, which leaves the ups and downs.
+- **Shift each year:** `shift[y] = (cycle[start + y] − cycle[start]) × cycleScale`, wrapping round after 2025.
+- **Settings:** you can choose the cycle start year and the size of the swings (0.5× to 1.5×). "Flat" keeps today's rates throughout.
+- **Floor:** rates never go below `minRate`, which is 2% by default.
+
+### Write-offs (depreciation)
+
+- **Building (Division 43):**
+  - 2.5% a year of the construction cost, for up to 40 years;
+  - construction cost = price × 40% (residential) or 50% (commercial).
+- **Fittings (Division 40):** only with "new or near-new". 1% of the price in year 1, falling 20% a year. Second-hand residential fittings can't be claimed (rules since 2017).
+- **Report figure:** if the person enters a figure from a depreciation (quantity surveyor's) report, it's used instead.
+
+### Default assumptions (`DEFAULT_ASSUMPTIONS`)
+
+These are deliberately middle-of-the-road, not optimistic.
+
+**Timeframe and rates**
+
+| key | default | note |
+|---|---|---|
+| horizon | 20 | years (10–30 in the page; 5–30 in the engine) |
+| homeRate / invRate / comRate | 5.8 / 6.2 / 7.2 | % today |
+| ioPremium / lrbaPremium | 0.4 / 1.2 | % extra for interest-only / SMSF loans |
+| minRate | 2 | % floor |
+| savingsRate | 4 | % |
+
+**Growth**
+
+| key | default | note |
+|---|---|---|
+| cpi / wageGrowth | 2.75 / 3.25 | % a year |
+| resGrowth / comGrowth | 5 / 3 | % a year, values |
+| resRentGrowth / comRentGrowth | 3.5 / 3 | % a year |
+
+**Running a property**
+
+| key | default | note |
+|---|---|---|
+| resVacancyWeeks / comVacancyWeeks | 2 / 6 | weeks empty a year |
+| resCostPct / comCostPct | 25 / 12 | running costs, % of rent (commercial is net lease) |
+| landPctRes / landPctCom | 55 / 45 | land value, % of property value |
+
+**Buying, selling and lending**
+
+| key | default | note |
+|---|---|---|
+| buyCostsRes / buyCostsComPct | $4,000 / 1.5% | legal and inspections |
+| sellCostsPct | 2.5 | agent and legal |
+| maxLvr | 80 | most you'd borrow against a property, for equity |
+| resLvr / comLvr / smsfLvr | 80 / 70 / 70 | bank lends, % of price |
+
+**Shares and super**
+
+| key | default | note |
+|---|---|---|
+| shareGrowth / shareYield / franking | 4.5 / 3.5 / 70 | % |
+| superReturn / superGuarantee | 6.5 / 12 | % after fees and tax / % of pay |
+| smsfBuffer | $30,000 | cash to keep in an SMSF after buying |
+
+**Lender's test and tax**
+
+| key | default | note |
+|---|---|---|
+| assessBuffer | 3 | lender's test rate buffer, % |
+| resShade / comShade | 80 / 75 | % of rent a lender counts |
+| cardServicing | 3.8 | % of card limits a month a lender counts |
+| negativeGearing | true | today's rules |
+| buildingPctRes / buildingPctCom / fittingsPct | 40 / 50 / 1 | % of price |
+| state / dutyPctOther | NSW / 4.5 | other states: duty % only, no land tax |
+
+---
+
+## 6. The pages (`src/app.js`)
+
+The page is plain JavaScript that re-renders the current page's HTML from `state` after each change. Every input carries `data-path` (a dotted path into `state`, e.g. `rentals.0.loan.offset`) and `data-kind` (`money`, `num`, `text`, `select`, `bool`). One `change` handler and one `input` handler write the value back to `state`, save it, and re-render, keeping focus and cursor position.
+
+Results are computed with `BlinkEngine.runAll(state)` and cached until the next edit.
+
+### Header
+
+- **Brand:** "Blink Check".
+- **Tools:** Save a copy (or Copy my figures inside a host frame), Load figures, Start again, and Print.
+- **Tabs:** 1 You · 2 What you own · 3 Plans · 4 Blink check · 5 Assumptions · ? Help.
+
+The page is reachable by `#hash` (e.g. `#check`).
+
+### The pages
+
+1. **You:**
+   - one or two people (name, income, super);
+   - living costs a month, credit card limits, and other loan repayments and years left;
+   - goal and risk chips, and a look-ahead of 10/15/20/25/30 years;
+   - notes ("What we're trying to work out").
+2. **What you own:**
+   - the home (value, loan, type, IO years, years left, offset) with a payoff note: "With $60,000 in the offset it's paid off in 18 years 2 months instead of 25 years, saving $X";
+   - rentals, with kind, value, cost base, rent, running costs %, write-off type or report figure, ownership split, and their loan;
+   - savings, shares, super, and SMSF toggles.
+3. **Plans:**
+   - plan tabs: the yardstick, then up to 3 plans;
+   - for each plan: name, spare-money rule, notes, and the step cards sorted by year;
+   - "Add a step" buttons: Buy residential, Buy commercial, Sell a property, Buy shares, SMSF purchase (only if either SMSF box is ticked), Put cash in an offset, and Switch a loan to P&I;
+   - copy or delete a plan, with a confirmation.
+4. **Blink check:**
+   - a verdict card for each run: the gain against the yardstick, the key figures and the notes;
+   - one chart with metric chips (net worth, net worth outside super, debt, equity, investments' cash after tax, household spare cash, interest rate) and a tick box per plan to overlay or hide it;
+   - "Where the money comes from" (the money chain per purchase, with the borrowing check);
+   - "In plain words — for your accountant or broker" with Copy;
+   - the year-by-year table.
+5. **Assumptions:**
+   - the rate model and a chart of the home loan rate;
+   - every default, in groups: rates, growth, running a property, buying and selling, tax, and the lender's test;
+   - a reset button, with a confirmation.
+6. **Help:**
+   - what it's for and how to use it;
+   - what the results mean;
+   - a glossary built from the `HELP` map;
+   - what it doesn't cover;
+   - how to rebuild it, with buttons to show or save this guide.
+
+### Help buttons
+
+- **The map:** `HELP` maps a key to `[title, explanation]`.
+- **Adding a button:** any field gets one by passing `{ help: "key" }`. The button sits next to the label, has a 42px tap area, and toggles the explanation under the field (`ui.openHelp[id]`).
+- **Where they appear:** offset, P&I/IO, LVR, equity, yield and cap rate, net lease, depreciation, CGT cost base, serviceability, debt recycling, SMSF/LRBA, franking, duty, land tax, vacancy, the rate cycle, the spare rule, the yardstick, top-ups and the money chain.
+- **Rent hint:** under a rent box, the page shows the gross and net yield, or for commercial the **cap rate**: `rent × 52 × (1 − costs%) ÷ price`. With no rent entered, it shows a typical rent at a 4% yield or 6.5% cap rate.
+
+### Charts
+
+- **Drawing:** `chart(id, series, height, format)` draws SVG with gridlines, axis labels in short money ("$1.2m"), one line per series, and a dashed line for the yardstick.
+- **Hover:** hovering or touching shows a tooltip with every series' value for that year.
+- **Colours:** series colours are CSS tokens `--s0`…`--s3`, matched to the plan tabs' dots.
+
+### Plain-words summary
+
+`plainWords(R)` writes, in the household's own voice:
+- **ABOUT US:** incomes, living costs, home and loans, rentals, savings, shares, cards and loans, goal, risk, and "what we're trying to work out".
+- **IDEA: <plan name>, for each plan:**
+  - each step in words, by year;
+  - where spare money goes;
+  - the rough result against the offset and the verdict;
+  - their own money in, and the hardest year;
+  - the borrowing check for each purchase;
+  - the plan's notes, as "Our questions".
+- **A closing line** saying these are broad estimates, not advice.
+
+It exists because many people find it hard to describe their ideas to an adviser.
+
+---
+
+## 7. Look and feel
+
+- **Fonts:** Space Grotesk for headings and Inter for text, with system fallbacks.
+- **Theme:** colour tokens on `:root`, with a dark theme under `prefers-color-scheme: dark`. It can be forced with `data-theme`.
+- **Colours:**
+  - one accent colour (`--accent`, violet);
+  - amber for warnings;
+  - red only for destructive actions and errors;
+  - green for "worth a closer look".
+- **Size and layout:**
+  - every touch target is at least 40px;
+  - the main action is at the top;
+  - there's no permanent search bar;
+  - it works at 360px wide with no sideways scrolling; wide tables scroll inside their own box.
+- **Deleting:** anything that deletes asks first, and uses a bin icon.
+- **Print:** a print stylesheet hides the tools and buttons.
+
+---
+
+## 8. Spoken input
+
+- **Typing boxes:** money and number boxes are `type="text"` with `inputmode="decimal"`, so the phone keyboard's microphone can be used.
+- **Reading the value:** on change, `parseAmount` reads what was typed or said. If it can't read it, the box keeps the old value.
+- **Showing the value:** money is shown as "$650,000".
+
+---
+
+## 9. Privacy
+
+- **The person's figures:**
+  - nothing is sent anywhere; there are no accounts, analytics or uploads;
+  - figures are kept in the browser (localStorage) while working, and in the file when saved.
+- **Outside requests:** the only one is the Google Fonts stylesheet. Remove the `<link>` tags in `head.html` for a fully offline file.
+- **Example figures:** these are for a made-up household (Alex and Sam). Never put a real person's figures in the repository or the built files.
+
+---
+
+## 10. Saving into the file
+
+This is the important design decision. A browser-only tool loses everything when the browser is cleared, and can't be sent to an accountant. So the figures live **inside the HTML file**:
+
+1. **The saved figures:** `body.html` ends with `<script id="saved-figures" type="application/json">null<\/script>`.
+2. **Capturing the clean page:** when the page loads, before rendering, `app.js` captures `PRISTINE` = the whole page's HTML.
+3. **"Save a copy":**
+   - it replaces that script's contents with `JSON.stringify(state)`, escaping `<` as `<`;
+   - it downloads the result as a new `.html` file (Blob + `<a download>`);
+   - before saving, tick boxes let the person leave out names, figures, plans or notes (`forSaving(opts)`);
+   - "Save a blank copy" saves `null`, i.e. a fresh tool.
+4. **On open:**
+   - it reads the embedded figures;
+   - working changes are kept in localStorage under `blink-check-v1:<fileId>`, so each saved file has its own working copy;
+   - the browser copy wins only if it's newer than the file's `savedAt`.
+5. **Warnings and starting again:**
+   - an amber banner warns when there are changes not yet saved into a file;
+   - "Start again" either clears the plans and keeps the figures, or clears everything. Both ask first.
+6. **Inside a host frame (e.g. a claude.ai artifact):**
+   - downloads are blocked there, so `STANDALONE` (`window.self === window.top`) is false;
+   - instead of Save, the page offers "Copy my figures" (JSON in a box);
+   - "Load figures" pastes that JSON back in.
+
+---
+
+## 11. The rebuild guide travels in the file
+
+`build.mjs` puts this guide inside the page as `<script id="rebuild-guide" type="text/plain">`, with any closing script tag inside it escaped (a backslash before the slash), and the page undoes that when it reads the guide. The Help page can show it, or save it as a `.md` file.
+
+So anyone who only has the HTML file still has:
+- every line of code, because the scripts are inline and readable;
+- this guide.
+
+Saved copies keep it, because `PRISTINE` includes it.
+
+---
+
+## 12. Tests (`test/engine.test.mjs`)
+
+Run with `node --test blink-check/test/engine.test.mjs`. They check:
+
+1. **Offset payoff:** $100k in the offset of a $400k, 30-year loan at 6% clears in 190–200 months, with a repayment of $2,398 a month.
+2. **Tax:** tax on $100,000 = 4,020 + 16,500 + 2,000 Medicare.
+3. **Stamp duty and land tax:** duty on $700,000 residential = $25,687; land tax is $0 at $1m and $3,300 at $1.275m.
+4. **Spoken amounts:** `parseAmount` reads the spoken and typed forms.
+5. **Rate cycle:** starts at 0, peaks above +1.5 (2008), and dips below −1; flat gives all zeros.
+6. **The money chain:** it adds up (main loan + equity + cash = total), and the verdict gain = the plan's net worth − the yardstick's.
+7. **Negative gearing:** on gives tax back in year 1; off gives 0 that year, with the loss carried forward.
+8. **Cards and personal loans:** they reduce the borrowing surplus by exactly `15,000 × 3.8% × 12 + 600 × 12`.
+9. **Spare money:** each spare rule sends money where it says.
+10. **Selling:** clears loans and lowers debt.
+11. **Debt recycling:** turns offset cash into shares with a deductible split.
+12. **SMSF:** a purchase uses super, not household cash.
+13. **A plan that can't be funded:** its verdict is NO.
+
+**Browser checks** (by hand, or with Playwright):
+- every page on desktop and on a phone (light and dark), with no sideways scroll and no console errors;
+- typing "six hundred and fifty thousand" into a money box;
+- chart hover;
+- Save a copy with names unticked, then reopening the saved file and seeing the figures, but not the names.
+
+---
+
+## 13. Known limits (and ideas for later)
+
+**Known limits:**
+- NSW duty and land tax only; other states use a flat duty %, and land tax isn't estimated.
+- No lenders mortgage insurance, fixed rates, offset sweeps between people, trusts, companies, or the Division 293 tax.
+- Super can't be accessed (no retirement drawdown phase); SMSF rules are simplified.
+- Values and rents move smoothly; real markets don't.
+
+**Ideas for later:**
+- Other states' duty and land tax tables.
+- A "stress" button: rates +2% for 2 years, plus 6 months vacant.
+- A side-by-side table of the plans at year 10 and at the horizon.
+- A Monte Carlo option over growth rates.
+
+---
+
+## 14. Rules to keep (if you change it)
+
+- Keep it **one self-contained file**, with no build-time or run-time libraries unless there's a strong reason. Say so before adding one.
+- **Never upload or publish anyone's figures.** No analytics, no remote storage.
+- Keep the engine **pure** (no DOM) and **tested**. Add a test for each new rule.
+- Keep the yardstick: every plan is compared with "cash stays in the offset".
+- Keep every figure **conservative**, and list its source in section 5 above.
+- Keep the plain-English style: short sentences, Australian spelling, no jargon without a "?" explanation.
+- Keep touch targets at 40px or more, and dark mode working. Red is only for destructive actions and errors. Every delete asks first.
+- Update this guide when you change behaviour.
+
+---
+
+## 15. Prompts to give an AI assistant
+
+### To rebuild it from scratch
+
+> I'd like you to build "Blink Check", a single-file HTML tool for Australian households. It should answer the question "is our next property or investment move worth researching, compared with leaving the cash in the home loan offset?"
+>
+> I've attached the rebuild guide (REBUILD-GUIDE.md) and the current blink-check.html, which contains the full working code. Follow the guide's data model, engine rules, pages, saving design and "Rules to keep".
+>
+> Build it as `src/engine.js` (pure, tested with `node --test`), `src/app.js`, `src/head.html`, `src/body.html` and `build.mjs`, which outputs one HTML file. Then run the tests, open the page in a browser on a phone-sized and a desktop screen, and tell me what you tested and what you didn't.
+
+### To change something
+
+> Here is Blink Check (blink-check.html) and its rebuild guide. I want to change: <describe the change in your own words>.
+>
+> Please keep to the guide's "Rules to keep". Update the engine tests and the guide, rebuild the file, and tell me plainly what changed and what you checked.
+
+### To update the yearly figures
+
+> Here is Blink Check and its rebuild guide. Please check the figures in section 5 against the current ATO resident tax rates, Revenue NSW transfer duty and land tax thresholds, and the RBA cash rate for the latest full year.
+>
+> Update `engine.js`, the tests and the guide where they've changed, and add the new year to `CASH_RATE`. Then tell me what changed and where each figure came from.
+</script>
+
+<script>
+/*
+ * Blink Check engine: given what a household owns and a plan (buy, sell,
+ * shares, SMSF…), works out month by month over 10–30 years what happens to
+ * its loans, offsets, cash, property, shares, super and tax — and compares
+ * each plan with simply leaving the cash in the offset.
+ *
+ * Pure functions, no page code, so it can be tested on its own. Broad
+ * numbers: general information for deciding what's worth researching, not
+ * advice.
+ */
+(function (root) {
+  "use strict";
+
+  // ---------------------------------------------------------------------
+  // Tax (resident individual), NSW stamp duty and land tax — the same
+  // figures Financial Vault uses (ATO resident rates, Revenue NSW).
+  // ---------------------------------------------------------------------
+
+  // [income from, tax at that point, rate above it]
+  const BRACKETS = {
+    2026: [
+      [0, 0, 0],
+      [18200, 0, 0.15],
+      [45000, 4020, 0.3],
+      [135000, 31020, 0.37],
+      [190000, 51370, 0.45],
+    ],
+    // From 1 July 2027 the 16% rate becomes 14% (legislated).
+    2027: [
+      [0, 0, 0],
+      [18200, 0, 0.14],
+      [45000, 3752, 0.3],
+      [135000, 30752, 0.37],
+      [190000, 51102, 0.45],
+    ],
+  };
+  const MEDICARE = 0.02;
+  const MEDICARE_THRESHOLD = 27222;
+
+  function bracketsFor(calendarYear) {
+    return calendarYear >= 2027 ? BRACKETS[2027] : BRACKETS[2026];
+  }
+
+  /** Income tax plus Medicare levy on a resident's taxable income. */
+  function individualTax(taxable, calendarYear) {
+    if (!(taxable > 0)) return 0;
+    const brackets = bracketsFor(calendarYear || 2026);
+    let b = brackets[0];
+    for (const x of brackets) if (taxable > x[0]) b = x;
+    const medicare = taxable <= MEDICARE_THRESHOLD ? 0 : Math.min(taxable * MEDICARE, (taxable - MEDICARE_THRESHOLD) * 0.1);
+    return b[1] + (taxable - b[0]) * b[2] + medicare;
+  }
+
+  // NSW transfer duty, 2026-27 general rates; premium duty for residential.
+  const DUTY = [
+    [0, 0, 1.25],
+    [18000, 225, 1.5],
+    [38000, 525, 1.75],
+    [103000, 1662, 3.5],
+    [387000, 11602, 4.5],
+    [1290000, 52237, 5.5],
+  ];
+  const DUTY_PREMIUM = [3870000, 194137, 7];
+
+  function nswDuty(value, residential) {
+    if (!(value > 0)) return 0;
+    const bands = residential ? DUTY.concat([DUTY_PREMIUM]) : DUTY;
+    let band = bands[0];
+    for (const b of bands) if (value > b[0]) band = b;
+    return Math.max(20, Math.round(band[1] + ((value - band[0]) / 100) * band[2]));
+  }
+
+  /** NSW land tax for one owner's combined taxable land value (general threshold, frozen from 2025). */
+  function nswLandTax(totalLandValue) {
+    const v = Math.max(0, totalLandValue);
+    if (v <= 1075000) return 0;
+    if (v <= 6571000) return 100 + (v - 1075000) * 0.016;
+    return 88036 + (v - 6571000) * 0.02;
+  }
+
+  /** Monthly repayment on a principal-and-interest loan. */
+  function pmt(annualRate, months, balance) {
+    if (!(balance > 0) || !(months > 0)) return 0;
+    const r = annualRate / 12;
+    if (r <= 0) return balance / months;
+    return (balance * r) / (1 - Math.pow(1 + r, -months));
+  }
+
+  /** Months to clear a P&I loan paying `payment`, with `offset` against it, at a fixed rate. */
+  function monthsToClear(balance, offset, annualRate, payment) {
+    let b = balance;
+    let m = 0;
+    while (b > offset && m < 1200) {
+      const interest = Math.max(0, b - offset) * (annualRate / 12);
+      b -= payment - interest;
+      m++;
+    }
+    return m;
+  }
+
+  // ---------------------------------------------------------------------
+  // Interest rates: the shape of the RBA cash rate cycle since 2000 (yearly
+  // averages, approximate), with its long downward drift taken out, applied
+  // to today's rates. Year 1 is always today's rate.
+  // ---------------------------------------------------------------------
+
+  const CASH_RATE = {
+    2000: 5.85, 2001: 4.95, 2002: 4.55, 2003: 4.8, 2004: 5.25, 2005: 5.45, 2006: 5.8, 2007: 6.4, 2008: 6.75,
+    2009: 3.25, 2010: 4.35, 2011: 4.7, 2012: 3.95, 2013: 2.85, 2014: 2.5, 2015: 2.15, 2016: 1.7, 2017: 1.5,
+    2018: 1.5, 2019: 1.1, 2020: 0.35, 2021: 0.1, 2022: 1.35, 2023: 3.95, 2024: 4.35, 2025: 3.85,
+  };
+  const CYCLE_YEARS = Object.keys(CASH_RATE).map(Number);
+  const CYCLE = (() => {
+    const xs = CYCLE_YEARS;
+    const ys = xs.map((y) => CASH_RATE[y]);
+    const n = xs.length;
+    const mx = xs.reduce((s, x) => s + x, 0) / n;
+    const my = ys.reduce((s, y) => s + y, 0) / n;
+    const slope = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0) / xs.reduce((s, x) => s + (x - mx) ** 2, 0);
+    return ys.map((y, i) => y - (my + slope * (xs[i] - mx))); // the cycle, without the drift
+  })();
+
+  /** How much rates are above (+) or below (−) today's, for each year of the plan, in percentage points. */
+  function rateShifts(a, years) {
+    const out = [];
+    const start = Math.max(0, CYCLE_YEARS.indexOf(Number(a.cycleStart)));
+    for (let y = 0; y < years; y++) {
+      if (a.rateModel !== "CYCLE") out.push(0);
+      else out.push((CYCLE[(start + y) % CYCLE.length] - CYCLE[start]) * (a.cycleScale ?? 1));
+    }
+    return out;
+  }
+
+  // ---------------------------------------------------------------------
+  // Defaults
+  // ---------------------------------------------------------------------
+
+  const DEFAULT_ASSUMPTIONS = {
+    horizon: 20,
+    startYear: new Date().getFullYear(),
+    state: "NSW",
+    dutyPctOther: 4.5, // % of price outside NSW
+    rateModel: "CYCLE",
+    cycleStart: 2000,
+    cycleScale: 1,
+    minRate: 2,
+    homeRate: 5.8,
+    invRate: 6.2,
+    comRate: 7.2,
+    ioPremium: 0.4,
+    lrbaPremium: 1.2,
+    savingsRate: 4,
+    cpi: 2.75,
+    wageGrowth: 3.25,
+    resGrowth: 5,
+    comGrowth: 3,
+    resRentGrowth: 3.5,
+    comRentGrowth: 3,
+    resVacancyWeeks: 2,
+    comVacancyWeeks: 6,
+    resCostPct: 25, // of rent: rates, insurance, repairs, management
+    comCostPct: 12, // of rent: what a net lease leaves the owner
+    landPctRes: 55,
+    landPctCom: 45,
+    buyCostsRes: 4000,
+    buyCostsComPct: 1.5,
+    sellCostsPct: 2.5,
+    maxLvr: 80, // for borrowing against equity
+    resLvr: 80,
+    comLvr: 70,
+    smsfLvr: 70,
+    shareGrowth: 4.5,
+    shareYield: 3.5,
+    franking: 70,
+    superReturn: 6.5,
+    superGuarantee: 12,
+    assessBuffer: 3,
+    resShade: 80,
+    comShade: 75,
+    smsfBuffer: 30000,
+    negativeGearing: true, // rental losses reduce wage tax; off = carried forward to later rental profit and gains
+    cardServicing: 3.8, // % of card limits a month that lenders count
+    buildingPctRes: 40, // construction cost as % of price, for the 2.5% building write-off
+    buildingPctCom: 50,
+    fittingsPct: 1, // new-build fittings write-off, % of price in year 1, falling 20% a year
+  };
+
+  /** The yearly tax write-off (depreciation) for a property: none, building only, or building + fittings (new). */
+  function writeOff(p, yearsHeld, a) {
+    if (p.writeOffAmount !== undefined && p.writeOffAmount !== null && p.writeOffAmount !== "") return +p.writeOffAmount || 0;
+    const mode = p.writeOff || "NONE";
+    if (mode === "NONE") return 0;
+    const price = p.writeOffBase || p.value;
+    const building = (price * (p.kind === "COM" ? a.buildingPctCom : a.buildingPctRes)) / 100;
+    let total = yearsHeld < 40 ? building * 0.025 : 0;
+    if (mode === "NEW") total += ((price * a.fittingsPct) / 100) * Math.pow(0.8, Math.max(0, yearsHeld));
+    return total;
+  }
+
+  // ---------------------------------------------------------------------
+  // Simulation
+  // ---------------------------------------------------------------------
+
+  const round = (n) => Math.round(n);
+  const positive = (n) => Math.max(0, n);
+
+  function simulate(plan, scenario) {
+    const a = Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {});
+    const H = Math.max(5, Math.min(30, Number(a.horizon) || 20));
+    const shifts = rateShifts(a, H);
+    const people = (plan.people || []).filter((p) => p && p.name !== undefined);
+    if (!people.length) people.push({ id: "p1", name: "You", salary: 0, super: 0 });
+    const nP = people.length;
+    const evenOwners = people.map(() => 100 / nP);
+    const ownersOf = (o) => (Array.isArray(o) && o.length === nP && o.some((x) => x > 0) ? o.map(Number) : evenOwners);
+
+    let loanSeq = 0;
+    const props = [];
+    const loans = [];
+    const flags = [];
+    const chains = [];
+
+    function addLoan(spec) {
+      const L = Object.assign(
+        { id: "L" + ++loanSeq, balance: 0, offset: 0, type: "PI", ioLeft: 0, termLeft: 360, deductible: false, smsf: false, paidOff: null, interestYear: 0, interestTotal: 0, payYear: 0 },
+        spec
+      );
+      L.rate = L.rateToday;
+      L.payment = L.type === "IO" && L.ioLeft > 0 ? 0 : pmt(L.rate / 100, L.termLeft, L.balance);
+      loans.push(L);
+      return L;
+    }
+    const active = (L) => L.balance > 0.5 && !L.paidOff;
+    const mainLoanOf = (propId) => loans.find((L) => L.prop === propId && L.forProp === propId && active(L));
+
+    // --- What's owned today ------------------------------------------------
+    const home = plan.home || {};
+    if (home.has && home.value > 0) {
+      props.push({ id: "home", name: "Home", kind: "RES", home: true, value: +home.value, costBase: +home.value, owners: evenOwners, growth: a.resGrowth, landPct: a.landPctRes });
+      if (home.loan && home.loan.balance > 0) {
+        addLoan({
+          name: "Home loan", prop: "home", forProp: "home", balance: +home.loan.balance, offset: +home.loan.offset || 0,
+          rateToday: +home.loan.rate || a.homeRate, type: home.loan.type === "IO" ? "IO" : "PI",
+          ioLeft: (home.loan.type === "IO" ? +home.loan.ioYears || 5 : 0) * 12, termLeft: (+home.loan.yearsLeft || 25) * 12,
+        });
+      }
+    }
+    (plan.rentals || []).forEach((r, i) => {
+      if (!(r.value > 0)) return;
+      const id = r.id || "r" + (i + 1);
+      const kind = r.kind === "COM" ? "COM" : "RES";
+      props.push({
+        id, name: r.name || (kind === "COM" ? "Commercial property" : "Rental property"), kind, value: +r.value,
+        costBase: +r.costBase || +r.value, owners: ownersOf(r.owners), rentWeekly: +r.rentWeekly || 0,
+        costPct: r.costPct ?? (kind === "COM" ? a.comCostPct : a.resCostPct), writeOff: r.writeOff || "NONE", writeOffAmount: r.writeOffAmount, writeOffBase: +r.value,
+        growth: kind === "COM" ? a.comGrowth : a.resGrowth, landPct: kind === "COM" ? a.landPctCom : a.landPctRes, boughtMonth: -24,
+      });
+      if (r.loan && r.loan.balance > 0) {
+        addLoan({
+          name: (r.name || "Rental") + " loan", prop: id, forProp: id, balance: +r.loan.balance, offset: +r.loan.offset || 0,
+          rateToday: +r.loan.rate || (kind === "COM" ? a.comRate : a.invRate), type: r.loan.type === "IO" ? "IO" : "PI",
+          ioLeft: (r.loan.type === "IO" ? +r.loan.ioYears || 5 : 0) * 12, termLeft: (+r.loan.yearsLeft || 25) * 12, deductible: true,
+        });
+      }
+    });
+
+    let cash = +plan.cash || 0;
+    const shares = { value: +((plan.shares || {}).value) || 0, costBase: +((plan.shares || {}).costBase) || +((plan.shares || {}).value) || 0 };
+    const superBal = people.map((p) => +p.super || 0);
+    const living0 = (+plan.livingMonthly || 0) * 12;
+    const otherRepay = (+plan.otherRepayMonthly || 0) * 12;
+    const otherRepayYears = +plan.otherRepayYears || 0;
+    const cardLimits = +plan.cardLimits || 0;
+    const carried = people.map(() => 0); // rental losses carried forward when negative gearing is off
+
+    // --- Helpers ---------------------------------------------------------------
+    const debtOn = (propId) => loans.filter((L) => L.prop === propId && active(L)).reduce((s, L) => s + L.balance, 0);
+    const usableEquity = (p) => positive(p.value * (a.maxLvr / 100) - debtOn(p.id));
+    const liveProps = () => props.filter((p) => !p.sold);
+    const offsetsTotal = () => loans.filter((L) => !L.smsf).reduce((s, L) => s + (active(L) ? L.offset : 0), 0);
+
+    let month = 0;
+    let year = 1;
+    let yr = null; // this year's running totals
+
+    function newYearTotals() {
+      return {
+        interest: 0, interestSaved: 0, rent: 0, costs: 0, landTax: 0, propCash: {}, shareCash: 0, dividends: 0, savingsInterest: 0,
+        takeHome: 0, living: 0, payg: 0, homePay: 0, gains: people.map(() => 0), sentTo: { homeOffset: 0, ownOffset: 0, otherOffset: 0, cash: 0, payDown: 0 },
+        drawnFrom: { cash: 0, offsets: 0, overdrawn: 0 }, upfrontCash: 0, events: [], taxSettle: 0, smsfIncome: 0,
+      };
+    }
+
+    /** Where spare money goes under this scenario's rule. Returns the loan whose offset takes it, or null for cash. */
+    function spareTarget(propId) {
+      const rule = scenario.spare || "HOME_OFFSET";
+      const open = loans.filter((L) => active(L) && !L.smsf);
+      if (rule === "CASH") return null;
+      if (rule === "OWN_OFFSET" && propId) {
+        const own = mainLoanOf(propId);
+        if (own) return own;
+      }
+      if (rule === "HIGHEST_RATE") return open.sort((x, y) => y.rate - x.rate)[0] || null;
+      // Home loan first; otherwise the loans that aren't tax-deductible, then the dearest.
+      const homeLoan = open.find((L) => L.prop === "home" && L.forProp === "home");
+      if (homeLoan) return homeLoan;
+      return open.sort((x, y) => Number(x.deductible) - Number(y.deductible) || y.rate - x.rate)[0] || null;
+    }
+
+    function putAway(amount, propId) {
+      if (!(amount > 0)) return;
+      const L = spareTarget(propId);
+      if (!L) {
+        cash += amount;
+        yr.sentTo.cash += amount;
+        return;
+      }
+      L.offset += amount;
+      if (L.prop === "home" && L.forProp === "home") yr.sentTo.homeOffset += amount;
+      else if (propId && L.forProp === propId) yr.sentTo.ownOffset += amount;
+      else yr.sentTo.otherOffset += amount;
+    }
+
+    /** Takes money from savings, then offsets (home first). Returns how much couldn't be found. */
+    function draw(amount, opts) {
+      let need = amount;
+      const fromCash = Math.min(positive(cash), need);
+      cash -= fromCash;
+      need -= fromCash;
+      yr.drawnFrom.cash += fromCash;
+      const order = loans
+        .filter((L) => !L.smsf && L.offset > 0)
+        .sort((x, y) => Number(y.prop === "home") - Number(x.prop === "home") || x.rate - y.rate);
+      for (const L of order) {
+        if (need <= 0) break;
+        const take = Math.min(L.offset, need);
+        L.offset -= take;
+        need -= take;
+        yr.drawnFrom.offsets += take;
+      }
+      if (need > 0 && !(opts && opts.noOverdraw)) {
+        cash -= need;
+        yr.drawnFrom.overdrawn += need;
+      }
+      return need;
+    }
+
+    function clearLoan(L, why) {
+      if (L.offset > 0) {
+        const left = L.offset - L.balance;
+        L.offset = 0;
+        L.balance = 0;
+        L.paidOff = { year, why };
+        if (left > 0) putAway(left, L.forProp);
+      } else {
+        L.balance = 0;
+        L.paidOff = { year, why };
+      }
+      yr.events.push(`${L.name} paid off`);
+    }
+
+    function repriceLoan(L) {
+      L.rate = Math.max(a.minRate, L.rateToday + (shifts[year - 1] || 0));
+      if (!(L.type === "IO" && L.ioLeft > 0)) L.payment = pmt(L.rate / 100, Math.max(1, L.termLeft), L.balance);
+    }
+
+    function totalsNow() {
+      const live = liveProps();
+      const value = live.filter((p) => !p.smsf).reduce((s, p) => s + p.value, 0);
+      const debt = loans.filter((L) => !L.smsf && active(L)).reduce((s, L) => s + L.balance, 0);
+      const offsets = offsetsTotal();
+      const smsfProp = live.filter((p) => p.smsf).reduce((s, p) => s + p.value, 0);
+      const smsfDebt = loans.filter((L) => L.smsf && active(L)).reduce((s, L) => s + L.balance, 0);
+      const superTotal = superBal.reduce((s, b) => s + b, 0) + smsfProp - smsfDebt;
+      const liquid = cash + offsets;
+      const nwExSuper = value + shares.value + cash + offsets - debt;
+      return { value, debt, offsets, cash, liquid, shares: shares.value, superTotal, nwExSuper, nw: nwExSuper + superTotal, equity: value - debt + offsets };
+    }
+
+    // Borrowing check, as a lender might: rates plus a buffer, rents shaded, every loan at P&I.
+    function borrowingCheck(salaries) {
+      const live = liveProps().filter((p) => !p.home && !p.smsf);
+      const gross = people.map((p, i) => salaries[i]);
+      for (const p of live) {
+        const rent = (p.rentNow ?? p.rentWeekly * 52) * ((p.kind === "COM" ? a.comShade : a.resShade) / 100);
+        p.owners.forEach((o, i) => (gross[i] += (rent * o) / 100));
+      }
+      const net = gross.reduce((s, g) => s + g - individualTax(g, a.startYear + year - 1), 0);
+      const commitments = loans
+        .filter((L) => active(L) && !L.smsf)
+        .reduce((s, L) => s + pmt((L.rate + a.assessBuffer) / 100, Math.max(12, L.type === "IO" ? L.termLeft - L.ioLeft : L.termLeft), L.balance) * 12, 0);
+      const living = living0 * Math.pow(1 + a.cpi / 100, year - 1);
+      const others = (year <= otherRepayYears ? otherRepay : 0) + cardLimits * (a.cardServicing / 100) * 12;
+      const surplus = net - commitments - living - others;
+      return { surplus: round(surplus), result: surplus >= 6000 ? "LIKELY" : surplus >= 0 ? "TIGHT" : "UNLIKELY" };
+    }
+
+    // --- Plan steps ----------------------------------------------------------------
+    function stepBuy(s, salaries) {
+      const kind = s.kind === "COM" ? "COM" : "RES";
+      const smsf = s.type === "SMSF";
+      const price = +s.price || 0;
+      if (!(price > 0)) return;
+      const duty = a.state === "NSW" ? nswDuty(price, kind === "RES") : round((price * a.dutyPctOther) / 100);
+      const other = kind === "RES" ? a.buyCostsRes : round((price * a.buyCostsComPct) / 100);
+      const total = price + duty + other;
+      const lvr = (+s.lvr || (smsf ? a.smsfLvr : kind === "COM" ? a.comLvr : a.resLvr)) / 100;
+      const id = s.id;
+      const owners = smsf ? evenOwners : ownersOf(s.owners);
+      const rentWeekly = +s.rentWeekly || (price * ((kind === "COM" ? 6.5 : 4) / 100)) / 52;
+      props.push({
+        id, name: s.name || (smsf ? "SMSF property" : kind === "COM" ? "Commercial purchase" : "Residential purchase"), kind, smsf,
+        value: price, costBase: total, owners, rentWeekly, costPct: s.costPct ?? (kind === "COM" ? a.comCostPct : a.resCostPct),
+        writeOff: s.writeOff || (kind === "COM" ? "BUILDING" : "BUILDING"), writeOffAmount: s.writeOffAmount, writeOffBase: price, growth: s.growth ?? (kind === "COM" ? a.comGrowth : a.resGrowth),
+        landPct: kind === "COM" ? a.landPctCom : a.landPctRes, boughtMonth: month,
+      });
+      const baseRate = smsf ? a.invRate + a.lrbaPremium : kind === "COM" ? a.comRate : a.invRate;
+      const loanType = smsf ? "PI" : s.loanType === "IO" ? "IO" : "PI";
+      const rateToday = baseRate + (loanType === "IO" ? a.ioPremium : 0);
+      const term = (smsf ? 20 : +s.loanYears || 30) * 12;
+      const io = loanType === "IO" ? (+s.ioYears || 5) * 12 : 0;
+      const mainAmount = round(price * lvr);
+      const main = addLoan({ name: (s.name || "Purchase") + " loan", prop: id, forProp: id, balance: mainAmount, rateToday, type: loanType, ioLeft: io, termLeft: term, deductible: !smsf, smsf });
+      repriceLoan(main);
+      let rest = total - mainAmount;
+      const chain = { id, year, name: props[props.length - 1].name, kind, smsf, price, duty, other, total, mainLoan: mainAmount, equity: [], cash: 0, fromSuper: 0, short: 0 };
+
+      if (smsf) {
+        const superTotal = superBal.reduce((x, b) => x + b, 0);
+        chain.fromSuper = rest;
+        if (superTotal - rest < a.smsfBuffer) flags.push({ year, text: `Super would be left with less than $${a.smsfBuffer.toLocaleString("en-AU")} after the SMSF purchase in year ${year}.` });
+        superBal.forEach((b, i) => (superBal[i] -= superTotal > 0 ? (rest * b) / superTotal : rest / nP));
+        chains.push(chain);
+        return;
+      }
+
+      const fromEquity = (amount) => {
+        let need = amount;
+        const sources = liveProps()
+          .filter((p) => !p.smsf && p.id !== id)
+          .sort((x, y) => Number(y.home) - Number(x.home) || usableEquity(y) - usableEquity(x));
+        for (const p of sources) {
+          if (need <= 0) break;
+          const take = Math.min(usableEquity(p), need);
+          if (take < 1000) continue;
+          const L = addLoan({ name: `Equity from ${p.name.toLowerCase()} for ${chain.name.toLowerCase()}`, prop: p.id, forProp: id, balance: round(take), rateToday, type: loanType, ioLeft: io, termLeft: term, deductible: true });
+          repriceLoan(L);
+          chain.equity.push({ from: p.name, amount: round(take) });
+          need -= take;
+        }
+        return need;
+      };
+      const fromCash = (amount) => {
+        const before = cash + offsetsTotal();
+        const take = Math.min(amount, positive(before));
+        if (take > 0) draw(take);
+        chain.cash += round(take);
+        yr.upfrontCash += take;
+        return amount - take;
+      };
+
+      if (s.funding === "CASH") rest = fromEquity(fromCash(rest));
+      else if (s.funding === "MIX") rest = fromEquity(fromCash(Math.min(rest, +s.cashAmount || 0)) + (rest - Math.min(rest, +s.cashAmount || 0)));
+      else rest = fromCash(fromEquity(rest));
+      if (rest > 1) {
+        chain.short = round(rest);
+        draw(rest);
+        flags.push({ year, text: `Not enough equity or cash for ${chain.name.toLowerCase()} in year ${year} — about $${round(rest).toLocaleString("en-AU")} short.` });
+      }
+      const debt = loans.filter((L) => !L.smsf && active(L)).reduce((x, L) => x + L.balance, 0);
+      const value = liveProps().filter((p) => !p.smsf).reduce((x, p) => x + p.value, 0);
+      chain.lvrAfter = value > 0 ? debt / value : 0;
+      chain.borrow = borrowingCheck(salaries);
+      chains.push(chain);
+      yr.events.push(`Buy ${chain.name.toLowerCase()}`);
+    }
+
+    function stepSell(s) {
+      const p = props.find((x) => x.id === s.target && !x.sold);
+      if (!p) return;
+      const price = p.value;
+      const costs = (price * a.sellCostsPct) / 100;
+      let proceeds = price - costs;
+      for (const L of loans.filter((x) => x.prop === p.id && active(x))) {
+        proceeds -= L.balance - L.offset;
+        L.balance = 0;
+        L.offset = 0;
+        L.paidOff = { year, why: "sold" };
+      }
+      // Loans that paid for it but are secured on other property: clear them too, or they stop being deductible.
+      for (const L of loans.filter((x) => x.forProp === p.id && x.prop !== p.id && active(x))) {
+        if (s.then !== "OFFSET" && proceeds > 0) {
+          const pay = Math.min(proceeds, L.balance);
+          L.balance -= pay;
+          proceeds -= pay;
+          yr.sentTo.payDown += pay;
+          if (L.balance <= 0.5) clearLoan(L, "sale");
+        }
+        if (active(L)) L.deductible = false;
+      }
+      if (!p.home && !p.smsf) {
+        const gain = price - costs - p.costBase;
+        const held = month - (p.boughtMonth ?? -24);
+        const taxable = gain > 0 ? (held >= 12 ? gain / 2 : gain) : 0;
+        p.owners.forEach((o, i) => (yr.gains[i] += (taxable * o) / 100));
+      }
+      p.sold = true;
+      p.soldYear = year;
+      yr.events.push(`Sell ${p.name.toLowerCase()}`);
+      if (p.smsf) {
+        const t = superBal.reduce((x, b) => x + b, 0);
+        superBal.forEach((b, i) => (superBal[i] += t > 0 ? (proceeds * b) / t : proceeds / nP));
+        return;
+      }
+      if (proceeds < 0) {
+        draw(-proceeds);
+        flags.push({ year, text: `Selling ${p.name.toLowerCase()} in year ${year} wouldn't clear its loans — about $${round(-proceeds).toLocaleString("en-AU")} short.` });
+        return;
+      }
+      if (s.then === "OFFSET") {
+        putAway(proceeds, null);
+        return;
+      }
+      // Pay down what's left: the loans that aren't tax-deductible first, then the dearest.
+      const order = loans.filter((L) => active(L) && !L.smsf).sort((x, y) => Number(x.deductible) - Number(y.deductible) || y.rate - x.rate);
+      for (const L of order) {
+        if (proceeds <= 0) break;
+        const pay = Math.min(proceeds, L.balance - L.offset);
+        if (pay <= 0) continue;
+        L.balance -= pay;
+        proceeds -= pay;
+        yr.sentTo.payDown += pay;
+        if (L.balance - L.offset <= 0.5) clearLoan(L, "sale");
+        else repriceLoan(L);
+      }
+      if (proceeds > 0) putAway(proceeds, null);
+    }
+
+    function stepShares(s) {
+      const amount = +s.amount || 0;
+      if (!(amount > 0)) return;
+      const chain = { id: s.id, year, name: "Shares / ETFs", kind: "SHARES", price: amount, duty: 0, other: 0, total: amount, mainLoan: 0, equity: [], cash: 0, short: 0 };
+      const loanType = s.loanType === "PI" ? "PI" : "IO";
+      const homeProp = props.find((p) => p.home && !p.sold);
+      const homeLoan = loans.find((L) => L.prop === "home" && L.forProp === "home" && active(L));
+      if (s.funding === "RECYCLE" && homeLoan && homeProp) {
+        // Pay the home loan down with the cash, then borrow the same back as a separate, tax-deductible split to buy the shares.
+        const take = Math.min(amount, positive(cash + offsetsTotal()), homeLoan.balance);
+        draw(take);
+        homeLoan.balance -= take;
+        repriceLoan(homeLoan);
+        const L = addLoan({ name: "Investment split (debt recycling)", prop: "home", forProp: "SHARES", balance: take, rateToday: a.invRate + (loanType === "IO" ? a.ioPremium : 0), type: loanType, ioLeft: loanType === "IO" ? 5 * 12 : 0, termLeft: 30 * 12, deductible: true });
+        repriceLoan(L);
+        chain.recycled = round(take);
+        chain.cash = 0;
+        shares.value += take;
+        shares.costBase += take;
+        if (take < amount) chain.short = round(amount - take);
+      } else if (s.funding === "EQUITY") {
+        let need = amount;
+        const sources = liveProps().filter((p) => !p.smsf).sort((x, y) => usableEquity(y) - usableEquity(x));
+        for (const p of sources) {
+          if (need <= 0) break;
+          const take = Math.min(usableEquity(p), need);
+          if (take < 1000) continue;
+          const L = addLoan({ name: `Share loan against ${p.name.toLowerCase()}`, prop: p.id, forProp: "SHARES", balance: round(take), rateToday: a.invRate + (loanType === "IO" ? a.ioPremium : 0), type: loanType, ioLeft: loanType === "IO" ? 5 * 12 : 0, termLeft: 30 * 12, deductible: true });
+          repriceLoan(L);
+          chain.equity.push({ from: p.name, amount: round(take) });
+          need -= take;
+        }
+        if (need > 0) {
+          chain.cash = round(need);
+          draw(need);
+          yr.upfrontCash += need;
+        }
+        shares.value += amount;
+        shares.costBase += amount;
+      } else {
+        draw(amount);
+        chain.cash = round(amount);
+        yr.upfrontCash += amount;
+        shares.value += amount;
+        shares.costBase += amount;
+      }
+      chains.push(chain);
+      yr.events.push("Buy shares");
+    }
+
+    function applySteps(salaries) {
+      for (const s of (scenario.steps || []).filter((x) => +x.year === year)) {
+        if (s.type === "BUY" || s.type === "SMSF") stepBuy(s, salaries);
+        else if (s.type === "SELL") stepSell(s);
+        else if (s.type === "SHARES") stepShares(s);
+        else if (s.type === "OFFSET") {
+          const amount = Math.min(+s.amount || 0, positive(cash));
+          const L = s.to === "home" ? loans.find((x) => x.prop === "home" && x.forProp === "home" && active(x)) : mainLoanOf(s.to);
+          if (L && amount > 0) {
+            cash -= amount;
+            L.offset += amount;
+            yr.events.push(`Move $${round(amount).toLocaleString("en-AU")} into an offset`);
+          }
+        } else if (s.type === "PI") {
+          for (const L of loans.filter((x) => (x.forProp === s.target || x.prop === s.target) && active(x) && x.type === "IO")) {
+            L.ioLeft = 0;
+            L.type = "PI";
+            L.payment = pmt(L.rate / 100, Math.max(1, L.termLeft), L.balance);
+          }
+          yr.events.push("Switch to principal and interest");
+        }
+      }
+    }
+
+    // --- Month by month ---------------------------------------------------------------
+    const years = [];
+    let salaries = people.map((p) => +p.salary || 0);
+    let payg = salaries.map((s) => individualTax(s, a.startYear));
+    let minLiquid = Infinity;
+    let runsOut = null;
+
+    for (month = 0; month < H * 12; month++) {
+      if (month % 12 === 0) {
+        year = month / 12 + 1;
+        yr = newYearTotals();
+        if (year > 1) {
+          salaries = salaries.map((s) => s * (1 + a.wageGrowth / 100));
+          for (const p of props) {
+            if (p.rentNow !== undefined) p.rentNow *= 1 + (p.kind === "COM" ? a.comRentGrowth : a.resRentGrowth) / 100;
+          }
+        }
+        payg = salaries.map((s) => individualTax(s, a.startYear + year - 1));
+        for (const L of loans.filter(active)) repriceLoan(L);
+        applySteps(salaries);
+        for (const p of props) if (p.rentNow === undefined && !p.home) p.rentNow = (p.rentWeekly || 0) * 52;
+        // Land tax this year: each person's share of the taxable land they hold (NSW; not the home or SMSF).
+        const landTax = {};
+        if (a.state === "NSW") {
+          const perPerson = people.map(() => []);
+          for (const p of liveProps().filter((x) => !x.home && !x.smsf)) p.owners.forEach((o, i) => perPerson[i].push({ id: p.id, v: (p.value * p.landPct * o) / 10000 }));
+          perPerson.forEach((parts) => {
+            const total = parts.reduce((s, x) => s + x.v, 0);
+            const tax = nswLandTax(total);
+            parts.forEach((x) => (landTax[x.id] = (landTax[x.id] || 0) + (total > 0 ? (tax * x.v) / total : 0)));
+          });
+        }
+        yr.landTaxBy = landTax;
+      }
+
+      const living = (living0 / 12) * Math.pow(1 + a.cpi / 100, year - 1);
+      let salaryPart = 0;
+      people.forEach((p, i) => {
+        const gross = salaries[i] / 12;
+        const takeHome = gross - payg[i] / 12;
+        salaryPart += takeHome;
+        yr.takeHome += takeHome;
+        yr.payg += payg[i] / 12;
+        superBal[i] += gross * (a.superGuarantee / 100) * 0.85;
+      });
+      salaryPart -= living;
+      yr.living += living;
+      if (year <= otherRepayYears && otherRepay > 0) {
+        salaryPart -= otherRepay / 12;
+        yr.living += otherRepay / 12;
+      }
+
+      // Growth.
+      for (const p of liveProps()) p.value *= Math.pow(1 + p.growth / 100, 1 / 12);
+      shares.value *= Math.pow(1 + a.shareGrowth / 100, 1 / 12);
+      superBal.forEach((b, i) => (superBal[i] = b * Math.pow(1 + a.superReturn / 100, 1 / 12)));
+
+      // Rents and running costs.
+      const parts = {};
+      for (const p of liveProps().filter((x) => !x.home)) {
+        const vacancy = (p.kind === "COM" ? a.comVacancyWeeks : a.resVacancyWeeks) / 52;
+        const rent = (p.rentNow * (1 - vacancy)) / 12;
+        const costs = (p.rentNow * p.costPct) / 100 / 12 + (yr.landTaxBy[p.id] || 0) / 12;
+        if (p.smsf) {
+          const t = superBal.reduce((x, b) => x + b, 0);
+          superBal.forEach((b, i) => (superBal[i] += ((rent - costs) * (t > 0 ? b / t : 1 / nP))));
+          yr.smsfIncome += rent - costs;
+          continue;
+        }
+        parts[p.id] = rent - costs;
+        yr.rent += rent;
+        yr.costs += costs;
+        yr.landTax += (yr.landTaxBy[p.id] || 0) / 12;
+      }
+
+      // Loans.
+      let sharePart = 0;
+      for (const L of loans.filter(active)) {
+        const eff = positive(L.balance - L.offset);
+        const interest = (eff * L.rate) / 100 / 12;
+        yr.interestSaved += (Math.min(L.offset, L.balance) * L.rate) / 100 / 12;
+        let pay;
+        if (L.type === "IO" && L.ioLeft > 0) {
+          pay = interest;
+          L.ioLeft--;
+          if (L.ioLeft === 0) {
+            L.type = "PI";
+            L.payment = pmt(L.rate / 100, Math.max(1, L.termLeft - 1), L.balance);
+          }
+        } else {
+          pay = Math.min(L.payment, L.balance + interest);
+          L.balance -= pay - interest;
+        }
+        L.termLeft = Math.max(1, L.termLeft - 1);
+        L.interestYear += interest;
+        L.interestTotal += interest;
+        L.payYear += pay;
+        yr.interest += L.smsf ? 0 : interest;
+        if (L.smsf) {
+          yr.smsfIncome -= interest;
+          const t = superBal.reduce((x, b) => x + b, 0);
+          superBal.forEach((b, i) => (superBal[i] -= pay * (t > 0 ? b / t : 1 / nP)));
+        } else if (L.forProp === "SHARES") sharePart -= pay;
+        else if (L.prop === "home" && L.forProp === "home") {
+          salaryPart -= pay;
+          yr.homePay += pay;
+        } else parts[L.forProp] = (parts[L.forProp] || 0) - pay;
+        if (L.balance - L.offset <= 0.5 && !(L.type === "IO" && L.ioLeft > 0)) clearLoan(L, "offset");
+        else if (L.balance <= 0.5) clearLoan(L, "repaid");
+      }
+      // Loans for a property that's been sold, still running: the household pays them.
+      for (const k of Object.keys(parts)) if (!props.find((p) => p.id === k && !p.sold)) {
+        salaryPart += parts[k];
+        delete parts[k];
+      }
+
+      const dividends = (shares.value * a.shareYield) / 100 / 12;
+      sharePart += dividends;
+      yr.dividends += dividends;
+      const interestOnCash = (positive(cash) * a.savingsRate) / 100 / 12;
+      salaryPart += interestOnCash;
+      yr.savingsInterest += interestOnCash;
+
+      for (const k of Object.keys(parts)) yr.propCash[k] = (yr.propCash[k] || 0) + parts[k];
+      yr.shareCash += sharePart;
+
+      // Spare money goes where the scenario says; missing money comes from savings, then offsets.
+      const items = Object.keys(parts).map((k) => ({ prop: k, v: parts[k] }));
+      items.push({ prop: null, v: salaryPart + sharePart });
+      const net = items.reduce((s, x) => s + x.v, 0);
+      if (net >= 0) {
+        const pos = items.reduce((s, x) => s + positive(x.v), 0);
+        for (const x of items) if (x.v > 0) putAway((x.v * net) / pos, x.prop);
+      } else draw(-net);
+
+      // Year end: tax, super tax, the year's record.
+      if (month % 12 === 11) {
+        const calYear = a.startYear + year - 1;
+        const taxable = people.map((p, i) => salaries[i]);
+        const taxableExInvest = people.map((p, i) => salaries[i]);
+        const savingsShare = yr.savingsInterest / nP;
+        people.forEach((p, i) => {
+          taxable[i] += savingsShare;
+          taxableExInvest[i] += savingsShare;
+        });
+        const invest = people.map(() => 0);
+        let writeOffs = 0;
+        for (const p of props.filter((x) => !x.home && !x.smsf)) {
+          if (yr.propCash[p.id] === undefined) continue;
+          // Tax uses interest rather than repayments, and takes off the write-off.
+          const principal = loans.filter((L) => L.forProp === p.id && !L.smsf).reduce((s, L) => s + (L.payYear - L.interestYear), 0);
+          const yearsHeld = Math.max(0, Math.floor((month - (p.boughtMonth ?? -24)) / 12));
+          const dep = p.sold && (p.soldYear ?? 0) < year ? 0 : writeOff(p, yearsHeld, a);
+          writeOffs += dep;
+          const result = yr.propCash[p.id] + principal - dep;
+          p.owners.forEach((o, i) => (invest[i] += (result * o) / 100));
+        }
+        const sharePrincipal = loans.filter((L) => L.forProp === "SHARES").reduce((s, L) => s + (L.payYear - L.interestYear), 0);
+        const frankRate = a.franking / 100;
+        const grossUp = yr.dividends * frankRate * (30 / 70);
+        people.forEach((p, i) => {
+          invest[i] += (yr.shareCash + sharePrincipal + grossUp) / nP;
+          let result = invest[i] + yr.gains[i];
+          if (!a.negativeGearing) {
+            // Losses only count against later investment income and gains.
+            if (result < 0) {
+              carried[i] += -result;
+              result = 0;
+            } else {
+              const use = Math.min(carried[i], result);
+              carried[i] -= use;
+              result -= use;
+            }
+          }
+          taxable[i] += result;
+        });
+        yr.writeOffs = writeOffs;
+        const tax = taxable.map((t) => individualTax(t, calYear));
+        const credits = grossUp;
+        const totalTax = tax.reduce((s, t) => s + t, 0) - credits;
+        const taxEx = taxableExInvest.reduce((s, t) => s + individualTax(t, calYear), 0);
+        const settle = yr.payg - totalTax; // refund (+) or bill (−)
+        yr.taxSettle = settle;
+        if (settle >= 0) putAway(settle, null);
+        else draw(-settle);
+        if (yr.smsfIncome > 0) {
+          const t = superBal.reduce((x, b) => x + b, 0);
+          superBal.forEach((b, i) => (superBal[i] -= yr.smsfIncome * 0.15 * (t > 0 ? b / t : 1 / nP)));
+        }
+
+        const T = totalsNow();
+        minLiquid = Math.min(minLiquid, T.liquid);
+        if (T.liquid < -1 && runsOut === null) runsOut = year;
+        const investCashBefore = Object.values(yr.propCash).reduce((s, v) => s + v, 0) + yr.shareCash;
+        const taxEffect = totalTax - taxEx; // extra tax because of the investments (negative = saves tax)
+        const investCashAfter = investCashBefore - taxEffect;
+        const homeLoan = loans.find((L) => L.prop === "home" && L.forProp === "home");
+        years.push({
+          year,
+          calYear,
+          rateShift: shifts[year - 1] || 0,
+          homeRate: homeLoan ? homeLoan.rate : (a.homeRate + (shifts[year - 1] || 0)),
+          value: round(T.value),
+          debt: round(T.debt),
+          offsets: round(T.offsets),
+          cash: round(T.cash),
+          liquid: round(T.liquid),
+          shares: round(T.shares),
+          superTotal: round(T.superTotal),
+          equity: round(T.equity),
+          nw: round(T.nw),
+          nwExSuper: round(T.nwExSuper),
+          interest: round(yr.interest),
+          interestSaved: round(yr.interestSaved),
+          rent: round(yr.rent),
+          costs: round(yr.costs),
+          landTax: round(yr.landTax),
+          taxEffect: round(taxEffect),
+          writeOffs: round(yr.writeOffs || 0),
+          investCashBefore: round(investCashBefore),
+          investCashAfter: round(investCashAfter),
+          topUp: round(positive(-investCashAfter)),
+          upfrontCash: round(yr.upfrontCash),
+          householdSpare: round(yr.takeHome - yr.living - yr.homePay + investCashBefore + yr.savingsInterest + settle),
+          sentTo: Object.fromEntries(Object.entries(yr.sentTo).map(([k, v]) => [k, round(v)])),
+          drawnFrom: Object.fromEntries(Object.entries(yr.drawnFrom).map(([k, v]) => [k, round(v)])),
+          props: props
+            .filter((p) => !p.home && !p.smsf && (yr.propCash[p.id] !== undefined))
+            .map((p) => ({ id: p.id, name: p.name, value: round(p.sold ? 0 : p.value), debt: round(loans.filter((L) => L.forProp === p.id && active(L)).reduce((s, L) => s + L.balance, 0)), cash: round(yr.propCash[p.id] || 0), sold: !!p.sold })),
+          events: yr.events,
+        });
+        for (const L of loans) {
+          L.interestYear = 0;
+          L.payYear = 0;
+        }
+      }
+    }
+
+    // --- Summary ------------------------------------------------------------------------
+    const last = years[years.length - 1];
+    const homeLoan = loans.find((L) => L.prop === "home" && L.forProp === "home");
+    const totalInterest = round(loans.reduce((s, L) => s + (L.smsf ? 0 : L.interestTotal), 0));
+    const upfront = years.reduce((s, y) => s + y.upfrontCash, 0);
+    const topUps = years.reduce((s, y) => s + y.topUp, 0);
+    const worst = years.reduce((w, y) => (y.investCashAfter < w.amount ? { year: y.year, amount: y.investCashAfter } : w), { year: 0, amount: 0 });
+    const firstPositive = years.find((y, i) => y.investCashAfter >= 0 && years.slice(i).every((z) => z.investCashAfter >= 0) && years.slice(0, i).some((z) => z.investCashAfter < 0));
+    const peakDebt = years.reduce((m, y) => Math.max(m, y.debt), 0);
+    const peakLvr = years.reduce((m, y) => Math.max(m, y.value > 0 ? y.debt / y.value : 0), 0);
+    const debtFree = years.find((y) => y.debt <= 0.5);
+    return {
+      id: scenario.id,
+      name: scenario.name,
+      baseline: !!scenario.baseline,
+      spare: scenario.spare || "HOME_OFFSET",
+      years,
+      chains,
+      flags,
+      summary: {
+        nwEnd: last.nw,
+        nwExSuperEnd: last.nwExSuper,
+        debtEnd: last.debt,
+        valueEnd: last.value,
+        peakDebt,
+        peakLvr,
+        totalInterest,
+        upfrontCash: round(upfront),
+        topUps: round(topUps),
+        moneyIn: round(upfront + topUps),
+        worstYear: worst,
+        positiveFrom: firstPositive ? firstPositive.year : null,
+        homeLoanPaidOff: homeLoan && homeLoan.paidOff ? homeLoan.paidOff.year : null,
+        debtFreeYear: debtFree ? debtFree.year : null,
+        minLiquid: round(minLiquid),
+        runsOut,
+      },
+    };
+  }
+
+  // ---------------------------------------------------------------------
+  // Comparing plans
+  // ---------------------------------------------------------------------
+
+  const money = (n) => (n < 0 ? "−$" : "$") + Math.abs(Math.round(n)).toLocaleString("en-AU");
+
+  function verdictFor(r, base, plan) {
+    const notes = [];
+    const s = r.summary;
+    const risk = plan.risk || "MIDDLE";
+    const goal = plan.goal || "GROWTH";
+    if (r.baseline) return { level: "BASE", label: "The yardstick", notes: ["Cash stays in the offset and spare money keeps going in; nothing new is bought."] };
+    const gain = s.nwEnd - base.summary.nwEnd;
+    const H = r.years.length;
+    for (const c of r.chains) {
+      if (c.borrow && c.borrow.result === "UNLIKELY") notes.push(`A lender may not approve the loan for ${c.name.toLowerCase()} in year ${c.year} — the budget comes out about ${money(-c.borrow.surplus)} a year short at their test rate.`);
+      else if (c.borrow && c.borrow.result === "TIGHT") notes.push(`Borrowing for ${c.name.toLowerCase()} in year ${c.year} looks tight at a lender's test rate.`);
+      if (c.short > 0) notes.push(`About ${money(c.short)} short of the deposit and costs for ${c.name.toLowerCase()} in year ${c.year}.`);
+    }
+    if (s.worstYear.amount < 0) notes.push(`The worst year is year ${s.worstYear.year}: the investments need ${money(-s.worstYear.amount)} from you (${money(-s.worstYear.amount / 52)} a week) after tax.`);
+    if (s.positiveFrom) notes.push(`The investments pay for themselves from year ${s.positiveFrom}.`);
+    if (s.peakLvr > 0.8) notes.push(`Borrowing peaks at ${Math.round(s.peakLvr * 100)}% of what the property is worth — little room if prices fall.`);
+    if (risk === "CAREFUL" && (s.peakLvr > 0.65 || r.chains.some((c) => c.kind === "COM"))) notes.push("More risk than a careful profile usually takes on (high borrowing, or a commercial vacancy risk).");
+    if (r.chains.some((c) => c.kind === "COM")) notes.push("Commercial property can sit empty for 6–12 months between tenants — keep a cash buffer.");
+    if (goal === "CASHFLOW" && s.worstYear.amount < 0 && !s.positiveFrom) notes.push("Costs money every year over the plan — doesn't fit a cash-flow goal.");
+    for (const f of r.flags) notes.push(f.text);
+    let level;
+    let label;
+    if (s.runsOut) {
+      level = "NO";
+      label = `Runs out of spare cash in year ${s.runsOut}`;
+      notes.unshift("Savings and offsets would be used up — it would need more income, a smaller purchase or a later year.");
+    } else if (gain > Math.max(50000, Math.abs(base.summary.nwEnd) * 0.05)) {
+      level = r.chains.some((c) => c.borrow && c.borrow.result === "UNLIKELY") ? "MAYBE" : "YES";
+      label = level === "YES" ? "Worth a closer look" : "Worth a look — if the loan is approved";
+    } else if (gain > 0) {
+      level = "MAYBE";
+      label = "Marginal";
+    } else {
+      level = "NO";
+      label = "Doesn't beat leaving the cash in the offset";
+    }
+    return { level, label, gain: round(gain), perDollar: s.moneyIn > 0 ? gain / s.moneyIn : null, notes, horizon: H };
+  }
+
+  function runAll(plan) {
+    const scenarios = plan.scenarios || [];
+    const base = scenarios.find((s) => s.baseline) || { id: "base", name: "Cash stays in the offset", baseline: true, steps: [] };
+    const baseRun = simulate(plan, base);
+    const runs = scenarios.map((s) => (s === base ? baseRun : simulate(plan, s)));
+    if (!scenarios.includes(base)) runs.unshift(baseRun);
+    for (const r of runs) r.verdict = verdictFor(r, baseRun, plan);
+    return { runs, base: baseRun, shifts: rateShifts(Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {}), baseRun.years.length) };
+  }
+
+  // ---------------------------------------------------------------------
+  // Reading numbers as people say or type them: "$650k", "1.2m", "four hundred and twenty thousand"
+  // ---------------------------------------------------------------------
+
+  const SMALL = { zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90, a: 1 };
+  const SCALE = { hundred: 100, thousand: 1000, grand: 1000, k: 1000, million: 1e6, mil: 1e6, m: 1e6 };
+
+  function parseAmount(input) {
+    if (input === null || input === undefined) return null;
+    if (typeof input === "number") return Number.isFinite(input) ? input : null;
+    let t = String(input).toLowerCase().trim().replace(/[$,]/g, "").replace(/\s+dollars?$/, "").replace(/\s*per\s*cent|\s*percent|%/g, "");
+    if (!t) return null;
+    const short = /^(-?\d*\.?\d+)\s*(k|m|mil|million|thousand|grand)?$/.exec(t);
+    if (short) return Number(short[1]) * (short[2] ? SCALE[short[2]] : 1);
+    // Words, possibly mixed with digits: "four hundred and twenty thousand", "1.5 million", "point five".
+    const words = t.replace(/-/g, " ").replace(/\band\b/g, " ").split(/\s+/).filter(Boolean);
+    let total = 0;
+    let current = 0;
+    let decimal = null;
+    let seen = false;
+    for (const w of words) {
+      if (w === "point") {
+        decimal = "";
+        continue;
+      }
+      if (decimal !== null) {
+        if (SMALL[w] !== undefined && SMALL[w] < 10) {
+          decimal += String(SMALL[w]);
+          continue;
+        }
+        if (/^\d+$/.test(w)) {
+          decimal += w;
+          continue;
+        }
+        current += Number("0." + (decimal || "0"));
+        decimal = null;
+      }
+      if (/^\d*\.?\d+$/.test(w)) {
+        current += Number(w);
+        seen = true;
+      } else if (SMALL[w] !== undefined) {
+        current += SMALL[w];
+        seen = true;
+      } else if (w === "hundred") {
+        current = (current || 1) * 100;
+        seen = true;
+      } else if (SCALE[w]) {
+        total += (current || 1) * SCALE[w];
+        current = 0;
+        seen = true;
+      } else return null;
+    }
+    if (decimal !== null) current += Number("0." + (decimal || "0"));
+    return seen ? total + current : null;
+  }
+
+  const api = { writeOff, simulate, runAll, rateShifts, individualTax, nswDuty, nswLandTax, pmt, monthsToClear, parseAmount, DEFAULT_ASSUMPTIONS, CASH_RATE };
+  root.BlinkEngine = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+/* Blink Check pages: five steps, saved in this browser, charts drawn here (no libraries). */
+(function () {
+  "use strict";
+  const E = window.BlinkEngine;
+  const D = E.DEFAULT_ASSUMPTIONS;
+  // The page as it arrived, before anything is drawn — for "Download a copy".
+  const PRISTINE = "<!doctype html>\n" + document.documentElement.outerHTML;
+  const STORE = "blink-check-v1";
+  const STANDALONE = (() => {
+    try {
+      return window.self === window.top;
+    } catch (e) {
+      return false;
+    }
+  })();
+  const PAGES = [
+    ["you", "You"],
+    ["own", "What you own"],
+    ["plans", "Plans"],
+    ["check", "Blink check"],
+    ["assume", "Assumptions"],
+  ];
+  const SERIES = ["var(--s0)", "var(--s1)", "var(--s2)", "var(--s3)"];
+  const BIN =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>';
+
+  // ---------------------------------------------------------------- words explained
+
+  const HELP = {
+    offset: ["Offset account", "A savings account linked to a loan. Its balance is taken off the loan before interest is charged, so $60,000 in the offset of a $420,000 loan means interest on $360,000. Same effect as paying the loan down — but you can take the money out again."],
+    pi: ["Principal and interest (P&I)", "Repayments cover the interest and part of the loan itself, so the loan shrinks to nothing by the end of the term."],
+    io: ["Interest only (IO)", "Repayments cover only the interest for a set number of years — the loan doesn't shrink. Common for investment loans to keep cash flow up. Repayments jump when the interest-only years end."],
+    equity: ["Equity", "What a property is worth less what's owed on it. Lenders will usually lend against it up to 80% of the value in total — that's how a deposit is 'borrowed from equity'."],
+    lvr: ["LVR (loan to value ratio)", "The loan as a share of the property's value. 80% LVR on a $700,000 property is a $560,000 loan. Over 80% usually means lenders mortgage insurance; commercial lenders usually stop at 65–70%."],
+    yield: ["Rental yield", "A year's rent as a share of the price. Gross yield is before costs; net yield is after the owner's costs. $600 a week on a $700,000 property is a 4.5% gross yield."],
+    caprate: ["Cap rate (capitalisation rate)", "The commercial word for net yield: a year's net rent (after the owner's costs) divided by the price. An $800,000 property at a 6.5% cap rate earns about $52,000 a year. A higher cap rate means more income per dollar, but often more risk or slower growth."],
+    netlease: ["Net lease and outgoings", "Outgoings are a property's running costs — council and water rates, insurance, strata, maintenance. In most commercial leases the tenant pays most of them on top of the rent (a net lease). Residential owners pay their own."],
+    wale: ["WALE (weighted average lease expiry)", "How many years, on average, the tenants are locked in for. A longer WALE is safer — the income is contracted. Worth asking about for any commercial property."],
+    vacancy: ["Weeks empty", "Time with no tenant. Residential is often a couple of weeks a year between tenants. Commercial can sit empty for six to twelve months — keep a cash buffer."],
+    negativeGearing: ["Negative gearing", "When a rental costs more than it earns (interest, running costs and write-offs), the loss is taken off your other income, so you pay less tax. You still lose money — the tax back only softens it. Positively geared means it earns more than it costs, and that extra is taxed."],
+    depreciation: ["Tax write-offs (depreciation)", "Owners can claim the building's wear: 2.5% a year of the construction cost for buildings started after September 1987. Fittings (carpets, blinds, appliances) can be claimed too, but for residential only in new or near-new properties. A quantity surveyor's report gives the exact figures; this tool uses a cautious estimate unless you enter one."],
+    duty: ["Stamp duty", "The state's tax on buying property, paid at settlement. Worked out here at NSW rates (premium duty for residential over $3.87m); for other states enter a percentage under Assumptions."],
+    landTax: ["Land tax", "A yearly NSW tax on investment land once an owner's total land value passes $1,075,000. Your home is exempt. Worked out here per person, on the land value share of each property."],
+    cgt: ["Capital gains tax", "Tax on the profit when an investment is sold. Held over a year, only half the gain is added to your income. Your home is exempt."],
+    serviceability: ["Borrowing check (serviceability)", "Lenders test whether your income covers every repayment at about 3% above the actual rate, counting only part of the rent (about 80% for residential) and about 3.8% of your credit card limits each month — even if the cards are paid off. This is a rough version of that test."],
+    debtRecycling: ["Debt recycling", "Paying the home loan down with cash (often from the offset), then borrowing the same amount back as a separate loan split to invest. The total owed doesn't change, but the interest on the new split is tax-deductible because it's used to invest. Talk to your accountant before doing it — it has to be set up correctly."],
+    smsf: ["SMSF", "A self-managed super fund. It can buy property, but the fund and the property must stay separate from you: no living in it, and no renting residential property to family. Commercial property can be leased to your own business at market rent."],
+    lrba: ["SMSF loan (LRBA)", "A limited recourse borrowing arrangement — the only way an SMSF can borrow to buy property. Lenders usually lend 60–70%, at higher rates, and the fund needs cash left over afterwards."],
+    franking: ["Franking credits", "Tax an Australian company has already paid on its profits, passed on with its dividends. It counts towards your tax, so franked dividends are taxed less."],
+    costBase: ["What you paid (cost base)", "The price plus stamp duty and buying costs. Used to work out capital gains tax if it's sold."],
+    yardstick: ["The yardstick", "Doing nothing new: your savings and every spare dollar go into the home loan offset. Each plan is compared with this, because it's the safe, tax-free return any plan has to beat."],
+    spare: ["Where spare money goes", "When the year leaves money over, this decides where it goes: the home loan offset (usually best — that interest isn't tax-deductible), a positive property's own loan offset, the dearest loan, or savings. When a plan needs money, it comes from savings first, then the offsets."],
+    topUp: ["Top-ups", "What the investments cost you each year after tax — rent and dividends, less running costs, loan repayments and the tax effect. This is the money that has to come out of your pay or savings."],
+    worstYear: ["Worst year", "The year the investments need the most from you, usually when interest rates peak. Check you could carry this."],
+    moneyChain: ["Where the money comes from", "How each purchase is paid for: the loan on the new property, any borrowing against equity in what you own, and your own cash — against the price, stamp duty and buying costs."],
+    rateCycle: ["The rate cycle", "Instead of guessing, rates rise and fall the way the Reserve Bank's cash rate did since 2000 (the 2008 peak, the 2020 low and the 2022–23 rises), added to today's rates. Year 1 is always today's rate."],
+    netWorth: ["Net worth", "Everything you own (property, shares, savings, offsets, super) less everything you owe. 'Outside super' leaves super out, because you can't use it until retirement."],
+    living: ["Living costs", "What the household spends each month on everything except loan repayments — food, bills, school, cars, holidays. The tool works out the loan repayments itself."],
+  };
+
+  // ---------------------------------------------------------------- state
+
+  const uid = () => Math.random().toString(36).slice(2, 9);
+
+  function example() {
+    return {
+      example: true,
+      people: [
+        { id: "p1", name: "Alex", salary: 145000, super: 160000 },
+        { id: "p2", name: "Sam", salary: 95000, super: 110000 },
+      ],
+      livingMonthly: 5500,
+      cardLimits: 15000,
+      otherRepayMonthly: 600,
+      otherRepayYears: 3,
+      goal: "GROWTH",
+      risk: "MIDDLE",
+      cash: 20000,
+      home: { has: true, value: 900000, loan: { balance: 420000, rate: 5.8, type: "PI", ioYears: 0, yearsLeft: 25, offset: 60000 } },
+      rentals: [
+        {
+          id: "r1", name: "Rental 1", kind: "RES", value: 650000, costBase: 520000, rentWeekly: 600, costPct: 25, writeOff: "BUILDING", owners: [50, 50],
+          loan: { balance: 470000, rate: 6.2, type: "IO", ioYears: 3, yearsLeft: 28, offset: 0 },
+        },
+      ],
+      shares: { value: 0, costBase: 0 },
+      smsf: { has: false, open: false },
+      assumptions: {},
+      scenarios: [
+        { id: "base", name: "Cash stays in the offset", baseline: true, spare: "HOME_OFFSET", steps: [] },
+        {
+          id: "s1", name: "Residential now, another in year 8", spare: "HOME_OFFSET",
+          steps: [
+            { id: uid(), type: "BUY", year: 1, kind: "RES", name: "Second rental", price: 700000, rentWeekly: 600, funding: "EQUITY", loanType: "IO", ioYears: 5, writeOff: "BUILDING" },
+            { id: uid(), type: "BUY", year: 8, kind: "RES", name: "Third rental", price: 800000, rentWeekly: 680, funding: "EQUITY", loanType: "IO", ioYears: 5, writeOff: "BUILDING" },
+          ],
+        },
+        {
+          id: "s2", name: "Commercial now, sell Rental 1 in year 10", spare: "HOME_OFFSET",
+          steps: [
+            { id: uid(), type: "BUY", year: 1, kind: "COM", name: "Commercial unit", price: 800000, rentWeekly: 1000, funding: "EQUITY", loanType: "PI", writeOff: "BUILDING" },
+            { id: uid(), type: "SELL", year: 10, target: "r1", then: "PAY_DEBT" },
+          ],
+        },
+        { id: "s3", name: "Debt recycle $80k into shares", spare: "HOME_OFFSET", steps: [{ id: uid(), type: "SHARES", year: 1, amount: 80000, funding: "RECYCLE", loanType: "IO" }] },
+      ],
+    };
+  }
+
+  function blank() {
+    return {
+      example: false,
+      people: [{ id: "p1", name: "", salary: 0, super: 0 }],
+      livingMonthly: 0,
+      cardLimits: 0,
+      otherRepayMonthly: 0,
+      otherRepayYears: 0,
+      goal: "GROWTH",
+      risk: "MIDDLE",
+      cash: 0,
+      home: { has: true, value: 0, loan: { balance: 0, rate: D.homeRate, type: "PI", ioYears: 0, yearsLeft: 25, offset: 0 } },
+      rentals: [],
+      shares: { value: 0, costBase: 0 },
+      smsf: { has: false, open: false },
+      assumptions: {},
+      scenarios: [
+        { id: "base", name: "Cash stays in the offset", baseline: true, spare: "HOME_OFFSET", steps: [] },
+        { id: "s1", name: "Plan 1", spare: "HOME_OFFSET", steps: [] },
+      ],
+    };
+  }
+
+  // Figures saved inside this file (by "Save a copy"), if any.
+  function embedded() {
+    try {
+      const saved = JSON.parse(document.getElementById("saved-figures").textContent || "null");
+      if (saved && saved.people) return saved;
+    } catch (e) {
+      /* none */
+    }
+    return null;
+  }
+  const FILE = embedded();
+  const FILE_ID = (FILE && FILE.fileId) || "blank";
+  const storeKey = () => STORE + ":" + FILE_ID;
+
+  // The file's figures, unless this browser has newer changes made to this same file.
+  function load() {
+    let local = null;
+    try {
+      local = JSON.parse(localStorage.getItem(storeKey()) || "null");
+    } catch (e) {
+      /* storage unavailable */
+    }
+    if (local && local.people && (!FILE || (local.updatedAt || 0) > (FILE.savedAt || 0))) return local;
+    if (FILE) return JSON.parse(JSON.stringify(FILE));
+    return example();
+  }
+
+  let state = load();
+  const ui = { openHelp: {}, page: "you", plan: 1, metric: "nw", hidden: {}, chainPlan: 1, tablePlan: 1, confirm: null, panel: null, message: "" };
+  let results = null;
+
+  function save() {
+    results = null;
+    try {
+      localStorage.setItem(storeKey(), JSON.stringify(state));
+    } catch (e) {
+      /* fine — figures just won't be remembered in this browser */
+    }
+  }
+  const unsaved = () => (state.updatedAt || 0) > (state.savedAt || 0);
+
+  const A = (k) => (state.assumptions[k] ?? D[k]);
+  const horizon = () => Math.max(5, Math.min(30, Number(A("horizon")) || 20));
+  const plans = () => state.scenarios.filter((s) => !s.baseline);
+
+  function compute() {
+    if (!results) results = E.runAll(state);
+    return results;
+  }
+
+  // ---------------------------------------------------------------- formatting
+
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const money = (n) => (n === null || n === undefined || isNaN(n) ? "—" : (n < 0 ? "−$" : "$") + Math.round(Math.abs(n)).toLocaleString("en-AU"));
+  const signed = (n) => (n > 0 ? "+" : "") + money(n);
+  const compact = (n) => {
+    const a = Math.abs(n);
+    const s = n < 0 ? "−$" : "$";
+    if (a >= 1e6) return s + (a / 1e6).toFixed(a >= 1e7 ? 0 : 1) + "m";
+    if (a >= 1e3) return s + Math.round(a / 1e3) + "k";
+    return s + Math.round(a);
+  };
+  const pctText = (n, d = 1) => (Math.round(n * 10 ** d) / 10 ** d).toString() + "%";
+  const yearLabel = (y) => `Year ${y}`;
+  const weekly = (n) => money(n / 52) + " a week";
+
+  function getPath(path) {
+    return path.split(".").reduce((o, k) => (o === null || o === undefined ? undefined : o[k]), state);
+  }
+  function setPath(path, value) {
+    const keys = path.split(".");
+    let o = state;
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (o[keys[i]] === null || o[keys[i]] === undefined) o[keys[i]] = /^\d+$/.test(keys[i + 1]) ? [] : {};
+      o = o[keys[i]];
+    }
+    o[keys[keys.length - 1]] = value;
+  }
+  const valueOf = (path) => {
+    const v = getPath(path);
+    if (v === undefined && path.startsWith("assumptions.")) return D[path.slice(12)];
+    return v;
+  };
+
+  // ---------------------------------------------------------------- fields
+
+  const fid = (path) => "f-" + path.replace(/\./g, "-");
+  function shown(kind, v) {
+    if (v === null || v === undefined || v === "") return "";
+    if (kind === "money") return money(v);
+    return String(v);
+  }
+  function helpButton(key, id) {
+    if (!key || !HELP[key]) return "";
+    return `<button type="button" class="info" data-help="${esc(id)}" aria-expanded="${!!ui.openHelp[id]}" aria-label="What's ${esc(HELP[key][0])}?" title="What's this?">?</button>`;
+  }
+  function helpPop(key, id) {
+    if (!key || !HELP[key] || !ui.openHelp[id]) return "";
+    return `<div class="help-pop"><b>${esc(HELP[key][0])}.</b> ${esc(HELP[key][1])} <button type="button" class="btn quiet small" data-go="help">More in Help</button></div>`;
+  }
+  const labelRow = (id, label, help) => `<div class="label-row"><label for="${id}">${esc(label)}</label>${helpButton(help, id)}</div>`;
+
+  function field(kind, path, label, opts = {}) {
+    const v = valueOf(path);
+    const id = fid(path);
+    return `<div class="field"${opts.wide ? ' style="grid-column: 1 / -1"' : ""}>
+      ${labelRow(id, label, opts.help)}
+      <input type="text" id="${id}" data-path="${path}" data-kind="${kind}" inputmode="${kind === "text" ? "text" : "decimal"}" autocomplete="off"
+        value="${esc(shown(kind, v))}" placeholder="${esc(opts.placeholder || "")}">
+      ${opts.hint ? `<span class="hint">${opts.hint}</span>` : ""}${helpPop(opts.help, id)}
+    </div>`;
+  }
+  function notesField(path, label, hint) {
+    const id = fid(path);
+    return `<div class="field"><label for="${id}">${esc(label)}</label>
+      <textarea id="${id}" data-path="${path}" data-kind="text" rows="4" style="font-family:var(--font-body);font-size:15px;min-height:96px">${esc(valueOf(path) || "")}</textarea>
+      ${hint ? `<span class="hint">${hint}</span>` : ""}</div>`;
+  }
+  const moneyField = (p, l, o) => field("money", p, l, o);
+  const numField = (p, l, o) => field("num", p, l, o);
+  const textField = (p, l, o) => field("text", p, l, o);
+  function selectField(path, label, options, opts = {}) {
+    const v = valueOf(path);
+    const id = fid(path);
+    return `<div class="field"${opts.wide ? ' style="grid-column: 1 / -1"' : ""}>
+      ${labelRow(id, label, opts.help)}
+      <select id="${id}" data-path="${path}" data-kind="${opts.kind || "select"}">
+        ${options.map(([val, text]) => `<option value="${esc(val)}"${String(v) === String(val) ? " selected" : ""}>${esc(text)}</option>`).join("")}
+      </select>
+      ${opts.hint ? `<span class="hint">${opts.hint}</span>` : ""}${helpPop(opts.help, id)}
+    </div>`;
+  }
+  function toggle(path, label, help) {
+    const id = fid(path);
+    return `<div><div class="label-row"><label class="toggle" for="${id}"><input type="checkbox" id="${id}" data-path="${path}" data-kind="bool"${valueOf(path) ? " checked" : ""}> ${esc(label)}</label>${helpButton(help, id)}</div>${helpPop(help, id)}</div>`;
+  }
+  function chips(path, options, kind = "select") {
+    const v = valueOf(path);
+    return `<div class="chips" role="group">${options
+      .map(([val, text]) => `<button type="button" class="chip" data-chip="${path}" data-kind="${kind}" data-value="${esc(val)}" aria-pressed="${String(v) === String(val)}">${esc(text)}</button>`)
+      .join("")}</div>`;
+  }
+  const yearsLeftText = (months) => {
+    const y = Math.floor(months / 12);
+    const m = months % 12;
+    return `${y} year${y === 1 ? "" : "s"}${m ? ` ${m} month${m === 1 ? "" : "s"}` : ""}`;
+  };
+
+  function confirmBox(key, question, action) {
+    if (ui.confirm !== key) return "";
+    return `<div class="confirm" role="alert"><span>${esc(question)}</span>
+      <button type="button" class="btn danger" data-act="${action}" data-key="${esc(key)}">${BIN} Yes, remove</button>
+      <button type="button" class="btn secondary" data-act="cancel-confirm">Keep it</button></div>`;
+  }
+  const binButton = (key, label) => `<button type="button" class="btn icon secondary" data-act="ask" data-key="${esc(key)}" aria-label="${esc(label)}" title="${esc(label)}">${BIN}</button>`;
+
+  // Rent hint: a typical rent for the price, or — once rent is entered — the yield (cap rate for commercial).
+  function rentHint(price, rentWeekly, costPct, kind) {
+    const com = kind === "COM";
+    if (!(price > 0)) return "";
+    if (!(rentWeekly > 0)) return `About ${money(Math.round((price * (com ? 0.065 : 0.04)) / 52))} at a ${com ? "6.5% cap rate" : "4% yield"}.`;
+    const gross = (rentWeekly * 52) / price;
+    const cost = (costPct != null && costPct !== "" ? +costPct : com ? A("comCostPct") : A("resCostPct")) / 100;
+    const net = gross * (1 - cost);
+    return com ? `Cap rate about ${(net * 100).toFixed(1)}% (${(gross * 100).toFixed(1)}% before the owner's costs).` : `Gross yield about ${(gross * 100).toFixed(1)}%, about ${(net * 100).toFixed(1)}% after costs.`;
+  }
+
+  // ---------------------------------------------------------------- pages
+
+  function navButtons(prev, next) {
+    const label = (id) => PAGES.find((p) => p[0] === id)[1];
+    return `<div class="nav">${prev ? `<button type="button" class="btn secondary" data-go="${prev}">Back: ${label(prev)}</button>` : "<span></span>"}
+      ${next ? `<button type="button" class="btn" data-go="${next}">Next: ${label(next)}</button>` : ""}</div>`;
+  }
+
+  function exampleBanner() {
+    if (!state.example) return "";
+    return `<div class="banner example"><span><b>These are example figures</b> for a made-up household. Change them to yours, or start with empty boxes.</span>
+      <button type="button" class="btn secondary" data-act="ask" data-key="fresh">Start with empty boxes</button></div>${confirmBox("fresh", "Clear every figure and plan?", "fresh")}`;
+  }
+
+  function pageYou() {
+    const two = state.people.length > 1;
+    return `${exampleBanner()}
+    <div class="intro"><h2>You</h2><p class="muted">Type or use your phone's microphone in any box — "145 thousand", "$145k" and "145,000" all work.</p></div>
+    <div class="card">
+      <div class="card-head"><h3>Who's buying</h3>${two ? "" : `<button type="button" class="btn quiet" data-act="add-person">+ Add a second person</button>`}</div>
+      ${state.people
+        .map(
+          (p, i) => `<div class="grid">
+            ${textField(`people.${i}.name`, "Name", { placeholder: i ? "Partner" : "You" })}
+            ${moneyField(`people.${i}.salary`, "Income a year, before tax")}
+            ${i ? `<div class="field" style="align-self:end">${binButton("person-" + i, "Remove this person")}</div>` : ""}
+          </div>${confirmBox("person-" + i, `Remove ${p.name || "this person"}?`, "remove-person")}`
+        )
+        .join("")}
+    </div>
+    <div class="card">
+      <h3>Each month</h3>
+      <div class="grid">
+        ${moneyField("livingMonthly", "Living costs a month", { hint: "Everything except loan repayments — the tool works those out.", help: "living" })}
+        ${moneyField("cardLimits", "Credit card limits, all cards", { hint: "Lenders count about 3.8% of the limit a month, even if it's paid off.", help: "serviceability" })}
+        ${moneyField("otherRepayMonthly", "Car or personal loan repayments a month")}
+        ${numField("otherRepayYears", "Years left on those loans")}
+      </div>
+    </div>
+    <div class="card">
+      <h3>What you're after</h3>
+      <div class="field"><span class="label">Main goal</span>${chips("goal", [["GROWTH", "Build wealth"], ["CASHFLOW", "More cash flow"], ["HOMEFIRST", "Pay the home off sooner"], ["RETIRE", "Retire earlier"]])}</div>
+      <div class="field"><span class="label">How much risk feels right</span>${chips("risk", [["CAREFUL", "Careful"], ["MIDDLE", "In the middle"], ["ADVENTUROUS", "Adventurous"]])}</div>
+      <div class="field"><span class="label">Look ahead</span>${chips("assumptions.horizon", [10, 15, 20, 25, 30].map((y) => [y, `${y} years`]), "num")}</div>
+      ${notesField("notes", "What we're trying to work out", "In your own words — it goes in the summary for your accountant or broker.")}
+    </div>
+    ${navButtons(null, "own")}`;
+  }
+
+  function loanFields(base, opts = {}) {
+    const type = valueOf(base + ".type");
+    return `<div class="grid">
+      ${moneyField(base + ".balance", "Loan owing")}
+      ${numField(base + ".rate", "Interest rate (% a year)")}
+      ${selectField(base + ".type", "Repayments", [["PI", "Principal and interest"], ["IO", "Interest only"]], { help: type === "IO" ? "io" : "pi" })}
+      ${type === "IO" ? numField(base + ".ioYears", "Interest-only years left") : ""}
+      ${numField(base + ".yearsLeft", "Years left on the loan")}
+      ${moneyField(base + ".offset", opts.offsetLabel || "Money in its offset", { help: "offset" })}
+    </div>`;
+  }
+
+  function payoffNote(loan) {
+    if (!loan || !(loan.balance > 0) || loan.type === "IO") return "";
+    const r = (loan.rate || 0) / 100;
+    const n = (loan.yearsLeft || 25) * 12;
+    const pay = E.pmt(r, n, loan.balance);
+    const off = loan.offset || 0;
+    if (!(off > 0)) return `<p class="note-box">Repayments about <b>${money(pay)}</b> a month, paid off in ${yearsLeftText(n)} at today's rate.</p>`;
+    const m = E.monthsToClear(loan.balance, off, r, pay);
+    const interestWith = pay * m - (loan.balance - off);
+    const interestWithout = pay * n - loan.balance;
+    return `<p class="note-box">Repayments about <b>${money(pay)}</b> a month. With ${money(off)} in the offset it's paid off in <b>${yearsLeftText(m)}</b> instead of ${yearsLeftText(n)},
+      saving about <b>${money(interestWithout - interestWith)}</b> of interest at today's rate.</p>`;
+  }
+
+  function pageOwn() {
+    const two = state.people.length > 1;
+    const home = state.home || {};
+    return `${exampleBanner()}
+    <div class="intro"><h2>What you own</h2><p class="muted">Today's values and loans. Leave out anything you don't have.</p></div>
+    <div class="card">
+      <div class="card-head"><h3>Home</h3>${toggle("home.has", "We own the home we live in")}</div>
+      ${home.has ? `<div class="grid">${moneyField("home.value", "What it's worth")}</div>${loanFields("home.loan")}${payoffNote(home.loan)}` : ""}
+    </div>
+    ${state.rentals
+      .map((r, i) => {
+        const b = `rentals.${i}`;
+        return `<div class="card">
+          <div class="card-head"><h3>${esc(r.name || "Rental property")}</h3>${binButton("rental-" + i, "Remove this property")}</div>
+          ${confirmBox("rental-" + i, `Remove ${r.name || "this property"}? Plans that sell it will skip that step.`, "remove-rental")}
+          <div class="grid">
+            ${textField(b + ".name", "Name")}
+            ${selectField(b + ".kind", "Kind", [["RES", "Residential"], ["COM", "Commercial"]])}
+            ${moneyField(b + ".value", "What it's worth")}
+            ${moneyField(b + ".costBase", "What you paid, with stamp duty and costs", { hint: "For capital gains tax if it's sold.", help: "costBase" })}
+            ${moneyField(b + ".rentWeekly", "Rent a week", { hint: rentHint(r.value, r.rentWeekly, r.costPct, r.kind), help: r.kind === "COM" ? "caprate" : "yield" })}
+            ${numField(b + ".costPct", "Running costs (% of rent)", { hint: r.kind === "COM" ? "Net lease: owner pays about 12%." : "Rates, insurance, repairs, management: about 25%.", help: r.kind === "COM" ? "netlease" : "" })}
+            ${selectField(b + ".writeOff", "Tax write-off (depreciation)", [["NONE", "None"], ["BUILDING", "Building only (built after 1987)"], ["NEW", "Building + fittings (new or near-new)"]], { help: "depreciation" })}
+            ${moneyField(b + ".writeOffAmount", "Or your depreciation report's figure a year", { placeholder: "Optional" })}
+            ${two ? numField(b + ".owners.0", `${state.people[0].name || "Person 1"}'s share (%)`, { hint: `${state.people[1].name || "Person 2"} owns the rest.` }) : ""}
+          </div>
+          <h4>Its loan</h4>
+          ${loanFields(b + ".loan")}
+        </div>`;
+      })
+      .join("")}
+    <div class="row"><button type="button" class="btn secondary" data-act="add-rental" data-kind="RES">+ Add a rental property</button>
+      <button type="button" class="btn secondary" data-act="add-rental" data-kind="COM">+ Add a commercial property</button></div>
+    <div class="card">
+      <h3>Savings, shares and super</h3>
+      <div class="grid">
+        ${moneyField("cash", "Savings not in an offset")}
+        ${moneyField("shares.value", "Shares and ETFs, worth")}
+        ${moneyField("shares.costBase", "What you paid for them")}
+        ${state.people.map((p, i) => moneyField(`people.${i}.super`, `${p.name || (i ? "Partner" : "Your")}'s super`)).join("")}
+      </div>
+      <div class="row">${toggle("smsf.has", "Our super is in an SMSF", "smsf")}${toggle("smsf.open", "Open to investing through super")}</div>
+    </div>
+    ${navButtons("you", "plans")}`;
+  }
+
+  const SPARE = [
+    ["HOME_OFFSET", "Into the home loan offset (then the next loan that isn't tax-deductible)"],
+    ["OWN_OFFSET", "A property that's in the black puts its money in its own loan's offset; the rest goes to the home loan offset"],
+    ["HIGHEST_RATE", "Into the offset of the dearest loan"],
+    ["CASH", "Kept in savings"],
+  ];
+
+  function propertyChoices(plan, beforeYear) {
+    const list = state.rentals.map((r) => [r.id, r.name || "Rental property"]);
+    for (const s of plan.steps) if ((s.type === "BUY" || s.type === "SMSF") && +s.year < +beforeYear) list.push([s.id, s.name || (s.type === "SMSF" ? "SMSF property" : s.kind === "COM" ? "Commercial purchase" : "Residential purchase")]);
+    return list;
+  }
+
+  function stepCard(plan, pi, s) {
+    const si = plan.steps.indexOf(s);
+    const b = `scenarios.${pi}.steps.${si}`;
+    const H = horizon();
+    const yearField = numField(b + ".year", `Year (1–${H})`);
+    const two = state.people.length > 1;
+    let title = "";
+    let body = "";
+    if (s.type === "BUY") {
+      const com = s.kind === "COM";
+      title = `Buy ${com ? "commercial" : "residential"}${s.name ? ` — ${esc(s.name)}` : ""}`;
+      body = `<div class="grid">
+        ${textField(b + ".name", "Name")}
+        ${yearField}
+        ${moneyField(b + ".price", "Price")}
+        ${moneyField(b + ".rentWeekly", "Rent a week", { hint: rentHint(s.price, s.rentWeekly, null, s.kind), help: com ? "caprate" : "yield" })}
+        ${selectField(b + ".funding", "Deposit and costs", [["EQUITY", "Borrow from equity — keep your cash"], ["CASH", "Use savings and offset cash first"], ["MIX", "Use a set amount of cash"]], { help: "equity" })}
+        ${s.funding === "MIX" ? moneyField(b + ".cashAmount", "Cash to put in") : ""}
+        ${numField(b + ".lvr", "Bank lends (% of price)", { placeholder: String(com ? A("comLvr") : A("resLvr")), help: "lvr" })}
+        ${selectField(b + ".loanType", "Repayments", [["PI", "Principal and interest"], ["IO", "Interest only"]], { help: s.loanType === "IO" ? "io" : "pi" })}
+        ${s.loanType === "IO" ? numField(b + ".ioYears", "Interest-only years", { placeholder: "5" }) : ""}
+        ${selectField(b + ".writeOff", "Tax write-off (depreciation)", [["NONE", "None"], ["BUILDING", "Building only (built after 1987)"], ["NEW", "Building + fittings (new or near-new)"]], { help: "depreciation" })}
+        ${moneyField(b + ".writeOffAmount", "Or a depreciation estimate a year", { placeholder: "Optional" })}
+        ${two ? numField(b + ".owners.0", `${state.people[0].name || "Person 1"}'s share (%)`, { placeholder: "50" }) : ""}
+      </div>`;
+    } else if (s.type === "SMSF") {
+      title = `SMSF purchase${s.name ? ` — ${esc(s.name)}` : ""}`;
+      body = `<div class="grid">${textField(b + ".name", "Name")}${yearField}
+        ${selectField(b + ".kind", "Kind", [["COM", "Commercial"], ["RES", "Residential"]])}
+        ${moneyField(b + ".price", "Price")}${moneyField(b + ".rentWeekly", "Rent a week", { hint: rentHint(s.price, s.rentWeekly, null, s.kind), help: s.kind === "COM" ? "caprate" : "yield" })}
+        ${numField(b + ".lvr", "Bank lends (% of price)", { placeholder: String(A("smsfLvr")), help: "lrba" })}</div>
+        <p class="small muted">Deposit and costs come out of super; rent and repayments stay inside the fund. Super can't be touched until retirement age.</p>`;
+    } else if (s.type === "SELL") {
+      title = "Sell a property";
+      const choices = propertyChoices(plan, s.year);
+      body = `<div class="grid">${yearField}
+        ${selectField(b + ".target", "Which property", choices.length ? choices : [["", "Nothing to sell yet"]])}
+        ${selectField(b + ".then", "Then", [["PAY_DEBT", "Pay down the other loans (home loan first)"], ["OFFSET", "Put the money in the offset"]])}</div>
+        <p class="small muted">Selling costs, capital gains tax (with the 50% discount after a year) and clearing its loans are included.</p>`;
+    } else if (s.type === "SHARES") {
+      title = "Buy shares or ETFs";
+      body = `<div class="grid">${yearField}${moneyField(b + ".amount", "Amount")}
+        ${selectField(b + ".funding", "Paid for by", [["CASH", "Savings and offset cash"], ["EQUITY", "Borrowing against property equity"], ["RECYCLE", "Debt recycling — pay the home loan down, borrow it back to invest"]], { help: "debtRecycling" })}
+        ${s.funding !== "CASH" ? selectField(b + ".loanType", "Loan repayments", [["IO", "Interest only"], ["PI", "Principal and interest"]]) : ""}</div>
+        ${s.funding === "RECYCLE" ? `<p class="small muted">Your offset cash pays down the home loan, and the same amount is borrowed back as a separate split to buy the shares — so that interest becomes tax-deductible. Talk to your accountant before doing it.</p>` : ""}`;
+    } else if (s.type === "OFFSET") {
+      title = "Put cash in an offset";
+      body = `<div class="grid">${yearField}${moneyField(b + ".amount", "Amount from savings")}
+        ${selectField(b + ".to", "Which loan's offset", [["home", "Home loan"]].concat(propertyChoices(plan, 99)))}</div>`;
+    } else if (s.type === "PI") {
+      title = "Switch to principal and interest";
+      body = `<div class="grid">${yearField}${selectField(b + ".target", "Which property's loans", propertyChoices(plan, 99).concat([["home", "Home"]]))}</div>`;
+    }
+    const key = `step-${pi}-${s.id}`;
+    return `<div class="step"><div class="step-head"><h4><span class="yr">${yearLabel(s.year)}</span>${title}</h4>${binButton(key, "Remove this step")}</div>
+      ${confirmBox(key, "Remove this step?", "remove-step")}${body}</div>`;
+  }
+
+  function pagePlans() {
+    const list = state.scenarios;
+    const idx = Math.min(ui.plan, list.length - 1);
+    const plan = list[idx];
+    const tabs = list
+      .map((s, i) => `<button type="button" class="plan-tab" data-plan="${i}" aria-selected="${i === idx}"><span class="dot" style="background:${SERIES[i]}"></span>${esc(s.baseline ? "Yardstick" : s.name || "Plan " + i)}</button>`)
+      .join("");
+    let body;
+    if (plan.baseline) {
+      body = `<div class="card"><h3>The yardstick: cash stays in the offset</h3>
+        <p>Nothing new is bought. Your savings and every spare dollar go into the home loan offset (then the next loan that isn't tax-deductible), which cuts interest and pays the loans off sooner. Each plan is compared with this.</p></div>`;
+    } else {
+      const sorted = plan.steps.slice().sort((a, b) => a.year - b.year);
+      const smsfOk = state.smsf && (state.smsf.has || state.smsf.open);
+      body = `<div class="card">
+        <div class="card-head"><h3>${esc(plan.name || "Plan")}</h3>
+          <div class="row">${plans().length < 3 ? `<button type="button" class="btn secondary" data-act="copy-plan">Copy this plan</button>` : ""}${binButton("plan-" + plan.id, "Delete this plan")}</div></div>
+        ${confirmBox("plan-" + plan.id, `Delete "${plan.name || "this plan"}"?`, "remove-plan")}
+        <div class="grid wide">${textField(`scenarios.${idx}.name`, "Plan name")}
+          ${selectField(`scenarios.${idx}.spare`, "Where spare money goes", SPARE, { wide: true, hint: "When the plan needs money, it comes from savings first, then the offsets (home loan first).", help: "spare" })}</div>
+        ${notesField(`scenarios.${idx}.notes`, "Notes and questions about this plan", "For example: “Would buying in the trust be better?” or “Can we borrow this much?”")}
+      </div>
+      <div class="steps">${sorted.length ? sorted.map((s) => stepCard(plan, idx, s)).join("") : `<p class="note-box">No steps yet — add one below.</p>`}</div>
+      <div class="card no-print"><h4>Add a step</h4><div class="add-steps">
+        <button type="button" class="btn secondary" data-add="BUY" data-kind="RES">Buy residential</button>
+        <button type="button" class="btn secondary" data-add="BUY" data-kind="COM">Buy commercial</button>
+        <button type="button" class="btn secondary" data-add="SELL">Sell a property</button>
+        <button type="button" class="btn secondary" data-add="SHARES">Buy shares</button>
+        ${smsfOk ? `<button type="button" class="btn secondary" data-add="SMSF">SMSF purchase</button>` : ""}
+        <button type="button" class="btn secondary" data-add="OFFSET">Put cash in an offset</button>
+        <button type="button" class="btn secondary" data-add="PI">Switch a loan to P&amp;I</button>
+      </div></div>`;
+    }
+    return `${exampleBanner()}
+    <div class="intro"><h2>Plans</h2><p class="muted">The yardstick is leaving your cash in the offset. Set up to three plans to compare with it — buy, sell, shares or super, in the years you'd do them.</p></div>
+    <div class="row">${tabs}${plans().length < 3 ? `<button type="button" class="btn quiet" data-act="add-plan">+ Add a plan</button>` : ""}</div>
+    ${body}
+    ${navButtons("own", "check")}`;
+  }
+
+  // ---------------------------------------------------------------- results
+
+  const METRICS = [
+    ["nw", "Net worth", (y) => y.nw, "Everything you own (super included) less what you owe."],
+    ["nwExSuper", "Net worth outside super", (y) => y.nwExSuper, "What you could get at before retirement."],
+    ["debt", "Debt", (y) => y.debt, "Loans owing (not counting SMSF loans)."],
+    ["equity", "Property equity", (y) => y.equity, "Property value less loans, with offset money counted as paid off."],
+    ["investCashAfter", "Investments' cash after tax", (y) => y.investCashAfter, "Rent and dividends, less costs, loan repayments and tax effect. Below zero is what you top up each year."],
+    ["householdSpare", "Household spare cash", (y) => y.householdSpare, "Pay after tax, less living costs and every repayment, plus or minus the investments."],
+    ["homeRate", "Interest rate", (y) => y.homeRate, "The home loan rate (other loans move the same way)."],
+  ];
+
+  function chart(id, series, H, fmt) {
+    const W = 760;
+    const Ht = 300;
+    const pl = 64;
+    const pr = 18;
+    const pt = 14;
+    const pb = 34;
+    const all = series.flatMap((s) => s.values);
+    let lo = Math.min(0, ...all);
+    let hi = Math.max(...all, 1);
+    if (fmt === "rate") {
+      lo = Math.max(0, Math.floor(Math.min(...all) - 0.5));
+      hi = Math.ceil(Math.max(...all) + 0.5);
+    }
+    const span = hi - lo || 1;
+    const step = niceStep(span / 5);
+    lo = Math.floor(lo / step) * step;
+    hi = Math.ceil(hi / step) * step;
+    const x = (i) => pl + (i * (W - pl - pr)) / Math.max(1, H - 1);
+    const y = (v) => pt + ((hi - v) * (Ht - pt - pb)) / (hi - lo || 1);
+    const label = (v) => (fmt === "rate" ? v.toFixed(1) + "%" : compact(v));
+    let grid = "";
+    for (let v = lo; v <= hi + step / 2; v += step) {
+      grid += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)" stroke-width="${Math.abs(v) < step / 1e6 ? 1.5 : 1}"/>`;
+      grid += `<text x="${pl - 8}" y="${y(v) + 4}" text-anchor="end">${label(v)}</text>`;
+    }
+    const every = H > 20 ? 5 : H > 10 ? 2 : 1;
+    let ticks = "";
+    for (let i = 0; i < H; i++) if ((i + 1) % every === 0 || i === 0) ticks += `<text x="${x(i)}" y="${Ht - 10}" text-anchor="middle">${i + 1}</text>`;
+    const lines = series
+      .map((s) => {
+        const pts = s.values.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+        const last = s.values.length - 1;
+        return `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="${s.base ? 2 : 2.5}" stroke-dasharray="${s.base ? "6 5" : ""}" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="${x(last)}" cy="${y(s.values[last])}" r="4" fill="${s.color}"/>`;
+      })
+      .join("");
+    chartData[id] = { series, H, fmt, x, pl, pr, W, Ht };
+    return `<div class="chart-wrap" data-chart="${id}">
+      <svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="Chart over ${H} years">
+        ${grid}${ticks}<text x="${W - pr}" y="${Ht - 10}" text-anchor="end" style="display:none">year</text>
+        ${lines}<line class="cursor" x1="0" x2="0" y1="${pt}" y2="${Ht - pb}" stroke="var(--muted)" stroke-dasharray="3 3" visibility="hidden"/>
+        <rect x="${pl}" y="${pt}" width="${W - pl - pr}" height="${Ht - pt - pb}" fill="transparent" class="hit"/>
+      </svg><div class="tip" hidden></div></div>
+      <p class="small muted">Years along the bottom. Dashed line: the yardstick.</p>`;
+  }
+  const chartData = {};
+  function niceStep(raw) {
+    const p = Math.pow(10, Math.floor(Math.log10(Math.max(raw, 1e-9))));
+    const n = raw / p;
+    return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p;
+  }
+
+  function verdictCard(r, i, base) {
+    const s = r.summary;
+    const H = r.years.length;
+    const v = r.verdict;
+    const extraIn = s.moneyIn - base.summary.moneyIn;
+    const rows = [
+      [`Net worth in ${H} years`, money(s.nwEnd)],
+      ["Cash put in at purchase", money(s.upfrontCash)],
+      [`Yearly top-ups over ${H} years`, money(s.topUps)],
+      ["Worst year", s.worstYear.amount < 0 ? `${yearLabel(s.worstYear.year)}: ${money(-s.worstYear.amount)}` : "Never costs you"],
+      ["Investments pay for themselves", s.positiveFrom ? `From year ${s.positiveFrom}` : s.worstYear.amount < 0 ? "Not within the plan" : "From the start"],
+      ["Home loan paid off", s.homeLoanPaidOff ? yearLabel(s.homeLoanPaidOff) : state.home && state.home.has ? `Not within ${H} years` : "—"],
+      ["Borrowing peaks at", pctText(s.peakLvr * 100, 0) + " of property value"],
+      ["Interest paid, all loans", money(s.totalInterest)],
+    ];
+    return `<div class="card verdict" style="--c:${SERIES[i]}">
+      <div class="card-head"><h3 style="display:flex;gap:8px;align-items:center"><span class="dot" style="background:${SERIES[i]}"></span>${esc(r.baseline ? "Yardstick: cash in the offset" : r.name)}${r.baseline ? helpButton("yardstick", "h-yard") : ""}</h3></div>${r.baseline ? helpPop("yardstick", "h-yard") : ""}
+      <span class="pill ${v.level}">${esc(v.label)}</span>
+      ${
+        r.baseline
+          ? `<div><div class="big">${money(s.nwEnd)}</div><p class="small muted">Net worth in ${H} years, if nothing new is bought.</p></div>`
+          : `<div><div class="big">${signed(v.gain)}</div><p class="small muted">Net worth in ${H} years compared with the yardstick${
+              extraIn > 0 ? `, for ${money(extraIn)} more of your own money over the years (${money(extraIn / H)} a year)` : ""
+            }.</p></div>`
+      }
+      <dl class="kv">${rows.map(([k, val]) => `<dt>${esc(k)}</dt><dd>${esc(val)}</dd>`).join("")}</dl>
+      ${v.notes.length ? `<ul class="notes">${v.notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
+    </div>`;
+  }
+
+  function chainView(c) {
+    const sources = [];
+    if (c.kind === "SHARES") {
+      if (c.recycled) sources.push([`Home loan paid down, then borrowed back (deductible)`, c.recycled]);
+    } else if (c.mainLoan) sources.push([c.smsf ? "Loan inside the SMSF" : "Loan on the new property", c.mainLoan]);
+    for (const e of c.equity) sources.push([`Borrowed against ${e.from.toLowerCase()}'s equity`, e.amount]);
+    if (c.cash) sources.push(["Your savings and offset cash", c.cash]);
+    if (c.fromSuper) sources.push(["Super", c.fromSuper]);
+    if (c.short) sources.push(["Shortfall — not covered", c.short]);
+    const uses = c.kind === "SHARES" ? [["Shares and ETFs", c.price]] : [["Price", c.price], ["Stamp duty", c.duty], ["Legal and other buying costs", c.other]];
+    const borrow = c.borrow
+      ? `<span class="pill ${c.borrow.result === "LIKELY" ? "YES" : "MAYBE"}">${c.borrow.result === "LIKELY" ? "Loan looks likely" : c.borrow.result === "TIGHT" ? "Loan looks tight" : "Loan looks unlikely"}</span>
+         <span class="small muted">${c.borrow.surplus >= 0 ? money(c.borrow.surplus) + " a year spare" : money(-c.borrow.surplus) + " a year short"} at a lender's test rate (cards and other loans included).</span>`
+      : "";
+    return `<div class="card" style="gap:10px">
+      <h4>${yearLabel(c.year)} — ${esc(c.name)}</h4>
+      <div class="chain">
+        <div class="col">${sources.map(([k, v]) => `<div class="box"><span>${esc(k)}</span><b>${money(v)}</b></div>`).join("")}</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="col">${uses.map(([k, v]) => `<div class="box"><span>${esc(k)}</span><b>${money(v)}</b></div>`).join("")}
+          <div class="box total"><span>Total</span><b>${money(c.total)}</b></div></div>
+      </div>
+      <div class="row">${c.lvrAfter ? `<span class="small">Borrowing afterwards: <b>${pctText(c.lvrAfter * 100, 0)}</b> of all property value.</span>` : ""}${borrow}</div>
+    </div>`;
+  }
+
+  function wentTo(y) {
+    const parts = [];
+    const t = y.sentTo;
+    if (t.homeOffset) parts.push(`home offset ${compact(t.homeOffset)}`);
+    if (t.ownOffset) parts.push(`own offsets ${compact(t.ownOffset)}`);
+    if (t.otherOffset) parts.push(`other offsets ${compact(t.otherOffset)}`);
+    if (t.cash) parts.push(`savings ${compact(t.cash)}`);
+    if (t.payDown) parts.push(`paid off ${compact(t.payDown)}`);
+    return parts.join(", ") || "—";
+  }
+  function takenFrom(y) {
+    const parts = [];
+    const d = y.drawnFrom;
+    if (d.cash) parts.push(`savings ${compact(d.cash)}`);
+    if (d.offsets) parts.push(`offsets ${compact(d.offsets)}`);
+    if (d.overdrawn) parts.push(`short ${compact(d.overdrawn)}`);
+    return parts.join(", ") || "—";
+  }
+
+  function yearTable(r) {
+    const cell = (n) => `<td class="num${n < 0 ? " neg" : ""}">${money(n)}</td>`;
+    return `<div class="table-wrap"><table>
+      <thead><tr><th>Year</th><th>Rate</th><th>Rent</th><th>Costs + land tax</th><th>Interest</th><th>Write-offs</th><th>Tax (− = back)</th><th>Investments after tax</th><th>Spare money went to</th><th>Money taken from</th><th>Debt</th><th>Net worth</th></tr></thead>
+      <tbody>${r.years
+        .map(
+          (y) => `<tr class="${y.events.length ? "event" : ""}"><td>${y.year}${y.events.length ? `<div class="small muted">${esc(y.events.join("; "))}</div>` : ""}</td>
+          <td class="num">${y.homeRate.toFixed(2)}%</td>${cell(y.rent)}${cell(y.costs)}${cell(y.interest)}${cell(y.writeOffs)}${cell(y.taxEffect)}${cell(y.investCashAfter)}
+          <td>${esc(wentTo(y))}</td><td>${esc(takenFrom(y))}</td>${cell(y.debt)}${cell(y.nw)}</tr>`
+        )
+        .join("")}</tbody></table></div>`;
+  }
+
+  const GOALS = { GROWTH: "build wealth", CASHFLOW: "get more cash flow", HOMEFIRST: "pay the home off sooner", RETIRE: "retire earlier" };
+  const RISKS = { CAREFUL: "careful", MIDDLE: "in the middle", ADVENTUROUS: "adventurous" };
+  const FUNDING = { EQUITY: "borrowing the deposit and costs against our equity", CASH: "using our savings and offset cash first", MIX: "putting in some cash and borrowing the rest" };
+
+  function stepWords(s) {
+    if (s.type === "BUY") {
+      const kind = s.kind === "COM" ? "a commercial property" : "a residential property";
+      const rent = s.rentWeekly ? ` (rent about ${money(s.rentWeekly)} a week)` : "";
+      const loan = s.loanType === "IO" ? `, interest only for ${s.ioYears || 5} years` : ", principal and interest";
+      return `buy ${kind} for about ${money(s.price)}${rent}, ${FUNDING[s.funding] || FUNDING.EQUITY}${loan}`;
+    }
+    if (s.type === "SMSF") return `buy ${s.kind === "COM" ? "a commercial" : "a residential"} property in our SMSF for about ${money(s.price)}, with a loan inside the fund`;
+    if (s.type === "SELL") {
+      const p = state.rentals.find((r) => r.id === s.target);
+      const name = p ? p.name : "the property bought earlier in this plan";
+      return `sell ${name}${s.then === "OFFSET" ? " and put the money in the offset" : " and use the money to pay down our other loans"}`;
+    }
+    if (s.type === "SHARES") return `invest ${money(s.amount)} in shares or ETFs, ${s.funding === "RECYCLE" ? "using debt recycling from the home loan" : s.funding === "EQUITY" ? "borrowing against property equity" : "from savings and offset cash"}`;
+    if (s.type === "OFFSET") return `put ${money(s.amount)} of savings into an offset account`;
+    if (s.type === "PI") return "switch the loans to principal and interest";
+    return "";
+  }
+
+  function plainWords(R) {
+    const H = R.base.years.length;
+    const two = state.people.length > 1;
+    const lines = [];
+    const names = state.people.map((p, i) => p.name || `Person ${i + 1}`);
+    lines.push("ABOUT US");
+    lines.push(`${two ? `${names.join(" and ")} earn ${state.people.map((p) => money(p.salary)).join(" and ")} a year` : `${names[0]} earns ${money(state.people[0].salary)} a year`} before tax; living costs are about ${money(state.livingMonthly)} a month.`);
+    if (state.home && state.home.has) lines.push(`Our home is worth about ${money(state.home.value)}, with ${money(state.home.loan.balance)} owing at ${state.home.loan.rate}% and ${money(state.home.loan.offset)} in the offset.`);
+    for (const r of state.rentals) lines.push(`${r.name}: ${r.kind === "COM" ? "commercial" : "residential"}, worth about ${money(r.value)}, ${money(r.loan.balance)} owing at ${r.loan.rate}% (${r.loan.type === "IO" ? "interest only" : "principal and interest"}), rent ${money(r.rentWeekly)} a week.`);
+    const extras = [];
+    if (state.cash) extras.push(`${money(state.cash)} in savings`);
+    if (state.shares && state.shares.value) extras.push(`${money(state.shares.value)} in shares`);
+    const superTotal = state.people.reduce((t, p) => t + (+p.super || 0), 0);
+    if (superTotal) extras.push(`${money(superTotal)} in super${state.smsf && state.smsf.has ? " (an SMSF)" : ""}`);
+    if (state.cardLimits || state.otherRepayMonthly) extras.push(`credit card limits of ${money(state.cardLimits)} and ${money(state.otherRepayMonthly)} a month of other loan repayments`);
+    if (extras.length) lines.push(`We also have ${extras.join(", ")}.`);
+    lines.push(`We want to ${GOALS[state.goal] || GOALS.GROWTH}, and our comfort with risk is ${RISKS[state.risk] || "in the middle"}.`);
+    if (state.notes) lines.push(`What we're trying to work out: ${state.notes}`);
+    for (const r of R.runs.filter((x) => !x.baseline)) {
+      const sc = state.scenarios.find((x) => x.id === r.id);
+      const sm = r.summary;
+      lines.push("");
+      lines.push(`IDEA: ${r.name.toUpperCase()}`);
+      for (const st of sc.steps.slice().sort((a, b) => a.year - b.year)) lines.push(`• Year ${st.year}: ${stepWords(st)}.`);
+      lines.push(`• Spare money goes ${SPARE.find((x) => x[0] === (sc.spare || "HOME_OFFSET"))[1].charAt(0).toLowerCase() + SPARE.find((x) => x[0] === (sc.spare || "HOME_OFFSET"))[1].slice(1)}.`);
+      lines.push(`Rough result over ${H} years: net worth about ${signed(r.verdict.gain)} compared with leaving the cash in the offset (${r.verdict.label.toLowerCase()}).`);
+      lines.push(`Our own money in: about ${money(sm.upfrontCash)} at purchase and ${money(sm.topUps)} of top-ups over the years${sm.worstYear.amount < 0 ? `; the hardest year is year ${sm.worstYear.year}, at about ${money(-sm.worstYear.amount)} (${weekly(-sm.worstYear.amount)}) after tax` : ""}.`);
+      for (const c of r.chains) if (c.borrow) lines.push(`Borrowing check for ${c.name.toLowerCase()} in year ${c.year}: ${c.borrow.result === "LIKELY" ? "looks likely" : c.borrow.result === "TIGHT" ? "looks tight" : "looks unlikely"}.`);
+      if (sc.notes) lines.push(`Our questions: ${sc.notes}`);
+    }
+    lines.push("");
+    lines.push("These are broad estimates from Blink Check (general information, not advice) — the assumptions are in the file.");
+    return lines.join("\n");
+  }
+
+  function pageCheck() {
+    const R = compute();
+    const H = R.base.years.length;
+    const runs = R.runs;
+    const metric = METRICS.find((m) => m[0] === ui.metric) || METRICS[0];
+    const series = runs
+      .map((r, i) => ({ r, i }))
+      .filter(({ r }) => !ui.hidden[r.id])
+      .map(({ r, i }) => ({ name: r.baseline ? "Yardstick" : r.name, color: SERIES[i], base: r.baseline, values: r.years.map(metric[2]) }));
+    const ci = Math.min(ui.chainPlan, runs.length - 1);
+    const ti = Math.min(ui.tablePlan, runs.length - 1);
+    const planChips = (key, current) =>
+      `<div class="chips">${runs.map((r, i) => `<button type="button" class="chip" data-pick="${key}" data-value="${i}" aria-pressed="${i === current}"><span class="dot" style="background:${SERIES[i]};margin-right:6px"></span>${esc(r.baseline ? "Yardstick" : r.name)}</button>`).join("")}</div>`;
+    const ct = runs[ci];
+    const tt = runs[ti];
+    const spareText = SPARE.find((x) => x[0] === (tt.spare || "HOME_OFFSET"))[1];
+    return `${exampleBanner()}
+    <div class="intro"><h2>Blink check</h2><p class="muted">Each plan against leaving the cash in the offset, over ${H} years. Broad numbers — enough to tell whether an idea is worth researching properly.</p></div>
+    <div class="verdicts">${runs.map((r, i) => verdictCard(r, i, R.base)).join("")}</div>
+    <div class="card">
+      <div class="card-head"><h3>${esc(metric[1])}</h3></div>
+      <div class="chart-controls">
+        <div class="chips">${METRICS.map((m) => `<button type="button" class="chip" data-metric="${m[0]}" aria-pressed="${m[0] === metric[0]}">${esc(m[1])}</button>`).join("")}</div>
+        <div class="chips">${runs
+          .map((r, i) => `<label class="chip legend-chip" style="display:inline-flex;align-items:center"><input type="checkbox" data-show="${r.id}"${ui.hidden[r.id] ? "" : " checked"} style="accent-color:${SERIES[i]};width:18px;height:18px"> ${esc(r.baseline ? "Yardstick" : r.name)}</label>`)
+          .join("")}</div>
+        <p class="small muted">${esc(metric[3])}</p>
+      </div>
+      ${series.length ? chart("main", series, H, metric[0] === "homeRate" ? "rate" : "money") : `<p class="note-box">Tick a plan to show it.</p>`}
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Where the money comes from ${helpButton("moneyChain", "h-chain")}</h3></div>${helpPop("moneyChain", "h-chain")}
+      ${planChips("chainPlan", ci)}
+      ${ct.chains.length ? ct.chains.map(chainView).join("") : `<p class="note-box">${ct.baseline ? "The yardstick buys nothing." : "This plan doesn't buy anything."}</p>`}
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>In plain words — for your accountant or broker</h3><button type="button" class="btn secondary" data-act="copy-words">Copy the words</button></div>
+      <p class="small muted">What you're thinking about, written out. Copy it into an email, or ${STANDALONE ? "save a copy of this file and send that" : "copy your figures to share them"}.</p>
+      <div id="plain-words" class="note-box" style="white-space:pre-wrap;max-width:75ch">${esc(plainWords(R))}</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Year by year ${helpButton("topUp", "h-topup")}</h3></div>${helpPop("topUp", "h-topup")}
+      ${planChips("tablePlan", ti)}
+      <p class="small muted">Spare money: ${esc(spareText.charAt(0).toLowerCase() + spareText.slice(1))}. Money that's needed comes from savings, then the offsets.</p>
+      ${yearTable(tt)}
+    </div>
+    ${navButtons("plans", "assume")}`;
+  }
+
+  function pageAssume() {
+    const R = compute();
+    const H = R.base.years.length;
+    const rateSeries = [{ name: "Home loan rate", color: "var(--accent)", values: R.base.years.map((y) => y.homeRate) }];
+    const years = Object.keys(E.CASH_RATE);
+    const pctF = (k, label, hint, help) => numField("assumptions." + k, label, { hint, help });
+    return `<div class="intro"><h2>Assumptions</h2><p class="muted">Sensible starting points for Australia, not forecasts. Change any of them; the yardstick and every plan use the same ones.</p></div>
+    <div class="card">
+      <h3>Interest rates</h3>
+      <div class="grid wide">
+        ${selectField("assumptions.rateModel", "Rates over the years", [["CYCLE", "Rise and fall like the cycle since 2000"], ["FLAT", "Stay where they are"]], { help: "rateCycle" })}
+        ${A("rateModel") === "CYCLE" ? selectField("assumptions.cycleStart", "Start the cycle as at", years.map((y) => [y, y]), { kind: "num" }) : ""}
+        ${A("rateModel") === "CYCLE" ? selectField("assumptions.cycleScale", "How big the swings are", [[0.5, "Half of history"], [0.75, "Three-quarters"], [1, "Same as history"], [1.25, "A quarter bigger"], [1.5, "Half again bigger"]], { kind: "num" }) : ""}
+      </div>
+      ${chart("rates", rateSeries, H, "rate")}
+      <p class="small muted">The cycle is the RBA cash rate's ups and downs since 2000 (yearly averages), with its long fall taken out, added to today's rates. Year 1 is always today's rate; 2008's peak and the 2020 low show up when the cycle reaches them.</p>
+      <div class="grid">
+        ${pctF("homeRate", "Home loan rate today (%)")}
+        ${pctF("invRate", "Investment loan rate today (%)")}
+        ${pctF("comRate", "Commercial loan rate today (%)")}
+        ${pctF("ioPremium", "Extra for interest only (%)")}
+        ${pctF("lrbaPremium", "Extra for an SMSF loan (%)")}
+        ${pctF("minRate", "Lowest rate allowed (%)")}
+        ${pctF("savingsRate", "Savings account rate (%)")}
+      </div>
+    </div>
+    <div class="card"><h3>Growth</h3><div class="grid">
+      ${pctF("resGrowth", "Residential values (% a year)")}${pctF("comGrowth", "Commercial values (% a year)")}
+      ${pctF("resRentGrowth", "Residential rents (% a year)")}${pctF("comRentGrowth", "Commercial rents (% a year)")}
+      ${pctF("wageGrowth", "Wages (% a year)")}${pctF("cpi", "Living costs (% a year)")}
+      ${pctF("shareGrowth", "Share prices (% a year)")}${pctF("shareYield", "Dividends (% a year)")}${pctF("franking", "Franked (% of dividends)", "", "franking")}
+      ${pctF("superReturn", "Super returns after fees and tax (%)")}${pctF("superGuarantee", "Employer super (% of pay)")}
+    </div></div>
+    <div class="card"><h3>Running a property</h3><div class="grid">
+      ${pctF("resVacancyWeeks", "Residential: weeks empty a year", "", "vacancy")}${pctF("comVacancyWeeks", "Commercial: weeks empty a year")}
+      ${pctF("resCostPct", "Residential running costs (% of rent)")}${pctF("comCostPct", "Commercial running costs (% of rent)")}
+      ${pctF("landPctRes", "Residential land value (% of price)", "For land tax.", "landTax")}${pctF("landPctCom", "Commercial land value (% of price)")}
+    </div></div>
+    <div class="card"><h3>Buying and selling</h3><div class="grid">
+      ${selectField("assumptions.state", "Stamp duty and land tax", [["NSW", "NSW rates"], ["OTHER", "Another state (enter duty %)"]], { help: "duty" })}
+      ${A("state") === "OTHER" ? pctF("dutyPctOther", "Stamp duty (% of price)", "Land tax isn't estimated outside NSW.") : ""}
+      ${moneyField("assumptions.buyCostsRes", "Residential buying costs (legal, inspections)")}
+      ${pctF("buyCostsComPct", "Commercial buying costs (% of price)")}
+      ${pctF("sellCostsPct", "Selling costs (% of price)")}
+      ${pctF("resLvr", "Bank lends on residential (% of price)")}${pctF("comLvr", "Bank lends on commercial (% of price)")}${pctF("smsfLvr", "Bank lends in an SMSF (% of price)")}
+      ${pctF("maxLvr", "Most you'd borrow against a property (% of value)", "Used when borrowing the deposit from equity.", "lvr")}
+    </div></div>
+    <div class="card"><h3>Tax</h3>
+      ${toggle("assumptions.negativeGearing", "Rental losses reduce tax on wages (negative gearing, today's rules)", "negativeGearing")}
+      <p class="small muted">Untick to see a plan if that changed: losses are then carried forward to use against later rental profit and capital gains.</p>
+      <div class="grid">
+        ${pctF("buildingPctRes", "Residential building cost (% of price)", "The building write-off is 2.5% of this a year.", "depreciation")}
+        ${pctF("buildingPctCom", "Commercial building cost (% of price)")}
+        ${pctF("fittingsPct", "New-build fittings write-off (% of price, first year)", "Falls 20% a year. Second-hand residential fittings can't be claimed.")}
+      </div>
+      <p class="small muted">Resident tax rates for 2026-27 (15% bracket) and from 1 July 2027 (14%), with the 2% Medicare levy. Capital gains get the 50% discount after a year. Your home is exempt.</p>
+    </div>
+    <div class="card"><h3>The lender's test</h3><div class="grid">
+      ${pctF("assessBuffer", "Test rate: actual rate plus (%)", "", "serviceability")}${pctF("resShade", "Residential rent counted (%)")}${pctF("comShade", "Commercial rent counted (%)")}
+      ${pctF("cardServicing", "Card limits counted (% a month)")}${moneyField("assumptions.smsfBuffer", "Cash to keep in the SMSF after buying")}
+    </div></div>
+    <div class="row"><button type="button" class="btn secondary" data-act="ask" data-key="assume">Go back to the starting assumptions</button></div>
+    ${confirmBox("assume", "Undo every change on this page?", "reset-assume")}
+    ${navButtons("check", null)}`;
+  }
+
+  // ---------------------------------------------------------------- help
+
+  function rebuildGuide() {
+    const el = document.getElementById("rebuild-guide");
+    return el ? el.textContent.replace(/<\\\/script/gi, "<\/script").trim() : "";
+  }
+
+  function pageHelp() {
+    const words = Object.entries(HELP).sort((a, b) => a[1][0].localeCompare(b[1][0]));
+    const guide = rebuildGuide();
+    return `<div class="intro"><h2>Help</h2><p class="muted">How to use Blink Check, what the results mean, and the words explained.</p></div>
+    <div class="card help">
+      <h3>What it's for</h3>
+      <p>A quick check — a "blink" — on whether the next move is worth researching properly, or whether you're better off leaving the cash in the home loan offset.
+        It runs your figures forward ${horizon()} years, month by month, with interest rates rising and falling, and compares each plan with doing nothing new.</p>
+      <p>It's broad estimates, not advice. A plan that looks good here is one to take to your accountant, a broker and a licensed adviser — not one to sign up for.</p>
+    </div>
+    <div class="card help">
+      <h3>How to use it</h3>
+      <ol class="steps-list">
+        <li><b>You</b> — incomes, living costs, credit card limits and other loan repayments. Rough round figures are fine.</li>
+        <li><b>What you own</b> — your home and its loan and offset, any rentals, savings, shares and super.</li>
+        <li><b>Plans</b> — up to three plans, each a list of steps: buy residential or commercial, buy through an SMSF, sell, buy shares, move money to an offset, switch a loan to principal and interest. Give each step a year.</li>
+        <li><b>Blink check</b> — each plan's verdict, the charts, where the money comes from, and a summary in plain words for your accountant or broker.</li>
+        <li><b>Assumptions</b> — rates, growth, costs, tax and the lender's test. Change any of them to see what happens.</li>
+      </ol>
+      <p><b>Talking it in:</b> tap a box, then the microphone on your phone's keyboard, and say the amount — "six hundred and fifty thousand", "1.2 million" or "580 a week" all work.</p>
+      <p><b>Saving:</b> ${STANDALONE ? "your figures are kept in this browser as you go. To keep them in the file itself, or to send it to someone, use <b>Save a copy</b> at the top — it saves a new copy of this page with the figures inside. Untick names or notes first if you'd rather leave them out. <b>Start again</b> clears the plans or everything." : "in this view, use <b>Copy my figures</b> to keep them, and <b>Load figures</b> to bring them back. For a file you can keep and send, open the Blink Check HTML file instead."}</p>
+      <p><b>Privacy:</b> nothing you type leaves this device. There are no accounts, no tracking and no uploads — the only thing the page loads from the internet is its fonts.</p>
+    </div>
+    <div class="card help">
+      <h3>What the results mean</h3>
+      <dl class="kv help-kv">
+        <dt>Worth a closer look</dt><dd>The plan ends well ahead of the yardstick (by more than $50,000 or 5% of the yardstick's net worth, whichever is bigger), never runs out of cash, and the borrowing check doesn't say "unlikely".</dd>
+        <dt>Worth a look — if the loan is approved</dt><dd>Well ahead, but a lender would probably say no to the borrowing as it stands.</dd>
+        <dt>Marginal</dt><dd>Ahead, but not by enough to be worth the extra risk and effort unless it suits your goals.</dd>
+        <dt>Doesn't beat leaving the cash in the offset</dt><dd>Ends behind the yardstick.</dd>
+        <dt>Runs out of spare cash</dt><dd>Savings and offsets would be used up in that year — the plan needs more income, a smaller purchase or a later year.</dd>
+        <dt>Net worth compared with the yardstick</dt><dd>How much better or worse off the plan leaves you at the end, against doing nothing new.</dd>
+        <dt>Cash put in at purchase</dt><dd>Your own money used for deposits, stamp duty and costs.</dd>
+        <dt>Yearly top-ups</dt><dd>${esc(HELP.topUp[1])}</dd>
+        <dt>Worst year</dt><dd>${esc(HELP.worstYear[1])}</dd>
+        <dt>Investments pay for themselves</dt><dd>The first year the investments put money in your pocket after tax, instead of needing top-ups.</dd>
+        <dt>Borrowing peaks at</dt><dd>The highest total loans as a share of total property value. Above about 80% gets hard to refinance.</dd>
+        <dt>Borrowing check</dt><dd>${esc(HELP.serviceability[1])} <i>Likely</i> means $6,000 a year or more to spare under that test; <i>tight</i> means just; <i>unlikely</i> means a lender would probably say no.</dd>
+        <dt>Where the money comes from</dt><dd>${esc(HELP.moneyChain[1])}</dd>
+        <dt>Year by year</dt><dd>Each year's values, loans, rent, costs, tax effect, top-ups, and where spare money went or needed money came from. "Overdrawn" means savings and offsets ran out — the plan can't be carried.</dd>
+      </dl>
+    </div>
+    <div class="card help">
+      <h3>Words explained</h3>
+      <dl class="kv help-kv">${words.map(([k, [t, d]]) => `<dt id="word-${k}">${esc(t)}</dt><dd>${esc(d)}</dd>`).join("")}</dl>
+    </div>
+    <div class="card help">
+      <h3>What it doesn't cover</h3>
+      <ul>
+        <li>It isn't financial, tax or credit advice, and it doesn't know your full situation.</li>
+        <li>Stamp duty and land tax are NSW rules. For another state, enter a duty percentage under Assumptions; land tax isn't estimated there.</li>
+        <li>No lenders mortgage insurance — keep borrowing at 80% or less of a property's value.</li>
+        <li>Variable rates only — no fixed-rate periods.</li>
+        <li>People own things in their own names. Trusts and companies aren't modelled.</li>
+        <li>Super can't be spent before retirement; it's shown in net worth but never used to pay for anything outside an SMSF.</li>
+        <li>Rents, growth and rates follow the assumptions smoothly — real life is lumpier, especially for commercial vacancies.</li>
+        <li>Tax uses today's resident rates and rules. Negative gearing and the capital gains discount can change — untick negative gearing under Assumptions to see a plan without it.</li>
+      </ul>
+    </div>
+    <div class="card help">
+      <h3>Rebuilding or changing Blink Check</h3>
+      <p>This page is a single file with everything inside it — the working-out, the pages and a full guide to how it's built. Anyone can use it, share it, or ask their own AI assistant (such as Claude) to change or rebuild it: give the assistant this file and the rebuild guide below.</p>
+      ${guide ? `<div class="row">${STANDALONE ? `<button type="button" class="btn secondary" data-act="save-guide">Save the rebuild guide</button>` : ""}
+        <button type="button" class="btn secondary" data-act="show-guide">${ui.showGuide ? "Hide the rebuild guide" : "Show the rebuild guide"}</button></div>
+        ${ui.showGuide ? `<pre class="guide">${esc(guide)}</pre>` : ""}` : ""}
+    </div>
+    ${navButtons("assume", null)}`;
+  }
+
+  // ---------------------------------------------------------------- drawing
+
+  const RENDER = { you: pageYou, own: pageOwn, plans: pagePlans, check: pageCheck, assume: pageAssume, help: pageHelp };
+
+  function renderTools() {
+    const tools = document.getElementById("tools");
+    tools.innerHTML = `
+      ${STANDALONE ? `<button type="button" class="btn" data-act="save-panel">Save a copy</button>` : `<button type="button" class="btn secondary" data-act="copy">Copy my figures</button>`}
+      <button type="button" class="btn secondary" data-act="paste">Load figures</button>
+      <button type="button" class="btn secondary" data-act="restart-panel">Start again</button>
+      ${STANDALONE ? `<button type="button" class="btn secondary" data-act="print">Print</button>` : ""}`;
+    document.getElementById("tabs").innerHTML = PAGES.map(
+      ([id, label], i) => `<button type="button" class="tab" role="tab" data-go="${id}" aria-selected="${ui.page === id}"><b>${i + 1}</b>${label}</button>`
+    ).join("") + `<button type="button" class="tab help-tab" role="tab" data-go="help" aria-selected="${ui.page === "help"}"><b>?</b>Help</button>`;
+  }
+
+  const tick = (id, label, on = true) => `<label class="toggle" for="${id}"><input type="checkbox" id="${id}"${on ? " checked" : ""}> ${label}</label>`;
+
+  function panel() {
+    let out = "";
+    if (ui.message && !ui.panel) out += `<div class="banner example"><span>${esc(ui.message)}</span><button type="button" class="btn quiet" data-act="close-panel">OK</button></div>`;
+    if (STANDALONE && unsaved() && !ui.panel && !state.example)
+      out += `<div class="banner warn"><span>Your latest changes are only in this browser. Save a copy to keep them in the file, or to send it on.</span><button type="button" class="btn secondary" data-act="save-panel">Save a copy</button></div>`;
+    if (ui.panel === "save")
+      return `<div class="card"><h3>Save a copy</h3>
+        <p class="small muted">Saves a new copy of this page with your figures inside it. Open it any time to carry on, or email it to someone — they open it in their browser and see what you see. Nothing is uploaded anywhere.</p>
+        <div class="grid wide">${tick("save-names", "Names")}${tick("save-figures", "What we own and earn")}${tick("save-plans", "The plans")}${tick("save-notes", "Notes")}</div>
+        <p class="small muted">Untick anything you'd rather leave out of this copy — for example names, before sending it to someone.</p>
+        <div class="row"><button type="button" class="btn" data-act="save-copy">Save the copy</button>
+          <button type="button" class="btn secondary" data-act="save-blank">Save a blank copy</button>
+          <button type="button" class="btn secondary" data-act="close-panel">Cancel</button></div></div>` + out;
+    if (ui.panel === "restart")
+      return `<div class="card"><h3>Start again</h3>
+        <p class="small muted">To keep what's here, save a copy first. Opening a blank copy is another way to start again.</p>
+        <div class="row"><button type="button" class="btn danger" data-act="clear-plans">${BIN} Clear the plans, keep my figures</button>
+          <button type="button" class="btn danger" data-act="fresh">${BIN} Clear everything</button>
+          <button type="button" class="btn secondary" data-act="close-panel">Cancel</button></div></div>`;
+    if (ui.panel === "paste")
+      return `<div class="card"><h3>Load figures</h3><p class="small muted">Paste figures copied from Blink Check. They replace what's here.</p>
+        <textarea id="paste-box" aria-label="Figures to load"></textarea>
+        <div class="row"><button type="button" class="btn" data-act="load-paste">Load them</button><button type="button" class="btn secondary" data-act="close-panel">Cancel</button></div>
+        ${ui.message ? `<p class="small" style="color:var(--danger)">${esc(ui.message)}</p>` : ""}</div>`;
+    if (ui.panel === "copied")
+      return `<div class="card"><h3>Your figures</h3><p class="small muted">${esc(ui.message)}</p><textarea id="copy-box" readonly aria-label="Your figures">${esc(JSON.stringify(state))}</textarea>
+        <div class="row"><button type="button" class="btn secondary" data-act="close-panel">Done</button></div></div>`;
+    return out;
+  }
+
+  function render(keepFocus) {
+    const active = keepFocus ? document.activeElement : null;
+    const focusId = active && active.id;
+    const sel = active && "selectionStart" in active ? [active.selectionStart, active.selectionEnd] : null;
+    renderTools();
+    for (const id of Object.keys(RENDER)) {
+      const el = document.querySelector(`section[data-page="${id}"]`);
+      el.hidden = id !== ui.page;
+      if (id === ui.page) el.innerHTML = panel() + RENDER[id]();
+      else el.innerHTML = "";
+    }
+    if (focusId) {
+      const el = document.getElementById(focusId);
+      if (el) {
+        el.focus({ preventScroll: true });
+        if (sel && el.setSelectionRange) {
+          try {
+            el.setSelectionRange(sel[0], sel[1]);
+          } catch (e) {
+            /* not a text box */
+          }
+        }
+      }
+    }
+  }
+
+  function go(page) {
+    ui.page = page;
+    ui.confirm = null;
+    try {
+      if (location.hash !== "#" + page) history.replaceState(null, "", "#" + page);
+    } catch (e) {
+      location.hash = page;
+    }
+    render(false);
+    window.scrollTo({ top: 0 });
+  }
+
+  // ---------------------------------------------------------------- editing
+
+  function edited() {
+    state.example = false;
+    state.updatedAt = Date.now();
+    save();
+  }
+
+  function readInput(el) {
+    const kind = el.dataset.kind;
+    const path = el.dataset.path;
+    if (kind === "bool") return el.checked;
+    if (kind === "text") return el.value;
+    if (kind === "select") return el.value;
+    const raw = el.value.trim();
+    if (raw === "") return path.startsWith("assumptions.") || /writeOffAmount|lvr|ioYears|cashAmount|owners/.test(path) ? undefined : 0;
+    const n = E.parseAmount(raw);
+    return n === null ? NaN : n;
+  }
+
+  document.addEventListener("change", (e) => {
+    const el = e.target;
+    if (el.dataset && el.dataset.show !== undefined) {
+      ui.hidden[el.dataset.show] = !el.checked;
+      render(true);
+      return;
+    }
+    if (!el.dataset || !el.dataset.path) return;
+    const v = readInput(el);
+    const err = el.parentElement.querySelector(".err");
+    if (typeof v === "number" && isNaN(v)) {
+      el.classList.add("bad");
+      if (!err) el.insertAdjacentHTML("afterend", `<span class="err">Couldn't read that — try 650000, 650k or "six hundred and fifty thousand".</span>`);
+      return;
+    }
+    el.classList.remove("bad");
+    if (err) err.remove();
+    if (v === undefined) {
+      const keys = el.dataset.path.split(".");
+      const parent = keys.slice(0, -1).reduce((o, k) => (o ? o[k] : undefined), state);
+      if (parent) delete parent[keys[keys.length - 1]];
+    } else setPath(el.dataset.path, v);
+    // A second owner's share follows the first's.
+    const m = /^(rentals|scenarios\.\d+\.steps)\.(\d+)\.owners\.0$/.exec(el.dataset.path);
+    if (m && typeof v === "number") setPath(el.dataset.path.replace(/0$/, "1"), Math.max(0, 100 - v));
+    edited();
+    render(true);
+  });
+
+  document.addEventListener("input", (e) => {
+    const el = e.target;
+    if (el.dataset && el.dataset.kind === "text" && el.dataset.path) {
+      setPath(el.dataset.path, el.value);
+      state.example = false;
+      state.updatedAt = Date.now();
+      save();
+    }
+  });
+
+  function newStep(type, kind) {
+    const plan = state.scenarios[ui.plan];
+    const year = Math.min(horizon(), 1 + (plan.steps.length ? Math.max(...plan.steps.map((s) => +s.year || 1)) : 0));
+    const s = { id: uid(), type, year };
+    if (type === "BUY") Object.assign(s, { kind, price: kind === "COM" ? 800000 : 700000, funding: "EQUITY", loanType: kind === "COM" ? "PI" : "IO", ioYears: 5, writeOff: "BUILDING", name: kind === "COM" ? "Commercial purchase" : "Residential purchase" });
+    if (type === "SMSF") Object.assign(s, { kind: "COM", price: 600000, name: "SMSF property" });
+    if (type === "SELL") Object.assign(s, { target: (propertyChoices(plan, year)[0] || [""])[0], then: "PAY_DEBT" });
+    if (type === "SHARES") Object.assign(s, { amount: 50000, funding: "CASH", loanType: "IO" });
+    if (type === "OFFSET") Object.assign(s, { amount: 20000, to: "home" });
+    if (type === "PI") Object.assign(s, { target: (propertyChoices(plan, 99)[0] || ["home"])[0] });
+    plan.steps.push(s);
+  }
+
+  async function copyFigures() {
+    const text = JSON.stringify(state);
+    try {
+      await navigator.clipboard.writeText(text);
+      ui.panel = "copied";
+      ui.message = "Copied. Paste it into a message or note to keep it, or load it on another device with “Load figures”.";
+    } catch (e) {
+      ui.panel = "copied";
+      ui.message = "Select all of this and copy it.";
+    }
+    render(false);
+    const box = document.getElementById("copy-box");
+    if (box && ui.message.startsWith("Select")) box.select();
+  }
+
+  /** What goes in a saved copy: everything, or with some parts left out (before sending it to someone). */
+  function forSaving(opts) {
+    const out = JSON.parse(JSON.stringify(state));
+    const b = blank();
+    if (!opts.names) out.people.forEach((p, i) => (p.name = `Person ${i + 1}`));
+    if (!opts.figures) {
+      for (const k of ["livingMonthly", "cardLimits", "otherRepayMonthly", "otherRepayYears", "cash", "home", "rentals", "shares", "smsf"]) out[k] = b[k];
+      out.people.forEach((p) => {
+        p.salary = 0;
+        p.super = 0;
+      });
+      for (const sc of out.scenarios) sc.steps = sc.steps.filter((st) => st.type !== "SELL" || !/^r/.test(st.target || ""));
+    }
+    if (!opts.plans) out.scenarios = b.scenarios;
+    if (!opts.notes) {
+      delete out.notes;
+      out.scenarios.forEach((sc) => delete sc.notes);
+    }
+    return out;
+  }
+
+  function download(figures, filename) {
+    const html = PRISTINE.replace(
+      /<script id="saved-figures" type="application\/json">[\s\S]*?<\/script>/,
+      `<script id="saved-figures" type="application/json">${figures === null ? "null" : JSON.stringify(figures).replace(/</g, "\\u003c")}<\/script>`
+    );
+    saveBlob(html, "text/html", filename);
+  }
+
+  function saveBlob(text, type, filename) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([text], { type }));
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+      a.remove();
+    }, 1000);
+  }
+
+  function saveCopy() {
+    const opts = {
+      names: document.getElementById("save-names").checked,
+      figures: document.getElementById("save-figures").checked,
+      plans: document.getElementById("save-plans").checked,
+      notes: document.getElementById("save-notes").checked,
+    };
+    const everything = opts.names && opts.figures && opts.plans && opts.notes;
+    const figures = forSaving(opts);
+    const now = Date.now();
+    figures.savedAt = now;
+    figures.updatedAt = now;
+    figures.fileId = everything ? state.fileId || uid() : uid();
+    if (everything) {
+      state.fileId = figures.fileId;
+      state.savedAt = now;
+      state.updatedAt = now;
+      save();
+    }
+    const who = opts.names ? state.people.map((p) => p.name).filter(Boolean).join(" and ") : "";
+    const date = new Date().toISOString().slice(0, 10);
+    download(figures, `Blink Check${who ? " - " + who : ""} - ${date}.html`);
+    ui.panel = null;
+    ui.message = everything ? "Saved. The file has everything in it — keep it, or send it on." : "Saved, with the parts you unticked left out.";
+  }
+
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest("button, [data-go]");
+    if (!t) return;
+    const d = t.dataset;
+    if (d.go) return go(d.go);
+    if (d.help) {
+      ui.openHelp[d.help] = !ui.openHelp[d.help];
+      return render(true);
+    }
+    if (d.chip) {
+      setPath(d.chip, d.kind === "num" ? Number(d.value) : d.value);
+      edited();
+      return render(true);
+    }
+    if (d.plan !== undefined) {
+      ui.plan = Number(d.plan);
+      ui.confirm = null;
+      return render(false);
+    }
+    if (d.metric) {
+      ui.metric = d.metric;
+      return render(true);
+    }
+    if (d.pick) {
+      ui[d.pick] = Number(d.value);
+      return render(true);
+    }
+    if (d.add) {
+      newStep(d.add, d.kind);
+      edited();
+      return render(false);
+    }
+    const act = d.act;
+    if (!act) return;
+    if (act === "ask") ui.confirm = d.key;
+    else if (act === "cancel-confirm") ui.confirm = null;
+    else if (act === "fresh") {
+      state = blank();
+      state.updatedAt = Date.now();
+      ui.plan = 1;
+      ui.confirm = null;
+      ui.panel = null;
+      save();
+    } else if (act === "add-person") {
+      state.people.push({ id: uid(), name: "", salary: 0, super: 0 });
+      for (const r of state.rentals) r.owners = [50, 50];
+      edited();
+    } else if (act === "remove-person") {
+      state.people.splice(1);
+      for (const r of state.rentals) delete r.owners;
+      ui.confirm = null;
+      edited();
+    } else if (act === "add-rental") {
+      const n = state.rentals.length + 1;
+      state.rentals.push({
+        id: "r" + uid(), name: d.kind === "COM" ? `Commercial ${n}` : `Rental ${n}`, kind: d.kind, value: 0, costBase: 0, rentWeekly: 0,
+        costPct: d.kind === "COM" ? D.comCostPct : D.resCostPct, writeOff: "BUILDING", owners: state.people.length > 1 ? [50, 50] : undefined,
+        loan: { balance: 0, rate: d.kind === "COM" ? D.comRate : D.invRate, type: "PI", ioYears: 0, yearsLeft: 25, offset: 0 },
+      });
+      edited();
+    } else if (act === "remove-rental") {
+      const i = Number(ui.confirm.split("-")[1]);
+      state.rentals.splice(i, 1);
+      ui.confirm = null;
+      edited();
+    } else if (act === "add-plan") {
+      state.scenarios.push({ id: "s" + uid(), name: `Plan ${plans().length + 1}`, spare: "HOME_OFFSET", steps: [] });
+      ui.plan = state.scenarios.length - 1;
+      edited();
+    } else if (act === "copy-plan") {
+      const src = state.scenarios[ui.plan];
+      const copy = JSON.parse(JSON.stringify(src));
+      copy.id = "s" + uid();
+      copy.name = src.name + " (copy)";
+      copy.steps.forEach((s) => (s.id = uid()));
+      state.scenarios.push(copy);
+      ui.plan = state.scenarios.length - 1;
+      edited();
+    } else if (act === "remove-plan") {
+      state.scenarios.splice(ui.plan, 1);
+      ui.plan = Math.max(0, Math.min(ui.plan, state.scenarios.length - 1));
+      ui.confirm = null;
+      edited();
+    } else if (act === "remove-step") {
+      const [, pi, sid] = ui.confirm.split("-");
+      const plan = state.scenarios[Number(pi)];
+      plan.steps = plan.steps.filter((s) => s.id !== sid);
+      ui.confirm = null;
+      edited();
+    } else if (act === "reset-assume") {
+      state.assumptions = { horizon: state.assumptions.horizon };
+      ui.confirm = null;
+      edited();
+    } else if (act === "copy") return void copyFigures();
+    else if (act === "copy-words") {
+      const text = document.getElementById("plain-words").textContent;
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          t.textContent = "Copied";
+        })
+        .catch(() => {
+          const r = document.createRange();
+          r.selectNodeContents(document.getElementById("plain-words"));
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(r);
+        });
+      return;
+    }
+    else if (act === "paste") {
+      ui.panel = "paste";
+      ui.message = "";
+    } else if (act === "close-panel") {
+      ui.panel = null;
+      ui.message = "";
+    }
+    else if (act === "load-paste") {
+      try {
+        const s = JSON.parse(document.getElementById("paste-box").value);
+        if (!s || !Array.isArray(s.people) || !Array.isArray(s.scenarios)) throw new Error("x");
+        state = s;
+        state.updatedAt = Date.now();
+        ui.panel = null;
+        ui.plan = 1;
+        ui.message = "";
+        save();
+      } catch (err) {
+        ui.message = "Those aren't Blink Check figures — copy them again with “Copy my figures”.";
+      }
+    } else if (act === "save-panel") {
+      ui.panel = "save";
+      ui.message = "";
+    } else if (act === "save-copy") saveCopy();
+    else if (act === "save-blank") {
+      download(null, "Blink Check - blank.html");
+      ui.panel = null;
+      ui.message = "Saved a blank copy.";
+    } else if (act === "restart-panel") {
+      ui.panel = "restart";
+      ui.message = "";
+    } else if (act === "clear-plans") {
+      state.scenarios = blank().scenarios;
+      ui.plan = 1;
+      ui.panel = null;
+      edited();
+    } else if (act === "print") return window.print();
+    else if (act === "save-guide") return saveBlob(rebuildGuide() + "\n", "text/markdown", "Blink Check - rebuild guide.md");
+    else if (act === "show-guide") ui.showGuide = !ui.showGuide;
+    render(act === "ask" || act === "cancel-confirm");
+  });
+
+  // Chart hover: the values for the year under the pointer.
+  document.addEventListener("pointermove", (e) => {
+    const wrap = e.target.closest && e.target.closest(".chart-wrap");
+    document.querySelectorAll(".chart-wrap").forEach((w) => {
+      if (w !== wrap) {
+        const tip = w.querySelector(".tip");
+        if (tip) tip.hidden = true;
+        const c = w.querySelector(".cursor");
+        if (c) c.setAttribute("visibility", "hidden");
+      }
+    });
+    if (!wrap) return;
+    const data = chartData[wrap.dataset.chart];
+    const svg = wrap.querySelector("svg");
+    if (!data || !svg) return;
+    const box = svg.getBoundingClientRect();
+    const vx = ((e.clientX - box.left) / box.width) * data.W;
+    const i = Math.max(0, Math.min(data.H - 1, Math.round(((vx - data.pl) / (data.W - data.pl - data.pr)) * (data.H - 1))));
+    const cx = data.x(i);
+    const cursor = svg.querySelector(".cursor");
+    cursor.setAttribute("x1", cx);
+    cursor.setAttribute("x2", cx);
+    cursor.setAttribute("visibility", "visible");
+    const tip = wrap.querySelector(".tip");
+    const fmt = (v) => (data.fmt === "rate" ? v.toFixed(2) + "%" : money(v));
+    tip.innerHTML = `<b>${yearLabel(i + 1)}</b>` + data.series.map((s) => `<div><span class="legend-chip"><span class="dot" style="background:${s.color}"></span>${esc(s.name)}</span><span>${fmt(s.values[i])}</span></div>`).join("");
+    tip.hidden = false;
+    const left = (cx / data.W) * box.width;
+    tip.style.left = Math.max(0, Math.min(box.width - tip.offsetWidth, left + 12)) + "px";
+    tip.style.top = "8px";
+  });
+
+  window.addEventListener("hashchange", () => {
+    const h = location.hash.slice(1);
+    if (RENDER[h] && h !== ui.page) go(h);
+  });
+
+  const start = location.hash.slice(1);
+  if (RENDER[start]) ui.page = start;
+  render(false);
+})();
+
+</script>
+</body>
+</html>

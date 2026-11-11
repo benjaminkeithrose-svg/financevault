@@ -9,7 +9,9 @@ import { fileURLToPath } from "node:url";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const read = (f) => fs.readFileSync(path.join(here, "src", f), "utf8");
 const head = read("head.html");
-const body = read("body.html");
+// The rebuild guide travels inside the page, so anyone with only the HTML file has everything.
+const guide = fs.readFileSync(path.join(here, "docs", "REBUILD-GUIDE.md"), "utf8").replace(/<\/script/gi, "<\\/script");
+const body = read("body.html").replace("@@REBUILD_GUIDE@@", () => guide);
 // "</script" can't appear inside an inline script.
 const script = (f) => `<script>\n${read(f).replace(/<\/script/gi, "<\\/script")}\n</script>`;
 const scripts = `${script("engine.js")}\n${script("app.js")}`;

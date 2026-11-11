@@ -134,7 +134,8 @@ textarea { min-height: 120px; font-family: ui-monospace, SFMono-Regular, Menlo, 
 
 /* Results */
 .verdicts { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-.verdict { border-top: 4px solid var(--c, var(--accent)); }
+.verdict { border-top: 4px solid var(--c, var(--accent)); align-content: start; }
+.verdict .pill { justify-self: start; align-self: start; }
 .pill { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 999px; font: 600 13px var(--font-body); }
 .pill.YES { background: var(--good-bg); color: var(--good); }
 .pill.MAYBE, .pill.NO { background: var(--warn-bg); color: var(--warn); }
@@ -184,4 +185,23 @@ details > summary { cursor: pointer; min-height: 40px; display: flex; align-item
   section[data-page][hidden] { display: none !important; }
   .card { break-inside: avoid; }
 }
+
+/* help */
+.label-row { display: flex; align-items: center; gap: 6px; min-height: 24px; }
+.label-row label { flex: 0 1 auto; }
+.info { position: relative; flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted);
+  font: 600 12px/1 var(--font-body); cursor: pointer; padding: 0; display: inline-grid; place-items: center; }
+.info::after { content: ""; position: absolute; inset: -10px; } /* 42px tap area */
+.info[aria-expanded="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+h3 .info { vertical-align: middle; margin-left: 6px; }
+.help-pop { background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 6px; padding: 10px 12px; font-size: 14px; line-height: 1.5; color: var(--text); font-weight: 400; }
+.help-pop .btn { margin-top: 6px; display: flex; }
+.btn.small { min-height: 40px; padding: 6px 10px; font-size: 13px; }
+.help p, .help li { line-height: 1.6; max-width: 75ch; }
+.help ul, .help ol { padding-left: 20px; margin: 0; display: grid; gap: 6px; }
+.help-kv { grid-template-columns: minmax(140px, 220px) 1fr; gap: 10px 16px; }
+.help-kv dt { color: var(--text); font-weight: 600; }
+.help-kv dd { text-align: left; font-weight: 400; line-height: 1.55; font-variant-numeric: normal; }
+@media (max-width: 560px) { .help-kv { grid-template-columns: 1fr; gap: 2px; } .help-kv dd { margin-bottom: 10px; } }
+pre.guide { white-space: pre-wrap; word-break: break-word; max-height: 60vh; overflow: auto; background: var(--surface-2); border-radius: 8px; padding: 12px; font-size: 12.5px; line-height: 1.5; }
 </style>
