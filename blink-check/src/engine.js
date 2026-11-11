@@ -151,7 +151,7 @@
     lrbaPremium: 1.2,
     savingsRate: 4,
     cpi: 2.75,
-    wageGrowth: 3.25,
+    wageGrowth: null, // % a year; null = in line with CPI (prices)
     resGrowth: 5,
     comGrowth: 3,
     resRentGrowth: 3.5,
@@ -208,6 +208,7 @@
     const a = Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {});
     const H = Math.max(5, Math.min(30, Number(a.horizon) || 20));
     const shifts = rateShifts(a, H);
+    const wageGrowth = a.wageGrowth === null || a.wageGrowth === undefined || a.wageGrowth === "" ? a.cpi : +a.wageGrowth;
     const people = (plan.people || []).filter((p) => p && p.name !== undefined);
     if (!people.length) people.push({ id: "p1", name: "You", salary: 0, super: 0 });
     const nP = people.length;
@@ -277,6 +278,7 @@
     const debtOn = (propId) => loans.filter((L) => L.prop === propId && active(L)).reduce((s, L) => s + L.balance, 0);
     const usableEquity = (p) => positive(p.value * (a.maxLvr / 100) - debtOn(p.id));
     const liveProps = () => props.filter((p) => !p.sold);
+    const reserve = () => Math.max(20000, (living0 / 4) * Math.pow(1 + a.cpi / 100, year - 1)); // three months of living costs
     const offsetsTotal = () => loans.filter((L) => !L.smsf).reduce((s, L) => s + (active(L) ? L.offset : 0), 0);
 
     let month = 0;
@@ -294,7 +296,8 @@
     /** Where spare money goes under this scenario's rule. Returns the loan whose offset takes it, or null for cash. */
     function spareTarget(propId) {
       const rule = scenario.spare || "HOME_OFFSET";
-      const open = loans.filter((L) => active(L) && !L.smsf);
+      // A loan its offset already covers costs no interest: more money there does nothing.
+      const open = loans.filter((L) => active(L) && !L.smsf && L.offset < L.balance - 0.5);
       if (rule === "CASH") return null;
       if (rule === "OWN_OFFSET" && propId) {
         const own = mainLoanOf(propId);
@@ -392,7 +395,7 @@
       const living = living0 * Math.pow(1 + a.cpi / 100, year - 1);
       const others = (year <= otherRepayYears ? otherRepay : 0) + cardLimits * (a.cardServicing / 100) * 12;
       const surplus = net - commitments - living - others;
-      return { surplus: round(surplus), result: surplus >= 6000 ? "LIKELY" : surplus >= 0 ? "TIGHT" : "UNLIKELY" };
+      return { surplus: round(surplus), income: round(salaries.reduce((x, v) => x + v, 0)), result: surplus >= 6000 ? "LIKELY" : surplus >= 0 ? "TIGHT" : "UNLIKELY" };
     }
 
     // --- Plan steps ----------------------------------------------------------------
@@ -622,7 +625,7 @@
         year = month / 12 + 1;
         yr = newYearTotals();
         if (year > 1) {
-          salaries = salaries.map((s) => s * (1 + a.wageGrowth / 100));
+          salaries = salaries.map((s) => s * (1 + wageGrowth / 100));
           for (const p of props) {
             if (p.rentNow !== undefined) p.rentNow *= 1 + (p.kind === "COM" ? a.comRentGrowth : a.resRentGrowth) / 100;
           }
@@ -717,7 +720,9 @@
           salaryPart -= pay;
           yr.homePay += pay;
         } else parts[L.forProp] = (parts[L.forProp] || 0) - pay;
-        if (L.balance - L.offset <= 0.5 && !(L.type === "IO" && L.ioLeft > 0)) clearLoan(L, "offset");
+        // Covered by its offset: pay it off with the offset only if a cash reserve is left; otherwise keep
+        // the money in the offset (no interest is charged) so it's still there when it's needed.
+        if (L.balance - L.offset <= 0.5 && !(L.type === "IO" && L.ioLeft > 0) && cash + offsetsTotal() - L.balance >= reserve()) clearLoan(L, "offset");
         else if (L.balance <= 0.5) clearLoan(L, "repaid");
       }
       // Loans for a property that's been sold, still running: the household pays them.
@@ -822,6 +827,10 @@
           equity: round(T.equity),
           nw: round(T.nw),
           nwExSuper: round(T.nwExSuper),
+          income: round(salaries.reduce((s, x) => s + x, 0)),
+          takeHome: round(yr.takeHome),
+          homeLoanPay: round(yr.homePay),
+          living: round(yr.living),
           interest: round(yr.interest),
           interestSaved: round(yr.interestSaved),
           rent: round(yr.rent),
@@ -899,12 +908,11 @@
     const s = r.summary;
     const risk = plan.risk || "MIDDLE";
     const goal = plan.goal || "GROWTH";
-    if (r.baseline) return { level: "BASE", label: "The yardstick", notes: ["Cash stays in the offset and spare money keeps going in; nothing new is bought."] };
+    if (r.baseline) return { level: "BASE", label: "The yardstick", stops: [], warnings: [], notes: ["Cash stays in the offset and spare money keeps going in; nothing new is bought."] };
     const gain = s.nwEnd - base.summary.nwEnd;
     const H = r.years.length;
     for (const c of r.chains) {
-      if (c.borrow && c.borrow.result === "UNLIKELY") notes.push(`A lender may not approve the loan for ${c.name.toLowerCase()} in year ${c.year} — the budget comes out about ${money(-c.borrow.surplus)} a year short at their test rate.`);
-      else if (c.borrow && c.borrow.result === "TIGHT") notes.push(`Borrowing for ${c.name.toLowerCase()} in year ${c.year} looks tight at a lender's test rate.`);
+      if (c.borrow && c.borrow.result === "TIGHT") notes.push(`Borrowing for ${c.name.toLowerCase()} in year ${c.year} looks tight at a lender's test rate.`);
       if (c.short > 0) notes.push(`About ${money(c.short)} short of the deposit and costs for ${c.name.toLowerCase()} in year ${c.year}.`);
     }
     if (s.worstYear.amount < 0) notes.push(`The worst year is year ${s.worstYear.year}: the investments need ${money(-s.worstYear.amount)} from you (${money(-s.worstYear.amount / 52)} a week) after tax.`);
@@ -914,9 +922,39 @@
     if (r.chains.some((c) => c.kind === "COM")) notes.push("Commercial property can sit empty for 6–12 months between tenants — keep a cash buffer.");
     if (goal === "CASHFLOW" && s.worstYear.amount < 0 && !s.positiveFrom) notes.push("Costs money every year over the plan — doesn't fit a cash-flow goal.");
     for (const f of r.flags) notes.push(f.text);
+
+    // Red flags: the plan probably can't be done on this income.
+    const stops = [];
+    if (s.runsOut) {
+      const y = r.years[s.runsOut - 1];
+      stops.push(
+        `Runs out of money in year ${s.runsOut}. That year the household earns about ${money(y.income)} before tax (${money(y.takeHome)} after tax). ` +
+          `The investments ${y.investCashAfter < 0 ? `cost ${money(-y.investCashAfter)} after tax` : `bring in ${money(y.investCashAfter)} after tax`}, ` +
+          `on top of ${money(y.homeLoanPay)} of home loan repayments and ${money(y.living)} of living costs — and savings and offsets are used up.`
+      );
+    }
+    for (const c of r.chains) {
+      if (c.borrow && c.borrow.result === "UNLIKELY")
+        stops.push(
+          `A lender would very likely say no to the loan for ${c.name.toLowerCase()} in year ${c.year}. On an income of about ${money(c.borrow.income)} before tax, ` +
+            `at their test rate (about 3% above the real rate, counting only part of the rent and your card limits), the budget is about ${money(-c.borrow.surplus)} a year short.`
+        );
+    }
+    const short = r.years.filter((y) => y.householdSpare < 0);
+    const warnings = [];
+    if (!s.runsOut && short.length) {
+      const worst = short.reduce((w, y) => (y.householdSpare < w.householdSpare ? y : w));
+      warnings.push(
+        `In ${short.length} of the ${H} years the household spends more than it earns — at worst year ${worst.year}, about ${money(-worst.householdSpare)} short, paid from savings and offsets.`
+      );
+    }
+
     let level;
     let label;
-    if (s.runsOut) {
+    if (stops.length) {
+      level = "STOP";
+      label = "Probably not possible on this income";
+    } else if (s.runsOut) {
       level = "NO";
       label = `Runs out of spare cash in year ${s.runsOut}`;
       notes.unshift("Savings and offsets would be used up — it would need more income, a smaller purchase or a later year.");
@@ -930,7 +968,7 @@
       level = "NO";
       label = "Doesn't beat leaving the cash in the offset";
     }
-    return { level, label, gain: round(gain), perDollar: s.moneyIn > 0 ? gain / s.moneyIn : null, notes, horizon: H };
+    return { level, label, gain: round(gain), perDollar: s.moneyIn > 0 ? gain / s.moneyIn : null, notes, stops, warnings, horizon: H };
   }
 
   function runAll(plan) {

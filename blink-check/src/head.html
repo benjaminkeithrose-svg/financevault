@@ -78,10 +78,10 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .tab[aria-selected="true"] b { background: var(--accent); color: var(--accent-ink); }
 .tab:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-main { padding-block: 20px 40px; display: grid; gap: 18px; }
-section[data-page] { display: grid; gap: 18px; }
+main { padding-block: 20px 40px; display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); }
+section[data-page] { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); min-width: 0; }
 .intro { display: grid; gap: 6px; max-width: 70ch; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 14px; min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 14px; min-width: 0; grid-template-columns: minmax(0, 1fr); }
 .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
 .grid.wide { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
@@ -108,7 +108,7 @@ textarea { min-height: 120px; font-family: ui-monospace, SFMono-Regular, Menlo, 
 .chips { display: flex; gap: 8px; flex-wrap: wrap; }
 .chip {
   min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg);
-  font: 500 14px var(--font-body); cursor: pointer;
+  font: 500 14px var(--font-body); cursor: pointer; max-width: 100%; text-align: left; line-height: 1.3; padding-block: 6px;
 }
 .chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--fg); }
 .toggle { display: flex; align-items: center; gap: 10px; min-height: 40px; cursor: pointer; }
@@ -204,4 +204,25 @@ h3 .info { vertical-align: middle; margin-left: 6px; }
 .help-kv dd { text-align: left; font-weight: 400; line-height: 1.55; font-variant-numeric: normal; }
 @media (max-width: 560px) { .help-kv { grid-template-columns: 1fr; gap: 2px; } .help-kv dd { margin-bottom: 10px; } }
 pre.guide { white-space: pre-wrap; word-break: break-word; max-height: 60vh; overflow: auto; background: var(--surface-2); border-radius: 8px; padding: 12px; font-size: 12.5px; line-height: 1.5; }
+
+/* red flag: the plan probably can't be done */
+.pill.STOP { background: var(--danger-bg); color: var(--danger); gap: 6px; }
+.pill svg, .red-flag svg { width: 16px; height: 16px; flex: none; }
+.red-flag { border: 2px solid var(--danger); background: var(--danger-bg); color: var(--fg); border-radius: 10px; padding: 12px 14px; display: grid; gap: 6px; font-size: 14px; line-height: 1.5; }
+.red-flag-head { display: flex; align-items: center; gap: 8px; color: var(--danger); font-size: 15px; }
+.red-flag.big { margin-bottom: 14px; }
+.red-flag.big .red-flag-head { font: 600 18px var(--font-head); }
+.red-flag.big svg { width: 22px; height: 22px; }
+.red-flag ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.red-flag p { margin: 0; }
+.amber-flag { background: var(--warn-bg); border-radius: 8px; padding: 10px 12px; font-size: 14px; line-height: 1.5; }
+.amber-flag p { margin: 0; }
+/* wealth, debt and cash flow */
+.at-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 6px 0; }
+.at-row label { font-size: 13px; font-weight: 500; color: var(--muted); }
+.at-row input[type="range"] { flex: 1 1 200px; min-height: 40px; accent-color: var(--accent); }
+.at-row output { font: 600 15px var(--font-head); min-width: 64px; }
+.diff-words { margin: 8px 0 12px; padding-left: 20px; display: grid; gap: 6px; line-height: 1.55; max-width: 75ch; }
+.diff-table td:first-child, .diff-table th:first-child { text-align: left; white-space: normal; min-width: 150px; }
+.diff-table th .dot { display: inline-block; vertical-align: middle; }
 </style>

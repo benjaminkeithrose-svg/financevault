@@ -129,5 +129,33 @@ test("a plan that can't be funded says so", () => {
     { id: "s", name: "Too big", steps: [{ id: "b", type: "BUY", year: 1, kind: "COM", price: 2500000, rentWeekly: 2000, funding: "EQUITY" }] },
   ];
   const r = E.runAll(p).runs[1];
-  assert.equal(r.verdict.level, "NO");
+  assert.equal(r.verdict.level, "STOP");
+  assert.ok(r.verdict.stops.length >= 1);
+});
+
+test("a red flag goes up when the household can't carry a second purchase two years after the first", () => {
+  const p = household();
+  p.people = [{ name: "Solo", salary: 200000, super: 100000 }];
+  p.cash = 30000;
+  p.home.loan.offset = 20000;
+  p.scenarios = [
+    { id: "base", baseline: true, name: "Base", steps: [] },
+    { id: "s", name: "Two quick buys", steps: [
+      { id: "b1", type: "BUY", year: 8, kind: "RES", price: 900000, rentWeekly: 650, funding: "EQUITY" },
+      { id: "b2", type: "BUY", year: 10, kind: "RES", price: 900000, rentWeekly: 650, funding: "EQUITY" },
+    ] },
+  ];
+  const r = E.runAll(p).runs[1];
+  assert.equal(r.verdict.level, "STOP");
+  assert.match(r.verdict.stops.join(" "), /lender would very likely say no|Runs out of money/);
+  assert.equal(r.years[0].income, 200000);
+});
+
+test("pay rises with prices (CPI) unless a wage growth figure is set", () => {
+  const base = run([]).base;
+  assert.equal(base.years[0].income, 250000);
+  assert.equal(base.years[1].income, Math.round(250000 * 1.0275));
+  const own = run([], { assumptions: { wageGrowth: 4 } }).base;
+  assert.equal(own.years[1].income, 260000);
+  assert.ok(base.years[0].takeHome > 0 && base.years[0].takeHome < 250000);
 });

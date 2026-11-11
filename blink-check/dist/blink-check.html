@@ -83,10 +83,10 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .tab[aria-selected="true"] b { background: var(--accent); color: var(--accent-ink); }
 .tab:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-main { padding-block: 20px 40px; display: grid; gap: 18px; }
-section[data-page] { display: grid; gap: 18px; }
+main { padding-block: 20px 40px; display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); }
+section[data-page] { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); min-width: 0; }
 .intro { display: grid; gap: 6px; max-width: 70ch; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 14px; min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 14px; min-width: 0; grid-template-columns: minmax(0, 1fr); }
 .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
 .grid.wide { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
@@ -113,7 +113,7 @@ textarea { min-height: 120px; font-family: ui-monospace, SFMono-Regular, Menlo, 
 .chips { display: flex; gap: 8px; flex-wrap: wrap; }
 .chip {
   min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg);
-  font: 500 14px var(--font-body); cursor: pointer;
+  font: 500 14px var(--font-body); cursor: pointer; max-width: 100%; text-align: left; line-height: 1.3; padding-block: 6px;
 }
 .chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--fg); }
 .toggle { display: flex; align-items: center; gap: 10px; min-height: 40px; cursor: pointer; }
@@ -209,6 +209,27 @@ h3 .info { vertical-align: middle; margin-left: 6px; }
 .help-kv dd { text-align: left; font-weight: 400; line-height: 1.55; font-variant-numeric: normal; }
 @media (max-width: 560px) { .help-kv { grid-template-columns: 1fr; gap: 2px; } .help-kv dd { margin-bottom: 10px; } }
 pre.guide { white-space: pre-wrap; word-break: break-word; max-height: 60vh; overflow: auto; background: var(--surface-2); border-radius: 8px; padding: 12px; font-size: 12.5px; line-height: 1.5; }
+
+/* red flag: the plan probably can't be done */
+.pill.STOP { background: var(--danger-bg); color: var(--danger); gap: 6px; }
+.pill svg, .red-flag svg { width: 16px; height: 16px; flex: none; }
+.red-flag { border: 2px solid var(--danger); background: var(--danger-bg); color: var(--fg); border-radius: 10px; padding: 12px 14px; display: grid; gap: 6px; font-size: 14px; line-height: 1.5; }
+.red-flag-head { display: flex; align-items: center; gap: 8px; color: var(--danger); font-size: 15px; }
+.red-flag.big { margin-bottom: 14px; }
+.red-flag.big .red-flag-head { font: 600 18px var(--font-head); }
+.red-flag.big svg { width: 22px; height: 22px; }
+.red-flag ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.red-flag p { margin: 0; }
+.amber-flag { background: var(--warn-bg); border-radius: 8px; padding: 10px 12px; font-size: 14px; line-height: 1.5; }
+.amber-flag p { margin: 0; }
+/* wealth, debt and cash flow */
+.at-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 6px 0; }
+.at-row label { font-size: 13px; font-weight: 500; color: var(--muted); }
+.at-row input[type="range"] { flex: 1 1 200px; min-height: 40px; accent-color: var(--accent); }
+.at-row output { font: 600 15px var(--font-head); min-width: 64px; }
+.diff-words { margin: 8px 0 12px; padding-left: 20px; display: grid; gap: 6px; line-height: 1.55; max-width: 75ch; }
+.diff-table td:first-child, .diff-table th:first-child { text-align: left; white-space: normal; min-width: 150px; }
+.diff-table th .dot { display: inline-block; vertical-align: middle; }
 </style>
 
 </head>
@@ -376,7 +397,7 @@ pmt, monthsToClear, parseAmount, DEFAULT_ASSUMPTIONS, CASH_RATE
 The simulation runs month by month for `horizon × 12` months. Each year is recorded at its last month.
 
 **At the start of each year:**
-1. Wages grow by `wageGrowth`, and rents grow by their growth rates.
+1. Wages grow by `wageGrowth`, or by `cpi` when it's empty (the default, so pay keeps pace with prices). Rents grow by their growth rates.
 2. PAYG tax is withheld on the new salaries.
 3. Every loan is repriced: `rate = max(minRate, rateToday + shift[year])`. P&I repayments are recalculated over the term left.
 4. The plan's steps for this year run.
@@ -397,7 +418,7 @@ The simulation runs month by month for `horizon × 12` months. Each year is reco
    - interest is charged on `max(0, balance − offset) × rate / 12`;
    - interest-only loans pay just the interest until `ioLeft` reaches 0, then become P&I over the term left;
    - P&I loans pay `pmt`;
-   - a loan is cleared when `balance − offset ≤ 0`, and any offset money left over goes on via the spare-money rule;
+   - a loan is cleared when `balance − offset ≤ 0`, but only if savings and offsets would still hold a **cash reserve** afterwards (three months of living costs, at least $20,000). Any offset money left over goes on via the spare-money rule. Until then, the loan stays "covered": no interest is charged, the money is still there to draw on, and spare money skips it.
    - repayments are charged to whoever the loan is for (`forProp`): the household (home loan), a property's cash flow (including equity loans secured on other property), shares, or super (SMSF loans).
 5. **Dividends:** `shares × yield / 12`, added to the shares' cash flow.
 6. **Savings interest:** `cash × savingsRate / 12`.
@@ -419,6 +440,7 @@ The simulation runs month by month for `horizon × 12` months. Each year is reco
 6. **SMSF net income** is taxed at 15% inside super.
 
 **Each year records** the following fields:
+- income: `income` (household pay before tax), `takeHome`, `homeLoanPay`, `living` (living costs plus other loan repayments);
 - rates and values: `homeRate`, `value`, `debt`, `offsets`, `cash`, `liquid`, `shares`, `superTotal`, `equity`, `nw`, `nwExSuper`;
 - the year's flows: `interest`, `interestSaved`, `rent`, `costs`, `landTax`, `taxEffect`, `writeOffs`;
 - investment cash: `investCashBefore`, `investCashAfter` (after the tax effect); `topUp` = what the household had to put in;
@@ -458,7 +480,7 @@ This is a rough version of a lender's test. It's run at each purchase.
 - **Income:** gross income = salaries + rents × shading (80% residential, 75% commercial), split by ownership. Net income = gross less tax.
 - **Repayments:** each loan is counted at P&I, at `rate + assessBuffer` (3%), over its remaining P&I term.
 - **Other costs:** living costs (with CPI), other loan repayments, and `cardLimits × 3.8% × 12`.
-- **Surplus** = net income − repayments − living − others:
+- **Surplus** = net income − repayments − living − others (the result also records the household `income`):
   - **LIKELY** if ≥ $6,000 a year;
   - **TIGHT** if ≥ 0;
   - otherwise **UNLIKELY**.
@@ -494,11 +516,18 @@ This is a rough version of a lender's test. It's run at each purchase.
 
 | verdict | when |
 |---|---|
-| "Runs out of spare cash in year N" (NO) | savings and offsets are used up in some year |
-| "Worth a closer look" (YES) | gain > max($50,000, 5% of the yardstick's net worth), and no purchase is UNLIKELY to be approved |
-| "Worth a look — if the loan is approved" (MAYBE) | the same gain, but a purchase is UNLIKELY |
+| "Probably not possible on this income" (STOP — red flag) | savings and offsets are used up in some year, or any purchase is UNLIKELY at the lender's test |
+| "Worth a closer look" (YES) | gain > max($50,000, 5% of the yardstick's net worth) |
 | "Marginal" (MAYBE) | 0 < gain ≤ that threshold |
 | "Doesn't beat leaving the cash in the offset" (NO) | gain ≤ 0 |
+
+**Red flags (`verdict.stops`).** Each red flag is a sentence with the figures:
+- **Running out:** the year's income before and after tax, what the investments cost or bring in after tax, the home loan repayments and the living costs.
+- **A loan a lender would refuse:** the income and how far short the budget is at the test rate.
+
+The page shows them in a red box on the plan's card, with a banner at the top of the results, and in the plain-words summary as "RED FLAG:".
+
+**Amber warnings (`verdict.warnings`):** years when the household spends more than it earns (`householdSpare < 0`) but doesn't run out.
 
 The notes list:
 - borrowing results and shortfalls;
@@ -599,7 +628,7 @@ These are deliberately middle-of-the-road, not optimistic.
 
 | key | default | note |
 |---|---|---|
-| cpi / wageGrowth | 2.75 / 3.25 | % a year |
+| cpi / wageGrowth | 2.75 / empty | % a year; empty pay rises = in line with CPI |
 | resGrowth / comGrowth | 5 / 3 | % a year, values |
 | resRentGrowth / comRentGrowth | 3.5 / 3 | % a year |
 
@@ -673,7 +702,16 @@ The page is reachable by `#hash` (e.g. `#check`).
    - copy or delete a plan, with a confirmation.
 4. **Blink check:**
    - a verdict card for each run: the gain against the yardstick, the key figures and the notes;
-   - one chart with metric chips (net worth, net worth outside super, debt, equity, investments' cash after tax, household spare cash, interest rate) and a tick box per plan to overlay or hide it;
+   - a red banner at the top when any plan probably won't work, and a red box on that plan's card;
+   - **Wealth, debt and cash flow:**
+     - pick one plan, tick others to lay over it, and tick which measures to show;
+     - **top chart, "What you own and owe":** wealth (net worth, solid) and debt (dashed), in each plan's colour;
+     - **bottom chart, "Money each year":** income before tax (dotted, in the text colour; the same in every plan) and the investments' cash flow after tax (solid). Below zero is shaded "costs you money";
+     - two charts rather than one with two scales, so yearly amounts aren't squashed against multi-million totals;
+     - the charts share a year cursor, and hovering one moves both;
+     - a year slider (easy on a phone) moves the cursor and updates the comparison without redrawing the page;
+     - the comparison is sentences ("By year 20, compared with A, B leaves you with $1.7m less wealth and $310k more debt; its investments cost you money in 10 years instead of 5") and a table: wealth, debt, income, cash flow, years costing money, own money put in, and the debt-free year;
+   - **Compare one measure:** one chart with metric chips (net worth, net worth outside super, debt, equity, investments' cash after tax, household spare cash, interest rate) and a tick box per plan to overlay or hide it;
    - "Where the money comes from" (the money chain per purchase, with the borrowing check);
    - "In plain words — for your accountant or broker" with Copy;
    - the year-by-year table.
@@ -697,7 +735,7 @@ The page is reachable by `#hash` (e.g. `#check`).
 
 ### Charts
 
-- **Drawing:** `chart(id, series, height, format)` draws SVG with gridlines, axis labels in short money ("$1.2m"), one line per series, and a dashed line for the yardstick.
+- **Drawing:** `chart(id, series, H, format, opts)` draws SVG at a narrower size on phones (under 600px, so the text stays readable; it redraws if the width crosses that line), with `opts.group` / `opts.at` for linked cursors and `opts.shadeNegative` for the shaded band below zero. It draws with gridlines, axis labels in short money ("$1.2m"), one line per series, and a dashed line for the yardstick.
 - **Hover:** hovering or touching shows a tooltip with every series' value for that year.
 - **Colours:** series colours are CSS tokens `--s0`…`--s3`, matched to the plan tabs' dots.
 
@@ -808,7 +846,9 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 10. **Selling:** clears loans and lowers debt.
 11. **Debt recycling:** turns offset cash into shares with a deductible split.
 12. **SMSF:** a purchase uses super, not household cash.
-13. **A plan that can't be funded:** its verdict is NO.
+13. **A plan that can't be funded:** its verdict is STOP, with a red flag.
+14. **Two quick purchases on $200k:** buying in year 8 and again in year 10 raises a red flag.
+15. **Pay rises:** pay rises with CPI by default, or by the wage growth figure when one is set; `income` and `takeHome` are recorded.
 
 **Browser checks** (by hand, or with Playwright):
 - every page on desktop and on a phone (light and dark), with no sideways scroll and no console errors;
@@ -1024,7 +1064,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     lrbaPremium: 1.2,
     savingsRate: 4,
     cpi: 2.75,
-    wageGrowth: 3.25,
+    wageGrowth: null, // % a year; null = in line with CPI (prices)
     resGrowth: 5,
     comGrowth: 3,
     resRentGrowth: 3.5,
@@ -1081,6 +1121,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const a = Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {});
     const H = Math.max(5, Math.min(30, Number(a.horizon) || 20));
     const shifts = rateShifts(a, H);
+    const wageGrowth = a.wageGrowth === null || a.wageGrowth === undefined || a.wageGrowth === "" ? a.cpi : +a.wageGrowth;
     const people = (plan.people || []).filter((p) => p && p.name !== undefined);
     if (!people.length) people.push({ id: "p1", name: "You", salary: 0, super: 0 });
     const nP = people.length;
@@ -1150,6 +1191,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const debtOn = (propId) => loans.filter((L) => L.prop === propId && active(L)).reduce((s, L) => s + L.balance, 0);
     const usableEquity = (p) => positive(p.value * (a.maxLvr / 100) - debtOn(p.id));
     const liveProps = () => props.filter((p) => !p.sold);
+    const reserve = () => Math.max(20000, (living0 / 4) * Math.pow(1 + a.cpi / 100, year - 1)); // three months of living costs
     const offsetsTotal = () => loans.filter((L) => !L.smsf).reduce((s, L) => s + (active(L) ? L.offset : 0), 0);
 
     let month = 0;
@@ -1167,7 +1209,8 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     /** Where spare money goes under this scenario's rule. Returns the loan whose offset takes it, or null for cash. */
     function spareTarget(propId) {
       const rule = scenario.spare || "HOME_OFFSET";
-      const open = loans.filter((L) => active(L) && !L.smsf);
+      // A loan its offset already covers costs no interest: more money there does nothing.
+      const open = loans.filter((L) => active(L) && !L.smsf && L.offset < L.balance - 0.5);
       if (rule === "CASH") return null;
       if (rule === "OWN_OFFSET" && propId) {
         const own = mainLoanOf(propId);
@@ -1265,7 +1308,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       const living = living0 * Math.pow(1 + a.cpi / 100, year - 1);
       const others = (year <= otherRepayYears ? otherRepay : 0) + cardLimits * (a.cardServicing / 100) * 12;
       const surplus = net - commitments - living - others;
-      return { surplus: round(surplus), result: surplus >= 6000 ? "LIKELY" : surplus >= 0 ? "TIGHT" : "UNLIKELY" };
+      return { surplus: round(surplus), income: round(salaries.reduce((x, v) => x + v, 0)), result: surplus >= 6000 ? "LIKELY" : surplus >= 0 ? "TIGHT" : "UNLIKELY" };
     }
 
     // --- Plan steps ----------------------------------------------------------------
@@ -1495,7 +1538,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         year = month / 12 + 1;
         yr = newYearTotals();
         if (year > 1) {
-          salaries = salaries.map((s) => s * (1 + a.wageGrowth / 100));
+          salaries = salaries.map((s) => s * (1 + wageGrowth / 100));
           for (const p of props) {
             if (p.rentNow !== undefined) p.rentNow *= 1 + (p.kind === "COM" ? a.comRentGrowth : a.resRentGrowth) / 100;
           }
@@ -1590,7 +1633,9 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
           salaryPart -= pay;
           yr.homePay += pay;
         } else parts[L.forProp] = (parts[L.forProp] || 0) - pay;
-        if (L.balance - L.offset <= 0.5 && !(L.type === "IO" && L.ioLeft > 0)) clearLoan(L, "offset");
+        // Covered by its offset: pay it off with the offset only if a cash reserve is left; otherwise keep
+        // the money in the offset (no interest is charged) so it's still there when it's needed.
+        if (L.balance - L.offset <= 0.5 && !(L.type === "IO" && L.ioLeft > 0) && cash + offsetsTotal() - L.balance >= reserve()) clearLoan(L, "offset");
         else if (L.balance <= 0.5) clearLoan(L, "repaid");
       }
       // Loans for a property that's been sold, still running: the household pays them.
@@ -1695,6 +1740,10 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
           equity: round(T.equity),
           nw: round(T.nw),
           nwExSuper: round(T.nwExSuper),
+          income: round(salaries.reduce((s, x) => s + x, 0)),
+          takeHome: round(yr.takeHome),
+          homeLoanPay: round(yr.homePay),
+          living: round(yr.living),
           interest: round(yr.interest),
           interestSaved: round(yr.interestSaved),
           rent: round(yr.rent),
@@ -1772,12 +1821,11 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const s = r.summary;
     const risk = plan.risk || "MIDDLE";
     const goal = plan.goal || "GROWTH";
-    if (r.baseline) return { level: "BASE", label: "The yardstick", notes: ["Cash stays in the offset and spare money keeps going in; nothing new is bought."] };
+    if (r.baseline) return { level: "BASE", label: "The yardstick", stops: [], warnings: [], notes: ["Cash stays in the offset and spare money keeps going in; nothing new is bought."] };
     const gain = s.nwEnd - base.summary.nwEnd;
     const H = r.years.length;
     for (const c of r.chains) {
-      if (c.borrow && c.borrow.result === "UNLIKELY") notes.push(`A lender may not approve the loan for ${c.name.toLowerCase()} in year ${c.year} — the budget comes out about ${money(-c.borrow.surplus)} a year short at their test rate.`);
-      else if (c.borrow && c.borrow.result === "TIGHT") notes.push(`Borrowing for ${c.name.toLowerCase()} in year ${c.year} looks tight at a lender's test rate.`);
+      if (c.borrow && c.borrow.result === "TIGHT") notes.push(`Borrowing for ${c.name.toLowerCase()} in year ${c.year} looks tight at a lender's test rate.`);
       if (c.short > 0) notes.push(`About ${money(c.short)} short of the deposit and costs for ${c.name.toLowerCase()} in year ${c.year}.`);
     }
     if (s.worstYear.amount < 0) notes.push(`The worst year is year ${s.worstYear.year}: the investments need ${money(-s.worstYear.amount)} from you (${money(-s.worstYear.amount / 52)} a week) after tax.`);
@@ -1787,9 +1835,39 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     if (r.chains.some((c) => c.kind === "COM")) notes.push("Commercial property can sit empty for 6–12 months between tenants — keep a cash buffer.");
     if (goal === "CASHFLOW" && s.worstYear.amount < 0 && !s.positiveFrom) notes.push("Costs money every year over the plan — doesn't fit a cash-flow goal.");
     for (const f of r.flags) notes.push(f.text);
+
+    // Red flags: the plan probably can't be done on this income.
+    const stops = [];
+    if (s.runsOut) {
+      const y = r.years[s.runsOut - 1];
+      stops.push(
+        `Runs out of money in year ${s.runsOut}. That year the household earns about ${money(y.income)} before tax (${money(y.takeHome)} after tax). ` +
+          `The investments ${y.investCashAfter < 0 ? `cost ${money(-y.investCashAfter)} after tax` : `bring in ${money(y.investCashAfter)} after tax`}, ` +
+          `on top of ${money(y.homeLoanPay)} of home loan repayments and ${money(y.living)} of living costs — and savings and offsets are used up.`
+      );
+    }
+    for (const c of r.chains) {
+      if (c.borrow && c.borrow.result === "UNLIKELY")
+        stops.push(
+          `A lender would very likely say no to the loan for ${c.name.toLowerCase()} in year ${c.year}. On an income of about ${money(c.borrow.income)} before tax, ` +
+            `at their test rate (about 3% above the real rate, counting only part of the rent and your card limits), the budget is about ${money(-c.borrow.surplus)} a year short.`
+        );
+    }
+    const short = r.years.filter((y) => y.householdSpare < 0);
+    const warnings = [];
+    if (!s.runsOut && short.length) {
+      const worst = short.reduce((w, y) => (y.householdSpare < w.householdSpare ? y : w));
+      warnings.push(
+        `In ${short.length} of the ${H} years the household spends more than it earns — at worst year ${worst.year}, about ${money(-worst.householdSpare)} short, paid from savings and offsets.`
+      );
+    }
+
     let level;
     let label;
-    if (s.runsOut) {
+    if (stops.length) {
+      level = "STOP";
+      label = "Probably not possible on this income";
+    } else if (s.runsOut) {
       level = "NO";
       label = `Runs out of spare cash in year ${s.runsOut}`;
       notes.unshift("Savings and offsets would be used up — it would need more income, a smaller purchase or a later year.");
@@ -1803,7 +1881,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       level = "NO";
       label = "Doesn't beat leaving the cash in the offset";
     }
-    return { level, label, gain: round(gain), perDollar: s.moneyIn > 0 ? gain / s.moneyIn : null, notes, horizon: H };
+    return { level, label, gain: round(gain), perDollar: s.moneyIn > 0 ? gain / s.moneyIn : null, notes, stops, warnings, horizon: H };
   }
 
   function runAll(plan) {
@@ -1905,6 +1983,9 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
   const BIN =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>';
 
+  const FLAG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>';
+
   // ---------------------------------------------------------------- words explained
 
   const HELP = {
@@ -1947,8 +2028,8 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     return {
       example: true,
       people: [
-        { id: "p1", name: "Alex", salary: 145000, super: 160000 },
-        { id: "p2", name: "Sam", salary: 95000, super: 110000 },
+        { id: "p1", name: "Alex", salary: 170000, super: 160000 },
+        { id: "p2", name: "Sam", salary: 125000, super: 110000 },
       ],
       livingMonthly: 5500,
       cardLimits: 15000,
@@ -2039,7 +2120,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
   }
 
   let state = load();
-  const ui = { openHelp: {}, page: "you", plan: 1, metric: "nw", hidden: {}, chainPlan: 1, tablePlan: 1, confirm: null, panel: null, message: "" };
+  const ui = { fullMain: 1, fullCompare: { base: true }, fullShow: { nw: true, debt: true, income: true, cash: true }, atYear: 0, openHelp: {}, page: "you", plan: 1, metric: "nw", hidden: {}, chainPlan: 1, tablePlan: 1, confirm: null, panel: null, message: "" };
   let results = null;
 
   function save() {
@@ -2422,11 +2503,14 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     ["homeRate", "Interest rate", (y) => y.homeRate, "The home loan rate (other loans move the same way)."],
   ];
 
-  function chart(id, series, H, fmt) {
-    const W = 760;
-    const Ht = 300;
-    const pl = 64;
-    const pr = 18;
+  // Line chart in SVG. series: [{ name, color, values, dash?, width?, base? }].
+  // opts.group links charts so they share a year cursor; opts.at puts that cursor on a year (1-based).
+  function chart(id, series, H, fmt, opts = {}) {
+    const narrow = window.innerWidth < 600;
+    const W = narrow ? 400 : 760;
+    const Ht = opts.height || (narrow ? 280 : 300);
+    const pl = narrow ? 50 : 64;
+    const pr = 14;
     const pt = 14;
     const pb = 34;
     const all = series.flatMap((s) => s.values);
@@ -2437,36 +2521,44 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       hi = Math.ceil(Math.max(...all) + 0.5);
     }
     const span = hi - lo || 1;
-    const step = niceStep(span / 5);
+    const step = niceStep(span / (narrow ? 4 : 5));
     lo = Math.floor(lo / step) * step;
     hi = Math.ceil(hi / step) * step;
     const x = (i) => pl + (i * (W - pl - pr)) / Math.max(1, H - 1);
     const y = (v) => pt + ((hi - v) * (Ht - pt - pb)) / (hi - lo || 1);
     const label = (v) => (fmt === "rate" ? v.toFixed(1) + "%" : compact(v));
     let grid = "";
+    // Below zero: money going out. A light band, so negative years stand out.
+    if (lo < 0 && opts.shadeNegative)
+      grid += `<rect x="${pl}" y="${y(0)}" width="${W - pl - pr}" height="${y(lo) - y(0)}" fill="var(--warn-bg)" opacity="0.7"/>
+        <text x="${pl + 8}" y="${y(lo) - 8}" style="fill:var(--warn)">${esc(opts.shadeNegative)}</text>`;
     for (let v = lo; v <= hi + step / 2; v += step) {
-      grid += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)" stroke-width="${Math.abs(v) < step / 1e6 ? 1.5 : 1}"/>`;
+      const zero = Math.abs(v) < step / 1e6;
+      grid += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="${zero ? "var(--muted)" : "var(--grid)"}" stroke-width="${zero ? 1.25 : 1}"/>`;
       grid += `<text x="${pl - 8}" y="${y(v) + 4}" text-anchor="end">${label(v)}</text>`;
     }
-    const every = H > 20 ? 5 : H > 10 ? 2 : 1;
+    const every = H > 20 ? 5 : H > 10 ? (narrow ? 4 : 2) : narrow ? 2 : 1;
     let ticks = "";
     for (let i = 0; i < H; i++) if ((i + 1) % every === 0 || i === 0) ticks += `<text x="${x(i)}" y="${Ht - 10}" text-anchor="middle">${i + 1}</text>`;
     const lines = series
       .map((s) => {
         const pts = s.values.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
         const last = s.values.length - 1;
-        return `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="${s.base ? 2 : 2.5}" stroke-dasharray="${s.base ? "6 5" : ""}" stroke-linejoin="round" stroke-linecap="round"/>
-          <circle cx="${x(last)}" cy="${y(s.values[last])}" r="4" fill="${s.color}"/>`;
+        const dash = s.dash !== undefined ? s.dash : s.base ? "6 5" : "";
+        const width = s.width || (s.base ? 2 : 2.5);
+        return `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="${width}" stroke-dasharray="${dash}" stroke-linejoin="round" stroke-linecap="round"/>
+          ${s.noDot ? "" : `<circle cx="${x(last)}" cy="${y(s.values[last])}" r="4" fill="${s.color}"/>`}`;
       })
       .join("");
+    const at = opts.at ? Math.min(H, opts.at) - 1 : null;
     chartData[id] = { series, H, fmt, x, pl, pr, W, Ht };
-    return `<div class="chart-wrap" data-chart="${id}">
-      <svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="Chart over ${H} years">
-        ${grid}${ticks}<text x="${W - pr}" y="${Ht - 10}" text-anchor="end" style="display:none">year</text>
-        ${lines}<line class="cursor" x1="0" x2="0" y1="${pt}" y2="${Ht - pb}" stroke="var(--muted)" stroke-dasharray="3 3" visibility="hidden"/>
+    return `<div class="chart-wrap" data-chart="${id}"${opts.group ? ` data-group="${opts.group}"` : ""}${at !== null ? ` data-at="${at}"` : ""}>
+      <svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="${esc(opts.label || `Chart over ${H} years`)}">
+        ${grid}${ticks}
+        ${lines}<line class="cursor" x1="${at !== null ? x(at) : 0}" x2="${at !== null ? x(at) : 0}" y1="${pt}" y2="${Ht - pb}" stroke="var(--muted)" stroke-dasharray="3 3" visibility="${at !== null ? "visible" : "hidden"}"/>
         <rect x="${pl}" y="${pt}" width="${W - pl - pr}" height="${Ht - pt - pb}" fill="transparent" class="hit"/>
       </svg><div class="tip" hidden></div></div>
-      <p class="small muted">Years along the bottom. Dashed line: the yardstick.</p>`;
+      ${opts.noNote ? "" : `<p class="small muted">Years along the bottom. Dashed line: the yardstick.</p>`}`;
   }
   const chartData = {};
   function niceStep(raw) {
@@ -2492,7 +2584,9 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     ];
     return `<div class="card verdict" style="--c:${SERIES[i]}">
       <div class="card-head"><h3 style="display:flex;gap:8px;align-items:center"><span class="dot" style="background:${SERIES[i]}"></span>${esc(r.baseline ? "Yardstick: cash in the offset" : r.name)}${r.baseline ? helpButton("yardstick", "h-yard") : ""}</h3></div>${r.baseline ? helpPop("yardstick", "h-yard") : ""}
-      <span class="pill ${v.level}">${esc(v.label)}</span>
+      <span class="pill ${v.level}">${v.level === "STOP" ? FLAG : ""}${esc(v.label)}</span>
+      ${(v.stops || []).length ? `<div class="red-flag" role="alert"><div class="red-flag-head">${FLAG}<b>This probably won't work</b></div><ul>${v.stops.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>` : ""}
+      ${(v.warnings || []).length ? `<div class="amber-flag">${v.warnings.map((t) => `<p>${esc(t)}</p>`).join("")}</div>` : ""}
       ${
         r.baseline
           ? `<div><div class="big">${money(s.nwEnd)}</div><p class="small muted">Net worth in ${H} years, if nothing new is bought.</p></div>`
@@ -2614,11 +2708,134 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       lines.push(`Rough result over ${H} years: net worth about ${signed(r.verdict.gain)} compared with leaving the cash in the offset (${r.verdict.label.toLowerCase()}).`);
       lines.push(`Our own money in: about ${money(sm.upfrontCash)} at purchase and ${money(sm.topUps)} of top-ups over the years${sm.worstYear.amount < 0 ? `; the hardest year is year ${sm.worstYear.year}, at about ${money(-sm.worstYear.amount)} (${weekly(-sm.worstYear.amount)}) after tax` : ""}.`);
       for (const c of r.chains) if (c.borrow) lines.push(`Borrowing check for ${c.name.toLowerCase()} in year ${c.year}: ${c.borrow.result === "LIKELY" ? "looks likely" : c.borrow.result === "TIGHT" ? "looks tight" : "looks unlikely"}.`);
+      for (const t of r.verdict.stops || []) lines.push(`RED FLAG: ${t}`);
+      for (const t of r.verdict.warnings || []) lines.push(`Watch: ${t}`);
       if (sc.notes) lines.push(`Our questions: ${sc.notes}`);
     }
     lines.push("");
     lines.push("These are broad estimates from Blink Check (general information, not advice) — the assumptions are in the file.");
     return lines.join("\n");
+  }
+
+  const runName = (r) => (r.baseline ? "Yardstick" : r.name);
+
+  function stopBanner(runs) {
+    const bad = runs.filter((r) => r.verdict && r.verdict.level === "STOP");
+    if (!bad.length) return "";
+    return `<div class="red-flag big" role="alert"><div class="red-flag-head">${FLAG}<b>${bad.length === 1 ? `"${esc(bad[0].name)}" probably won't work on this income` : `${bad.length} plans probably won't work on this income`}</b></div>
+      <p>${bad.map((r) => esc(r.name)).join("; ")} — see the red flags on ${bad.length === 1 ? "its card" : "their cards"} below. A smaller purchase, a later year, more income or less other debt might change that.</p></div>`;
+  }
+
+  // Short money for sentences: $1.71m, $310k.
+  const approx = (n) => {
+    const a = Math.abs(n);
+    if (a >= 1e6) return "$" + (a / 1e6).toFixed(2).replace(/\.?0+$/, "") + "m";
+    if (a >= 1e4) return "$" + Math.round(a / 1e3) + "k";
+    return money(a);
+  };
+
+  const FULL_MEASURES = [
+    ["nw", "Wealth (net worth)", "solid"],
+    ["debt", "Debt", "dashed"],
+    ["income", "Income before tax", "dotted"],
+    ["cash", "Investments' cash flow after tax", "solid"],
+  ];
+  const lineKey = (style) =>
+    `<svg width="28" height="10" aria-hidden="true"><line x1="1" x2="27" y1="5" y2="5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"${style === "dashed" ? ' stroke-dasharray="7 5"' : style === "dotted" ? ' stroke-dasharray="1 5"' : ""}/></svg>`;
+
+  // Facts about one plan, by year `at` (1-based).
+  function factsAt(r, at) {
+    const ys = r.years.slice(0, at);
+    const y = r.years[at - 1];
+    return {
+      nw: y.nw,
+      debt: y.debt,
+      income: y.income,
+      cash: y.investCashAfter,
+      costYears: ys.filter((x) => x.investCashAfter < 0).length,
+      moneyIn: ys.reduce((t, x) => t + x.upfrontCash + x.topUp, 0),
+      debtFree: r.summary.debtFreeYear,
+    };
+  }
+
+  function fullDiff() {
+    const R = compute();
+    const runs = R.runs;
+    const H = R.base.years.length;
+    const at = Math.min(ui.atYear || H, H);
+    const mi = Math.min(ui.fullMain, runs.length - 1);
+    const main = runs[mi];
+    const others = runs.filter((r, i) => i !== mi && ui.fullCompare[r.id]);
+    const m = factsAt(main, at);
+    const yearsText = (n) => `${n} year${n === 1 ? "" : "s"}`;
+    const sentences = others.map((o) => {
+      const f = factsAt(o, at);
+      const parts = [];
+      const dW = f.nw - m.nw;
+      parts.push(Math.abs(dW) < 1000 ? "about the same wealth" : `${approx(dW)} ${dW > 0 ? "more" : "less"} wealth`);
+      const dD = f.debt - m.debt;
+      parts.push(Math.abs(dD) < 1000 ? "about the same debt" : `${approx(dD)} ${dD > 0 ? "more" : "less"} debt`);
+      const cy = f.costYears === m.costYears ? `in both, the investments cost you money in ${yearsText(f.costYears)}` : `its investments cost you money in ${yearsText(f.costYears)} instead of ${m.costYears}`;
+      return `<li>By year ${at}, compared with <b>${esc(runName(main))}</b>, <b>${esc(runName(o))}</b> leaves you with ${parts.join(" and ")}; ${cy}.</li>`;
+    });
+    const rows = [
+      [`Wealth (net worth) in year ${at}`, (f) => money(f.nw), (f) => f.nw - m.nw, "money"],
+      [`Debt in year ${at}`, (f) => money(f.debt), (f) => f.debt - m.debt, "money"],
+      [`Income before tax in year ${at}`, (f) => money(f.income), (f) => f.income - m.income, "money"],
+      [`Investments' cash flow in year ${at}`, (f) => money(f.cash), (f) => f.cash - m.cash, "money"],
+      [`Years the investments cost you money (1–${at})`, (f) => String(f.costYears), (f) => f.costYears - m.costYears, "years"],
+      [`Your own money put in (1–${at})`, (f) => money(f.moneyIn), (f) => f.moneyIn - m.moneyIn, "money"],
+      ["Debt-free", (f) => (f.debtFree ? `Year ${f.debtFree}` : `Not within ${H} years`), () => null, ""],
+    ];
+    const facts = others.map((o) => factsAt(o, at));
+    const diffText = (d, kind) => (d === null || d === 0 || (kind === "money" && Math.abs(d) < 500) ? "" : kind === "years" ? `${Math.abs(d)} ${d > 0 ? "more" : "fewer"}` : `${approx(d)} ${d > 0 ? "more" : "less"}`);
+    return `${sentences.length ? `<ul class="diff-words">${sentences.join("")}</ul>` : `<p class="small muted">Tick a plan under "Compare with" to see the differences.</p>`}
+      <div class="table-wrap"><table class="diff-table"><thead><tr><th>Year ${at}</th><th><span class="dot" style="background:${SERIES[mi]}"></span> ${esc(runName(main))}</th>${others
+        .map((o) => `<th><span class="dot" style="background:${SERIES[runs.indexOf(o)]}"></span> ${esc(runName(o))}</th>`)
+        .join("")}</tr></thead><tbody>${rows
+        .map(([label, val, diff, kind]) => `<tr><td>${esc(label)}</td><td class="num">${esc(val(m))}</td>${facts.map((f) => `<td class="num">${esc(val(f))}${diffText(diff(f), kind) ? `<div class="small muted">${esc(diffText(diff(f), kind))}</div>` : ""}</td>`).join("")}</tr>`)
+        .join("")}</tbody></table></div>`;
+  }
+
+  function fullCard(R) {
+    const runs = R.runs;
+    const H = R.base.years.length;
+    const at = Math.min(ui.atYear || H, H);
+    const mi = Math.min(ui.fullMain, runs.length - 1);
+    const main = runs[mi];
+    const shown = runs.filter((r, i) => i === mi || ui.fullCompare[r.id]);
+    const on = ui.fullShow;
+    const top = [];
+    const bottom = [];
+    for (const r of shown) {
+      const i = runs.indexOf(r);
+      const width = r === main ? 3 : 2;
+      const nm = runName(r);
+      if (on.nw) top.push({ name: `Wealth — ${nm}`, color: SERIES[i], values: r.years.map((y) => y.nw), width });
+      if (on.debt) top.push({ name: `Debt — ${nm}`, color: SERIES[i], values: r.years.map((y) => y.debt), width, dash: "7 5", noDot: true });
+      if (on.cash) bottom.push({ name: `Cash flow — ${nm}`, color: SERIES[i], values: r.years.map((y) => y.investCashAfter), width });
+    }
+    if (on.income) bottom.unshift({ name: "Income before tax", color: "var(--fg)", values: main.years.map((y) => y.income), width: 2, dash: "1 5", noDot: true });
+    const wage = state.assumptions.wageGrowth;
+    const wageText = wage === undefined || wage === null || wage === "" ? `rising with prices (CPI, ${A("cpi")}% a year)` : `rising ${wage}% a year`;
+    return `<div class="card">
+      <div class="card-head"><h3>Wealth, debt and cash flow</h3></div>
+      <p class="small muted">One plan in full, with any others laid over it. Pick the plan, tick what to compare it with, and slide to a year.</p>
+      <div class="field"><span class="label">Plan</span><div class="chips">${runs
+        .map((r, i) => `<button type="button" class="chip" data-pick="fullMain" data-value="${i}" aria-pressed="${i === mi}"><span class="dot" style="background:${SERIES[i]};margin-right:6px"></span>${esc(runName(r))}</button>`)
+        .join("")}</div></div>
+      <div class="field"><span class="label">Compare with</span><div class="chips">${runs
+        .map((r, i) => (i === mi ? "" : `<label class="chip legend-chip"><input type="checkbox" data-cmp="${esc(r.id)}"${ui.fullCompare[r.id] ? " checked" : ""} style="accent-color:${SERIES[i]};width:18px;height:18px"> ${esc(runName(r))}</label>`))
+        .join("")}</div></div>
+      <div class="field"><span class="label">Show</span><div class="chips">${FULL_MEASURES.map(
+        ([k, label, style]) => `<label class="chip legend-chip"><input type="checkbox" data-measure="${k}"${on[k] ? " checked" : ""} style="width:18px;height:18px"> ${lineKey(style)} ${esc(label)}</label>`
+      ).join("")}</div></div>
+      <div class="at-row"><label for="at-year">Compare at</label><input type="range" id="at-year" data-at min="1" max="${H}" value="${at}"><output id="at-label">Year ${at}</output></div>
+      ${on.nw || on.debt ? `<h4>What you own and owe</h4>${top.length ? chart("full-top", top, H, "money", { group: "full", at, noNote: true, label: "Wealth and debt over the years" }) : ""}` : ""}
+      ${on.income || on.cash ? `<h4>Money each year</h4>${chart("full-bottom", bottom, H, "money", { group: "full", at, noNote: true, shadeNegative: on.cash ? "Below the line: costs you money" : "", label: "Income and cash flow each year" })}` : ""}
+      <p class="small muted">Solid: wealth and cash flow. Dashed: debt. Dotted: income before tax, ${esc(wageText)} — the same in every plan. The thicker line is the plan you picked.</p>
+      <div id="full-diff">${fullDiff()}</div>
+    </div>`;
   }
 
   function pageCheck() {
@@ -2639,9 +2856,11 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const spareText = SPARE.find((x) => x[0] === (tt.spare || "HOME_OFFSET"))[1];
     return `${exampleBanner()}
     <div class="intro"><h2>Blink check</h2><p class="muted">Each plan against leaving the cash in the offset, over ${H} years. Broad numbers — enough to tell whether an idea is worth researching properly.</p></div>
+    ${stopBanner(runs)}
     <div class="verdicts">${runs.map((r, i) => verdictCard(r, i, R.base)).join("")}</div>
+    ${fullCard(R)}
     <div class="card">
-      <div class="card-head"><h3>${esc(metric[1])}</h3></div>
+      <div class="card-head"><h3>Compare one measure: ${esc(metric[1].toLowerCase())}</h3></div>
       <div class="chart-controls">
         <div class="chips">${METRICS.map((m) => `<button type="button" class="chip" data-metric="${m[0]}" aria-pressed="${m[0] === metric[0]}">${esc(m[1])}</button>`).join("")}</div>
         <div class="chips">${runs
@@ -2699,7 +2918,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     <div class="card"><h3>Growth</h3><div class="grid">
       ${pctF("resGrowth", "Residential values (% a year)")}${pctF("comGrowth", "Commercial values (% a year)")}
       ${pctF("resRentGrowth", "Residential rents (% a year)")}${pctF("comRentGrowth", "Commercial rents (% a year)")}
-      ${pctF("wageGrowth", "Wages (% a year)")}${pctF("cpi", "Living costs (% a year)")}
+      ${numField("assumptions.wageGrowth", "Pay rises (% a year)", { placeholder: `Same as prices: ${A("cpi")}%`, hint: "Leave empty to keep pay in line with prices (CPI). Australian wages have grown about 3–3.5% a year over the long run." })}${pctF("cpi", "Living costs (% a year)")}
       ${pctF("shareGrowth", "Share prices (% a year)")}${pctF("shareYield", "Dividends (% a year)")}${pctF("franking", "Franked (% of dividends)", "", "franking")}
       ${pctF("superReturn", "Super returns after fees and tax (%)")}${pctF("superGuarantee", "Employer super (% of pay)")}
     </div></div>
@@ -2769,11 +2988,12 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     <div class="card help">
       <h3>What the results mean</h3>
       <dl class="kv help-kv">
+        <dt>Probably not possible on this income (red flag)</dt><dd>The plan would run the household out of money in some year — pay after tax can't cover living costs, the home loan and what the investments cost, and savings and offsets are used up — or a lender would very likely refuse one of the loans. The red box says which, with the figures.</dd>
         <dt>Worth a closer look</dt><dd>The plan ends well ahead of the yardstick (by more than $50,000 or 5% of the yardstick's net worth, whichever is bigger), never runs out of cash, and the borrowing check doesn't say "unlikely".</dd>
-        <dt>Worth a look — if the loan is approved</dt><dd>Well ahead, but a lender would probably say no to the borrowing as it stands.</dd>
         <dt>Marginal</dt><dd>Ahead, but not by enough to be worth the extra risk and effort unless it suits your goals.</dd>
         <dt>Doesn't beat leaving the cash in the offset</dt><dd>Ends behind the yardstick.</dd>
-        <dt>Runs out of spare cash</dt><dd>Savings and offsets would be used up in that year — the plan needs more income, a smaller purchase or a later year.</dd>
+        <dt>Amber note: spends more than it earns</dt><dd>In some years the household spends more than it earns and dips into savings and offsets, but doesn't run out within the plan.</dd>
+        <dt>Wealth, debt and cash flow</dt><dd>Two charts for one plan, with any others laid over it. The top one is what you own and owe (wealth solid, debt dashed). The bottom one is money each year: income before tax (dotted) and what the investments put in your pocket or cost you after tax (solid) — below the line costs you money. Slide to a year to compare the plans in words and in a table.</dd>
         <dt>Net worth compared with the yardstick</dt><dd>How much better or worse off the plan leaves you at the end, against doing nothing new.</dd>
         <dt>Cash put in at purchase</dt><dd>Your own money used for deposits, stamp duty and costs.</dd>
         <dt>Yearly top-ups</dt><dd>${esc(HELP.topUp[1])}</dd>
@@ -2920,6 +3140,15 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 
   document.addEventListener("change", (e) => {
     const el = e.target;
+    if (el.dataset && el.dataset.cmp !== undefined) {
+      ui.fullCompare[el.dataset.cmp] = el.checked;
+      return render(true);
+    }
+    if (el.dataset && el.dataset.measure !== undefined) {
+      ui.fullShow[el.dataset.measure] = el.checked;
+      return render(true);
+    }
+    if (el.dataset && el.dataset.at !== undefined) return;
     if (el.dataset && el.dataset.show !== undefined) {
       ui.hidden[el.dataset.show] = !el.checked;
       render(true);
@@ -2949,6 +3178,17 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 
   document.addEventListener("input", (e) => {
     const el = e.target;
+    if (el.dataset && el.dataset.at !== undefined) {
+      // Slide to a year: move the cursors and refresh the comparison, without redrawing the page (the slider keeps working mid-drag).
+      ui.atYear = Number(el.value);
+      document.getElementById("at-label").textContent = `Year ${el.value}`;
+      document.querySelectorAll('.chart-wrap[data-group="full"]').forEach((w) => {
+        w.dataset.at = el.value - 1;
+        placeCursor(w, el.value - 1);
+      });
+      document.getElementById("full-diff").innerHTML = fullDiff();
+      return;
+    }
     if (el.dataset && el.dataset.kind === "text" && el.dataset.path) {
       setPath(el.dataset.path, el.value);
       state.example = false;
@@ -3077,6 +3317,11 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     }
     if (d.pick) {
       ui[d.pick] = Number(d.value);
+      if (d.pick === "fullMain") {
+        const r = compute().runs[ui.fullMain];
+        if (r) delete ui.fullCompare[r.id];
+        if (!Object.values(ui.fullCompare).some(Boolean) && !r.baseline) ui.fullCompare.base = true;
+      }
       return render(true);
     }
     if (d.add) {
@@ -3204,16 +3449,25 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     render(act === "ask" || act === "cancel-confirm");
   });
 
-  // Chart hover: the values for the year under the pointer.
+  // Chart hover: the values for the year under the pointer. Linked charts move their cursors together;
+  // when the pointer leaves, a chart with a chosen year puts its cursor back there.
+  function placeCursor(w, i) {
+    const data = chartData[w.dataset.chart];
+    const c = w.querySelector(".cursor");
+    if (!data || !c) return;
+    if (i === null || i === undefined || i === "") return c.setAttribute("visibility", "hidden");
+    c.setAttribute("x1", data.x(+i));
+    c.setAttribute("x2", data.x(+i));
+    c.setAttribute("visibility", "visible");
+  }
   document.addEventListener("pointermove", (e) => {
     const wrap = e.target.closest && e.target.closest(".chart-wrap");
+    const group = wrap && wrap.dataset.group;
     document.querySelectorAll(".chart-wrap").forEach((w) => {
-      if (w !== wrap) {
-        const tip = w.querySelector(".tip");
-        if (tip) tip.hidden = true;
-        const c = w.querySelector(".cursor");
-        if (c) c.setAttribute("visibility", "hidden");
-      }
+      if (w === wrap || (group && w.dataset.group === group)) return;
+      const tip = w.querySelector(".tip");
+      if (tip) tip.hidden = true;
+      placeCursor(w, w.dataset.at);
     });
     if (!wrap) return;
     const data = chartData[wrap.dataset.chart];
@@ -3222,18 +3476,26 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const box = svg.getBoundingClientRect();
     const vx = ((e.clientX - box.left) / box.width) * data.W;
     const i = Math.max(0, Math.min(data.H - 1, Math.round(((vx - data.pl) / (data.W - data.pl - data.pr)) * (data.H - 1))));
-    const cx = data.x(i);
-    const cursor = svg.querySelector(".cursor");
-    cursor.setAttribute("x1", cx);
-    cursor.setAttribute("x2", cx);
-    cursor.setAttribute("visibility", "visible");
+    placeCursor(wrap, i);
+    if (group) document.querySelectorAll(`.chart-wrap[data-group="${group}"]`).forEach((w) => w !== wrap && placeCursor(w, i));
     const tip = wrap.querySelector(".tip");
     const fmt = (v) => (data.fmt === "rate" ? v.toFixed(2) + "%" : money(v));
     tip.innerHTML = `<b>${yearLabel(i + 1)}</b>` + data.series.map((s) => `<div><span class="legend-chip"><span class="dot" style="background:${s.color}"></span>${esc(s.name)}</span><span>${fmt(s.values[i])}</span></div>`).join("");
     tip.hidden = false;
-    const left = (cx / data.W) * box.width;
-    tip.style.left = Math.max(0, Math.min(box.width - tip.offsetWidth, left + 12)) + "px";
+    const left = (data.x(i) / data.W) * box.width;
+    const room = box.width - tip.offsetWidth;
+    tip.style.left = Math.max(0, Math.min(room, left > box.width / 2 ? left - tip.offsetWidth - 12 : left + 12)) + "px";
     tip.style.top = "8px";
+  });
+
+  // Charts are drawn for the screen width; redraw if it crosses the phone/desktop line.
+  let wasNarrow = window.innerWidth < 600;
+  window.addEventListener("resize", () => {
+    const narrow = window.innerWidth < 600;
+    if (narrow !== wasNarrow) {
+      wasNarrow = narrow;
+      render(true);
+    }
   });
 
   window.addEventListener("hashchange", () => {

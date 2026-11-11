@@ -24,6 +24,9 @@
   const BIN =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>';
 
+  const FLAG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>';
+
   // ---------------------------------------------------------------- words explained
 
   const HELP = {
@@ -66,8 +69,8 @@
     return {
       example: true,
       people: [
-        { id: "p1", name: "Alex", salary: 145000, super: 160000 },
-        { id: "p2", name: "Sam", salary: 95000, super: 110000 },
+        { id: "p1", name: "Alex", salary: 170000, super: 160000 },
+        { id: "p2", name: "Sam", salary: 125000, super: 110000 },
       ],
       livingMonthly: 5500,
       cardLimits: 15000,
@@ -158,7 +161,7 @@
   }
 
   let state = load();
-  const ui = { openHelp: {}, page: "you", plan: 1, metric: "nw", hidden: {}, chainPlan: 1, tablePlan: 1, confirm: null, panel: null, message: "" };
+  const ui = { fullMain: 1, fullCompare: { base: true }, fullShow: { nw: true, debt: true, income: true, cash: true }, atYear: 0, openHelp: {}, page: "you", plan: 1, metric: "nw", hidden: {}, chainPlan: 1, tablePlan: 1, confirm: null, panel: null, message: "" };
   let results = null;
 
   function save() {
@@ -541,11 +544,14 @@
     ["homeRate", "Interest rate", (y) => y.homeRate, "The home loan rate (other loans move the same way)."],
   ];
 
-  function chart(id, series, H, fmt) {
-    const W = 760;
-    const Ht = 300;
-    const pl = 64;
-    const pr = 18;
+  // Line chart in SVG. series: [{ name, color, values, dash?, width?, base? }].
+  // opts.group links charts so they share a year cursor; opts.at puts that cursor on a year (1-based).
+  function chart(id, series, H, fmt, opts = {}) {
+    const narrow = window.innerWidth < 600;
+    const W = narrow ? 400 : 760;
+    const Ht = opts.height || (narrow ? 280 : 300);
+    const pl = narrow ? 50 : 64;
+    const pr = 14;
     const pt = 14;
     const pb = 34;
     const all = series.flatMap((s) => s.values);
@@ -556,36 +562,44 @@
       hi = Math.ceil(Math.max(...all) + 0.5);
     }
     const span = hi - lo || 1;
-    const step = niceStep(span / 5);
+    const step = niceStep(span / (narrow ? 4 : 5));
     lo = Math.floor(lo / step) * step;
     hi = Math.ceil(hi / step) * step;
     const x = (i) => pl + (i * (W - pl - pr)) / Math.max(1, H - 1);
     const y = (v) => pt + ((hi - v) * (Ht - pt - pb)) / (hi - lo || 1);
     const label = (v) => (fmt === "rate" ? v.toFixed(1) + "%" : compact(v));
     let grid = "";
+    // Below zero: money going out. A light band, so negative years stand out.
+    if (lo < 0 && opts.shadeNegative)
+      grid += `<rect x="${pl}" y="${y(0)}" width="${W - pl - pr}" height="${y(lo) - y(0)}" fill="var(--warn-bg)" opacity="0.7"/>
+        <text x="${pl + 8}" y="${y(lo) - 8}" style="fill:var(--warn)">${esc(opts.shadeNegative)}</text>`;
     for (let v = lo; v <= hi + step / 2; v += step) {
-      grid += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)" stroke-width="${Math.abs(v) < step / 1e6 ? 1.5 : 1}"/>`;
+      const zero = Math.abs(v) < step / 1e6;
+      grid += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="${zero ? "var(--muted)" : "var(--grid)"}" stroke-width="${zero ? 1.25 : 1}"/>`;
       grid += `<text x="${pl - 8}" y="${y(v) + 4}" text-anchor="end">${label(v)}</text>`;
     }
-    const every = H > 20 ? 5 : H > 10 ? 2 : 1;
+    const every = H > 20 ? 5 : H > 10 ? (narrow ? 4 : 2) : narrow ? 2 : 1;
     let ticks = "";
     for (let i = 0; i < H; i++) if ((i + 1) % every === 0 || i === 0) ticks += `<text x="${x(i)}" y="${Ht - 10}" text-anchor="middle">${i + 1}</text>`;
     const lines = series
       .map((s) => {
         const pts = s.values.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
         const last = s.values.length - 1;
-        return `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="${s.base ? 2 : 2.5}" stroke-dasharray="${s.base ? "6 5" : ""}" stroke-linejoin="round" stroke-linecap="round"/>
-          <circle cx="${x(last)}" cy="${y(s.values[last])}" r="4" fill="${s.color}"/>`;
+        const dash = s.dash !== undefined ? s.dash : s.base ? "6 5" : "";
+        const width = s.width || (s.base ? 2 : 2.5);
+        return `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="${width}" stroke-dasharray="${dash}" stroke-linejoin="round" stroke-linecap="round"/>
+          ${s.noDot ? "" : `<circle cx="${x(last)}" cy="${y(s.values[last])}" r="4" fill="${s.color}"/>`}`;
       })
       .join("");
+    const at = opts.at ? Math.min(H, opts.at) - 1 : null;
     chartData[id] = { series, H, fmt, x, pl, pr, W, Ht };
-    return `<div class="chart-wrap" data-chart="${id}">
-      <svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="Chart over ${H} years">
-        ${grid}${ticks}<text x="${W - pr}" y="${Ht - 10}" text-anchor="end" style="display:none">year</text>
-        ${lines}<line class="cursor" x1="0" x2="0" y1="${pt}" y2="${Ht - pb}" stroke="var(--muted)" stroke-dasharray="3 3" visibility="hidden"/>
+    return `<div class="chart-wrap" data-chart="${id}"${opts.group ? ` data-group="${opts.group}"` : ""}${at !== null ? ` data-at="${at}"` : ""}>
+      <svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="${esc(opts.label || `Chart over ${H} years`)}">
+        ${grid}${ticks}
+        ${lines}<line class="cursor" x1="${at !== null ? x(at) : 0}" x2="${at !== null ? x(at) : 0}" y1="${pt}" y2="${Ht - pb}" stroke="var(--muted)" stroke-dasharray="3 3" visibility="${at !== null ? "visible" : "hidden"}"/>
         <rect x="${pl}" y="${pt}" width="${W - pl - pr}" height="${Ht - pt - pb}" fill="transparent" class="hit"/>
       </svg><div class="tip" hidden></div></div>
-      <p class="small muted">Years along the bottom. Dashed line: the yardstick.</p>`;
+      ${opts.noNote ? "" : `<p class="small muted">Years along the bottom. Dashed line: the yardstick.</p>`}`;
   }
   const chartData = {};
   function niceStep(raw) {
@@ -611,7 +625,9 @@
     ];
     return `<div class="card verdict" style="--c:${SERIES[i]}">
       <div class="card-head"><h3 style="display:flex;gap:8px;align-items:center"><span class="dot" style="background:${SERIES[i]}"></span>${esc(r.baseline ? "Yardstick: cash in the offset" : r.name)}${r.baseline ? helpButton("yardstick", "h-yard") : ""}</h3></div>${r.baseline ? helpPop("yardstick", "h-yard") : ""}
-      <span class="pill ${v.level}">${esc(v.label)}</span>
+      <span class="pill ${v.level}">${v.level === "STOP" ? FLAG : ""}${esc(v.label)}</span>
+      ${(v.stops || []).length ? `<div class="red-flag" role="alert"><div class="red-flag-head">${FLAG}<b>This probably won't work</b></div><ul>${v.stops.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>` : ""}
+      ${(v.warnings || []).length ? `<div class="amber-flag">${v.warnings.map((t) => `<p>${esc(t)}</p>`).join("")}</div>` : ""}
       ${
         r.baseline
           ? `<div><div class="big">${money(s.nwEnd)}</div><p class="small muted">Net worth in ${H} years, if nothing new is bought.</p></div>`
@@ -733,11 +749,134 @@
       lines.push(`Rough result over ${H} years: net worth about ${signed(r.verdict.gain)} compared with leaving the cash in the offset (${r.verdict.label.toLowerCase()}).`);
       lines.push(`Our own money in: about ${money(sm.upfrontCash)} at purchase and ${money(sm.topUps)} of top-ups over the years${sm.worstYear.amount < 0 ? `; the hardest year is year ${sm.worstYear.year}, at about ${money(-sm.worstYear.amount)} (${weekly(-sm.worstYear.amount)}) after tax` : ""}.`);
       for (const c of r.chains) if (c.borrow) lines.push(`Borrowing check for ${c.name.toLowerCase()} in year ${c.year}: ${c.borrow.result === "LIKELY" ? "looks likely" : c.borrow.result === "TIGHT" ? "looks tight" : "looks unlikely"}.`);
+      for (const t of r.verdict.stops || []) lines.push(`RED FLAG: ${t}`);
+      for (const t of r.verdict.warnings || []) lines.push(`Watch: ${t}`);
       if (sc.notes) lines.push(`Our questions: ${sc.notes}`);
     }
     lines.push("");
     lines.push("These are broad estimates from Blink Check (general information, not advice) — the assumptions are in the file.");
     return lines.join("\n");
+  }
+
+  const runName = (r) => (r.baseline ? "Yardstick" : r.name);
+
+  function stopBanner(runs) {
+    const bad = runs.filter((r) => r.verdict && r.verdict.level === "STOP");
+    if (!bad.length) return "";
+    return `<div class="red-flag big" role="alert"><div class="red-flag-head">${FLAG}<b>${bad.length === 1 ? `"${esc(bad[0].name)}" probably won't work on this income` : `${bad.length} plans probably won't work on this income`}</b></div>
+      <p>${bad.map((r) => esc(r.name)).join("; ")} — see the red flags on ${bad.length === 1 ? "its card" : "their cards"} below. A smaller purchase, a later year, more income or less other debt might change that.</p></div>`;
+  }
+
+  // Short money for sentences: $1.71m, $310k.
+  const approx = (n) => {
+    const a = Math.abs(n);
+    if (a >= 1e6) return "$" + (a / 1e6).toFixed(2).replace(/\.?0+$/, "") + "m";
+    if (a >= 1e4) return "$" + Math.round(a / 1e3) + "k";
+    return money(a);
+  };
+
+  const FULL_MEASURES = [
+    ["nw", "Wealth (net worth)", "solid"],
+    ["debt", "Debt", "dashed"],
+    ["income", "Income before tax", "dotted"],
+    ["cash", "Investments' cash flow after tax", "solid"],
+  ];
+  const lineKey = (style) =>
+    `<svg width="28" height="10" aria-hidden="true"><line x1="1" x2="27" y1="5" y2="5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"${style === "dashed" ? ' stroke-dasharray="7 5"' : style === "dotted" ? ' stroke-dasharray="1 5"' : ""}/></svg>`;
+
+  // Facts about one plan, by year `at` (1-based).
+  function factsAt(r, at) {
+    const ys = r.years.slice(0, at);
+    const y = r.years[at - 1];
+    return {
+      nw: y.nw,
+      debt: y.debt,
+      income: y.income,
+      cash: y.investCashAfter,
+      costYears: ys.filter((x) => x.investCashAfter < 0).length,
+      moneyIn: ys.reduce((t, x) => t + x.upfrontCash + x.topUp, 0),
+      debtFree: r.summary.debtFreeYear,
+    };
+  }
+
+  function fullDiff() {
+    const R = compute();
+    const runs = R.runs;
+    const H = R.base.years.length;
+    const at = Math.min(ui.atYear || H, H);
+    const mi = Math.min(ui.fullMain, runs.length - 1);
+    const main = runs[mi];
+    const others = runs.filter((r, i) => i !== mi && ui.fullCompare[r.id]);
+    const m = factsAt(main, at);
+    const yearsText = (n) => `${n} year${n === 1 ? "" : "s"}`;
+    const sentences = others.map((o) => {
+      const f = factsAt(o, at);
+      const parts = [];
+      const dW = f.nw - m.nw;
+      parts.push(Math.abs(dW) < 1000 ? "about the same wealth" : `${approx(dW)} ${dW > 0 ? "more" : "less"} wealth`);
+      const dD = f.debt - m.debt;
+      parts.push(Math.abs(dD) < 1000 ? "about the same debt" : `${approx(dD)} ${dD > 0 ? "more" : "less"} debt`);
+      const cy = f.costYears === m.costYears ? `in both, the investments cost you money in ${yearsText(f.costYears)}` : `its investments cost you money in ${yearsText(f.costYears)} instead of ${m.costYears}`;
+      return `<li>By year ${at}, compared with <b>${esc(runName(main))}</b>, <b>${esc(runName(o))}</b> leaves you with ${parts.join(" and ")}; ${cy}.</li>`;
+    });
+    const rows = [
+      [`Wealth (net worth) in year ${at}`, (f) => money(f.nw), (f) => f.nw - m.nw, "money"],
+      [`Debt in year ${at}`, (f) => money(f.debt), (f) => f.debt - m.debt, "money"],
+      [`Income before tax in year ${at}`, (f) => money(f.income), (f) => f.income - m.income, "money"],
+      [`Investments' cash flow in year ${at}`, (f) => money(f.cash), (f) => f.cash - m.cash, "money"],
+      [`Years the investments cost you money (1–${at})`, (f) => String(f.costYears), (f) => f.costYears - m.costYears, "years"],
+      [`Your own money put in (1–${at})`, (f) => money(f.moneyIn), (f) => f.moneyIn - m.moneyIn, "money"],
+      ["Debt-free", (f) => (f.debtFree ? `Year ${f.debtFree}` : `Not within ${H} years`), () => null, ""],
+    ];
+    const facts = others.map((o) => factsAt(o, at));
+    const diffText = (d, kind) => (d === null || d === 0 || (kind === "money" && Math.abs(d) < 500) ? "" : kind === "years" ? `${Math.abs(d)} ${d > 0 ? "more" : "fewer"}` : `${approx(d)} ${d > 0 ? "more" : "less"}`);
+    return `${sentences.length ? `<ul class="diff-words">${sentences.join("")}</ul>` : `<p class="small muted">Tick a plan under "Compare with" to see the differences.</p>`}
+      <div class="table-wrap"><table class="diff-table"><thead><tr><th>Year ${at}</th><th><span class="dot" style="background:${SERIES[mi]}"></span> ${esc(runName(main))}</th>${others
+        .map((o) => `<th><span class="dot" style="background:${SERIES[runs.indexOf(o)]}"></span> ${esc(runName(o))}</th>`)
+        .join("")}</tr></thead><tbody>${rows
+        .map(([label, val, diff, kind]) => `<tr><td>${esc(label)}</td><td class="num">${esc(val(m))}</td>${facts.map((f) => `<td class="num">${esc(val(f))}${diffText(diff(f), kind) ? `<div class="small muted">${esc(diffText(diff(f), kind))}</div>` : ""}</td>`).join("")}</tr>`)
+        .join("")}</tbody></table></div>`;
+  }
+
+  function fullCard(R) {
+    const runs = R.runs;
+    const H = R.base.years.length;
+    const at = Math.min(ui.atYear || H, H);
+    const mi = Math.min(ui.fullMain, runs.length - 1);
+    const main = runs[mi];
+    const shown = runs.filter((r, i) => i === mi || ui.fullCompare[r.id]);
+    const on = ui.fullShow;
+    const top = [];
+    const bottom = [];
+    for (const r of shown) {
+      const i = runs.indexOf(r);
+      const width = r === main ? 3 : 2;
+      const nm = runName(r);
+      if (on.nw) top.push({ name: `Wealth — ${nm}`, color: SERIES[i], values: r.years.map((y) => y.nw), width });
+      if (on.debt) top.push({ name: `Debt — ${nm}`, color: SERIES[i], values: r.years.map((y) => y.debt), width, dash: "7 5", noDot: true });
+      if (on.cash) bottom.push({ name: `Cash flow — ${nm}`, color: SERIES[i], values: r.years.map((y) => y.investCashAfter), width });
+    }
+    if (on.income) bottom.unshift({ name: "Income before tax", color: "var(--fg)", values: main.years.map((y) => y.income), width: 2, dash: "1 5", noDot: true });
+    const wage = state.assumptions.wageGrowth;
+    const wageText = wage === undefined || wage === null || wage === "" ? `rising with prices (CPI, ${A("cpi")}% a year)` : `rising ${wage}% a year`;
+    return `<div class="card">
+      <div class="card-head"><h3>Wealth, debt and cash flow</h3></div>
+      <p class="small muted">One plan in full, with any others laid over it. Pick the plan, tick what to compare it with, and slide to a year.</p>
+      <div class="field"><span class="label">Plan</span><div class="chips">${runs
+        .map((r, i) => `<button type="button" class="chip" data-pick="fullMain" data-value="${i}" aria-pressed="${i === mi}"><span class="dot" style="background:${SERIES[i]};margin-right:6px"></span>${esc(runName(r))}</button>`)
+        .join("")}</div></div>
+      <div class="field"><span class="label">Compare with</span><div class="chips">${runs
+        .map((r, i) => (i === mi ? "" : `<label class="chip legend-chip"><input type="checkbox" data-cmp="${esc(r.id)}"${ui.fullCompare[r.id] ? " checked" : ""} style="accent-color:${SERIES[i]};width:18px;height:18px"> ${esc(runName(r))}</label>`))
+        .join("")}</div></div>
+      <div class="field"><span class="label">Show</span><div class="chips">${FULL_MEASURES.map(
+        ([k, label, style]) => `<label class="chip legend-chip"><input type="checkbox" data-measure="${k}"${on[k] ? " checked" : ""} style="width:18px;height:18px"> ${lineKey(style)} ${esc(label)}</label>`
+      ).join("")}</div></div>
+      <div class="at-row"><label for="at-year">Compare at</label><input type="range" id="at-year" data-at min="1" max="${H}" value="${at}"><output id="at-label">Year ${at}</output></div>
+      ${on.nw || on.debt ? `<h4>What you own and owe</h4>${top.length ? chart("full-top", top, H, "money", { group: "full", at, noNote: true, label: "Wealth and debt over the years" }) : ""}` : ""}
+      ${on.income || on.cash ? `<h4>Money each year</h4>${chart("full-bottom", bottom, H, "money", { group: "full", at, noNote: true, shadeNegative: on.cash ? "Below the line: costs you money" : "", label: "Income and cash flow each year" })}` : ""}
+      <p class="small muted">Solid: wealth and cash flow. Dashed: debt. Dotted: income before tax, ${esc(wageText)} — the same in every plan. The thicker line is the plan you picked.</p>
+      <div id="full-diff">${fullDiff()}</div>
+    </div>`;
   }
 
   function pageCheck() {
@@ -758,9 +897,11 @@
     const spareText = SPARE.find((x) => x[0] === (tt.spare || "HOME_OFFSET"))[1];
     return `${exampleBanner()}
     <div class="intro"><h2>Blink check</h2><p class="muted">Each plan against leaving the cash in the offset, over ${H} years. Broad numbers — enough to tell whether an idea is worth researching properly.</p></div>
+    ${stopBanner(runs)}
     <div class="verdicts">${runs.map((r, i) => verdictCard(r, i, R.base)).join("")}</div>
+    ${fullCard(R)}
     <div class="card">
-      <div class="card-head"><h3>${esc(metric[1])}</h3></div>
+      <div class="card-head"><h3>Compare one measure: ${esc(metric[1].toLowerCase())}</h3></div>
       <div class="chart-controls">
         <div class="chips">${METRICS.map((m) => `<button type="button" class="chip" data-metric="${m[0]}" aria-pressed="${m[0] === metric[0]}">${esc(m[1])}</button>`).join("")}</div>
         <div class="chips">${runs
@@ -818,7 +959,7 @@
     <div class="card"><h3>Growth</h3><div class="grid">
       ${pctF("resGrowth", "Residential values (% a year)")}${pctF("comGrowth", "Commercial values (% a year)")}
       ${pctF("resRentGrowth", "Residential rents (% a year)")}${pctF("comRentGrowth", "Commercial rents (% a year)")}
-      ${pctF("wageGrowth", "Wages (% a year)")}${pctF("cpi", "Living costs (% a year)")}
+      ${numField("assumptions.wageGrowth", "Pay rises (% a year)", { placeholder: `Same as prices: ${A("cpi")}%`, hint: "Leave empty to keep pay in line with prices (CPI). Australian wages have grown about 3–3.5% a year over the long run." })}${pctF("cpi", "Living costs (% a year)")}
       ${pctF("shareGrowth", "Share prices (% a year)")}${pctF("shareYield", "Dividends (% a year)")}${pctF("franking", "Franked (% of dividends)", "", "franking")}
       ${pctF("superReturn", "Super returns after fees and tax (%)")}${pctF("superGuarantee", "Employer super (% of pay)")}
     </div></div>
@@ -888,11 +1029,12 @@
     <div class="card help">
       <h3>What the results mean</h3>
       <dl class="kv help-kv">
+        <dt>Probably not possible on this income (red flag)</dt><dd>The plan would run the household out of money in some year — pay after tax can't cover living costs, the home loan and what the investments cost, and savings and offsets are used up — or a lender would very likely refuse one of the loans. The red box says which, with the figures.</dd>
         <dt>Worth a closer look</dt><dd>The plan ends well ahead of the yardstick (by more than $50,000 or 5% of the yardstick's net worth, whichever is bigger), never runs out of cash, and the borrowing check doesn't say "unlikely".</dd>
-        <dt>Worth a look — if the loan is approved</dt><dd>Well ahead, but a lender would probably say no to the borrowing as it stands.</dd>
         <dt>Marginal</dt><dd>Ahead, but not by enough to be worth the extra risk and effort unless it suits your goals.</dd>
         <dt>Doesn't beat leaving the cash in the offset</dt><dd>Ends behind the yardstick.</dd>
-        <dt>Runs out of spare cash</dt><dd>Savings and offsets would be used up in that year — the plan needs more income, a smaller purchase or a later year.</dd>
+        <dt>Amber note: spends more than it earns</dt><dd>In some years the household spends more than it earns and dips into savings and offsets, but doesn't run out within the plan.</dd>
+        <dt>Wealth, debt and cash flow</dt><dd>Two charts for one plan, with any others laid over it. The top one is what you own and owe (wealth solid, debt dashed). The bottom one is money each year: income before tax (dotted) and what the investments put in your pocket or cost you after tax (solid) — below the line costs you money. Slide to a year to compare the plans in words and in a table.</dd>
         <dt>Net worth compared with the yardstick</dt><dd>How much better or worse off the plan leaves you at the end, against doing nothing new.</dd>
         <dt>Cash put in at purchase</dt><dd>Your own money used for deposits, stamp duty and costs.</dd>
         <dt>Yearly top-ups</dt><dd>${esc(HELP.topUp[1])}</dd>
@@ -1039,6 +1181,15 @@
 
   document.addEventListener("change", (e) => {
     const el = e.target;
+    if (el.dataset && el.dataset.cmp !== undefined) {
+      ui.fullCompare[el.dataset.cmp] = el.checked;
+      return render(true);
+    }
+    if (el.dataset && el.dataset.measure !== undefined) {
+      ui.fullShow[el.dataset.measure] = el.checked;
+      return render(true);
+    }
+    if (el.dataset && el.dataset.at !== undefined) return;
     if (el.dataset && el.dataset.show !== undefined) {
       ui.hidden[el.dataset.show] = !el.checked;
       render(true);
@@ -1068,6 +1219,17 @@
 
   document.addEventListener("input", (e) => {
     const el = e.target;
+    if (el.dataset && el.dataset.at !== undefined) {
+      // Slide to a year: move the cursors and refresh the comparison, without redrawing the page (the slider keeps working mid-drag).
+      ui.atYear = Number(el.value);
+      document.getElementById("at-label").textContent = `Year ${el.value}`;
+      document.querySelectorAll('.chart-wrap[data-group="full"]').forEach((w) => {
+        w.dataset.at = el.value - 1;
+        placeCursor(w, el.value - 1);
+      });
+      document.getElementById("full-diff").innerHTML = fullDiff();
+      return;
+    }
     if (el.dataset && el.dataset.kind === "text" && el.dataset.path) {
       setPath(el.dataset.path, el.value);
       state.example = false;
@@ -1196,6 +1358,11 @@
     }
     if (d.pick) {
       ui[d.pick] = Number(d.value);
+      if (d.pick === "fullMain") {
+        const r = compute().runs[ui.fullMain];
+        if (r) delete ui.fullCompare[r.id];
+        if (!Object.values(ui.fullCompare).some(Boolean) && !r.baseline) ui.fullCompare.base = true;
+      }
       return render(true);
     }
     if (d.add) {
@@ -1323,16 +1490,25 @@
     render(act === "ask" || act === "cancel-confirm");
   });
 
-  // Chart hover: the values for the year under the pointer.
+  // Chart hover: the values for the year under the pointer. Linked charts move their cursors together;
+  // when the pointer leaves, a chart with a chosen year puts its cursor back there.
+  function placeCursor(w, i) {
+    const data = chartData[w.dataset.chart];
+    const c = w.querySelector(".cursor");
+    if (!data || !c) return;
+    if (i === null || i === undefined || i === "") return c.setAttribute("visibility", "hidden");
+    c.setAttribute("x1", data.x(+i));
+    c.setAttribute("x2", data.x(+i));
+    c.setAttribute("visibility", "visible");
+  }
   document.addEventListener("pointermove", (e) => {
     const wrap = e.target.closest && e.target.closest(".chart-wrap");
+    const group = wrap && wrap.dataset.group;
     document.querySelectorAll(".chart-wrap").forEach((w) => {
-      if (w !== wrap) {
-        const tip = w.querySelector(".tip");
-        if (tip) tip.hidden = true;
-        const c = w.querySelector(".cursor");
-        if (c) c.setAttribute("visibility", "hidden");
-      }
+      if (w === wrap || (group && w.dataset.group === group)) return;
+      const tip = w.querySelector(".tip");
+      if (tip) tip.hidden = true;
+      placeCursor(w, w.dataset.at);
     });
     if (!wrap) return;
     const data = chartData[wrap.dataset.chart];
@@ -1341,18 +1517,26 @@
     const box = svg.getBoundingClientRect();
     const vx = ((e.clientX - box.left) / box.width) * data.W;
     const i = Math.max(0, Math.min(data.H - 1, Math.round(((vx - data.pl) / (data.W - data.pl - data.pr)) * (data.H - 1))));
-    const cx = data.x(i);
-    const cursor = svg.querySelector(".cursor");
-    cursor.setAttribute("x1", cx);
-    cursor.setAttribute("x2", cx);
-    cursor.setAttribute("visibility", "visible");
+    placeCursor(wrap, i);
+    if (group) document.querySelectorAll(`.chart-wrap[data-group="${group}"]`).forEach((w) => w !== wrap && placeCursor(w, i));
     const tip = wrap.querySelector(".tip");
     const fmt = (v) => (data.fmt === "rate" ? v.toFixed(2) + "%" : money(v));
     tip.innerHTML = `<b>${yearLabel(i + 1)}</b>` + data.series.map((s) => `<div><span class="legend-chip"><span class="dot" style="background:${s.color}"></span>${esc(s.name)}</span><span>${fmt(s.values[i])}</span></div>`).join("");
     tip.hidden = false;
-    const left = (cx / data.W) * box.width;
-    tip.style.left = Math.max(0, Math.min(box.width - tip.offsetWidth, left + 12)) + "px";
+    const left = (data.x(i) / data.W) * box.width;
+    const room = box.width - tip.offsetWidth;
+    tip.style.left = Math.max(0, Math.min(room, left > box.width / 2 ? left - tip.offsetWidth - 12 : left + 12)) + "px";
     tip.style.top = "8px";
+  });
+
+  // Charts are drawn for the screen width; redraw if it crosses the phone/desktop line.
+  let wasNarrow = window.innerWidth < 600;
+  window.addEventListener("resize", () => {
+    const narrow = window.innerWidth < 600;
+    if (narrow !== wasNarrow) {
+      wasNarrow = narrow;
+      render(true);
+    }
   });
 
   window.addEventListener("hashchange", () => {

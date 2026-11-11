@@ -137,7 +137,7 @@ pmt, monthsToClear, parseAmount, DEFAULT_ASSUMPTIONS, CASH_RATE
 The simulation runs month by month for `horizon × 12` months. Each year is recorded at its last month.
 
 **At the start of each year:**
-1. Wages grow by `wageGrowth`, and rents grow by their growth rates.
+1. Wages grow by `wageGrowth`, or by `cpi` when it's empty (the default, so pay keeps pace with prices). Rents grow by their growth rates.
 2. PAYG tax is withheld on the new salaries.
 3. Every loan is repriced: `rate = max(minRate, rateToday + shift[year])`. P&I repayments are recalculated over the term left.
 4. The plan's steps for this year run.
@@ -158,7 +158,7 @@ The simulation runs month by month for `horizon × 12` months. Each year is reco
    - interest is charged on `max(0, balance − offset) × rate / 12`;
    - interest-only loans pay just the interest until `ioLeft` reaches 0, then become P&I over the term left;
    - P&I loans pay `pmt`;
-   - a loan is cleared when `balance − offset ≤ 0`, and any offset money left over goes on via the spare-money rule;
+   - a loan is cleared when `balance − offset ≤ 0`, but only if savings and offsets would still hold a **cash reserve** afterwards (three months of living costs, at least $20,000). Any offset money left over goes on via the spare-money rule. Until then, the loan stays "covered": no interest is charged, the money is still there to draw on, and spare money skips it.
    - repayments are charged to whoever the loan is for (`forProp`): the household (home loan), a property's cash flow (including equity loans secured on other property), shares, or super (SMSF loans).
 5. **Dividends:** `shares × yield / 12`, added to the shares' cash flow.
 6. **Savings interest:** `cash × savingsRate / 12`.
@@ -180,6 +180,7 @@ The simulation runs month by month for `horizon × 12` months. Each year is reco
 6. **SMSF net income** is taxed at 15% inside super.
 
 **Each year records** the following fields:
+- income: `income` (household pay before tax), `takeHome`, `homeLoanPay`, `living` (living costs plus other loan repayments);
 - rates and values: `homeRate`, `value`, `debt`, `offsets`, `cash`, `liquid`, `shares`, `superTotal`, `equity`, `nw`, `nwExSuper`;
 - the year's flows: `interest`, `interestSaved`, `rent`, `costs`, `landTax`, `taxEffect`, `writeOffs`;
 - investment cash: `investCashBefore`, `investCashAfter` (after the tax effect); `topUp` = what the household had to put in;
@@ -219,7 +220,7 @@ This is a rough version of a lender's test. It's run at each purchase.
 - **Income:** gross income = salaries + rents × shading (80% residential, 75% commercial), split by ownership. Net income = gross less tax.
 - **Repayments:** each loan is counted at P&I, at `rate + assessBuffer` (3%), over its remaining P&I term.
 - **Other costs:** living costs (with CPI), other loan repayments, and `cardLimits × 3.8% × 12`.
-- **Surplus** = net income − repayments − living − others:
+- **Surplus** = net income − repayments − living − others (the result also records the household `income`):
   - **LIKELY** if ≥ $6,000 a year;
   - **TIGHT** if ≥ 0;
   - otherwise **UNLIKELY**.
@@ -255,11 +256,18 @@ This is a rough version of a lender's test. It's run at each purchase.
 
 | verdict | when |
 |---|---|
-| "Runs out of spare cash in year N" (NO) | savings and offsets are used up in some year |
-| "Worth a closer look" (YES) | gain > max($50,000, 5% of the yardstick's net worth), and no purchase is UNLIKELY to be approved |
-| "Worth a look — if the loan is approved" (MAYBE) | the same gain, but a purchase is UNLIKELY |
+| "Probably not possible on this income" (STOP — red flag) | savings and offsets are used up in some year, or any purchase is UNLIKELY at the lender's test |
+| "Worth a closer look" (YES) | gain > max($50,000, 5% of the yardstick's net worth) |
 | "Marginal" (MAYBE) | 0 < gain ≤ that threshold |
 | "Doesn't beat leaving the cash in the offset" (NO) | gain ≤ 0 |
+
+**Red flags (`verdict.stops`).** Each red flag is a sentence with the figures:
+- **Running out:** the year's income before and after tax, what the investments cost or bring in after tax, the home loan repayments and the living costs.
+- **A loan a lender would refuse:** the income and how far short the budget is at the test rate.
+
+The page shows them in a red box on the plan's card, with a banner at the top of the results, and in the plain-words summary as "RED FLAG:".
+
+**Amber warnings (`verdict.warnings`):** years when the household spends more than it earns (`householdSpare < 0`) but doesn't run out.
 
 The notes list:
 - borrowing results and shortfalls;
@@ -360,7 +368,7 @@ These are deliberately middle-of-the-road, not optimistic.
 
 | key | default | note |
 |---|---|---|
-| cpi / wageGrowth | 2.75 / 3.25 | % a year |
+| cpi / wageGrowth | 2.75 / empty | % a year; empty pay rises = in line with CPI |
 | resGrowth / comGrowth | 5 / 3 | % a year, values |
 | resRentGrowth / comRentGrowth | 3.5 / 3 | % a year |
 
@@ -434,7 +442,16 @@ The page is reachable by `#hash` (e.g. `#check`).
    - copy or delete a plan, with a confirmation.
 4. **Blink check:**
    - a verdict card for each run: the gain against the yardstick, the key figures and the notes;
-   - one chart with metric chips (net worth, net worth outside super, debt, equity, investments' cash after tax, household spare cash, interest rate) and a tick box per plan to overlay or hide it;
+   - a red banner at the top when any plan probably won't work, and a red box on that plan's card;
+   - **Wealth, debt and cash flow:**
+     - pick one plan, tick others to lay over it, and tick which measures to show;
+     - **top chart, "What you own and owe":** wealth (net worth, solid) and debt (dashed), in each plan's colour;
+     - **bottom chart, "Money each year":** income before tax (dotted, in the text colour; the same in every plan) and the investments' cash flow after tax (solid). Below zero is shaded "costs you money";
+     - two charts rather than one with two scales, so yearly amounts aren't squashed against multi-million totals;
+     - the charts share a year cursor, and hovering one moves both;
+     - a year slider (easy on a phone) moves the cursor and updates the comparison without redrawing the page;
+     - the comparison is sentences ("By year 20, compared with A, B leaves you with $1.7m less wealth and $310k more debt; its investments cost you money in 10 years instead of 5") and a table: wealth, debt, income, cash flow, years costing money, own money put in, and the debt-free year;
+   - **Compare one measure:** one chart with metric chips (net worth, net worth outside super, debt, equity, investments' cash after tax, household spare cash, interest rate) and a tick box per plan to overlay or hide it;
    - "Where the money comes from" (the money chain per purchase, with the borrowing check);
    - "In plain words — for your accountant or broker" with Copy;
    - the year-by-year table.
@@ -458,7 +475,7 @@ The page is reachable by `#hash` (e.g. `#check`).
 
 ### Charts
 
-- **Drawing:** `chart(id, series, height, format)` draws SVG with gridlines, axis labels in short money ("$1.2m"), one line per series, and a dashed line for the yardstick.
+- **Drawing:** `chart(id, series, H, format, opts)` draws SVG at a narrower size on phones (under 600px, so the text stays readable; it redraws if the width crosses that line), with `opts.group` / `opts.at` for linked cursors and `opts.shadeNegative` for the shaded band below zero. It draws with gridlines, axis labels in short money ("$1.2m"), one line per series, and a dashed line for the yardstick.
 - **Hover:** hovering or touching shows a tooltip with every series' value for that year.
 - **Colours:** series colours are CSS tokens `--s0`…`--s3`, matched to the plan tabs' dots.
 
@@ -569,7 +586,9 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 10. **Selling:** clears loans and lowers debt.
 11. **Debt recycling:** turns offset cash into shares with a deductible split.
 12. **SMSF:** a purchase uses super, not household cash.
-13. **A plan that can't be funded:** its verdict is NO.
+13. **A plan that can't be funded:** its verdict is STOP, with a red flag.
+14. **Two quick purchases on $200k:** buying in year 8 and again in year 10 raises a red flag.
+15. **Pay rises:** pay rises with CPI by default, or by the wage growth figure when one is set; `income` and `takeHome` are recorded.
 
 **Browser checks** (by hand, or with Playwright):
 - every page on desktop and on a phone (light and dark), with no sideways scroll and no console errors;
