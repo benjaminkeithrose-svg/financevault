@@ -1135,10 +1135,10 @@
     notes.push(`In year ${at} (age ${y.age}): home equity about ${money(y.homeEquity)}; cash and super about ${money(y.spendable)}.`);
     const ap1 = r.years[0].agePension;
     const apBase = base.years[0].agePension;
-    if (!r.baseline && Math.abs(ap1 - apBase) > 500) notes.push(`Age Pension in year 1: about ${money(ap1)} a year, compared with ${money(apBase)} on the yardstick.`);
+    if (!r.baseline && Math.abs(ap1 - apBase) > 500) notes.push(`Age Pension in year 1: about ${money(ap1)} a year, compared with ${money(apBase)} with no change.`);
     else if (ap1 > 0) notes.push(`Age Pension in year 1: about ${money(ap1)} a year.`);
     for (const f of r.flags) notes.push(f.text);
-    if (r.baseline) return { level: "BASE", label: "The yardstick", stops, warnings, notes: ["Nothing new is bought; money stays in savings and super.", ...notes] };
+    if (r.baseline) return { level: "BASE", label: "What every plan is measured against", stops, warnings, notes: ["Nothing new is bought; money stays in savings and super.", ...notes] };
     const gain = s.nwEnd - base.summary.nwEnd;
     let level;
     let label;
@@ -1161,7 +1161,7 @@
     const s = r.summary;
     const risk = plan.risk || "MIDDLE";
     const goal = plan.goal || "GROWTH";
-    if (r.baseline) return { level: "BASE", label: "The yardstick", stops: [], warnings: [], notes: ["Cash stays in the offset and spare money keeps going in; nothing new is bought."] };
+    if (r.baseline) return { level: "BASE", label: "What every plan is measured against", stops: [], warnings: [], notes: ["Cash stays in the offset and spare money keeps going in; nothing new is bought."] };
     const gain = s.nwEnd - base.summary.nwEnd;
     const H = r.years.length;
     for (const c of r.chains) {

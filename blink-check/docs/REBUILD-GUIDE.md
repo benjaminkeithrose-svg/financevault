@@ -23,7 +23,7 @@ Blink Check is a quick check, or "blink", on one question: **is the next move wo
 ### Design goals (from the person who asked for it)
 
 1. **Simple to use, sophisticated underneath.** It has five short pages and works well on a phone. Amounts can be spoken with the phone's microphone ("six hundred and fifty thousand").
-2. **The yardstick is the offset.** Every plan is compared with keeping cash in the home loan offset, because that's the safe, tax-free return any plan has to beat.
+2. **Everything is compared with "No change" (the offset).** Every plan is compared with keeping cash in the home loan offset, because that's the safe, tax-free return any plan has to beat.
 3. **It looks 10 to 30 years ahead (20 by default)** and follows 2–3 properties deep, for example buy now, buy again in year 7–8, and sell or consolidate in year 10.
 4. **Rates move.** Interest rates rise and fall the way the RBA cash rate did since 2000, starting from today's rates.
 5. **It covers P&I and interest-only loans, and an offset on every loan.** The offset shortens the loan: $100k in the offset of a $400k, 30-year loan pays it off in about 16–17 years.
@@ -94,7 +94,7 @@ Everything the person enters is one plain object, called `state` in `app.js` and
   smsf: { has, open },
   assumptions: { ...overrides of DEFAULT_ASSUMPTIONS },   // only the ones changed
   notes,                                          // free text, goes into the plain-words summary
-  scenarios: [Scenario],                          // the yardstick + up to 3 plans
+  scenarios: [Scenario],                          // "No change" (the baseline) + up to 3 plans
   example,                                        // true while the made-up example figures are showing
   fileId, savedAt, updatedAt                      // saving bookkeeping (section 10)
 }
@@ -116,7 +116,7 @@ SpareRule = "HOME_OFFSET" | "OWN_OFFSET" | "HIGHEST_RATE" | "CASH"
 | `OFFSET` | `year, amount, to ("home" or a property id)` | Moves savings into a loan's offset. |
 | `PI` | `year, target` | Switches a property's interest-only loans to P&I. |
 
-The yardstick scenario (`baseline: true`) has no steps. It always exists, and it can't be deleted.
+The "No change" scenario (`baseline: true`, once called "the yardstick") has no steps. It always exists, and it can't be deleted.
 
 ---
 
@@ -253,12 +253,12 @@ This is a rough version of a lender's test. It's run at each purchase.
 
 ### Verdicts (`verdictFor`)
 
-`gain` is the plan's net worth at the end, less the yardstick's.
+`gain` is the plan's net worth at the end, less No change's.
 
 | verdict | when |
 |---|---|
 | "Probably not possible on this income" (STOP — red flag) | savings and offsets are used up in some year, or any purchase is UNLIKELY at the lender's test |
-| "Worth a closer look" (YES) | gain > max($50,000, 5% of the yardstick's net worth) |
+| "Worth a closer look" (YES) | gain > max($50,000, 5% of No change's net worth) |
 | "Marginal" (MAYBE) | 0 < gain ≤ that threshold |
 | "Doesn't beat leaving the cash in the offset" (NO) | gain ≤ 0 |
 
@@ -503,12 +503,12 @@ The page is reachable by `#hash` (e.g. `#check`).
    - rentals, with kind, value, cost base, rent, running costs %, write-off type or report figure, ownership split, and their loan;
    - savings, shares, super, and SMSF toggles.
 3. **Plans:**
-   - plan tabs: the yardstick, then up to 3 plans;
+   - plan tabs: No change, then up to 3 plans;
    - for each plan: name, spare-money rule, notes, and the step cards sorted by year;
    - "Add a step" buttons: Buy residential, Buy commercial, Sell a property, Buy shares, SMSF purchase (only if either SMSF box is ticked), Put cash in an offset, and Switch a loan to P&I;
    - copy or delete a plan, with a confirmation.
 4. **Blink check:**
-   - a verdict card for each run: the gain against the yardstick, the key figures and the notes;
+   - a verdict card for each run: the gain against No change, the key figures and the notes;
    - a red banner at the top when any plan probably won't work, and a red box on that plan's card;
    - **Wealth, debt and cash flow:**
      - pick one plan, tick others to lay over it, and tick which measures to show;
@@ -537,14 +537,15 @@ The page is reachable by `#hash` (e.g. `#check`).
 
 - **The map:** `HELP` maps a key to `[title, explanation]`.
 - **Adding a button:** any field gets one by passing `{ help: "key" }`. The button sits next to the label, has a 42px tap area, and toggles the explanation under the field (`ui.openHelp[id]`).
-- **Where they appear:** offset, P&I/IO, LVR, equity, yield and cap rate, net lease, depreciation, CGT cost base, serviceability, debt recycling, SMSF/LRBA, franking, duty, land tax, vacancy, the rate cycle, the spare rule, the yardstick, top-ups and the money chain.
+- **Where they appear:** offset, P&I/IO, LVR, equity, yield and cap rate, net lease, depreciation, CGT cost base, serviceability, debt recycling, SMSF/LRBA, franking, duty, land tax, vacancy, the rate cycle, the spare rule, No change, top-ups and the money chain.
 - **Rent hint:** under a rent box, the page shows the gross and net yield, or for commercial the **cap rate**: `rent × 52 × (1 − costs%) ÷ price`. With no rent entered, it shows a typical rent at a 4% yield or 6.5% cap rate.
 
 ### Charts
 
-- **Drawing:** `chart(id, series, H, format, opts)` draws SVG at a narrower size on phones (under 600px, so the text stays readable; it redraws if the width crosses that line), with `opts.group` / `opts.at` for linked cursors and `opts.shadeNegative` for the shaded band below zero. It draws with gridlines, axis labels in short money ("$1.2m"), one line per series, and a dashed line for the yardstick.
+- **Drawing:** `chart(id, series, H, format, opts)` draws SVG at a narrower size on phones (under 600px, so the text stays readable; it redraws if the width crosses that line), with `opts.group` / `opts.at` for linked cursors and `opts.shadeNegative` for the shaded band below zero. It draws with gridlines, axis labels in short money ("$1.2m"), one line per series, and a dashed line for No change.
 - **Hover:** hovering or touching shows a tooltip with every series' value for that year.
 - **Colours:** series colours are CSS tokens `--s0`…`--s3`, matched to the plan tabs' dots.
+- **Key:** every chart with two or more lines has a visual key underneath (`legend(series)`): a short sample of each line, in its colour and dash style, beside its name. No change is the dashed line in the single-measure chart. There are no text-only keys.
 
 ### Plain-words summary
 
@@ -646,7 +647,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 3. **Stamp duty and land tax:** duty on $700,000 residential = $25,687; land tax is $0 at $1m and $3,300 at $1.275m.
 4. **Spoken amounts:** `parseAmount` reads the spoken and typed forms.
 5. **Rate cycle:** starts at 0, peaks above +1.5 (2008), and dips below −1; flat gives all zeros.
-6. **The money chain:** it adds up (main loan + equity + cash = total), and the verdict gain = the plan's net worth − the yardstick's.
+6. **The money chain:** it adds up (main loan + equity + cash = total), and the verdict gain = the plan's net worth − No change's.
 7. **Negative gearing:** on gives tax back in year 1; off gives 0 that year, with the loss carried forward.
 8. **Cards and personal loans:** they reduce the borrowing surplus by exactly `15,000 × 3.8% × 12 + 600 × 12`.
 9. **Spare money:** each spare rule sends money where it says.
@@ -694,7 +695,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 - Keep it **one self-contained file**, with no build-time or run-time libraries unless there's a strong reason. Say so before adding one.
 - **Never upload or publish anyone's figures.** No analytics, no remote storage.
 - Keep the engine **pure** (no DOM) and **tested**. Add a test for each new rule.
-- Keep the yardstick: every plan is compared with "cash stays in the offset".
+- Keep "No change" as the comparison: every plan is compared with buying nothing new (cash stays in the offset; for retirees, staying as you are). The page explains it in one line at the top of the results.
 - Keep every figure **conservative**, and list its source in section 5 above.
 - Keep the plain-English style: short sentences, Australian spelling, no jargon without a "?" explanation.
 - Keep touch targets at 40px or more, and dark mode working. Red is only for destructive actions and errors. Every delete asks first.

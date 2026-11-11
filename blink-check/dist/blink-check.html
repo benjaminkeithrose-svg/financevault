@@ -230,6 +230,12 @@ pre.guide { white-space: pre-wrap; word-break: break-word; max-height: 60vh; ove
 .diff-words { margin: 8px 0 12px; padding-left: 20px; display: grid; gap: 6px; line-height: 1.55; max-width: 75ch; }
 .diff-table td:first-child, .diff-table th:first-child { text-align: left; white-space: normal; min-width: 150px; }
 .diff-table th .dot { display: inline-block; vertical-align: middle; }
+
+/* chart key */
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--fg); margin-top: 4px; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.legend-item svg { flex: none; }
+.base-explain { line-height: 1.55; }
 </style>
 
 </head>
@@ -283,7 +289,7 @@ Blink Check is a quick check, or "blink", on one question: **is the next move wo
 ### Design goals (from the person who asked for it)
 
 1. **Simple to use, sophisticated underneath.** It has five short pages and works well on a phone. Amounts can be spoken with the phone's microphone ("six hundred and fifty thousand").
-2. **The yardstick is the offset.** Every plan is compared with keeping cash in the home loan offset, because that's the safe, tax-free return any plan has to beat.
+2. **Everything is compared with "No change" (the offset).** Every plan is compared with keeping cash in the home loan offset, because that's the safe, tax-free return any plan has to beat.
 3. **It looks 10 to 30 years ahead (20 by default)** and follows 2–3 properties deep, for example buy now, buy again in year 7–8, and sell or consolidate in year 10.
 4. **Rates move.** Interest rates rise and fall the way the RBA cash rate did since 2000, starting from today's rates.
 5. **It covers P&I and interest-only loans, and an offset on every loan.** The offset shortens the loan: $100k in the offset of a $400k, 30-year loan pays it off in about 16–17 years.
@@ -354,7 +360,7 @@ Everything the person enters is one plain object, called `state` in `app.js` and
   smsf: { has, open },
   assumptions: { ...overrides of DEFAULT_ASSUMPTIONS },   // only the ones changed
   notes,                                          // free text, goes into the plain-words summary
-  scenarios: [Scenario],                          // the yardstick + up to 3 plans
+  scenarios: [Scenario],                          // "No change" (the baseline) + up to 3 plans
   example,                                        // true while the made-up example figures are showing
   fileId, savedAt, updatedAt                      // saving bookkeeping (section 10)
 }
@@ -376,7 +382,7 @@ SpareRule = "HOME_OFFSET" | "OWN_OFFSET" | "HIGHEST_RATE" | "CASH"
 | `OFFSET` | `year, amount, to ("home" or a property id)` | Moves savings into a loan's offset. |
 | `PI` | `year, target` | Switches a property's interest-only loans to P&I. |
 
-The yardstick scenario (`baseline: true`) has no steps. It always exists, and it can't be deleted.
+The "No change" scenario (`baseline: true`, once called "the yardstick") has no steps. It always exists, and it can't be deleted.
 
 ---
 
@@ -513,12 +519,12 @@ This is a rough version of a lender's test. It's run at each purchase.
 
 ### Verdicts (`verdictFor`)
 
-`gain` is the plan's net worth at the end, less the yardstick's.
+`gain` is the plan's net worth at the end, less No change's.
 
 | verdict | when |
 |---|---|
 | "Probably not possible on this income" (STOP — red flag) | savings and offsets are used up in some year, or any purchase is UNLIKELY at the lender's test |
-| "Worth a closer look" (YES) | gain > max($50,000, 5% of the yardstick's net worth) |
+| "Worth a closer look" (YES) | gain > max($50,000, 5% of No change's net worth) |
 | "Marginal" (MAYBE) | 0 < gain ≤ that threshold |
 | "Doesn't beat leaving the cash in the offset" (NO) | gain ≤ 0 |
 
@@ -763,12 +769,12 @@ The page is reachable by `#hash` (e.g. `#check`).
    - rentals, with kind, value, cost base, rent, running costs %, write-off type or report figure, ownership split, and their loan;
    - savings, shares, super, and SMSF toggles.
 3. **Plans:**
-   - plan tabs: the yardstick, then up to 3 plans;
+   - plan tabs: No change, then up to 3 plans;
    - for each plan: name, spare-money rule, notes, and the step cards sorted by year;
    - "Add a step" buttons: Buy residential, Buy commercial, Sell a property, Buy shares, SMSF purchase (only if either SMSF box is ticked), Put cash in an offset, and Switch a loan to P&I;
    - copy or delete a plan, with a confirmation.
 4. **Blink check:**
-   - a verdict card for each run: the gain against the yardstick, the key figures and the notes;
+   - a verdict card for each run: the gain against No change, the key figures and the notes;
    - a red banner at the top when any plan probably won't work, and a red box on that plan's card;
    - **Wealth, debt and cash flow:**
      - pick one plan, tick others to lay over it, and tick which measures to show;
@@ -797,14 +803,15 @@ The page is reachable by `#hash` (e.g. `#check`).
 
 - **The map:** `HELP` maps a key to `[title, explanation]`.
 - **Adding a button:** any field gets one by passing `{ help: "key" }`. The button sits next to the label, has a 42px tap area, and toggles the explanation under the field (`ui.openHelp[id]`).
-- **Where they appear:** offset, P&I/IO, LVR, equity, yield and cap rate, net lease, depreciation, CGT cost base, serviceability, debt recycling, SMSF/LRBA, franking, duty, land tax, vacancy, the rate cycle, the spare rule, the yardstick, top-ups and the money chain.
+- **Where they appear:** offset, P&I/IO, LVR, equity, yield and cap rate, net lease, depreciation, CGT cost base, serviceability, debt recycling, SMSF/LRBA, franking, duty, land tax, vacancy, the rate cycle, the spare rule, No change, top-ups and the money chain.
 - **Rent hint:** under a rent box, the page shows the gross and net yield, or for commercial the **cap rate**: `rent × 52 × (1 − costs%) ÷ price`. With no rent entered, it shows a typical rent at a 4% yield or 6.5% cap rate.
 
 ### Charts
 
-- **Drawing:** `chart(id, series, H, format, opts)` draws SVG at a narrower size on phones (under 600px, so the text stays readable; it redraws if the width crosses that line), with `opts.group` / `opts.at` for linked cursors and `opts.shadeNegative` for the shaded band below zero. It draws with gridlines, axis labels in short money ("$1.2m"), one line per series, and a dashed line for the yardstick.
+- **Drawing:** `chart(id, series, H, format, opts)` draws SVG at a narrower size on phones (under 600px, so the text stays readable; it redraws if the width crosses that line), with `opts.group` / `opts.at` for linked cursors and `opts.shadeNegative` for the shaded band below zero. It draws with gridlines, axis labels in short money ("$1.2m"), one line per series, and a dashed line for No change.
 - **Hover:** hovering or touching shows a tooltip with every series' value for that year.
 - **Colours:** series colours are CSS tokens `--s0`…`--s3`, matched to the plan tabs' dots.
+- **Key:** every chart with two or more lines has a visual key underneath (`legend(series)`): a short sample of each line, in its colour and dash style, beside its name. No change is the dashed line in the single-measure chart. There are no text-only keys.
 
 ### Plain-words summary
 
@@ -906,7 +913,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 3. **Stamp duty and land tax:** duty on $700,000 residential = $25,687; land tax is $0 at $1m and $3,300 at $1.275m.
 4. **Spoken amounts:** `parseAmount` reads the spoken and typed forms.
 5. **Rate cycle:** starts at 0, peaks above +1.5 (2008), and dips below −1; flat gives all zeros.
-6. **The money chain:** it adds up (main loan + equity + cash = total), and the verdict gain = the plan's net worth − the yardstick's.
+6. **The money chain:** it adds up (main loan + equity + cash = total), and the verdict gain = the plan's net worth − No change's.
 7. **Negative gearing:** on gives tax back in year 1; off gives 0 that year, with the loss carried forward.
 8. **Cards and personal loans:** they reduce the borrowing surplus by exactly `15,000 × 3.8% × 12 + 600 × 12`.
 9. **Spare money:** each spare rule sends money where it says.
@@ -954,7 +961,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 - Keep it **one self-contained file**, with no build-time or run-time libraries unless there's a strong reason. Say so before adding one.
 - **Never upload or publish anyone's figures.** No analytics, no remote storage.
 - Keep the engine **pure** (no DOM) and **tested**. Add a test for each new rule.
-- Keep the yardstick: every plan is compared with "cash stays in the offset".
+- Keep "No change" as the comparison: every plan is compared with buying nothing new (cash stays in the offset; for retirees, staying as you are). The page explains it in one line at the top of the results.
 - Keep every figure **conservative**, and list its source in section 5 above.
 - Keep the plain-English style: short sentences, Australian spelling, no jargon without a "?" explanation.
 - Keep touch targets at 40px or more, and dark mode working. Red is only for destructive actions and errors. Every delete asks first.
@@ -2123,10 +2130,10 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     notes.push(`In year ${at} (age ${y.age}): home equity about ${money(y.homeEquity)}; cash and super about ${money(y.spendable)}.`);
     const ap1 = r.years[0].agePension;
     const apBase = base.years[0].agePension;
-    if (!r.baseline && Math.abs(ap1 - apBase) > 500) notes.push(`Age Pension in year 1: about ${money(ap1)} a year, compared with ${money(apBase)} on the yardstick.`);
+    if (!r.baseline && Math.abs(ap1 - apBase) > 500) notes.push(`Age Pension in year 1: about ${money(ap1)} a year, compared with ${money(apBase)} with no change.`);
     else if (ap1 > 0) notes.push(`Age Pension in year 1: about ${money(ap1)} a year.`);
     for (const f of r.flags) notes.push(f.text);
-    if (r.baseline) return { level: "BASE", label: "The yardstick", stops, warnings, notes: ["Nothing new is bought; money stays in savings and super.", ...notes] };
+    if (r.baseline) return { level: "BASE", label: "What every plan is measured against", stops, warnings, notes: ["Nothing new is bought; money stays in savings and super.", ...notes] };
     const gain = s.nwEnd - base.summary.nwEnd;
     let level;
     let label;
@@ -2149,7 +2156,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const s = r.summary;
     const risk = plan.risk || "MIDDLE";
     const goal = plan.goal || "GROWTH";
-    if (r.baseline) return { level: "BASE", label: "The yardstick", stops: [], warnings: [], notes: ["Cash stays in the offset and spare money keeps going in; nothing new is bought."] };
+    if (r.baseline) return { level: "BASE", label: "What every plan is measured against", stops: [], warnings: [], notes: ["Cash stays in the offset and spare money keeps going in; nothing new is bought."] };
     const gain = s.nwEnd - base.summary.nwEnd;
     const H = r.years.length;
     for (const c of r.chains) {
@@ -2334,6 +2341,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     ["check", "Blink check"],
     ["assume", "Assumptions"],
   ];
+  const BASE_NAME = "No change";
   const SERIES = ["var(--s0)", "var(--s1)", "var(--s2)", "var(--s3)"];
   const BIN =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>';
@@ -2365,7 +2373,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     lrba: ["SMSF loan (LRBA)", "A limited recourse borrowing arrangement — the only way an SMSF can borrow to buy property. Lenders usually lend 60–70%, at higher rates, and the fund needs cash left over afterwards."],
     franking: ["Franking credits", "Tax an Australian company has already paid on its profits, passed on with its dividends. It counts towards your tax, so franked dividends are taxed less."],
     costBase: ["What you paid (cost base)", "The price plus stamp duty and buying costs. Used to work out capital gains tax if it's sold."],
-    yardstick: ["The yardstick", "Doing nothing new: your savings and every spare dollar go into the home loan offset. Each plan is compared with this, because it's the safe, tax-free return any plan has to beat."],
+    yardstick: ["No change", "The plan every other plan is measured against: you buy nothing new and keep what you have. For a working household, savings and every spare dollar go into the home loan offset — that's the safe, tax-free return any idea has to beat. For a retiree, you stay as you are (keep renting, or stay in your home). If a plan doesn't end up ahead of No change, it isn't worth the risk and effort."],
     spare: ["Where spare money goes", "When the year leaves money over, this decides where it goes: the home loan offset (usually best — that interest isn't tax-deductible), a positive property's own loan offset, the dearest loan, or savings. When a plan needs money, it comes from savings first, then the offsets."],
     topUp: ["Top-ups", "What the investments cost you each year after tax — rent and dividends, less running costs, loan repayments and the tax effect. This is the money that has to come out of your pay or savings."],
     worstYear: ["Worst year", "The year the investments need the most from you, usually when interest rates peak. Check you could carry this."],
@@ -2897,14 +2905,14 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const idx = Math.min(ui.plan, list.length - 1);
     const plan = list[idx];
     const tabs = list
-      .map((s, i) => `<button type="button" class="plan-tab" data-plan="${i}" aria-selected="${i === idx}"><span class="dot" style="background:${SERIES[i]}"></span>${esc(s.baseline ? "Yardstick" : s.name || "Plan " + i)}</button>`)
+      .map((s, i) => `<button type="button" class="plan-tab" data-plan="${i}" aria-selected="${i === idx}"><span class="dot" style="background:${SERIES[i]}"></span>${esc(s.baseline ? BASE_NAME : s.name || "Plan " + i)}</button>`)
       .join("");
     let body;
     if (plan.baseline) {
       body = retired()
-        ? `<div class="card"><h3>The yardstick: keep things as they are</h3>
+        ? `<div class="card"><h3>No change: stay as you are</h3>
         <p>Nothing new is bought. ${state.home && state.home.has ? "You stay in your home" : "You keep renting"}; super pays a pension, savings earn interest, and the Age Pension is worked out each year. Each plan is compared with this.</p></div>`
-        : `<div class="card"><h3>The yardstick: cash stays in the offset</h3>
+        : `<div class="card"><h3>No change: cash stays in the offset</h3>
         <p>Nothing new is bought. Your savings and every spare dollar go into the home loan offset (then the next loan that isn't tax-deductible), which cuts interest and pays the loans off sooner. Each plan is compared with this.</p></div>`;
     } else {
       const sorted = plan.steps.slice().sort((a, b) => a.year - b.year);
@@ -2930,7 +2938,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       </div></div>`;
     }
     return `${exampleBanner()}
-    <div class="intro"><h2>Plans</h2><p class="muted">The yardstick is leaving your cash in the offset. Set up to three plans to compare with it — buy, sell, shares or super, in the years you'd do them.</p></div>
+    <div class="intro"><h2>Plans</h2><p class="muted">Every plan is compared with <b>No change</b> — ${retired() ? "staying as you are" : "buying nothing new and leaving your cash in the offset"}. Set up to three plans to compare with it — buy, sell, shares or super, in the years you'd do them.</p></div>
     <div class="row">${tabs}${plans().length < 3 ? `<button type="button" class="btn quiet" data-act="add-plan">+ Add a plan</button>` : ""}</div>
     ${body}
     ${navButtons("own", "check")}`;
@@ -3010,9 +3018,19 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         ${lines}<line class="cursor" x1="${at !== null ? x(at) : 0}" x2="${at !== null ? x(at) : 0}" y1="${pt}" y2="${Ht - pb}" stroke="var(--muted)" stroke-dasharray="3 3" visibility="${at !== null ? "visible" : "hidden"}"/>
         <rect x="${pl}" y="${pt}" width="${W - pl - pr}" height="${Ht - pt - pb}" fill="transparent" class="hit"/>
       </svg><div class="tip" hidden></div></div>
-      ${opts.noNote ? "" : `<p class="small muted">Years along the bottom. Dashed line: the yardstick.</p>`}`;
+      ${series.length > 1 && !opts.noLegend ? legend(series) : ""}`;
   }
   const chartData = {};
+  // A visual key: a sample of each line, in its colour and style, beside its name.
+  function legend(series) {
+    return `<div class="legend">${series
+      .map((s) => {
+        const dash = s.dash !== undefined ? s.dash : s.base ? "6 5" : "";
+        const w = Math.min(3, s.width || (s.base ? 2 : 2.5));
+        return `<span class="legend-item"><svg width="30" height="12" aria-hidden="true"><line x1="3" x2="27" y1="6" y2="6" stroke="${s.color}" stroke-width="${w}" stroke-linecap="round"${dash ? ` stroke-dasharray="${dash}"` : ""}/></svg>${esc(s.name)}</span>`;
+      })
+      .join("")}</div>`;
+  }
   function niceStep(raw) {
     const p = Math.pow(10, Math.floor(Math.log10(Math.max(raw, 1e-9))));
     const n = raw / p;
@@ -3035,7 +3053,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     ];
     if (r.maxHomePrice !== undefined) rows.push([`Most to spend on the home (money lasts to ${A("lastUntil")})`, r.maxHomePrice === null ? "None works" : money(r.maxHomePrice)]);
     return `<div class="card verdict" style="--c:${SERIES[i]}">
-      <div class="card-head"><h3 style="display:flex;gap:8px;align-items:center"><span class="dot" style="background:${SERIES[i]}"></span>${esc(r.baseline ? "Yardstick: keep things as they are" : r.name)}</h3></div>
+      <div class="card-head"><h3 style="display:flex;gap:8px;align-items:center"><span class="dot" style="background:${SERIES[i]}"></span>${esc(r.baseline ? `${BASE_NAME}: ${state.home && state.home.has ? "stay in your home" : "keep renting"}` : r.name)}</h3></div>
       <span class="pill ${v.level}">${v.level === "STOP" ? FLAG : ""}${esc(v.label)}</span>
       ${(v.stops || []).length ? `<div class="red-flag" role="alert"><div class="red-flag-head">${FLAG}<b>${r.baseline ? "Even without a change, this doesn't last" : "This probably won't work"}</b></div><ul>${v.stops.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>` : ""}
       ${(v.warnings || []).length ? `<div class="amber-flag">${v.warnings.map((t) => `<p>${esc(t)}</p>`).join("")}</div>` : ""}
@@ -3062,14 +3080,14 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       ["Interest paid, all loans", money(s.totalInterest)],
     ];
     return `<div class="card verdict" style="--c:${SERIES[i]}">
-      <div class="card-head"><h3 style="display:flex;gap:8px;align-items:center"><span class="dot" style="background:${SERIES[i]}"></span>${esc(r.baseline ? "Yardstick: cash in the offset" : r.name)}${r.baseline ? helpButton("yardstick", "h-yard") : ""}</h3></div>${r.baseline ? helpPop("yardstick", "h-yard") : ""}
+      <div class="card-head"><h3 style="display:flex;gap:8px;align-items:center"><span class="dot" style="background:${SERIES[i]}"></span>${esc(r.baseline ? `${BASE_NAME}: cash stays in the offset` : r.name)}${r.baseline ? helpButton("yardstick", "h-yard") : ""}</h3></div>${r.baseline ? helpPop("yardstick", "h-yard") : ""}
       <span class="pill ${v.level}">${v.level === "STOP" ? FLAG : ""}${esc(v.label)}</span>
       ${(v.stops || []).length ? `<div class="red-flag" role="alert"><div class="red-flag-head">${FLAG}<b>This probably won't work</b></div><ul>${v.stops.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>` : ""}
       ${(v.warnings || []).length ? `<div class="amber-flag">${v.warnings.map((t) => `<p>${esc(t)}</p>`).join("")}</div>` : ""}
       ${
         r.baseline
           ? `<div><div class="big">${money(s.nwEnd)}</div><p class="small muted">Net worth in ${H} years, if nothing new is bought.</p></div>`
-          : `<div><div class="big">${signed(v.gain)}</div><p class="small muted">Net worth in ${H} years compared with the yardstick${
+          : `<div><div class="big">${signed(v.gain)}</div><p class="small muted">Net worth in ${H} years compared with No change${
               extraIn > 0 ? `, for ${money(extraIn)} more of your own money over the years (${money(extraIn / H)} a year)` : ""
             }.</p></div>`
       }
@@ -3242,7 +3260,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     return lines.join("\n");
   }
 
-  const runName = (r) => (r.baseline ? "Yardstick" : r.name);
+  const runName = (r) => (r.baseline ? BASE_NAME : r.name);
 
   function stopBanner(runs) {
     const bad = runs.filter((r) => r.verdict && r.verdict.level === "STOP");
@@ -3402,7 +3420,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       <div class="at-row"><label for="at-year">Compare at</label><input type="range" id="at-year" data-at min="1" max="${H}" value="${at}"><output id="at-label">Year ${at} · age ${ageAt}</output></div>
       ${top.length ? `<h4>What you own</h4>${chart("full-top", top, H, "money", { group: "full", at, noNote: true, label: "Home equity and cash and super over the years" })}` : ""}
       ${bottom.length ? `<h4>Money each year</h4>${chart("full-bottom", bottom, H, "money", { group: "full", at, noNote: true, shadeNegative: on.leftOver !== false ? "Below the line: drawing on savings and super" : "", label: "Money coming in and left over each year" })}` : ""}
-      <p class="small muted">Top: home equity (solid) and cash and super (dashed). Bottom: money coming in — Age Pension, super pension, interest and any pay (dotted) — and what's left after living costs, rent and the home's running costs (solid). Years along the bottom; year 1 is age ${main.years[0].age}.</p>
+      <p class="small muted">Coming in: Age Pension, super pension, interest and any pay. Left over: after living costs, rent and the home's running costs. Year 1 is age ${main.years[0].age}.</p>
       <div id="full-diff">${fullDiff()}</div>
     </div>`;
   }
@@ -3444,7 +3462,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       <div class="at-row"><label for="at-year">Compare at</label><input type="range" id="at-year" data-at min="1" max="${H}" value="${at}"><output id="at-label">Year ${at}</output></div>
       ${on.nw || on.debt ? `<h4>What you own and owe</h4>${top.length ? chart("full-top", top, H, "money", { group: "full", at, noNote: true, label: "Wealth and debt over the years" }) : ""}` : ""}
       ${on.income || on.cash ? `<h4>Money each year</h4>${chart("full-bottom", bottom, H, "money", { group: "full", at, noNote: true, shadeNegative: on.cash ? "Below the line: costs you money" : "", label: "Income and cash flow each year" })}` : ""}
-      <p class="small muted">Solid: wealth and cash flow. Dashed: debt. Dotted: income before tax, ${esc(wageText)} — the same in every plan. The thicker line is the plan you picked.</p>
+      ${on.income ? `<p class="small muted">Income before tax is the same in every plan, ${esc(wageText)}.</p>` : ""}
       <div id="full-diff">${fullDiff()}</div>
     </div>`;
   }
@@ -3458,16 +3476,21 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const series = runs
       .map((r, i) => ({ r, i }))
       .filter(({ r }) => !ui.hidden[r.id])
-      .map(({ r, i }) => ({ name: r.baseline ? "Yardstick" : r.name, color: SERIES[i], base: r.baseline, values: r.years.map(metric[2]) }));
+      .map(({ r, i }) => ({ name: r.baseline ? BASE_NAME : r.name, color: SERIES[i], base: r.baseline, values: r.years.map(metric[2]) }));
     const ci = Math.min(ui.chainPlan, runs.length - 1);
     const ti = Math.min(ui.tablePlan, runs.length - 1);
     const planChips = (key, current) =>
-      `<div class="chips">${runs.map((r, i) => `<button type="button" class="chip" data-pick="${key}" data-value="${i}" aria-pressed="${i === current}"><span class="dot" style="background:${SERIES[i]};margin-right:6px"></span>${esc(r.baseline ? "Yardstick" : r.name)}</button>`).join("")}</div>`;
+      `<div class="chips">${runs.map((r, i) => `<button type="button" class="chip" data-pick="${key}" data-value="${i}" aria-pressed="${i === current}"><span class="dot" style="background:${SERIES[i]};margin-right:6px"></span>${esc(r.baseline ? BASE_NAME : r.name)}</button>`).join("")}</div>`;
     const ct = runs[ci];
     const tt = runs[ti];
     const spareText = SPARE.find((x) => x[0] === (tt.spare || "HOME_OFFSET"))[1];
     return `${exampleBanner()}
     <div class="intro"><h2>Blink check</h2><p class="muted">${retired() ? `Each plan against keeping things as they are, to age 100 (${H} years). Does the money last, and what's left in the home and in the bank?` : `Each plan against leaving the cash in the offset, over ${H} years.`} Broad numbers — enough to tell whether an idea is worth researching properly.</p></div>
+    <div class="note-box base-explain"><b>${BASE_NAME}</b> — ${
+      retired()
+        ? `you buy nothing new and stay as you are (${state.home && state.home.has ? "in your home" : "renting"}), living on super, savings and the Age Pension.`
+        : "you buy nothing new; savings and every spare dollar go into the home loan offset."
+    } Every plan is measured against it: a plan has to end up ahead of ${BASE_NAME} to be worth the risk.</div>
     ${stopBanner(runs)}
     <div class="verdicts">${runs.map((r, i) => verdictCard(r, i, R.base)).join("")}</div>
     ${fullCard(R)}
@@ -3476,7 +3499,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       <div class="chart-controls">
         <div class="chips">${LIST.map((m) => `<button type="button" class="chip" data-metric="${m[0]}" aria-pressed="${m[0] === metric[0]}">${esc(m[1])}</button>`).join("")}</div>
         <div class="chips">${runs
-          .map((r, i) => `<label class="chip legend-chip" style="display:inline-flex;align-items:center"><input type="checkbox" data-show="${r.id}"${ui.hidden[r.id] ? "" : " checked"} style="accent-color:${SERIES[i]};width:18px;height:18px"> ${esc(r.baseline ? "Yardstick" : r.name)}</label>`)
+          .map((r, i) => `<label class="chip legend-chip" style="display:inline-flex;align-items:center"><input type="checkbox" data-show="${r.id}"${ui.hidden[r.id] ? "" : " checked"} style="accent-color:${SERIES[i]};width:18px;height:18px"> ${esc(r.baseline ? BASE_NAME : r.name)}</label>`)
           .join("")}</div>
         <p class="small muted">${esc(metric[3])}</p>
       </div>
@@ -3485,7 +3508,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     <div class="card">
       <div class="card-head"><h3>Where the money comes from ${helpButton("moneyChain", "h-chain")}</h3></div>${helpPop("moneyChain", "h-chain")}
       ${planChips("chainPlan", ci)}
-      ${ct.chains.length ? ct.chains.map(chainView).join("") : `<p class="note-box">${ct.baseline ? "The yardstick buys nothing." : "This plan doesn't buy anything."}</p>`}
+      ${ct.chains.length ? ct.chains.map(chainView).join("") : `<p class="note-box">${ct.baseline ? "No change buys nothing." : "This plan doesn't buy anything."}</p>`}
     </div>
     <div class="card">
       <div class="card-head"><h3>In plain words — for ${retired() ? "an adviser or accountant" : "your accountant or broker"}</h3><button type="button" class="btn secondary" data-act="copy-words">Copy the words</button></div>
@@ -3507,7 +3530,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const rateSeries = [{ name: "Home loan rate", color: "var(--accent)", values: R.base.years.map((y) => y.homeRate) }];
     const years = Object.keys(E.CASH_RATE);
     const pctF = (k, label, hint, help) => numField("assumptions." + k, label, { hint, help });
-    return `<div class="intro"><h2>Assumptions</h2><p class="muted">Sensible starting points for Australia, not forecasts. Change any of them; the yardstick and every plan use the same ones.</p></div>
+    return `<div class="intro"><h2>Assumptions</h2><p class="muted">Sensible starting points for Australia, not forecasts. Change any of them; No change and every plan use the same ones.</p></div>
     <div class="card">
       <h3>Interest rates</h3>
       <div class="grid wide">
@@ -3607,14 +3630,14 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       <h3>What the results mean</h3>
       <dl class="kv help-kv">
         <dt>Probably not possible on this income (red flag)</dt><dd>The plan would run the household out of money in some year — pay after tax can't cover living costs, the home loan and what the investments cost, and savings and offsets are used up — or a lender would very likely refuse one of the loans. The red box says which, with the figures.</dd>
-        <dt>Worth a closer look</dt><dd>The plan ends well ahead of the yardstick (by more than $50,000 or 5% of the yardstick's net worth, whichever is bigger), never runs out of cash, and the borrowing check doesn't say "unlikely".</dd>
+        <dt>Worth a closer look</dt><dd>The plan ends well ahead of No change (by more than $50,000 or 5% of No change's net worth, whichever is bigger), never runs out of cash, and the borrowing check doesn't say "unlikely".</dd>
         <dt>Marginal</dt><dd>Ahead, but not by enough to be worth the extra risk and effort unless it suits your goals.</dd>
-        <dt>Doesn't beat leaving the cash in the offset</dt><dd>Ends behind the yardstick.</dd>
+        <dt>Doesn't beat leaving the cash in the offset</dt><dd>Ends behind No change.</dd>
         <dt>Amber note: spends more than it earns</dt><dd>In some years the household spends more than it earns and dips into savings and offsets, but doesn't run out within the plan.</dd>
         <dt>Retired: money doesn't last (red flag)</dt><dd>Savings and super run out before the age you picked. The card shows the age, what's coming in and going out that year, and the most that plan could spend on a home and still have money at that age.</dd>
         <dt>Retired: home equity against cash and super</dt><dd>The top chart compares what's tied up in the home with the money there is to live on; the bottom one shows money coming in (Age Pension, super pension, interest) and what's left after living costs, rent and the home's running costs. Below the line means drawing on savings and super.</dd>
         <dt>Wealth, debt and cash flow</dt><dd>Two charts for one plan, with any others laid over it. The top one is what you own and owe (wealth solid, debt dashed). The bottom one is money each year: income before tax (dotted) and what the investments put in your pocket or cost you after tax (solid) — below the line costs you money. Slide to a year to compare the plans in words and in a table.</dd>
-        <dt>Net worth compared with the yardstick</dt><dd>How much better or worse off the plan leaves you at the end, against doing nothing new.</dd>
+        <dt>Net worth compared with No change</dt><dd>How much better or worse off the plan leaves you at the end, against doing nothing new.</dd>
         <dt>Cash put in at purchase</dt><dd>Your own money used for deposits, stamp duty and costs.</dd>
         <dt>Yearly top-ups</dt><dd>${esc(HELP.topUp[1])}</dd>
         <dt>Worst year</dt><dd>${esc(HELP.worstYear[1])}</dd>
