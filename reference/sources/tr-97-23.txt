@@ -1,0 +1,2624 @@
+                                                                                                Taxation Ruling
+                   Australian
+                   Taxation
+                   Office
+                                                                                    TR 97/23
+                                   FOI status: may be released                                     page 1 of 52
+
+
+
+
+                                   Taxation Ruling
+                                   Income tax: deductions for repairs
+
+other Rulings on this topic
+IT 180; IT 242; IT 2183;           This Ruling, to the extent that it is capable of being a 'public ruling' in
+TR 95/21; TR 97/16
+                                   terms of Part IVAAA of the Taxation Administration Act 1953, is a
+                                   public ruling for the purposes of that Part. Taxation Ruling TR 92/1
+contents                    para   explains when a Ruling is a public ruling and how it is binding on the
+What this Ruling is about     1    Commissioner.
+Previous Rulings              11
+Ruling                        12
+                                   What this Ruling is about
+Date of effect                80
+Explanations                  83   Class of person/arrangement
+Examples                    162    1.    This Ruling explains the circumstances in which expenditure
+Detailed contents list      188    incurred by a taxpayer for repairs is an allowable deduction under
+                                   section 25-10 of the Income Tax Assessment Act 1997 ('the ITAA
+                                   1997') - formerly contained in section 53 of the Income Tax
+                                   Assessment Act 1936 ('the ITAA 1936'). It consolidates most prior
+                                   Taxation Rulings and Taxation Determinations on repairs. The Ruling
+                                   deals with:
+                                         (a)    the meaning of the word 'repairs' in subsection 25-10(1),
+                                                and in the former subsection 53(1);
+                                         (b)    repair expenditure of a capital nature;
+                                         (c)    the distinction between repair and either renewal or
+                                                reconstruction - what is meant by an 'entirety';
+                                         (d)    the distinction between a repair and an improvement;
+                                         (e)    expenditure to remedy defects, damage or deterioration in
+                                                existence at the date of acquisition of property (that is, an
+                                                initial repair);
+                                         (f)    some specific issues in construing section 25-10 and the
+                                                former section 53;
+                                         (g)    expenditure for repairs before property is held, occupied or
+                                                used for income producing or business purposes;
+                                         (h)    expenditure for repairs to property previously used for
+                                                non-income producing purposes;
+                                         (i)    expenditure for repairs to property used for the purpose of
+                                                providing non-deductible entertainment; and
+Taxation Ruling
+
+
+TR 97/23
+page 2 of 52                                         FOI status: may be released
+
+
+
+      (j)      expenditure for repairs to property used only partly for
+               income producing purposes during a year of income.
+2.    The following expressions in section 25-10 and the former
+section 53, in column 1, are abbreviated at times in this Ruling as
+indicated in column 2:
+
+
+Expression in section 25-10             Abbreviation in this Ruling
+          (column 1)                              (column 2)
+'premises (or part of premises),        'property'
+plant, machinery, tools or articles'
+'held or used'                          'held, etc.,'
+'purpose of producing assessable        'income purposes'
+income'
+Expression in section 53                Abbreviation in this Ruling
+          (column 1)                              (column 2)
+'premises, or part of premises,         'property'
+plant, machinery, implements,
+utensils, rolling stock or articles'
+'held, occupied or used'                'held, etc.,'
+'purpose of producing assessable        'income purposes'
+income, or in carrying on a
+business for that purpose'
+
+
+3.    In this Ruling, a reference to:
+      ·        'section 8-1' means, as appropriate, 'section 8-1 of the
+               ITAA 1997 or the former subsection 51(1) of the ITAA
+               1936';
+      ·        'section 25-10' means, as appropriate, 'section 25-10 of the
+               ITAA 1997 or the former subsection 53(1) of the ITAA
+               1936';
+      ·        'section 42-15' means, as appropriate, 'section 42-15 of the
+               ITAA 1997 or the former subsection 54(1) of the ITAA
+               1936';
+      ·        'the old law' means 'the former subsection 53(1) of the
+               ITAA 1936'; and
+      ·        'the new law' means 'section 25-10 of the ITAA 1997'.
+4.   In this Ruling, the expression 'initial repair' refers to a repair by a
+taxpayer that remedies some defect in property or makes good damage
+                                                               Taxation Ruling
+
+
+                                                   TR 97/23
+FOI status: may be released                                       page 3 of 52
+
+
+
+to, or deterioration of, property being a defect, damage or
+deterioration:
+      (a)    existing when the property was acquired from another
+             person (whether by purchase, lease or licence); and
+      (b)    not arising from the operations of the taxpayer who incurs
+             the repair expenditure.
+5.    A repair is not an 'initial repair' simply because it is the first
+repair made after property is acquired. It is an 'initial repair' if repair is
+due when the property is acquired in the sense that the property has
+defects, damage or deterioration or is not in good order and suitable
+for use in the way intended.
+6.     This Ruling does not consider in detail the circumstances in
+which a loss or outgoing for repairs may be deductible under the
+general deduction provision (section 8-1) or under the depreciation
+deduction provision (section 42-15). Repairs may include some
+maintenance work but only if it is done in conjunction with work that
+is a repair. Repairs may not involve only maintenance work. If non-
+capital maintenance work is not a repair, it may be deductible under
+section 8-1. If expenditure on maintenance work is of a capital nature,
+it may be depreciable under section 42-15.
+7.    Section 8-10 of the ITAA 1997 provides a rule against double
+deductions. If expenditure on repairs is potentially deductible under
+both sections 25-10 and 8-1, section 8-10 provides that you can deduct
+only under the provision that is most appropriate. Which provision is
+the most appropriate is an objective question. In our view, if both
+sections 25-10 and 8-1 allow you to deduct the same amount, section
+25-10, being the provision that deals specifically with repair
+expenditure, is the most appropriate provision.
+8.    Under the old law, if expenditure on repairs is potentially
+deductible under both subsections 53(1) and 51(1), we consider it is
+more 'appropriate' in exercising the discretion in subsection 82(1) (no
+double deductions) that the deduction be allowed under subsection
+53(1) rather than 51(1): see Case Q98 83 ATC 487 at 489; Case 26
+(1983) 27 CTBR (NS) at 160.
+9.    The Ruling does not deal with the question whether expenditure
+for repairs after property ceases to be held, occupied or used for
+income producing or business purposes is deductible under section
+25-10 or under the old law. Taxation Ruling IT 180 addresses this
+question for the old law. Because section 25-10 expresses the same
+ideas as the old law, IT 180 also applies to the new law: Taxation
+Ruling TR 97/16, paragraph 17.
+10. The Ruling also does not deal with the question whether
+expenditure for repairs may be included in the cost base of an asset for
+Taxation Ruling
+
+
+TR 97/23
+page 4 of 52                                          FOI status: may be released
+
+
+
+the purposes of the capital gains provisions, nor with the depreciation
+and other capital allowance provisions in the income tax law.
+
+
+Previous Rulings
+11. This Ruling replaces Taxation Rulings IT 153, IT 2089 (which
+was withdrawn on 3 September 1997), IT 2116, IT 2149, IT 2183,
+IT 2587 and Taxation Determination TD 92/180. These Rulings and
+the Determination are now withdrawn.
+
+
+Ruling
+Meaning of the word 'repairs'
+(Note: see explanation at paragraphs 83 to 107 and examples at paragraphs 162 and
+163 of this Ruling)
+
+
+Context of the word 'repairs' in section 25-10
+12. In its context in section 25-10, the word 'repairs' relates to work
+done to 'premises (or part of premises), plant, machinery, tools or
+articles'. The word 'repairs' appeared in a similar context in the old
+law. While the things specified in the section cover a wide range of
+property, they do not extend to all classes of property, e.g., intangible
+property.
+
+
+Ordinary meaning of 'repairs'
+13. The word 'repairs' has its ordinary meaning. It ordinarily means
+the remedying or making good of defects in, damage to, or
+deterioration of, property to be repaired (being defects, damage or
+deterioration in a mechanical and physical sense) and contemplates the
+continued existence of the property.
+14. Work done to prevent or anticipate defects, damage or
+deterioration (in a mechanical or physical sense) in property is not in
+itself a 'repair' unless it is done in conjunction with remedying or
+making good defects in, damage to, or deterioration of, the property.
+15. Repair for the most part is occasional and partial. It involves
+restoration of the efficiency of function of the property being repaired
+without changing its character and may include restoration to its
+former appearance, form, state or condition. A repair merely replaces
+a part of something or corrects something that is already there and has
+become worn out or dilapidated. Works can fairly be described as
+                                                            Taxation Ruling
+
+
+                                                TR 97/23
+FOI status: may be released                                    page 5 of 52
+
+
+
+'repairs' if they are done to make good damage or deterioration that has
+occurred by ordinary wear and tear, by accidental or deliberate damage
+or by the operation of natural causes (whether expected or unexpected)
+during the passage of time.
+16. To repair property improves to some extent the condition it was
+in immediately before repair. A minor and incidental degree of
+improvement, addition or alteration may be done to property and still
+be a repair. If the work amounts to a substantial improvement,
+addition or alteration, it is not a repair and is not deductible under
+section 25-10.
+
+
+Restoration of the efficiency of function of the property
+17. 'Repairs', in its context in section 25-10, is directed to the
+holding or use of property for income purposes. Under the old law,
+the property had to be 'held, occupied or used' for income purposes.
+Holding or use of property for this purpose indicates that, in
+determining whether work done to property constitutes 'repairs', it is
+more significant to consider whether the work restores the efficiency
+of function of the property without changing its character than it is to
+consider whether the appearance, form, state or condition of the
+property is exactly restored.
+
+
+Need for exercise of judgment
+18. We recognise that in some cases practical difficulty may be
+involved in deciding, for the purpose of deductibility of repair
+expenditure under section 25-10, whether the property is returned to
+its original efficiency of function by particular work done to it. We
+accept that there can be sound commercial and other reasons for doing
+work on property to improve its appearance, condition or functional
+efficiency. The question is necessarily one of fact and degree. It
+requires a careful weighing of the various factors discussed in this
+Ruling and exercising judgment in the light of decided case law and
+practical commercial experience. If a taxpayer is experiencing
+practical difficulty in deciding whether particular repair expenditure is
+deductible, he or she can seek a private binding ruling from the
+Australian Taxation Office ('the ATO').
+
+
+Maintenance work - whether 'repair'
+19. Work done partly to remedy or make good defects, damage or
+deterioration does not cease to be a repair if it is also done partly -
+even largely - to prevent or anticipate defects, damage or deterioration
+(in a mechanical or physical sense) in property or in rectifying defects
+Taxation Ruling
+
+
+TR 97/23
+page 6 of 52                                       FOI status: may be released
+
+
+
+in their very early stages. Repairs are not confined to rectifying
+defects, damage or deterioration that have already become serious.
+Work done to property not in need of repair, however, is not repair
+work and any expenditure for the work in these circumstances is not
+deductible under section 25-10.
+20. Some kinds of maintenance work are 'repairs' in terms of section
+25-10, for example, painting plant or business premises to rectify
+existing deterioration and to prevent further deterioration. Other
+kinds of maintenance work, such as oiling, brushing or cleaning
+something that is otherwise in good working condition and only
+requires attention to prevent the possibility of its going wrong in the
+future, are not 'repairs' in terms of the section . Expenditure on the
+latter kind of maintenance work may be an allowable deduction under
+section 8-1.
+
+
+Question of fact and degree
+21. What is a 'repair' for the purposes of section 25-10 is a question
+of fact and degree in each case having regard to the appearance, form,
+state and condition of the particular property at the time the
+expenditure is incurred and to the nature and extent of the work done
+to the property.
+22. If work done to property goes beyond what is a 'repair' in terms
+of section 25-10, any expenditure for the work is not deductible. The
+work may go beyond 'repairs' in terms of the section if it:
+      (a)      changes the character of the property; or
+      (b)      does more than restore its efficiency of function.
+(The cost of this work may be deductible under other provisions of the
+income tax law, e.g., section 8-1 or section 42-15 or Division 43 of the
+ITAA 1997 (or the former Division 10C or 10D of Part III of the
+ITAA 1936).)
+
+
+Work done solely to meet requirements of regulatory bodies
+23. To determine whether work done to meet requirements of
+regulatory bodies, or to conform with their standards, constitutes
+'repairs' for the purposes of section 25-10, it is necessary to consider
+the general principles and the various factors discussed in this Ruling.
+24. Expenditure on work that modifies property to satisfy regulatory
+requirements is allowable under section 25-10 as repair expenditure
+only if the work:
+                                                            Taxation Ruling
+
+
+                                                 TR 97/23
+FOI status: may be released                                    page 7 of 52
+
+
+
+      (a)    remedies or makes good a defect in, damage to, or
+             deterioration (in a mechanical or physical sense) of,
+             property; and
+      (b)    restores the efficiency of function of the property; and
+      (c)    does not produce a new and different function for the
+             property nor add to the property a function that it did not
+             previously have.
+25. The expenditure must not be of a capital nature, e.g., an
+improvement.
+
+
+Expenditure to control health risks from dangerous substances
+26. Work done to property in controlling health risks associated with
+the use of dangerous substances (such as asbestos, chloroflurocarbons
+('CFCs'), chromium, dioxin, cyanide, pesticides and arsenic) does not
+qualify as a 'repair' for the purposes of section 25-10 unless the work
+remedies or makes good defects in, damage to, or deterioration (in a
+mechanical or physical sense) of, the property.
+27. An example of expenditure that is not deductible as a repair is
+the cost of removing asbestos insulation from factory walls (if the
+insulation is not in need of repair) and replacing it with modern
+insulation material. This work does not constitute the rectification of
+a defect in a mechanical or physical sense as envisaged by section
+25-10. The asbestos insulation functions efficiently as insulation. It is
+being replaced because of the health risk it might pose to factory
+occupants, not to 'repair' the factory in the ordinary sense of the word.
+The costs, if incurred on or after 19 August 1992, are deductible under
+subsection 82BK(1) of the ITAA 1936 as allowable environmental
+protection expenditure.
+28. Another example of costs that are not deductible under section
+25-10 is the cost of removing CFC gases from air conditioning plant
+and replacing them with non-ozone depleting gases. This work does
+not remedy any defect (in a mechanical or physical sense) in the
+holding, etc., of the air conditioning plant for income purposes, even
+though it is beneficial to public health. The costs, if incurred on or
+after 19 August 1992, are deductible under subsection 82BK(1) of the
+ITAA 1936 as allowable environmental protection expenditure.
+29. Expenditure to control health risks associated with the use of
+dangerous substances that is not deductible under section 25-10 may
+be deductible under section 8-1 or Subdivision CA of Division 3 of
+Part III of the ITAA 1936.
+30. The provisions of Subdivision CA (comprising sections 82BH to
+82BR of the ITAA 1936) allow a deduction for expenditure, including
+Taxation Ruling
+
+
+TR 97/23
+page 8 of 52                                          FOI status: may be released
+
+
+
+expenditure of a capital nature, incurred on or after 19 August 1992 by
+a taxpayer carrying on eligible environmental protection activities.
+These activities are the preventing, combating or rectifying pollution
+(which here means contamination of the environment by harmful or
+such potentially dangerous substances as asbestos and CFCs) in the
+circumstances specified in paragraph 82BM(1)(a) of the ITAA 1936,
+and the treating, cleaning up, removing or storing of waste in the
+circumstances specified in paragraph 82BM(1)(b) of that Act. The
+environmental protection provisions are provisions of last resort. If a
+deduction for environmental protection activities is allowable under
+another provision of the Act, the expenditure is not deductible under
+Subdivision CA (see subsection 82BL(3) of the ITAA 1936).
+
+
+Repair expenditure of a capital nature
+(Note: see explanation at paragraphs 108 to 112 and example at paragraph 164 of
+this Ruling)
+
+
+In what situations is repair expenditure of a capital nature?
+31. Expenditure incurred for repairs is not deductible under section
+25-10 if the expenditure is of a capital nature. Subsection 25-10(3)
+precludes a deduction for capital expenditure.
+32. Expenditure for repairs to property is capital expenditure if any
+of the following subparagraphs applies:
+      (a)      The guidelines for distinguishing between capital and
+               revenue outgoings laid down by the courts for the purposes
+               of the forerunners of section 8-1 in such cases as Sun
+               Newspapers Ltd v. FC of T (1938) 61 CLR 337; (1938) 5
+               ATD 87 and Hallstroms Pty Ltd v. FC of T (1946) 72
+               CLR 634; (1946) 8 ATD 190 indicate that the expenditure
+               is incurred in establishing, replacing or enlarging the
+               profit-yielding (i.e., business) structure rather being a
+               working or operating expense (see also paragraphs 111
+               and 134 of this Ruling).
+      (b)      The expenditure, rather than being for work done to
+               restore the property by renewal or replacement of
+               subsidiary parts of a whole, is for work that is a renewal in
+               the sense of a reconstruction of the entirety (see paragraph
+               114 of this Ruling for what is meant by an 'entirety'). The
+               application of this distinction depends very much on what,
+               in the circumstances of the case, is properly considered to
+               be the relevant entirety (see also paragraph 115 of this
+               Ruling).
+                                                                  Taxation Ruling
+
+
+                                                     TR 97/23
+FOI status: may be released                                           page 9 of 52
+
+
+
+      (c)    If property bought for use as a capital asset in the buyer's
+             business is not in good order and suitable for use in the
+             way intended, expenditure incurred in putting it in order
+             suitable for use is part of the cost of its acquisition and is
+             of a capital nature (see also paragraphs 59 to 66 and 125 to
+             140 of this Ruling).
+33. The cost of replacing things such as free-standing stoves,
+refrigerators and furniture in premises used for income purposes is
+capital expenditure and is not deductible under section 25-10. (Note,
+however, that these items (if they are not permanent fixtures) are plant
+on which depreciation is allowable: see Taxation Ruling IT 242.)
+34. The cost of replacing items such as locks and exhaust fans,
+which are permanent fixtures installed in premises used for income
+purposes, is deductible as a repair under section 25-10 provided it is a
+replacement of a worn out unit by a new unit of a similar design that
+simply restores its efficiency of function and is not an improvement:
+see Case S27 (1966) 17 TBRD 163; (1966) 13 CTBR (NS) Case 56.
+
+
+No deduction for 'notional' repairs
+35. If work done goes beyond 'repair' and the whole cost is capital
+expenditure, no amount is allowable as a deduction under section
+25-10 for 'notional' repairs, i.e., an amount it is estimated that repair
+work would have cost the taxpayer if the property had in fact merely
+been repaired (but see paragraphs 55 to 57 of this Ruling for the
+deductibility of repairs carried out at the same time as an
+improvement, and paragraphs 63 to 66 and 136 to 140 of this Ruling
+for dissecting or apportioning initial repair costs).
+
+
+Distinction between repair and either renewal or reconstruction -
+what is meant by the 'entirety'
+(Note: see explanations at paragraphs 113 to 119 and examples at paragraphs 165 to
+170 of this Ruling)
+
+
+Repair is distinct from renewal or reconstruction
+36. Repair is restoration by renewal or replacement of subsidiary
+parts of a whole. Renewal or reconstruction, as distinguished from
+repair, is restoration of the entirety.
+
+
+What is an 'entirety'?
+37. The term 'entirety' is used by the courts in repair cases to refer to
+something 'separately identifiable as a principal item of capital
+Taxation Ruling
+
+
+TR 97/23
+page 10 of 52                                         FOI status: may be released
+
+
+
+equipment' (Lindsay v. FC of T (1960) 106 CLR 377 at 385; (1960)
+12 ATD 197 at 201), 'a physical thing which satisfies a particular
+notion' (the Lindsay case at 106 CLR 384; 12 ATD 201) and 'not
+necessarily the whole but substantially the whole of the [property]
+under discussion' (the Lindsay case at 106 CLR 383-4; 12 ATD 200).
+There is no one correct test for what is a subsidiary part and what is an
+entirety. Which approach to adopt depends on the facts in each
+particular case and, even then, the question is one to be answered in
+the light of all the circumstances it is reasonable to take into account
+(see Regent Oil Co Ltd v. Strick Inspector of Taxes [1965] 3 All ER
+174 at 179; Brown (Inspector of Taxes) v. Burnley Football and
+Athletic Co Ltd [1980] 3 All ER 244 at 255).
+38.   Property is more likely to be an entirety if:
+      ·         the property is separately identifiable as a principal item of
+                capital equipment; or
+      ·         the thing or structure is an integral part, but only a part, of
+                entire premises and is capable of providing a useful
+                function without regard to any other part of the premises;
+                or
+      ·         the thing or structure is a separate and distinct item of
+                plant in itself from the thing or structure which it serves;
+                or
+      ·         the thing or structure is a 'unit of property' as that
+                expression is used in the depreciation deduction provisions
+                of the income tax law.
+39. Property is more likely to be a subsidiary part rather than an
+entirety if:
+      ·         it is an integral part of some larger item of plant; or
+      ·         the property is physically, commercially and functionally
+                an inseparable part of something else.
+40. Examples of property that constitute an entirety are a slipway on
+the business site of a slip proprietor and ship repairer (the Lindsay
+case); a spectators' grandstand in a football stadium (the Burnley FC
+case); a bridge giving access to the driveway of a garage (Case B21
+(1951) 2 TBRD 101); a substantially new race track (Case D64 72
+ATC 390; (1972) 18 CTBR (NS) Case 33); and a factory drainage
+system comprising an underground system of concrete stormwater
+drains (Case G5 (1955) 7 TBRD 29). Examples of property that do
+not constitute an entirety are the insulation and lining for a cool room
+(Case T14 (1968) 18 TBRD 67) and a window in a factory (even
+though the window is totally restored). Something that is part of a
+                                                           Taxation Ruling
+
+
+                                                TR 97/23
+FOI status: may be released                                  page 11 of 52
+
+
+
+building, e.g., a roof or wall, is just that and no more. The building
+itself is the entirety.
+41. If a series of separate buildings collectively form and function as
+a single industrial undertaking or commercial complex, we take the
+view that each separate building in the undertaking or complex is an
+entirety in itself. We do not accept that the whole undertaking or
+complex is an entirety. As a result, the replacement of a complete
+building is not regarded as replacement of a subsidiary part of an
+entirety comprised of the undertaking or complex.
+42. Work done to a part of a building, though not amounting to a
+replacement or reconstruction of an entirety, may still be capital
+expenditure and not deductible, for example, because it amounts to an
+improvement: see (1953) 4 CTBR (NS) Case 9 and paragraphs 44 to
+57 of this Ruling for the distinction between a repair and an
+improvement.
+
+
+Progressive restoration can involve deductible repairs
+43. Although a reconstruction of the whole of property (e.g., fencing
+or a railway) is not a deductible repair, a series of restorations of the
+property could be undertaken over a period of time that progressively
+restores subsidiary parts of the whole. The progressive restoration
+would involve a series of deductible repair expenses. It is a question
+of fact and degree whether the work is the reconstruction of an entirety
+or a progressive restoration of subsidiary parts of the entirety over a
+period of time. Relevant considerations in drawing the line of
+demarcation here include:
+      ·      the nature, scale and dimensions of the work in proportion
+             to the nature, scale and dimensions of the property
+             involved (the larger the work in comparison with the scale
+             and dimensions of the property, the more likely a
+             reconstruction of the entirety is involved);
+      ·      the period of time over which the work is done (the shorter
+             the period, the more likely a reconstruction of the entirety
+             is involved); and
+      ·      whether the work is done in accordance with an on-going
+             program of restoration (more likely to constitute
+             deductible repairs) or done in one operation (more likely to
+             constitute a non-deductible reconstruction of the whole
+             property).
+Taxation Ruling
+
+
+TR 97/23
+page 12 of 52                                         FOI status: may be released
+
+
+
+Distinction between a repair and an improvement
+(Note: see explanations at paragraphs 120 to 124 and examples at paragraphs 172 to
+176 of this Ruling)
+
+
+Repair is distinct from improvement
+44. The meaning of 'repair' or 'repairs' is considered in paragraphs 12
+to 30 of this Ruling. In the case of a 'repair', broadly speaking, the
+work restores the efficiency of function of the property without
+changing its character. An 'improvement', on the other hand, provides
+a greater efficiency of function in the property - usually in some
+existing function. It involves bringing a thing or structure into a more
+valuable or desirable form, state or condition than a mere repair would
+do. Some factors that point to work done to property being an
+improvement include whether the work will extend the property's
+income producing ability, significantly enhance its saleability or
+market value or extend the property's expected life.
+45. To distinguish between a 'repair' and an 'improvement' to
+property, one needs to consider the effect that the work done on the
+property has on its efficiency of function. This is the determinative
+test.
+46. If the work entails the replacement or restoration of some
+defective, damaged or deteriorated part of the property, one does not
+focus on the effect the work has on the efficiency of function of the
+part. That is not determinative of whether the property is repaired or
+improved. It is a relevant factor to take into account, however, in
+considering the effect of the work on the property's efficiency of
+function. It is possible, for instance, that the replacement of a
+subsidiary part of property with a part better in some ways than the
+original is a repair to the property without the work being an
+improvement to the property.
+47. Replacement or substantial reconstruction of the entirety, as
+distinct from the subsidiary parts of the whole, is an improvement.
+
+
+Use of different materials
+48. If expenditure is incurred in replacing or renewing a part of
+property with a material of a different type from the original, the work
+done may either repair the property, or be an improvement to it. The
+use of different materials is not in itself determinative of the issue.
+49. Whether the use of a more modern material to replace the
+original material qualifies as a repair is a question determined on the
+facts of each case. It is restoration of a thing's efficiency of function
+                                                            Taxation Ruling
+
+
+                                                 TR 97/23
+FOI status: may be released                                   page 13 of 52
+
+
+
+(without changing its character) rather than exact repetition of form or
+material that is significant.
+50. If the work done restores a previous function to the property, or
+restores the efficiency of the previous function, it does not matter that
+a different material is used. Even if the work done using different
+material enables the property to perform its function marginally more
+efficiently, the work may still constitute a deductible repair. However,
+the greater the work enhances the efficient functioning of the property,
+the more likely it is that the work constitutes an improvement.
+51. The test is whether there is a sufficient degree of improvement
+to justify characterising the expenditure as capital and therefore
+excluding it from deductibility under section 25-10.
+52. If the work produces a new and different function, or an
+additional function, it is likely to constitute a capital improvement.
+
+
+Technological advances or enhancements
+53. As a general proposition, the greater the degree of technological
+advancement involved in work done to property, the more it is likely
+the work goes beyond a 'repair'. This is so because it is more likely the
+work does more than restore the property to its original efficiency of
+function. If it does, the cost of the work is not deductible under
+section 25-10. (It might be deductible under section 8-1 if the cost is a
+working or operating expense and it is not of a capital nature.)
+54.   If, however:
+      (a)    the work done to property involves:
+             (i)    a degree of technological advancement that results in
+                    only a minor and incidental improvement to the
+                    property; or
+             (ii)   an enhancement arising from the use of more
+                    modern materials and component parts (often where
+                    original materials and parts are no longer available)
+                    that adds in only a minor and incidental way to the
+                    overall efficiency of function of the property; and
+      (b)    the work done does not change the property's character;
+this does not in itself preclude the expenditure from being
+characterised as repair expenditure deductible under section 25-10.
+
+
+Repairs done at the same time as improvements
+55. The character of a repair does not necessarily change because it
+is carried out at the same time as an improvement. If, for example, a
+Taxation Ruling
+
+
+TR 97/23
+page 14 of 52                                         FOI status: may be released
+
+
+
+shopping centre is extensively renovated or restored (the project
+combining repairs and improvements) and if some parts of the project
+can be effectively separated and considered in isolation from the rest
+of the project, they may still be repairs. It is necessary to examine
+separately the individual parts of the total project to determine whether
+any part, if considered in isolation, is a repair. It is not appropriate to
+have regard only to the result of the entire work done. It is
+inappropriate to regard the whole project as an affair of capital. In
+other words, if individual parts of the total project can be separated
+and characterised as repairs, and if their cost can be segregated and
+accurately quantified, their cost is deductible. It must be possible to
+segregate the cost of the repairs actually effected from the capital cost
+of the improvements.
+56. If, however, repair work is inextricably bound up with work of
+an improvement nature, and the repair work cannot be separately
+segregated and its cost accurately quantified independently from the
+cost of the improvements, we regard the cost of the entire work as
+being of a capital nature and not deductible.
+57. For example, if work normally regarded as a repair, such as
+painting, is done to property as part of, or in conjunction with, a
+reconstruction and modernisation of the property, and it cannot be
+segregated and its cost separately quantified, it may not be deductible.
+It is again a question of fact and degree.
+58. Expenditure on 'notional' repairs is not deductible; see paragraph
+35 of this Ruling.
+
+
+Expenditure to remedy defects, damage or deterioration in
+existence at the date of acquisition (initial repairs)
+(Note: see explanations at paragraphs 125 to 140 and examples at paragraphs 177 to
+179 of this Ruling)
+
+
+Initial repairs are of a capital nature and not deductible
+59. Expenditure incurred on an initial repair after property is
+acquired, if the expenditure is incurred in remedying defects, damage
+or deterioration in existence at the date of acquisition, is capital
+expenditure and is not, therefore, deductible under section 25-10. This
+is so whether the property is purchased or obtained under lease or
+licence by the taxpayer. The cost of effecting an initial repair is still
+not deductible even if some income happens to be earned after
+acquisition but before the repair expenditure is incurred: but see
+paragraphs 63 to 66 of this Ruling in relation to dissecting or
+apportioning initial repair costs.
+                                                             Taxation Ruling
+
+
+                                                 TR 97/23
+FOI status: may be released                                    page 15 of 52
+
+
+
+60. The main consideration in relation to initial repairs is the
+appearance, form, state and condition of the property and its functional
+efficiency when it is acquired. Expenditure that remedies some defect
+or damage to, or deterioration of, property is capital expenditure if the
+defect, damage or deterioration:
+      (a)    existed at the time of acquisition of the property; and
+      (b)    did not arise from the operations of the person who incurs
+             the expenditure.
+61. It is immaterial whether at the time of acquisition the taxpayer
+was aware of the condition of the property, including its need for
+repair. It is also immaterial whether the purchase price (or lease
+rentals) reflected the need for repairs. We consider that the English
+Court of Appeal decision in Odeon Associated Theatres Ltd v. Jones
+(Inspector of Taxes) [1972] 1 All ER 681 is not authority in Australia
+for a contrary view. An initial repair expense is not the type of repair
+expenditure ordinarily incurred as a working or operating expense in
+producing assessable income or in carrying on a business. This is
+because it lacks a connection with the conduct or operations of the
+taxpayer that produce the taxpayer's assessable income. It is
+essentially an additional cost of acquiring the property or an
+improvement in the quality of the property acquired. Initial repair
+expenditure relates to the establishment of the profit - yielding
+structure. It is capital expenditure and is not deductible under section
+25-10.
+
+
+Initial repairs to property obtained by lease or licence
+62. If property is obtained under lease or licence (rather than
+purchased) and is, or is to be, held, etc., for income purposes,
+expenditure on 'initial repairs' is capital expenditure. Expenditure for
+initial repairs after property is obtained under lease or licence is
+therefore not deductible under section 25-10.
+
+
+Initial repair costs can be dissected or apportioned
+63. An initial repair expense can be dissected or apportioned to
+allow a deduction under section 25-10 of any part of the expense that
+remedies deterioration arising from the holding, etc., of the property
+by the taxpayer for income purposes after it was acquired. No
+dissection or apportionment is available, however, if the repair
+expenditure is necessitated by a defect or damage to property because
+this expenditure is either wholly attributable to the holding, etc., of the
+property before the taxpayer acquired it or wholly attributable to the
+Taxation Ruling
+
+
+TR 97/23
+page 16 of 52                                        FOI status: may be released
+
+
+
+holding, etc., of the property by the taxpayer for income purposes after
+it was acquired.
+64. Dissection or apportionment on a time basis is appropriate if
+repair costs are incurred either due to defects (whether expected or
+unexpected) that arise gradually over an extended period or due to
+wear and tear or deterioration that occurs:
+      (a)       in part before the property is acquired by a taxpayer; and
+      (b)       in part in the course of the taxpayer's holding, etc., of the
+                property for income purposes.
+65. This dissection may be done either in the year of income the
+property is acquired if the initial repair expenditure is incurred in that
+year or in a later year in which the expenditure is incurred.
+66. If repair costs are attributable either to damage before property is
+acquired by a taxpayer, or to defects that emerged suddenly and
+matured by the time of acquisition of the property, no deduction is
+allowable under section 25-10 in accordance with paragraph 59 of this
+Ruling. If repair costs are attributable either to damage that occurs
+during the taxpayer's holding, etc., of the property for income purposes
+or to defects that emerge suddenly and mature during that time, a
+deduction is allowable if the other general principles stated in this
+Ruling are satisfied.
+
+
+Some specific issues in construing section 25-10
+(Note: see explanations at paragraphs 141 to 144 and examples at paragraphs 180
+and 181 of this Ruling)
+Expenditure incurred by a taxpayer on repairs to property that the
+taxpayer does not own
+67. A taxpayer is entitled to a deduction under section 25-10 for
+expenditure for repairs to property he or she holds, etc., for income
+purposes, even though the taxpayer does not own the property. The
+test is whether the taxpayer held or used the property as required, not
+that the taxpayer owned the property.
+68. A lessee of business premises, for example, is entitled to a
+deduction under section 25-10 for repair expenditure incurred in a year
+of income during the term of the lease if the lessee held, etc., the
+premises for income purposes when the expenditure is incurred. This
+is so even though the lessee does not own the premises and even if the
+year of income is the year that the lease expires, provided that, when
+the repair expenditure is incurred, the lessee held, etc., the premises
+for income purposes. A deduction is also allowable if a licence to use
+the business premises is granted to the taxpayer rather than a lease of
+the premises.
+                                                           Taxation Ruling
+
+
+                                                TR 97/23
+FOI status: may be released                                  page 17 of 52
+
+
+
+69. No deduction under section 25-10 is allowable to a real estate
+agent who incurs repair expenditure on a rental property on the agent's
+list. This is because a real estate agent does not hold, occupy or use a
+rental property for the purpose of producing assessable income or in
+carrying on business for that purpose. It is the owner or lessor of a
+rental property who holds or uses it for income purposes.
+70. The deductibility under section 8-1 of costs incurred by a real
+estate industry employee on such things as replacing a cracked
+window and repairs to door locks in presenting a property for sale is
+considered in Taxation Ruling TR 95/21. Paragraphs 22 and 172 to
+174 of TR 95/21 state that these costs are not deductible under
+subsection 51(1) of the ITAA 1936 because they are not incurred in
+deriving the employee's income. Rather, they are incurred in deriving
+the employer's income.
+
+
+Expenditure for repairs must be 'incurred'
+71. There need be no legal obligation on the taxpayer to undertake
+repairs for the taxpayer to be entitled to a deduction. Expenditure for
+the repairs must be 'incurred' by the taxpayer in the year of income in
+which the deduction is claimed. The word 'incur' in section 25-10 has
+the same meaning as the word 'incurred' in section 8-1.
+
+
+Property must be held or used bone fide for income purposes
+72. You can deduct repair expenditure if, when you incurred the
+expenditure, you held or used the property bona fide for income
+purposes. We say 'bona fide' here because some arrangements may
+not result in an allowable deduction. For instance, a taxpayer's
+beachside apartment may have deteriorated over several years due to
+wear and tear arising from its use for private purposes. If the taxpayer
+arranges to 'rent' the apartment to his or her adult child for, say, a
+month and during that month incurs expenditure to repair and paint the
+apartment, a deduction may not be allowable, in our view, under
+section 25-10 for the repair and painting costs. We would take the
+view in appropriate circumstances that no deduction is allowable
+either because:
+      (a)    the apartment is not held, etc., for income purposes; or
+      (b)    Part IVA of the ITAA 1936, may apply to the arrangement.
+Taxation Ruling
+
+
+TR 97/23
+page 18 of 52                                         FOI status: may be released
+
+
+
+Expenditure for repairs after property is held, etc., for income
+purposes but before income is actually derived
+73. A deduction is allowable under section 25-10 for repair
+expenditure incurred in a year of income after property is first held,
+etc., for income purposes but before income is actually derived from
+the property, provided the repairs are not initial repairs. For example,
+a rental property may be vacant but be advertised as being available
+for rental. Before a tenant occupies the property, storm damage or an
+accidental breakage occurs. Expenditure incurred to repair the damage
+or breakage is deductible under section 25-10 because the property is
+held, etc., for income purposes.
+
+
+Scope of repair deduction provision and general deduction provision
+74. Generally speaking, section 8-1 produces the same result as
+section 25-10 in relation to the deductibility of repair costs. Section
+8-1 has its own tests for deductibility. There may be occasions,
+however, where section 8-1 allows a deduction for repair expenditure
+that would otherwise not be deductible under section 25-10. Section
+8-1 might allow a deduction, for example, after a taxpayer ceases to
+hold, etc., property for income purposes even though section 25-10
+would not allow a deduction (see Placer Pacific Management Pty Ltd
+v FC of T 95 ATC 4459; (1995) 31 ATR 253).
+
+
+Expenditure for repairs before property is held, etc., for income
+purposes
+(Note: see explanations at paragraph 145 and example at paragraph 182 of this
+Ruling)
+75. Repair expenditure incurred in a year of income before property
+is held, etc., for income purposes is not deductible under section 25-
+10.
+
+
+Expenditure for repairs to property previously used by the
+taxpayer for non-income producing purposes
+(Note: see explanations at paragraph 146 and examples at paragraphs 183 and 184
+of this Ruling)
+76. In appropriate circumstances, expenditure for repairs can qualify
+as a deduction even though the property has previously been held, etc.,
+by the taxpayer for non-income purposes. This situation is different
+from an initial repair done to newly purchased or newly leased
+property, where the repair expenditure is capital expenditure.
+                                                                  Taxation Ruling
+
+
+                                                     TR 97/23
+FOI status: may be released                                         page 19 of 52
+
+
+
+77. A deduction is allowable under section 25-10 if, when the repair
+expenditure is incurred in a year of income, the property is held, etc.,
+by a taxpayer for income purposes:
+       (a)   even though the property has previously been held, etc., by
+             the taxpayer for non-income purposes; and
+       (b) even though some or all of the defects, damage or
+           deterioration arise from, or are attributable to, the
+           taxpayer's holding, etc., of the property before its holding,
+           etc., for income purposes; and
+       (c)   provided that the repair expenditure is not capital
+             expenditure.
+
+
+Expenditure for repairs to property used for the purpose of
+providing non-deductible entertainment
+(Note: see explanations at paragraphs 147 to 150 and example at paragraph 185 of
+this Ruling)
+78. Deductions otherwise allowable under section 25-10 or under
+section 8-1 for repairs to property are reduced to the extent that the
+property, when the expenditure is incurred, is used by a taxpayer for
+the purpose of providing, or in connection with providing,
+entertainment that is made non-deductible by section 32-15 of the
+ITAA 1997 (or the former section 51AE of the ITAA 1936). The
+deduction is wholly denied if the property is used solely for non-
+deductible entertainment. If the property is used to provide both
+deductible and non-deductible entertainment, the deduction is
+proportionately reduced to the extent that the property is used for non-
+deductible entertainment.
+
+
+Expenditure for repairs to property used only partly for income
+producing purposes during a year of income
+(Note: see explanations at paragraphs 151 to 161 and examples at paragraphs 186
+and 187 of this Ruling)
+79. If property is held, etc., in a year of income partly for income
+purposes and partly for non-income purposes, repair expenditure is
+only deductible to the extent that is reasonable in the circumstances of
+the case. The reasonableness test is an objective one and each case
+must be decided on its own merits. However, we would expect that
+the amount of expenditure allowable as a deduction under subsection
+25-10(2) (or the old law, when read with subsection 53(3)) would
+ordinarily be calculated by reference to the extent to which the
+property was held, etc., in the year of income for income purposes.
+Taxation Ruling
+
+
+TR 97/23
+page 20 of 52                                         FOI status: may be released
+
+
+
+
+Date of effect
+80. Subject to paragraphs 81 and 82, this Ruling applies to years
+commencing both before and after its date of issue. However, the
+Ruling does not apply to taxpayers to the extent that it conflicts with
+the terms of a settlement of a dispute agreed to before the date of issue
+of the Ruling (see paragraphs 21 and 22 of Taxation Ruling
+TR 92/20).
+81. Paragraphs 26 to 30 of this Ruling (expenditure to control health
+risks from dangerous substances) may be less favourable in some
+circumstances than Taxation Ruling IT 2183. It is less favourable
+because IT 2183, broadly stated, accepted as deductible repair work
+done in controlling health risks associated with the use of asbestos in
+income producing buildings. Paragraphs 26 to 30 only have a future
+application. They only apply to expenditure incurred after the date of
+this Ruling.
+82. Paragraphs 63 to 66 of this Ruling (initial repair costs can be
+dissected or apportioned) are more favourable to taxpayers than the
+Commissioner's earlier practice of denying any dissection or
+apportionment. Paragraphs 63 to 66 have both a past and future
+application, subject to the statutory limits of section 170 of the ITAA
+1936.
+
+
+Explanations
+Meaning of the word 'repairs'
+(Note: see ruling at paragraphs 12 to 30 and examples at paragraphs 162 and 163 of
+this Ruling)
+
+
+Ordinary meaning of the word 'repairs' in its context in section
+25-10
+83. The word 'repairs' is not defined in the Act. In its context in
+section 25-10, the word 'repairs' bears its ordinary meaning.
+According to The Shorter Oxford English Dictionary, 'repair' means:
+      'Restoration of some material thing or structure by the renewal
+      of decayed or worn out parts, by refixing what has become loose
+      or detached; the result of this.'
+84.   Osborn's Concise Law Dictionary, 8th ed, defines 'repair' as:
+      'The making good of defects in a property which has deteriorated
+      from its original state. The work required may involve curing
+      defects arising from the defective design or construction of the
+                                                            Taxation Ruling
+
+
+                                                TR 97/23
+FOI status: may be released                                   page 21 of 52
+
+
+
+      building, but it must fall short of effectively reconstructing the
+      premises or improving them.'
+85. Many judicial decisions make it plain that 'repair' involves the
+making good of defects, damage or deterioration including the renewal
+of parts and that the word does not imply a total reconstruction: see
+Stroud's Judicial Dictionary. In BP Oil Refinery (Bulwer Island) Ltd
+v. FC of T 92 ATC 4031 at 4039; (1992) 23 ATR 65 at 73, the
+Federal Court of Australia (Jenkinson J) expressed the opinion that
+'work will not be considered repair unless it includes some restoration
+of something lost or damaged, whether function or substance or some
+other quality or characteristic'.
+86. Repair, as the word is commonly understood, does not depend
+on whether much is done or only a little. Lord Macnaghten said in the
+House of Lords decision in Hoddinott v. Newton, Chambers & Co Ltd
+[1901] AC 49 at 54:
+      'A man does not usually wait to repair his house until it is
+      altogether ruinous and on the point of falling to pieces.'
+87. What is a 'repair' for the purposes of section 25-10 is a question
+of fact and degree in each case having regard to the form, state and
+condition of the particular property and its functional efficiency when
+the expenditure is incurred (per Buckley LJ in Lurcott v. Wakely &
+Wheeler [1911] 1 KB 905 at 924) and to the nature and extent of the
+work done. 'Repair' may involve renewal or replacement of subsidiary
+parts to some degree and may involve improvement but only to a
+minor and incidental extent.
+
+
+Restoration of efficiency of function of the property
+88. The High Court of Australia (Windeyer J) said in W Thomas &
+Co Pty Ltd v. FC of T (1965) 115 CLR 58 at 72; (1965) 14 ATD 78
+at 87:
+      'The words "repair" and "improvement" may for some purposes
+      connote contrasting concepts; but obviously repairing a thing
+      improves the condition it was in immediately before repair. It
+      may sometimes be convenient for some purposes to contrast a
+      "repair" with a "replacement" or a "renewal". But repairs to a
+      whole are often made by the replacement of worn-out parts by
+      new parts. Repair involves a restoration of a thing to a
+      condition it formerly had without changing its character.
+      But in the case of a thing considered from the point of view
+      of its use as distinct from its appearance, it is restoration of
+      efficiency of function rather than exact repetition of form or
+      material that is significant. Whether or not work done upon a
+Taxation Ruling
+
+
+TR 97/23
+page 22 of 52                                    FOI status: may be released
+
+
+
+      thing is aptly described as a repair of that thing is thus a question
+      of fact and degree.' (emphasis added)
+89. It is therefore more significant in applying the word 'repairs' in
+its context in section 25-10, to consider whether the work restores the
+efficiency of function of the property for income purposes (without
+changing its character) than it is to consider whether the appearance,
+form, state or condition of the property is exactly restored.
+
+
+Functionality of the property on which the work is done
+90. In considering whether work does more than restore property to
+its original efficiency of function, what is determinative is the
+functionality of the property on which the work is being done and not
+the functionality of the defective component or part. That is not to
+say, however, that the effect of the work on the functionality of the
+defective component or part is not relevant. It is a relevant factor to
+take into account in considering the extent of change made to the
+functionality of the property.
+91. To illustrate, if cast-iron pistons in an engine are replaced with
+aluminium-alloy pistons, being a more modern material for the
+construction of pistons, the determining question is whether the
+functionality of the engine has been restored or has only been
+enhanced in a minor and incidental way. However, any greater
+efficiency of function of the pistons is a relevant consideration in
+deciding that question. Expenditure in replacing the pistons is
+deductible under section 25-10. The engine's essential efficiency of
+function has not changed. Nor has the character of the engine changed
+by the use of marginally more efficient pistons. The aluminium-alloy
+pistons are marginally more efficient because they are lighter, hardier
+and are machined differently to produce less friction.
+
+
+Maintenance work - whether 'repair'
+92. Maintenance, as generally understood, includes the prevention of
+defects, damage or deterioration; a common example is the regular re-
+painting of business premises. The word 'maintenance' may in some
+contexts be the same as 'repair', and it may in some contexts have a
+wider meaning that includes repairing as well as other operations.
+Some kinds of maintenance work constitute 'repairs' in its context in
+section 25-10, for example, painting plant or business premises to
+rectify existing deterioration and to prevent further deterioration.
+Maintenance done to property that is not in need of repair, however, is
+not repair work and any expenditure for the work in these
+circumstances is not deductible under section 25-10.
+                                                            Taxation Ruling
+
+
+                                                TR 97/23
+FOI status: may be released                                   page 23 of 52
+
+
+
+93. In Day v. Harland and Wolff [1953] 2 All ER 387 Pearson J
+observed at 388:
+      'So, very broadly speaking, I think that to repair is to remedy
+      defects, but it can also properly include an element of the "stitch
+      in time which saves nine". Work does not cease to be repair
+      work because it is done to a large extent in anticipation of
+      forthcoming defects or in rectification of merely incipient
+      defects, rather than the rectification of defects which have
+      already become serious. Some element of anticipation is
+      included.' (emphasis added)
+94. His Honour's statement, by necessary implication, indicates that
+work done that is only in anticipation of forthcoming defects or
+deterioration does in fact cease to be repair work. Work done in
+anticipation of forthcoming defects or deterioration can be considered
+a 'repair' if it is done in combination with work of rectification: see
+the BP Oil Refinery (Bulwer Island) Ltd case at 92 ATC 4039; 23
+ATR 73.
+95. Oiling, brushing or cleaning something that is otherwise in good
+working condition and only requires attention to prevent the
+possibility of its going wrong in the future, is not 'repairs' in terms of
+section 25-10: compare London & North Eastern Ry. Co. v. Berriman
+[1946] 1 All ER 255 at 267 and the BP Oil Refinery (Bulwer Island)
+Ltd case. (The cost of these operations may be deductible under
+section 8-1.)
+
+
+Work done to meet requirements of regulatory bodies
+96. To constitute a 'repair' for the purposes of section 25-10, work
+done to meet requirements of regulatory bodies must satisfy the
+general principles and the various factors discussed in this Ruling.
+Work done to repair property that also happens to meet the
+requirements of regulatory bodies is deductible under the section.
+However, work done solely to meet requirements of regulatory bodies
+is not a 'repair' for the purposes of the section.
+97. A 'repair' for the purposes of section 25-10 is, fundamentally,
+work done to remedy or restore a defect in, damage to, or deterioration
+of, property in a mechanical or physical sense.
+98. We take the view that 'repair' does not extend to a removal of
+any impediment to the holding, etc., of property for income purposes
+arising solely from regulatory requirements. This is clearly
+demonstrable if the property is otherwise functioning (in a mechanical
+or physical sense) as intended and, in that sense, is not in a state of
+disrepair.
+Taxation Ruling
+
+
+TR 97/23
+page 24 of 52                                   FOI status: may be released
+
+
+
+99. If Government regulations, for instance, require something to be
+added to property (e.g., an automatic sprinkler system to a building or
+an air bag to a motor vehicle), work done to comply with this
+requirement does not constitute a repair because it is not work done to
+remedy or make good any defect, damage or deterioration in a
+mechanical or physical sense. In any event, this is likely to involve
+capital expenditure and be excluded from section 25-10.
+
+
+Alternative view
+100. We acknowledge that an alternative view exists whether work
+done to meet regulatory requirements constitutes a 'repair' under the
+terms of section 25-10.
+101. If a regulatory body imposes a requirement to do work to
+property (say, a requirement relating to health, safety or for some other
+social utilitarian purpose), proponents of this view contend that, until
+the work is done, this is an impediment or defect in the property that
+can necessitate a 'repair' in terms of section 25-10.
+102. The regulatory requirement, on this view, is arguably an
+impediment or defect in the efficient functioning of the property, and
+thus, in the holding, etc., of the property for income purposes. In an
+extreme case, non-compliance with the requirement may even require
+income producing activities to cease. This view advocates that
+expenditure to remedy the impediment is deductible under section
+25-10.
+103. If Government regulations, for instance, require that work be
+done to property to control health risks associated with the use of
+dangerous substances (such as asbestos, CFCs, chromium, dioxins,
+cyanide, pesticides and arsenic), the work done could qualify, on this
+view, as a 'repair' for the purposes of section 25-10.
+104. We do not accept the correctness of this alternative view. As
+stated earlier, we take the view that removing an impediment to the
+holding, etc., of property for income purposes arising from regulatory
+requirements does not constitute 'repair' of a defect in, damage to, or
+deterioration of the property in the context required by section 25-10.
+
+
+Technological advances or enhancements
+105. In many a repair process, there is some improvement made to
+property as a result of technological advancements or more modern
+materials and component parts becoming available. The extent of this
+improvement is crucial in making a judgment about the deductibility
+of repair expenditure under section 25-10.
+                                                                    Taxation Ruling
+
+
+                                                       TR 97/23
+FOI status: may be released                                           page 25 of 52
+
+
+
+106. As a general proposition, the greater the degree of:
+       (a)    technological advancement; or
+       (b)    enhancement arising due to the use of more modern
+              materials and component parts;
+involved in the work done to property, the more likely it is that the
+work involves an improvement or a change in the character of the
+property rather than a repair.
+107. If, however, only minor and incidental improvement is made to
+the overall efficiency of function of property as a result of
+technological advancement, or by reason of enhancements due to the
+use of more modern materials and component parts in the work done
+to the property, the repair expenditure remains deductible under
+section 25-10.
+
+
+In what situations is repair expenditure of a capital nature?
+(Note: see ruling at paragraphs 31 to 35 and example at paragraph 164 of this
+Ruling)
+108. Subsection 25-10(3) excludes capital expenditure from being a
+deduction. Under the old law, expenditure of a capital nature was also
+excluded.
+109. Two of the leading Australian cases on determining whether
+expenditure for repairs is of a capital nature are FC of T v. Western
+Suburbs Cinemas Ltd (1952) 86 CLR 102; (1952) 9 ATD 452 and the
+Lindsay case (affirmed on appeal at (1961) 106 CLR 377; 12 ATD
+505).
+110. In the Western Suburbs Cinemas case, the ceiling of a motion
+picture theatre was in a state of disrepair. To restore the ceiling to its
+original condition would have cost £603. The company instead
+replaced the ceiling with a new one of a different design and better
+material for a cost of more than £3,000. The High Court (Kitto J)
+concluded that the new ceiling was an improvement to a fixed capital
+asset and that its cost was a capital charge. His Honour said at 86
+CLR 105; 9 ATD 454:
+       'To decide whether a particular item of expenditure on business
+       premises ought to be charged to capital or revenue account is apt
+       to be a matter of difficulty, though the difference between the
+       two accounts is clear enough as a matter of general statement
+       (Sun Newspapers Ltd v. Federal Commissioner of Taxation). In
+       this case, the work done consisted of the replacement of the
+       entire ceiling, a major and important part of the structure of the
+       theatre, with a new and better ceiling. The operation seems to
+       me different, not only in degree, but in kind, from the type of
+Taxation Ruling
+
+
+TR 97/23
+page 26 of 52                                    FOI status: may be released
+
+
+
+      repairs which are properly allowed for in the working expenses
+      of a theatre business. It did much more than meet a need for
+      restoration; it provided a ceiling having considerable advantages
+      over the old one, including the advantage that it reduced the
+      likelihood of repair bills in the future ... . The truth is, I think,
+      that the new ceiling was an improvement to a fixed capital asset
+      and that its cost was a capital charge.'
+111. In Lindsay v. FC of T (1960) 106 CLR 197; 12 ATD 505, the
+High Court (Kitto J) held that expenditure incurred to renew a slipway
+was a renewal of an entirety and not a deductible repair. His Honour
+said at 106 CLR 383; 12 ATD 200:
+      'If the work done in respect of the slipway is correctly described
+      as repairs, it cannot, I think, on the facts of this case, be of a
+      capital nature. The problem is to characterize the expenditure
+      according to the familiar distinction between repair, in the sense
+      of restoration by renewal or replacement of subsidiary parts of a
+      whole, and renewal in the sense of reconstruction of the entirety,
+      meaning by the entirety not necessarily the whole but
+      substantially the whole of the subject matter under discussion:
+      per Buckley L.J., in Lurcott v. Wakely & Wheeler; Rhodesia
+      Railways v. Collector of Income Tax, Bechuanaland'.
+      In order to determine whether an item of expenditure is to be
+      held on general principles to be chargeable to income or capital
+      account, it is of course necessary to distinguish between "the
+      business entity, structure or organization set up or established for
+      the earning of profit and the process by which such an
+      organization operates to obtain regular returns by means of
+      regular outlay" ... : Sun Newspapers Ltd and Associated
+      Newspapers Ltd. v. Federal Commissioner of Taxation [(1938)
+      61 CLR 337 at pp 359, 360]. But where the question is whether
+      expenditure has been for repairs, and for the purpose of deciding
+      that question one asks what is the entirety which it is relevant to
+      consider, one is looking not for a profit-earning structure or
+      entity, as such, but for a physical thing which satisfies a
+      particular notion.'
+
+
+No deduction for notional repairs
+112. In the Western Suburbs Cinemas case, Kitto J rejected an
+argument that, where an actual expenditure is not an allowable
+deduction, a notional expenditure may be. His Honour said at 86 CLR
+107; 9 ATD 455:
+      ' ... when a taxpayer has two courses open to him, one involving
+      an expenditure which will be an allowable deduction for income
+                                                                   Taxation Ruling
+
+
+                                                      TR 97/23
+FOI status: may be released                                          page 27 of 52
+
+
+
+      tax and the other involving an expenditure which will not be an
+      allowable deduction, and for his own reasons he chooses the
+      second course, he cannot have his income tax assessed as if he
+      had exercised his choice in the opposite way. Section 53 is
+      concerned with expenditure which was in fact incurred, not with
+      expenditure which could have been incurred but was not.'
+
+
+Distinction between repair and either renewal or reconstruction -
+what is meant by the 'entirety'
+(Note: see ruling at paragraphs 36 to 43 and examples at paragraphs 165 to 170 of
+this Ruling)
+Repair is distinct from renewal or replacement
+113. Repairs to property may involve renewal or replacement of a
+subordinate part of the property. As Buckley LJ said in Lurcott v.
+Wakely & Wheeler [1911] 1 KB 905 at 924:
+      'Repair is restoration by renewal or replacement of subsidiary
+      parts of a whole. Renewal, as distinguished from repair, is
+      reconstruction of the entirety, meaning by the entirety not
+      necessarily the whole but substantially the whole subject-matter
+      under discussion ... the question of repair is in every case one of
+      degree, and the test is whether the act to be done is one which in
+      substance is the renewal or replacement of defective parts, or the
+      renewal or replacement of substantially the whole.'
+114. Renewal, replacement or reconstruction of the entirety (i.e., the
+whole or substantially the whole) of a thing or structure is an
+improvement rather than a deductible repair.
+
+
+What is an entirety?
+115. The tests used by the courts and tribunals or suggested by
+commentators to identify an entirety - as distinct from a subsidiary part
+- include one or more of the following:
+      ·      is the property (e.g., a chimney) physically, commercially
+             and functionally an inseparable part of an entirety (e.g., a
+             factory)?: Samuel Jones & Co (Devondale) Ltd v.
+             Commissioners of Inland Revenue (1951) 32 TC 513.
+      ·      is the property (e.g., a slipway) separately identifiable as a
+             principal item of capital equipment?: Lindsay's case.
+      ·      is the thing or structure (e.g., a timber staircase) an integral
+             part, but only a part, of the entire premises and is it
+             capable of providing a useful function without regard to
+Taxation Ruling
+
+
+TR 97/23
+page 28 of 52                                        FOI status: may be released
+
+
+
+                any other part of the premises?: Case W68 89 ATC 613;
+                AAT Case 5232 (1989) 20 ATR 3796.
+      ·         is the thing or structure (e.g., meters and pumping plant) a
+                separate and distinct item of plant in itself from the thing
+                or structure (e.g., a light and power station) to which it
+                supplied something (e.g., electric light and power) or an
+                integral part of some larger item of plant?: Case 36
+                (1949) 15 TBRD (OS) 287.
+      ·         is the property a 'unit of property' as that expression is used
+                in the depreciation provisions of the income tax law,
+                bearing in mind that, to be such a 'unit', the thing or
+                structure must be 'functionally separate and independent'?:
+                Ready Mixed Concrete (Victoria) Pty Ltd v. FC of T
+                (1969) 118 CLR 177; (1969) 15 ATD 215.
+116. The leading Australian case in this area is the High Court
+decision in the Lindsay case where slip proprietors and ship repairers
+reconstructed one of two slipways. The taxpayers submitted that the
+relevant entirety was the whole of the business premises on which the
+slipway existed or, alternatively, the whole of the slip (comprising the
+slipway, the hauling machinery that served it, the cradle on it and the
+dolphins and warping winches by which vessels were manoeuvred on
+to it). Kitto J rejected a submission that the slipway was only a
+subsidiary part of some larger thing or aggregation of things. His
+Honour held that the expenditure involved was not deductible under
+section 53 of the ITAA 1936 because the slipway ought to be
+considered as an entirety by itself (at 106 CLR 385; 12 ATD 201):
+      'It is separately identifiable as a principal, and indeed the
+      principal, item of capital equipment, so that in a discussion as to
+      whether work done in relation to it constitutes a repair or a
+      renewal in the opposed senses abovementioned, the subject
+      matter in relation to which the choice of description is to be
+      made is the slipway itself, and not any larger thing or
+      aggregation of things of which it may be suggested to form part.'
+117. In the W Thomas & Co case, where the High Court considered
+deductions claimed for repairs to guttering, the roof, walls and two
+floors of a building, the view was taken that the whole building was
+the entirety. Windeyer J said (at 115 CLR 66; 14 ATD 83) that the
+relevant question is not:
+      ' ... whether the roof or the floor or some other part of the
+      building, looked at by itself, was repaired as distinct from being
+      reconstructed or replaced. It is whether what was done to the
+      roof or the floor or some other part was a repair of the building.'
+                                                                   Taxation Ruling
+
+
+                                                      TR 97/23
+FOI status: may be released                                          page 29 of 52
+
+
+
+118. In other examples, the floor of a house (Lister v. Lane & Nesham
+[1893] 2 QB 212) and the front external wall of a house (the Lurcott
+case) have each been held to be a subsidiary part of the whole.
+
+
+Progressive restoration can involve deductible repairs
+119. It is a question of fact and degree whether a reconstruction is
+undertaken of the whole property (not deductible) or a series of
+restorations is embarked on over a period of time, progressively
+restoring subsidiary parts of the whole (deductible). In the Lindsay
+case, the expenditure on the slipway was regarded as a non-deductible
+expense for the reconstruction of an entirety. The expenditure would
+not become deductible by apportioning it into parts referable to
+different sections of the slipway. By contrast, in The Rhodesia
+Railways Ltd and Others v. Commissioner of Taxes (Southern
+Rhodesia) [1925] 1 SAf TC 133 the restoration of sections of a
+railway track was held not to be the reconstruction of an entirety.
+
+
+Distinction between a repair and an improvement
+(Note: see ruling at paragraphs 44 to 57 and examples at paragraphs 172 to 176 of
+this Ruling)
+120. An important question in distinguishing between a repair and an
+improvement is whether expenditure incurred in replacing or renewing
+a part of property with a material of a different type from the original
+is a repair of the property or an improvement to it.
+121. The material used does not have to be exactly the same as the
+original material for the work to be a repair. Similarly, the use of
+different material, whether it happens to be cheaper or more expensive
+than the original material being replaced, does not necessarily rule out
+the work being a repair.
+122. It needs to be borne in mind that repairing property to some
+extent improves the condition it was in immediately before repair.
+Whether the use of a more modern material to replace the original
+material qualifies as a repair is a question determined on the facts of
+each case.
+123. What is determinative of deductibility under section 25-10, if
+different material is used, is whether the work done restores the
+efficiency of function of the property (without changing its character),
+not whether the same material as the original is used. We accept that
+use of different material may result in a minor and incidental degree of
+improvement in the property but still only restore the efficiency of
+function of the property. If the degree of improvement is more than
+Taxation Ruling
+
+
+TR 97/23
+page 30 of 52                                         FOI status: may be released
+
+
+
+minor and incidental, the expenditure is of a capital nature and not
+deductible under section 25-10.
+124. Relevant considerations, consistently with the approach taken by
+the High Court in the W Thomas & Co case and the Western Suburbs
+Cinemas case, in distinguishing generally between a repair and an
+improvement, are:
+      (a)       whether or not the thing replaced or renewed was a major
+                and important part of the structure of the property (at 86
+                CLR 106; 9 ATD 454);
+      (b)       whether the work performed did more than meet the need
+                for restoration of efficiency of function (at 86 CLR 106; 9
+                ATD 454 and at 115 CLR 72; 14 ATD 87), bearing in
+                mind that 'repair' involves a restoration of a thing to a
+                condition it formerly had without changing its character;
+      (c)       whether the thing was replaced with a new and better one
+                (at 86 CLR 106; 9 ATD 454); and
+      (d)       whether the new thing has considerable advantages over
+                the old one, including the advantage that it reduces the
+                likelihood of repair bills in the future (at 86 CLR 106; 9
+                ATD 454).
+
+
+Expenditure to remedy defects, damage or deterioration in
+existence at the date of acquisition (initial repairs)
+(Note: see ruling at paragraphs 59 to 66 and examples at paragraphs 177 to 179 of
+this Ruling)
+
+
+Initial repairs are of a capital nature and not deductible
+125. A repair after acquisition of property is an 'initial repair' if repair
+was due when the property was acquired, in the sense that there was a
+need for repair to restore or maintain the property's efficiency of
+function. In other words, the property was neither in good order when
+it was acquired nor suitable for use for income purposes in the way
+intended.
+126. The leading Australian case in this area is the High Court
+decision in the Thomas case. There, Windeyer J held that the costs of
+repairing a roof, guttering, wall, basement floor and wooden floor and
+painting a building in the year of income it was acquired was
+expenditure of a capital nature.
+127. His Honour said (at 115 CLR 72; 14 ATD 87):
+      'Expenditure upon repairs is properly attributable to revenue
+      account when the repairs are for the maintenance of an income-
+                                                           Taxation Ruling
+
+
+                                               TR 97/23
+FOI status: may be released                                  page 31 of 52
+
+
+
+      producing capital asset. Maintenance involves the periodic
+      repair of defects that are the result of normal wear and tear in
+      operation. It is an expense of a revenue nature when it is to
+      repair defects arising from the operations of the person who
+      incurs it. But if when a thing is bought for use as a capital
+      asset in the buyer's business it is not in good order and
+      suitable for use in the way intended, the cost of putting it in
+      order suitable for use is part of the cost of its acquisition, not
+      a cost of its maintenance. The decision of the Court of Session
+      in Law Shipping Co. Ltd. v. Inland Revenue Commissioners,
+      [(1923) 12 TC 621] is commonly cited as authority for that
+      proposition. The principle is obvious without the need for any
+      supporting authority.' (emphasis added)
+128. His Honour made it clear that it is immaterial whether the
+taxpayer knew of the defects or whether the purchase price was
+affected by them. Windeyer J said (at 115 CLR 74; 14 ATD 88):
+      'It seems to me immaterial that when the taxpayer acquired the
+      building it did not know of some of its defects ... . That means
+      only that the cost of obtaining an asset suitable for its purpose
+      was greater than had been expected.'
+129. In the Law Shipping Co case, the taxpayer in December 1919
+bought for £97,000 a steamship ready to sail and with freight booked
+and loaded. As the periodical Lloyd's survey was then considerably
+overdue, an exemption from survey had been obtained for the voyage
+about to commence. On return from the voyage in May 1920, the ship
+underwent survey and the taxpayer had to spend over £50,000 on
+repairs. The Special Commissioners allowed a deduction of only
+£12,000 as being applicable to the period during which the taxpayer
+was the owner of the ship. The Court of Session, Scotland (First
+Division) held that the amount disallowed was of a capital nature and
+not deductible.
+130. More recently, the English Court of Appeal in Odeon Associated
+Theatres v. Jones (Inspector of Taxes) [1972] 1 All ER 681 held that
+expenditure of £7,969 incurred during the period 1948-56 (in respect
+of dilapidations which occurred before acquisition) on the Regal
+Cinema at Marble Arch, which was acquired for £240,000 in January
+1945 in a somewhat run-down condition, was expenditure of a
+revenue character.
+131. A key reason for the decision was that, although the cinema was
+in disrepair at the date it was acquired, this had no effect on the
+purchase price. The purchase price was not affected because there was
+a war-time prohibition on repairing cinemas, causing all cinemas to be
+in a similarly dilapidated condition. We take the view that the
+Taxation Ruling
+
+
+TR 97/23
+page 32 of 52                                     FOI status: may be released
+
+
+
+decision in the Odeon Theatres case should not be followed in
+Australia.
+
+
+Alternative view
+132. It has been suggested, however, that the Odeon Theatres case
+supports the view that expenditure on initial repairs is deductible
+under section 25-10 and not excluded as capital expenditure. On this
+view, repair expenditure is deductible if the property acquired - though
+in a state of disrepair at the time of the acquisition - is suitable for use
+for income purposes and if the purchase price of the property is not
+affected by that state of disrepair.
+133. Even if the Odeon Theatres case is authority in the United
+Kingdom for the proposition that expenditure on initial repairs is not
+capital expenditure if a property's state of disrepair did not affect its
+suitability for use or its purchase price, we consider that it is not
+authority for that proposition in Australia. Such a proposition would,
+in our view, be inconsistent with the more persuasive precedent of the
+High Court of Australia in the W Thomas & Co case. In our view, the
+decision in the Odeon Theatres case is not likely to be followed in
+Australia: see Case D47 72 ATC 272 per AM Donovan (Chairman)
+and RK Todd (Member) at 291; (1972) 18 CTBR (NS) Case 14 at 102
+and Case V83 88 ATC 580 per DJ Trowse (Member) at 583; AAT
+Case 4371 (1988) 19 ATR 3540 at 3542. Since the Odeon Theatres
+case was decided in 1972 it has not been followed in Australia by
+former Taxation Board of Review No 2 (Case D47; Case 14) or by the
+Administrative Appeals Tribunal (Case V83; AAT Case 4371).
+134. We believe it is important to recognise that the proposition that
+expenditure on initial repairs is capital expenditure is not some unique
+principle. There is no general proposition that initial repair costs are
+not deductible for income tax purposes. Rather, the proposition that
+initial repair costs are of a capital nature is a particular application of
+the general tests set out by Dixon J in Sun Newspapers Ltd v. FC of T
+(1938) 61 CLR 337; (1938) 5 ATD 87 for determining what is capital
+expenditure. Under these tests, expenditure relating to the
+establishment, replacement or enlargement of the profit-yielding
+structure, as opposed to expenditure incurred in the operation of that
+structure, is of a capital nature: see Case P5 (1963) 14 TBRD 14 at
+25; (1963) 11 CTBR (NS) Case 44 per RE O'Neill (Member) at 218;
+Case R101 84 ATC 673 per TJ McCarthy (Member) at 675; (1984)
+27 CTBR (NS) Case 154 at 1209 and Case V83 88 ATC 580 per DJ
+Trowse (Member) at 583; AAT Case 4371 (1988) 19 ATR 3540 at
+3542-3.
+                                                           Taxation Ruling
+
+
+                                                TR 97/23
+FOI status: may be released                                  page 33 of 52
+
+
+
+Initial repairs to property obtained by lease or licence
+135. Expenditure for initial repairs after property is obtained under
+lease or licence is of a capital nature and is not deductible under
+section 25-10. Initial repair costs incurred on property after it is
+purchased relate to the establishment of the profit-yielding structure
+and are therefore of a capital nature; initial repair costs incurred on
+property after it is obtained under a lease or licence relate to the
+establishment of the profit-yielding structure and are also of a capital
+nature. Therefore, for the same reasons that initial repairs are not
+deductible after the purchase of property, we take the view that
+expenditure for initial repairs after property is obtained under lease or
+licence is not deductible under section 25-10. In (1956) 6 CTBR (NS)
+Case 55, Taxation Board of Review No 2 held that initial repair costs
+incurred by a weekly tenant of premises were of a capital nature and
+not deductible under section 51 or 53 of the ITAA 1936.
+
+
+Initial repair costs can be dissected or apportioned
+136. Subsection 25-10(3) states that you cannot deduct capital
+expenditure under section 25-10. The old law referred to expenditure
+incurred for repairs, not being expenditure of a capital nature.
+This, in our opinion, allowed apportionment. After property is
+acquired by a taxpayer, it may deteriorate more during the period it is
+held, etc., by the taxpayer for income purposes than it had deteriorated
+when it was acquired by the taxpayer. The cost of bringing the
+property back to the state of efficiency of function that it was in when
+acquired by the taxpayer is deductible as a repair not of a capital
+nature. In other words, provided that the whole of the expenditure is
+for repairs, some part of that expenditure may be of a capital nature
+and some part of it may be deductible.
+137. Expenditure for repairs to recently acquired property is fully
+deductible only if it involves the remedying of defects, damage or
+deterioration wholly attributable to the period in which the property is
+held, etc., by the taxpayer for income purposes. If, on the other hand,
+the expenditure involves putting the property in order suitable for use
+or the cost of remedying defects, or restoring damage or deterioration
+existing at the time of purchase, it is of a capital nature and not
+deductible under the old law. As a general rule of thumb, but subject
+to the facts in each particular case, repairs effected soon after the
+purchase of property often rectify defects in, damage to, or
+deterioration present in the property at the time of purchase.
+138. Initial repair expenses can be dissected or apportioned under
+section 25-10 to allow a deduction to the extent to which the repair
+work remedies defects, damage or deterioration arising from the
+Taxation Ruling
+
+
+TR 97/23
+page 34 of 52                                         FOI status: may be released
+
+
+
+taxpayer's holding, etc., of the property for income purposes after it is
+acquired: see the Law Shipping case where the Special
+Commissioners allowed a deduction of £12,000 (out of a sum of
+£51,558 incurred on repairs) as being applicable to the period during
+which the company owned the ship. See also (1962) 10 CTBR (NS)
+Case 84; (1963) 11 CTBR (NS) Case 63; (1950) 1 CTBR (NS) Case
+18 and (1959) 8 CTBR (NS) Case 137 in which purchased properties
+were repaired and Taxation Boards of Review allowed a portion of
+repair expenditure; contrast the views of Senior Member, Mr PM
+Roach, in Case V167 88 ATC 1107; AAT Case 12 (1986) 18 ATR
+3056 and Case W7 89 ATC 161; AAT Case 4845 (1988) 20 ATR
+3170.
+139. We accept that Windeyer J in the Thomas case (at 115 CLR 74;
+14 ATD 88) was saying nothing more than that there was insufficient
+evidence in relation to the items of expenditure he was considering in
+that particular case to permit him a basis of apportionment.
+Windeyer J was not saying categorically that apportionment is never
+possible. This approach is also suggested by his Honour citing with
+approval the decision in the Law Shipping case.
+140. We accept, for example, that a court might agree to
+apportionment if a taxpayer is able to identify the extent to which
+repair expenditure is necessitated by deterioration arising after
+property is acquired and is attributable to the taxpayer's holding, etc.,
+of the property for income purposes.
+
+
+Some specific issues in construing section 25-10
+(Note: see ruling at paragraphs 67 to 74 and examples at paragraphs 180 and 181 of
+this Ruling)
+
+
+Expenditure incurred by a taxpayer on repairs to property that the
+taxpayer does not own
+141. It is not a specific requirement of section 25-10, unlike section
+42-15, that property be owned by the taxpayer.
+142. Entitlement to a deduction under section 25-10 for expenditure
+incurred by a taxpayer for repairs to property depends on whether the
+taxpayer held or used the property for income purposes.
+143. A lessee of premises, or a person granted a licence to use
+premises, is entitled to a deduction under section 25-10 for repair
+expenditure if the lessee or licensee meets these requirements, i.e.,
+holds, or uses the premises for income purposes, even though he or
+she does not own the premises.
+                                                                   Taxation Ruling
+
+
+                                                      TR 97/23
+FOI status: may be released                                           page 35 of 52
+
+
+
+Expenditure for repairs must be 'incurred'
+144. Section 25-10 requires that you 'incur' expenditure for repairs for
+it to be deductible. For this purpose, the word 'incur' in section 25-10
+has the same meaning as that given by the courts to the word 'incurred'
+in subsection 51(1) of the ITAA 1936: Case Q48 (1965) 15 TBRD
+229. Broadly stated, to be 'incurred' there needs to be a presently
+existing pecuniary obligation in relation to the repairs that has become
+due, but not necessarily payable, at that time. The taxpayer must be
+definitively committed to the expenditure.
+
+
+Expenditure for repairs before property is held, etc., for income
+purposes
+(Note: see ruling at paragraph 75 and example at paragraph 182 of this Ruling)
+145. Under section 25-10, a deduction is allowed for expenditure for
+repairs to property held, etc., for income purposes. Expenditure
+incurred in repairing property is not deductible if the property is not
+held, etc., nor ever has been held, etc., for income purposes.
+Furthermore, the expenditure is likely to be capital expenditure. If it
+is, the exception for capital expenditure operates to deny a deduction.
+As the Administrative Appeals Tribunal (Mr PM Roach, Senior
+Member) said in Case V167 88 ATC 1107 at 1111; AAT Case 12
+(1986) 18 ATR 3056 at 3059:
+      'If a taxpayer buys a property with the view to letting it at a rent
+      and immediately paints it throughout before letting it, the
+      expenditure may be fairly characterised as capital ... '
+
+
+Expenditure for repairs to property previously used for
+non-income producing purposes
+(Note: see ruling at paragraphs 76 and 77 and examples at paragraphs 183 and 184
+of this Ruling)
+146. Repair expenditure, incurred by a taxpayer in a year of income
+on property held, etc., in earlier years for non-income purposes, can
+qualify for deduction under section 25-10 if the property is held, etc.,
+for income purposes when the repair expenditure is incurred: see
+Case V167 88 ATC 1107; AAT Case 12 (1986) 18 ATR 3056 and
+Case W7 89 ATC 161; AAT Case 4845 (1988) 20 ATR 3170.
+
+
+Expenditure for repairs to property used for the purpose of
+providing non-deductible entertainment
+(Note: see ruling at paragraph 78 and example at paragraph 185 of this Ruling)
+147. If:
+Taxation Ruling
+
+
+TR 97/23
+page 36 of 52                                         FOI status: may be released
+
+
+
+      (a)       expenditure is incurred by a taxpayer for repairs to
+                property; and
+      (b)       when the expenditure is incurred the property is being used
+                by the taxpayer in providing entertainment;
+no deduction is allowable under section 8-1 or section 25-10 for the
+repair expenditure to the extent that the property is used for non-
+deductible entertainment: see section 32-15 of the ITAA 1997, when
+read with section 32-5 of that Act (or the former section 51AE of the
+ITAA 1936).
+148. By section 32-15, use of property by a taxpayer in providing
+entertainment (whether or not the property is also used for another
+purpose) is taken not to be for the purpose of producing assessable
+income if section 32-5 would prevent the taxpayer deducting a loss or
+outgoing if the taxpayer incurred it in providing the entertainment. No
+deduction is allowable for the repair expenditure, or it is
+proportionately reduced, because the property fails to satisfy the
+requirement that it be used for income producing purposes.
+Subsection 51AE(14) of the ITAA 1936 provided, in essence, the
+same result.
+149. Entertainment means:
+       (a)      entertainment by way of food, drink or recreation; or
+       (b) accommodation or travel to do with providing
+           entertainment by way of food, drink or recreation:
+           subsection 32-10(1) of the ITAA 1997.
+150. You are taken by subsection 32-10(2) to provide entertainment
+even if business discussions or transactions occur.
+
+
+Expenditure for repairs to property used only partly for income
+purposes during a year of income
+(Note: see ruling at paragraph 79 and examples at paragraphs 186 and 187 of this
+Ruling)
+151. Before considering the operation of subsection 25-10(2), which
+applies if you held or used property only partly for income purposes,
+it is necessary to review the history of subsection 53(3) of the ITAA
+1936.
+152. Expenditure on repairs incurred before 19 April 1984 (when
+subsection 53(3) was inserted into the ITAA 1936 ) was deductible in
+full so long as the property was used to some extent for income
+purposes: see Case Q11 83 ATC 41; (1983) 26 CTBR (NS) Case 75
+and Case Q98 83 ATC 487; (1983) 27 CTBR (NS) Case 26.
+                                                           Taxation Ruling
+
+
+                                               TR 97/23
+FOI status: may be released                                  page 37 of 52
+
+
+
+153. Subsection 53(3) was inserted to overcome this result. By that
+subsection, expenditure for repairs to property held, etc., only partly
+for income purposes was deductible to the extent that the
+Commissioner considered reasonable in the circumstances of the case.
+According to the explanatory memorandum accompanying Income
+Tax Assessment Amendment Bill (No 3) 1984, subsection 53(3)
+meant that expenditure for repairs attributable to private or domestic
+use, or to earning exempt income, was not allowable.
+154. Subsection 53(3) allowed an apportionment of expenditure
+incurred by a taxpayer in a year of income for repairs to property held,
+etc., partly in that year for income purposes and partly for non-
+income purposes. The amount of the expenditure allowable was
+ordinarily an amount calculated by reference to the extent to which the
+property was held, etc., in the year of income for income purposes.
+155. Apportionment of repair expenditure incurred in a year of
+income was not available, however, if the property had been held, etc.,
+by a taxpayer in earlier years of income for purposes other than
+income purposes. We based this opinion on the legislative history of
+subsection 53(3) and, in particular, on the legislative intention to
+overcome the conclusions reached in Case Q11; Case 75 and Case
+Q98; Case 26.
+156. We took the view that the correct construction of subsection
+53(3) required that the relevant percentage of business use of property
+in a year of income be calculated as a proportion of the total use of the
+property in that year. Once calculated for a particular year of income,
+the percentage was applied to the whole repair expenditure incurred in
+the year. This meant, for example, that if a motor vehicle was used in
+a year of income 70 percent of the time for business purposes and
+repair expenditure was incurred on the vehicle, 70 percent of the
+expenditure was properly allowable. This was the case if the repair
+expenditure was incurred following an accident, whether the accident
+happened while the vehicle was being used for business or for non-
+business purposes.
+
+
+Alternative views
+157. We acknowledge, but do not concede as producing a proper
+interpretation of subsection 53(3), the following alternative views.
+
+
+View 1
+158. If the accident referred to in paragraph 156 happened while the
+vehicle was being used for income purposes, 100 percent of the repair
+Taxation Ruling
+
+
+TR 97/23
+page 38 of 52                                          FOI status: may be released
+
+
+
+costs were allowable. If the vehicle was being used for non-income
+purposes, 70 percent of the repair costs were allowable.
+
+
+View 2
+159. If the accident referred to above happened while the vehicle was
+being used for income purposes, 100 per cent of the repair costs were
+deductible. If the vehicle was being used for non-income purposes, no
+repair costs were allowable.
+160. Turning to subsection 25-10(2), it broadly corresponds with
+subsection 53(3), except that the Commissioner's discretion to
+determine the amount of the deduction has been replaced with an
+objective test of what is reasonable in the circumstances. Apart from
+this exception, subsection 25-10(2) expresses the same ideas as
+subsection 53(3).
+161. We take the same views, for the purpose of the objective test in
+subsection 25-10(2), as those stated in paragraphs 154 to 156 of this
+Ruling for the former subsection 53(3).
+
+
+Examples
+Meaning of the word 'repairs'
+(Note: see ruling at paragraphs 12 to 30 and explanations at paragraphs 83 to 107 of
+this Ruling)
+
+
+Example 1
+162. Sam Tabernarius, a shopkeeper, decides to replace the awning of
+his shop with a more modern and aesthetic equivalent. The awning is
+in good condition before the work is done; there is nothing to be
+restored, no decayed or worn out parts to be renewed and nothing
+loose or detached which requires fixing. The expenditure involved is
+not for repairs - the awning being in good repair before the work was
+done - and no deduction is allowable under section 25-10 of the ITAA
+1997.
+
+
+Example 2
+163. By January 1997, Widgets Pty Ltd has used a building for a
+manufacturing plant for many years. Widgets Pty Ltd discovers on
+testing for contaminants that insulation in the roof and walls contains
+dangerous levels of asbestos fibres. The contaminated insulation had
+been placed in the building by the previous owner. The company
+                                                                   Taxation Ruling
+
+
+                                                      TR 97/23
+FOI status: may be released                                           page 39 of 52
+
+
+
+immediately set about removing the insulation and replacing it with a
+safe alternative. Expenditure incurred by Widgets Pty Ltd in removing
+and replacing the insulation is not a 'repair' and not deductible under
+section 25-10. However, because the expenditure is incurred entirely
+for an environment protection activity, namely, removing pollution
+from a site on which the company carries on its income producing
+activities (subparagraph 82BM(1)(a)(ii) of the ITAA 1936), it is
+deductible under subsection 82BK(1) of that Act. The expenditure is
+not in respect of constructing an improvement to the building so
+subsection 82BN(1) of that Act does not preclude a deduction under
+the environment protection provisions.
+
+
+Repair expenditure of a capital nature
+(Note: see ruling at paragraphs 31 to 35 and explanations at paragraphs 108 to 112
+of this Ruling)
+
+
+Example 3
+164. Elle Bashful uses her truck for income producing purposes. She
+replaces the truck's worn out petrol engine with a diesel engine with a
+much greater economy of operation. The engine is not an entirety but
+a subsidiary part of truck. However, the costs relate to an
+improvement of the truck because the replacement of the engine
+involved a significantly greater efficiency in the truck's function. The
+engine is a major and important part of the truck and is a new and
+better engine with considerable advantages over the old one, including
+the advantage that it reduces the likelihood of future repair bills. The
+costs are of a capital nature and are not deductible under section 25-
+10: cf (1953) 3 CTBR (NS) Case 82. A deduction for depreciation
+under section 42-15 may be allowable.
+
+
+Distinction between repair and either renewal or reconstruction -
+what constitutes the 'entirety'
+(Note: see ruling at paragraphs 36 to 43 and explanations at paragraphs 113 to 119
+of this Ruling)
+Example 4
+165. Mr Fermier and Mr Agricola are neighbouring farmers affected
+by a severe bushfire. Mr Fermier restores his existing fencing to good
+condition by mending it and replacing damaged sections, e.g., the
+fence on the northern boundary. Mr Agricola replaces the entire
+fencing surrounding his property.
+166. Mr Fermier is entitled to claim a deduction for the cost of
+repairing his fencing under section 25-10. The entirety is the total
+Taxation Ruling
+
+
+TR 97/23
+page 40 of 52                                   FOI status: may be released
+
+
+
+fencing so replacing the fences on the northern boundary is a
+replacement of a subsidiary part of the whole fencing: cf (1963)
+11 CTBR (NS) Case 44.
+167. However, Mr Agricola's expenditure is not deductible under
+section 25-10 because the whole fencing was replaced, making it a
+reconstruction of the entirety. The total fencing is not a subsidiary
+part of the rural property or of anything else. To replace entire fencing
+with new fencing is to replace one capital asset with another capital
+asset. The cost is therefore of a capital nature: cf (1962) 10 CTBR
+(NS) Case 58. Mr Agricola's fences are depreciable 'plant' (paragraph
+42-18(1)(c) of the ITAA 1997 or the former subparagraph 54(2)(b)(i)
+of the ITAA 1936) and are deductible under section 42-15.
+
+
+Replacement or substantial reconstruction of the entirety
+Example 5
+168. After recent bushfires the local State Electricity Authority
+inspects electricity poles on a number of properties. The Authority
+advises Mr Hogg, a pig farmer, that his electricity poles and overhead
+power lines are unsound, due to damage caused by the bushfires. To
+rectify the damage caused, he replaces these with underground cables.
+The cabling is a part of a larger system by which electricity is brought
+to the farm, distributed for use, and usage measured. Further, even
+though underground cables are better protected from future bushfires
+and storms, no greater efficiency of function of the electricity system
+is provided by the cables. Accordingly, the expenditure incurred by
+Mr Hogg is a repair, and deductible under section 25-10. If Mr Hogg
+had merely replaced the poles and cables, the expenditure incurred
+would also be a repair, and deductible accordingly. If the electricity
+connection is used for both domestic and business purposes, the
+deduction is limited by subsection 25-10(2) to that part of Mr Hogg's
+expenditure which reasonably relates to the use of the electricity
+connection for business purposes. (Any amount received by Mr Hogg
+by way of insurance or indemnity in respect of the expenditure
+incurred in replacing poles or overhead wires should be included in Mr
+Hogg's assessable income in terms of subsection 20-20(2) of the ITAA
+1997 to the extent to which the expenditure is an allowable
+deduction.)
+169. Note that there is an alternative view that the circumstances of
+this example may, in fact, amount to the replacement of an 'entirety',
+or an improvement. Although the decision in this matter is a
+borderline one, we consider that, on balance, the marginally better
+view - in keeping with our longstanding position on this matter - is
+that the facts of this example amount to the making of a repair.
+                                                                    Taxation Ruling
+
+
+                                                       TR 97/23
+FOI status: may be released                                           page 41 of 52
+
+
+
+
+Example 6
+170. Mr P Bowser owns a service station that is not connected to
+mains power supply. He has meters and a pumping plant to supply
+power to the service station. He has to replace both the meters and the
+pumping plant due to their old age. The meters and the pumping plant
+are entireties in their own right, separate and distinct from the service
+station. Their replacement is not a repair and the cost is not deductible
+under section 25-10: Case 36 (1949) 15 TBRD (OS) 287.
+
+
+'Notional' repairs
+(Note: see ruling at paragraph 35 and explanations at paragraph 112 of this Ruling)
+Example 7
+171. Ken-the-Shopfitter runs a factory in a building in which the
+wooden floor needs repairing. The options are either to repair the old
+floor or to replace it with an entirely new one of steel and concrete.
+Ken decides to adopt the second option because it will save future
+repairs and because it has distinct advantages over the old wooden
+floor. By choosing the second option, Ken cannot claim a deduction
+as if he had simply repaired the wooden floor. His actual expenditure
+being capital, none of it is allowable as a repair.
+
+
+Distinction between a repair and an improvement
+Material used different from original material
+(Note: see ruling at paragraphs 44 to 57 and explanations at paragraphs 120 to 124
+of this Ruling)
+Example 8
+172. Mary Fabrica owns a factory in which the bitumen floor laid on
+a gravel base needs repairing. She replaces it with a new floor
+consisting of an underlay of concrete topped with granolith (a paving
+stone of crushed granite and cement). The new floor, from a
+functional efficiency (rather than an appearance) point of view, is not
+superior in quality to the old floor. The new floor performs precisely
+the same function as the old and is no more satisfactory. In fact, the
+new floor is more expensive to repair than the old. Because the new
+floor is not a substantial improvement, it is a repair and its cost is
+deductible under section 25-10: Case T75 (1968) 18 TBRD 377;
+(1968) 14 CTBR (NS) Case 40.
+Taxation Ruling
+
+
+TR 97/23
+page 42 of 52                                       FOI status: may be released
+
+
+
+Technological advances or enhancements
+Example 9
+173. Switched-On Pty Ltd decides, after controlling its furnace for
+25 years with electro-mechanical switches and gauges, to replace them
+with computerised controls. The computerised controls perform the
+same function as the original controls. Electro-mechanical controls
+are no longer mass produced and, if made to order, would cost
+substantially more than the computerised controls. The degree of
+improvement in the efficiency of the furnace's function is only minor
+and incidental, its character has not changed and the operation and
+output of the furnace have not altered. The cost of replacing the
+controls is deductible under section 25-10 of the ITAA 1997.
+
+
+Example 10
+174. Wind Tunnel Pty Ltd has a malfunctioning vibration monitor for
+one of its blower fans. It replaces the old monitor with a digital
+monitor. The new monitor gives a more accurate reading than the old
+one but this is superfluous to the company's needs because it only
+needs to ensure that the blower operates within a certain vibration
+range. The facility for reading a precise vibration level is inherent in
+the digital technology used in the new monitor. The monitor involved
+no extra cost. The degree of improvement in the efficiency of the
+blower fan's function is only minor and incidental and its character, as
+a blower fan, has not changed. Bearing in mind that the additional
+capacity of the monitor exceeds the taxpayer's needs, and viewing the
+issue from the particular taxpayer's proposed use of the blower fan and
+monitor, the monitor's cost is deductible under section 25-10.
+
+
+Example 11
+175. Gurgler Pty Ltd needs to replace the impellor in a pump it has
+used for five years. A new impellor made from stainless steel would
+cost $8,000. If the original cast iron impellor is replaced with another
+cast iron one, it would cost about $4,000. The stainless steel impellor
+is chosen because it will provide improved functional efficiency for
+the pump. It will perform more efficiently as an impellor and will last
+three to four times longer than the cast iron type. The cost of the
+stainless steel impellor is not deductible under section 25-10 because:
+      (a)       there is a substantial improvement in the functional
+                efficiency of both the impellor and the pump;
+      (b)       the impellor is a major and important structural part of the
+                pump;
+                                                                   Taxation Ruling
+
+
+                                                           TR 97/23
+FOI status: may be released                                           page 43 of 52
+
+
+
+       (c)    the impellor is new and better than the original impellor;
+              and
+       (d)    the stainless steel impellor has considerable advantages
+              over the old cast iron one, including the advantage that it
+              reduces the likelihood of repair bills in the future.
+
+
+Repairs and improvements effected concurrently
+(Note: see ruling at paragraphs 55 to 57 of this Ruling)
+Example 12
+176. Tracey owns a factory. The council has advised her to repair
+faulty wiring, reposition existing electrical outlets and install new
+power points, mains and switchboards. Only part of the expenditure is
+incurred on repair work. Individual parts of the work are capable of
+being classified as repairs, if examined in isolation from the remainder
+of the work. The costs of the work relating to repairing the faulty
+wiring only is deductible under section 25-10, provided the costs can
+be segregated and accurately quantified. Tracey must be able to
+segregate the costs of repairing the wiring from the (capital) costs of
+the electrical improvements. Tracey is required by section 262A of
+the ITAA 1936 to keep records that explain all transactions and other
+acts she engages in that are relevant for any purpose of the income tax
+law. It is advisable for Tracey to seek separate quotes and to maintain
+separate accounts in relation to the costs of repairing the wiring and
+the cost of electrical improvements.
+
+
+Expenditure to remedy defects, damage or deterioration in
+existence at the date of acquisition (initial repairs)
+(Note: see ruling at paragraphs 59 to 66 and explanations at paragraphs 125 to 140
+of this Ruling)
+Example 13
+177. William Infelix purchases a house that was ostensibly in good
+repair. To make it more attractive to prospective tenants, minor
+repairs and renovations are undertaken. The minor repairs and
+renovations are initial repairs. Their cost is of a capital nature and not
+deductible. During the course of these repairs and renovations,
+William discovers that the woodwork is seriously affected by the
+ravages of white ants.
+178. Substantial expenditure is incurred to remedy the problems
+caused by the white ant infestation to restore the property to a state in
+which it is suitable for occupation by tenants.
+Taxation Ruling
+
+
+TR 97/23
+page 44 of 52                                          FOI status: may be released
+
+
+
+179. The expenditure incurred in these circumstances to fix the white
+ant problem existing at the date of purchase is also of a capital nature.
+It is therefore not deductible under section 25-10. The fact that
+William was unaware of the problem when he purchased the house,
+and the fact that he would have paid a lower purchase price if he had
+known of the need for repairs, do not alter the capital nature of the
+expense: Case 64 (1944) 11 TBRD (OS) 202 and the W Thomas &
+Co case.
+
+
+Some specific issues in construing section 25-10
+(Note: see ruling at paragraphs 67 to 74 and explanations at paragraphs 141 to 144
+of this Ruling)
+Expenditure incurred by a taxpayer on repairs to property that the
+taxpayer does not own
+Example 14
+180. Farmer Ted Kelly has poor access to one of his main paddocks.
+To gain access to the paddock for sowing, reaping his crops, etc., Ted
+uses a road over an adjoining farm owned by Ken Hall. Ted uses his
+neighbour's road with Ken's concurrence. Ken's road is a sand and
+gravel road that is not an all-weather one. Over time, Ken's road needs
+to be resurfaced with a grader. Ted meets the cost of grading Ken's
+road. The cost is deductible by Ted because he uses the road in
+carrying on his business to produce assessable income, even though he
+does not own the road.
+
+
+Example 15
+181. Maureen and Pam Cook conduct a restaurant business from
+premises they lease. Because their landlord is reluctant to spend
+money on the premises, Maureen and Pam periodically undertake
+repairs to the premises. They are entitled to a deduction for their
+expenditure under section 25-10.
+
+
+Expenditure for repairs before property is held, etc., for income
+purposes
+(Note: see ruling at paragraph 75 and explanations at paragraph 145 of this Ruling)
+Example 16
+182. Mary-Ellen Walton, after the death of her spouse, decided to
+move out of the long-held family home and to rent it to tenants. She
+leaves the property on 15 July 1996. To make it more attractive for
+prospective tenants, Mary-Ellen undertakes major repairs and
+renovations to the house between August 1996 and February 1997.
+                                                                    Taxation Ruling
+
+
+                                                       TR 97/23
+FOI status: may be released                                            page 45 of 52
+
+
+
+She places the house in the hands of a real estate agent on 15 March
+1997 and lets the house to tenants on 1 April 1997. The costs of the
+repairs and renovations are not deductible under the old law. When
+the costs were incurred, Mary-Ellen was not holding or using the
+house to produce rental income. The costs are an expense in preparing
+the house for producing rent. They are of a capital nature.
+
+
+Expenditure for repairs to property previously used for non-
+income producing purposes
+(Note: see ruling at paragraphs 76 and 77 and explanations at paragraph 146 of this
+Ruling)
+Example 17
+183. Brenton Viator owns a motor vehicle that he bought in
+December 1992. On 1 July 1995 he applied for and got a job as a
+travelling salesperson and commenced to use his vehicle solely for
+income producing purposes. On 15 August 1996 Brenton incurs repair
+expenditure on the vehicle. The cost of the repairs is deductible under
+the old law because the costs were incurred in the 1996-97 year and,
+on 15 August 1996, the vehicle was being used for income producing
+purposes. This is so even though the repairs may relate, in part, to a
+period when the vehicle was used for private purposes.
+
+
+Example 18
+184. A building has been owned by a tax exempt entity for a number
+of years. At the start of a new taxation year, the entity changes its
+operational activities so that it is now a taxable entity carrying on
+business for income-producing purposes. During this year, extensive
+repair work is done to the building. The cost of this repair work is
+fully deductible under section 25-10 even though some of the
+deterioration that is remedied is attributable to the period when the
+body was not taxable. Subdivision 57-G of Schedule 2D of the ITAA
+1936 does not deny the deductions for the repairs.
+
+
+Expenditure for repairs to property used for the purpose of
+providing non-deductible entertainment
+(Note: see ruling at paragraph 78 and explanations at paragraphs 147 to 150 of this
+Ruling)
+Example 19
+185. Generous Co Ltd, a large accounting firm, uses a cruiser solely
+for the entertainment of its existing and prospective clients, business
+associates and staff by taking them on sightseeing river and ocean
+Taxation Ruling
+
+
+TR 97/23
+page 46 of 52                                          FOI status: may be released
+
+
+
+cruises. The company incurs $10,000 in repairing deterioration of the
+cruiser due to normal operating wear and tear. No deduction is
+allowable under section 8-1 or under section 25-10 for the repair costs.
+
+
+Expenditure for repairs to property used only partly for income
+producing purposes during a year of income
+(Note: see ruling at paragraph 79 and explanations at paragraphs 151 to 161 of this
+Ruling)
+Example 20
+186. Josephine Telefix, a television repairer, owns a station wagon
+that is used for 70% business and 30% private purposes during the
+taxation year. Repair costs of $10,000 are incurred on the front
+panels, engine and computer system in the station wagon following a
+car accident during the running of the business. The full amount of
+the repair costs of $10,000 is not deductible under section 25-10.
+Because Josephine uses the station wagon for private and for business
+purposes, subsection 25-10(2) limits the amount of her deduction to
+that part of the expenditure that reasonably relates to the use of the
+station wagon for business purposes, namely, $7,000.
+
+
+Example 21
+187. Assume the facts in Example 20 are unchanged except that the
+accident occurs while Josephine is using the station wagon driving to
+Church, i.e., for private purposes. We reject the view that no part of
+the repair costs is deductible under section 25-10. Because Josephine
+uses the station wagon for private and for business purposes,
+subsection 25-10(2) limits the amount of her deduction to that part of
+the expenditure that reasonably relates to the use of the station wagon
+for business purposes, namely, $7,000.
+
+
+Detailed contents list
+188. Below is a detailed list of the contents of this Ruling:
+                                                                     paragraph
+What this Ruling is about                                                      1
+Class of person/arrangement                                                    1
+Previous Rulings now withdrawn                                                11
+Ruling                                                                        12
+Meaning of the word 'repairs'                                                 12
+                                                             Taxation Ruling
+
+
+                                               TR 97/23
+FOI status: may be released                                    page 47 of 52
+
+
+
+      Context of the word 'repairs' in section 25-10                 12
+      Ordinary meaning of 'repairs'                                  13
+      Restoration of the efficiency of function of the property      17
+      Need for exercise of judgment                                  18
+      Maintenance work - whether 'repair'                            19
+      Question of fact and degree                                    21
+      Work done solely to meet requirements of regulatory
+      bodies                                                         23
+      Expenditure to control health risks from dangerous
+      substances                                                     26
+Repair expenditure of a capital nature                               31
+      In what situations is repair expenditure of a capital
+      nature?                                                        31
+      No deduction for 'notional' repairs                            35
+Distinction between repair and either renewal or
+reconstruction - what is meant by the 'entirety'                     36
+      Repair is distinct from renewal or reconstruction              36
+      What is an 'entirety'?                                         37
+      Progressive restoration can involve deductible repairs         43
+Distinction between a repair and an improvement                      44
+      Repair is distinct from improvement                            44
+      Use of different materials                                     48
+      Technological advances or enhancements                         53
+      Repairs done at the same time as improvements                  55
+Expenditure to remedy defects, damage or deterioration
+in existence at the date of acquisition (initial repairs)            59
+      Initial repairs are of a capital nature and not deductible     59
+      Initial repairs to property obtained by lease or licence       62
+      Initial repair costs can be dissected or apportioned           63
+Some specific issues in construing section 25-10                     67
+      Expenditure incurred by a taxpayer on repairs to
+      property that the taxpayer does not own                        67
+Expenditure for repairs must be 'incurred'                           71
+      Property must be held or used bone fide for income
+      purposes                                                       72
+Taxation Ruling
+
+
+TR 97/23
+page 48 of 52                                   FOI status: may be released
+
+
+
+      Expenditure for repairs after property is held, etc., for
+      income purposes but before income is actually derived         73
+      Scope of repair deduction provision and general
+      deduction provision                                           74
+Expenditure for repairs before property is held, etc., for income
+purposes                                                          75
+Expenditure for repairs to property previously used by
+the taxpayer for non-income producing purposes                      76
+Expenditure for repairs to property used for the purpose
+of providing non-deductible entertainment                           78
+Expenditure for repairs to property used only partly for income
+producing purposes during a year of income                          79
+Date of effect                                                      80
+Explanations                                                        83
+Meaning of the word 'repairs'                                       83
+      Ordinary meaning of the word 'repairs' in
+      its context in section 25-10                                  83
+      Restoration of efficiency of function of the property         88
+      Functionality of the property on which the work is done       90
+      Maintenance work - whether 'repair'                           92
+      Work done to meet requirements of regulatory bodies           96
+      Alternative view                                             100
+      Technological advances or enhancements                       105
+In what situations is repair expenditure of a capital nature?      108
+      No deduction for notional repairs                            112
+Distinction between repair and either renewal or
+reconstruction - what is meant by the 'entirety'                   113
+      Repair is distinct from renewal or replacement               113
+      What is an entirety?                                         115
+      Progressive restoration can involve deductible repairs       119
+Distinction between a repair and an improvement                    120
+Expenditure to remedy defects, damage or deterioration
+in existence at the date of acquisition (initial repairs)          125
+      Initial repairs are of a capital nature and not deductible 125
+      Alternative view                                             132
+                                                             Taxation Ruling
+
+
+                                                TR 97/23
+FOI status: may be released                                    page 49 of 52
+
+
+
+      Initial repairs to property obtained by lease or licence      135
+      Initial repair costs can be dissected or apportioned          136
+Some specific issues in construing section 25-10                    141
+      Expenditure incurred by a taxpayer on repairs
+      to property that the taxpayer does not own                    141
+      Expenditure for repairs must be 'incurred'                    144
+Expenditure for repairs before property is held, etc., for
+income purposes                                                     145
+Expenditure for repairs to property previously used for
+non-income producing purposes                                       146
+Expenditure for repairs to property used for the purpose of
+providing non-deductible entertainment                              147
+Expenditure for repairs to property used only partly for
+income purposes during a year of income                             151
+      Alternative views                                             157
+             View 1                                                 158
+             View 2                                                 159
+Examples                                                            162
+Meaning of the word 'repairs'                                       162
+             Example 1                                              162
+             Example 2                                              163
+Repair expenditure of a capital nature                              164
+             Example 3                                              164
+Distinction between repair and either renewal or
+reconstruction - what constitutes the 'entirety'                    165
+             Example 4                                              165
+      Replacement or substantial reconstruction of the entirety 168
+             Example 5                                              168
+             Example 6                                              170
+      'Notional' repairs                                            171
+             Example 7                                              171
+Distinction between a repair and an improvement                     172
+      Material used different from original material                172
+             Example 8                                              172
+Taxation Ruling
+
+
+TR 97/23
+page 50 of 52                                  FOI status: may be released
+
+
+
+       Technological advances or enhancements                     173
+                Example 9                                         173
+                Example 10                                        174
+                Example 11                                        175
+       Repairs and improvements effected concurrently             176
+                Example 12                                        176
+Expenditure to remedy defects, damage or deterioration
+in existence at the date of acquisition (initial repairs)         177
+                Example 13                                        177
+Some specific issues in construing section 25-10                  180
+       Expenditure incurred by a taxpayer on repairs to
+       property that the taxpayer does not own                    180
+                Example 14                                        180
+                Example 15                                        181
+Expenditure for repairs before property is held, etc., for income
+purposes                                                          182
+                Example 16                                        182
+Expenditure for repairs to property previously used for
+non-income producing purposes                                     183
+                Example 17                                        183
+                Example 18                                        184
+Expenditure for repairs to property used for the purpose
+of providing non-deductible entertainment                         185
+                Example 19                                        185
+Expenditure for repairs to property used only partly for
+income producing purposes during a year of income                 186
+                Example 20                                        186
+                Example 21                                        187
+Detailed contents list                                            188
+
+
+
+
+Commissioner of Taxation
+3 December 1997
+ISSN      1039 - 0731
+                                                              Taxation Ruling
+
+
+                                                 TR 97/23
+FOI status: may be released                                     page 51 of 52
+
+
+
+ATO references                         -   ITAA97 8-1
+NO      97/9762-9                      -   ITAA97 25-10
+        97/8922-7                      -   ITAA97 25-10(1)
+        96/3526-2                      -   ITAA97 25-10(2)
+        96/527-8                       -   ITAA97 32-5
+        95/8640-7                      -   ITAA97 32-10(1)
+BO      TRUMG 94/4                     -   ITAA97 32-10(2)
+                                       -   ITAA97 32-15
+Previously released in draft form as   -   ITAA97 42-15
+TR 94/D31                              -   ITAA97 Div 43
+
+Price     $5.30                        case references
+                                       - BP Oil Refinery (Bulwer Island) Ltd
+FOI index detail                          v. FC of T 92 ATC 4031; (1992) 23
+reference number                          ATR 65
+    I 1017365                          - Brown (Inspector of Taxes) v.
+                                          Burnley Football and Athletic Co
+subject references                        Ltd [1980] 3 All ER 244
+- allowable deduction                  - Day v. Harland and Wolff 1953] 2
+- capital                                 All ER 387
+- entertainment                        - FC of T v. Western Suburbs
+- entirety                                Cinemas Ltd 1952) 86 CLR 102;
+- environmental protection                (1952) 9 ATD 452
+   expenditure                         - Hallstroms Pty Ltd v. FC of T
+- improvement                             (1946) 72 CLR 634; (1946) 8 ATD
+- initial repairs                         190
+- maintenance                          - Hoddinott v. Newton, Chambers &
+- notional repairs                        Co Ltd [1901] AC 49
+- reconstruction                       - Lindsay v. FC of T (1960) 106 CLR
+- renewal                                 197; (1960) 12 ATD 505
+- renovation                           - Lister v. Lane & Nesham [1893] 2
+- repair                                  QB 212
+- replacement                          - London & North Eastern Ry. Co. v.
+- restoration                             Berriman [1946] 1 All ER 255
+                                       - Lurcott v. Wakely & Wheeler
+legislative references                    [1911] 1 KB 905
+- ITAA36 51(1)                         - Odeon Associated Theatres Ltd v.
+- ITAA36 51AE                             Jones (Inspector of Taxes) [1972] 1
+- ITAA36 51AE(14)                         All ER 681
+- ITAA36 53                            - Placer Pacific Management Pty Ltd
+- ITAA36 53(1)                            v. FC of T 95 ATC 4459; (1995) 31
+- ITAA36 53(3)                            ATR 253
+- ITAA36 54(1)                         - Ready Mixed Concrete (Victoria)
+- ITAA36 54(2)(b)(i)                      Pty Ltd v. FC of T (1969) 118 CLR
+- ITAA36 82(1)                            177; (1969) 15 ATD 215
+- ITAA36 82BH                          - Regent Oil Co Ltd v. Strick
+- ITAA36 82BK(1)                          Inspector of Taxes [1965] 3 All ER
+- ITAA36 82BL(3)                          174
+- ITAA36 82BM(1)(a)                    - Samuel Jones & Co (Devondale) Ltd
+- ITAA36 82BM(1)(a)(ii)                   v. Commissioners of Inland Revenue
+- ITAA36 82BM(1)(b)                       (1951) 32 TC 513
+- ITAA36 82BN(1)                       - Sun Newspapers Ltd v. FC of T
+- ITAA36 82BR                             (1938) 61 CLR 337; (1938) 5 ATD
+- ITAA36 Pt IVA                           87
+- ITAA36 Subdiv 57-G Sch 2D
+Taxation Ruling
+
+
+TR 97/23
+page 52 of 52                          FOI status: may be released
+
+
+
+-   The Law Shipping Co Ltd v. The
+    Commissioners of Inland Revenue
+    (1923) 12 TC 621
+-   The Rhodesia Railways Ltd and
+    Others v. Commissioner of Taxes
+    (Southern Rhodesia) [1925] 1 SAf
+    TC 133
+-   W Thomas & Co Pty Ltd v. FC of T
+    1965) 115 CLR 58; (1965) 14 ATD
+    78
+-   Case 64 (1944) 11 TBRD (OS) 202
+-   Case 36 (1949) 15 TBRD (OS) 287
+-   (1950) 1 CTBR (NS) Case 18
+-   Case B21 (1951) 2 TBRD 101
+-   (1953) 3 CTBR (NS) Case 82
+-   (1953) 4 CTBR (NS) Case 9
+-   Case G5 (1955) 7 TBRD 29
+-   (1956) 6 CTBR (NS) Case 55
+-   (1959) 8 CTBR (NS) Case 137
+-   (1962) 10 CTBR (NS) Case 58
+-   (1962) 10 CTBR (NS) Case 84
+-   Case P5 (1963) 14 TBRD 14
+-   (1963) 11 CTBR (NS) Case 44
+-   (1963) 11 CTBR (NS) Case 63
+-   Case Q48 (1965) 15 TBRD 229
+-   Case S27 (1966) 17 TBRD 163;
+    (1966) 13 CTBR (NS) Case 56
+-   Case T14 (1968) 18 TBRD 67
+-   Case T75 (1968) 18 TBRD 377;
+    (1968) 14 CTBR (NS) Case 40
+-   (1972) 18 CTBR (NS) Case 14;
+    Case D47 72 ATC 272
+-   (1972) 18 CTBR (NS) Case 33;
+    Case D64 72 ATC 390
+-   (1983) 26 CTBR (NS) Case 75;
+    Case Q11 83 ATC 41
+-   (1983) 27 CTBR (NS) Case 26;
+    Case Q98 83 ATC 487
+-   (1984) 27 CTBR (NS) Case 154;
+    Case R101 84 ATC 673
+-   Case V167 88 ATC 1107; AAT
+    Case 12 1986) 18 ATR 3056
+-   Case V83 88 ATC 580; AAT Case
+    4371 (1988) 19 ATR 3540
+-   Case W7 89 ATC 161; AAT Case
+    4845 (1988) 20 ATR 3170
+-   Case W68 89 ATC 613; AAT Case
+    5232 (1989) 20 ATR 3796
+

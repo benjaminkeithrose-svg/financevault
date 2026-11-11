@@ -1,0 +1,439 @@
+How trusts are assessed for land tax
+  revenue.nsw.gov.au/taxes-duties-levies-royalties/land-tax/understanding-land-tax/types-of-landowners/trusts
+
+
+Understand the different types of trusts, their eligibility for the NSW land tax threshold and
+their potential liability for surcharge land tax.
+
+Last updated: 25 August 2026
+On this page
+What is a trust?Surcharge land tax for trustsApplication of the threshold for different types
+of trustsSpecial trustsFixed trustsBare trustsSuperannuation trustsTrusts created by a
+willFamily unit trustsConcessional trustsCharitable trustsDocuments to provideProviding
+accurate information and documentsContact the land tax team
+
+What is a trust?
+A trust is an arrangement where a trustee manages or holds a property for the benefit of
+one or more individuals or organisations (known as a beneficiary).
+
+The trustee has a duty to the beneficiaries, who are the beneficial owners of the trust
+property.
+
+You are considered to be the owner of the interest in the trust if you are a beneficiary or
+unit holder in a fixed or family unit trust.
+
+A trust may be liable for land tax. When calculating your land tax liability, you must
+consider the value of your interest in the account.
+
+Watch our video series on trusts to find out more.
+
+Surcharge land tax for trusts
+Trusts may be liable for surcharge land tax where the beneficiaries of a trust include
+foreign persons.
+
+Discretionary trust deeds are required to irrevocably exclude foreign beneficiaries to be
+exempt from surcharge land tax.
+
+Read more about how surcharge land tax can be applied to different trust structures
+below.
+
+
+Application of the threshold for different types of trusts
+Some trust types are not eligible to receive the land tax threshold.
+
+This means some owners may pay land tax even if their land value is below the threshold,
+such as special trusts.
+
+
+                                                                                                                1/9
+Find out if your trust type is eligible for the land tax threshold below.
+
+
+Special trusts
+A special trust does not receive the land tax threshold.
+
+A special trust is a trust that does not meet the criteria to be considered a concessional
+trust or a fixed trust for land tax purposes.
+
+A special trust is defined in section 3A of the Land Tax Management Act 1956 and can
+include:
+
+      family trusts
+      discretionary trusts
+      unit trusts, and
+      trusts created by a will.
+
+Special trusts are taxed at a flat rate of 1.6% for amounts up to the premium land tax
+threshold, then at 2%.
+
+You may also be liable for surcharge land tax in NSW if:
+
+      any beneficiary is a foreign person, and
+      the trust owns residential land in NSW.
+
+With a special trust, the trustee, not the beneficiaries, are the only person who meets the
+definition of an owner for land tax purposes.
+
+The trustee of a special trust is considered a foreign person if:
+
+      it is a discretionary trust that does not exclude foreign beneficiaries (see section 5D
+      of the Land Tax Act 1956 and Commissioner's Practice Note: Foreign surcharges
+      and discretionary trusts), or
+      any beneficiary is an individual not ordinarily resident in Australia, or
+      it is a foreign corporation, a foreign trust, or a foreign government, and
+      it holds a substantial interest or aggregate substantial interest in the trust.
+
+Example: Special trust land tax calculation
+
+ Landowner            ABC Pty Ltd ATF ABC Family Trust
+
+
+                      Property F
+
+                      ABC Pty Ltd ATF ABC Family Trusts owns 100%
+ Property
+ ownership            Land value = $600,000
+
+
+
+
+                                                                                                2/9
+                     Special trusts do not receive the benefit of the land tax threshold
+
+                     $600,000 (total land value) x $1.6% (general land tax rate) = $9,600
+
+                     Note: A premium land tax marginal rate of 2% applies for special
+ Calculation         trust on the total taxable land value above $6,571,000
+
+
+ Land tax            $9,600
+ payable
+
+
+
+
+Back to top
+
+Setting up or amending a discretionary trust to exclude foreign
+beneficiaries for surcharge land tax
+
+The trustee of a discretionary trust may be liable for foreign surcharges if any one of the
+named beneficiaries or potential beneficiaries is a foreign person.
+
+To avoid surcharge land tax discretionary trusts must be set up or amended to prevent
+beneficiaries and potential beneficiaries that are foreign persons from receiving
+distributions as to income and/or capital of the trust.
+
+Should the trust deed contain named beneficiaries who are foreign persons, such
+beneficiaries must be removed from the trust deed as beneficiaries.
+
+It is not sufficient that named beneficiaries are merely prevented from receiving
+distributions, such as through a general clause excluding foreign persons from being
+beneficiaries.
+
+The trust will be liable for surcharge land tax on any residential land held even if the trust
+does not intend to distribute income and/or capital to the foreign persons who are
+beneficiaries of the discretionary trust.
+
+For a discretionary trust, each beneficiary or potential beneficiary to whom the trustee has
+discretion to distribute the income or property is deemed to have the maximum
+percentage interest in the income or property that the trustee may exercise discretion to
+distribute to them.
+
+A trustee will be considered foreign and liable to pay surcharge land tax on any residential
+land held unless the trust satisfies both of the following criteria:
+
+   1. No beneficiary or potential beneficiary of the trust is a foreign person (the "no
+      foreign beneficiary requirement"), and
+   2. The terms of the trust must not be capable of amendment that would result in a
+      foreign person being a potential beneficiary (the "no amendment requirement").
+
+
+                                                                                                 3/9
+If both of the above criteria are not satisfied the trustee will be considered foreign.
+
+For more information and examples refer to Commissioner's Practice Note: Foreign
+surcharges and discretionary trusts.
+
+
+Back to top
+
+Fixed trusts
+A fixed trust is eligible for the land tax threshold.
+
+A fixed trust includes some unit trusts and bare trusts.
+
+Fixed trust has the meanings given by section 3A(2) and section (3A) and (3B) of the
+Land Tax Management Act 1956.
+
+To qualify as a fixed trust, the trust deed must satisfy the following:
+
+      the beneficiaries or unit holders are presently entitled to all the income of the trust,
+      after payment of the proper expenses incurred by the trustee in authorised
+      administration of the trust
+      the beneficiaries or unit holders are presently entitled to the capital of the trust and
+      may require the trustee to wind up the trust and distribute the trust property or the
+      net proceeds of the trust
+      the entitlements cannot be removed, restricted or otherwise affected by the exercise
+      of any discretion, or by a failure to exercise any discretion, conferred on a person by
+      the trust deed
+
+Where a trust is a unit trust it must also:
+
+      only one class of units can be issued, and the proportion of trust capital a unit holder
+      is entitled to on winding up or surrender of units must be fixed, and must be the
+      same as the proportion of income of the trust to which the unit holder is entitled.
+      if a beneficiary or a unit holder owns other taxable land, or is a special trust, they
+      are assessed on the combined value of their interest of the land held in the trust and
+      any other taxable land owned. They may be entitled to a secondary deduction to
+      prevent double taxation.
+
+Generally, foreign person beneficiaries of a fixed trust are individually liable for any
+surcharge liability, not the trust/trustee.
+
+In cases where the trustee and the beneficiaries of a fixed trust (along with any other joint
+owners) are all natural persons, a principal place of residence exemption (PPR) can be
+applied provided that the beneficiaries resides in the property and all relevant eligibility
+requirements the PPR exemption are met.
+
+ Open all
+
+
+                                                                                                 4/9
+Amending a unit trust to receive the benefit of the land tax threshold
+A unit trust that does not meet the relevant criteria set out in section 3A(3B) of the Land
+Tax Management Act 1956, can amend its trust deed so it is considered a fixed trust for
+future tax years.
+
+Before you amend a trust deed, you should consider seeking professional advice as any
+amendment may change the way your trust is considered for other circumstances.
+
+To ensure amended deeds meet the requirements, you will need to lodge a return via
+Land Tax Online and upload the following documents:
+
+      an executed copy of the amended deed trust, and
+      an executed full copy of the original trust deed, if you have not already given it to us.
+      a copy of the unit holder register showing the unit holdings as at the date of the
+      amending deed.
+
+Follow these steps to lodge a return in Land Tax Online.
+
+Learn more about amending a unit trust deed in the Commissioner’s Practice Note: Unit
+trust deed amendments.
+
+Liability of beneficiaries/unit holders in a fixed trust
+If a trust satisfies the relevant criteria, the beneficiaries of the trust are taken to be owners
+of an equitable estate in the land and may be liable for land tax and any surcharge land
+tax (if applicable), as if they were legal owners of the land.
+
+They are treated as secondary taxpayers as per section 25 of the Land Tax Management
+Act 1956.
+
+Therefore, a beneficiaries/unit holder’s interest in the trust, which owns other taxable land,
+or is a special trust, is assessed on the combined value of their interest in the land held in
+the trust, and any other taxable land owned.
+
+They may be entitled to a secondary deduction to prevent double taxation.
+
+All fixed trusts must provide details of the beneficiaries/unit holders.
+
+Assessing a unit trust
+A unit trust may be a special trust, a fixed trust or a family unit trust.
+
+To be a fixed trust, certain criteria apply.
+
+If they do not apply, the trustee can restructure the trust deed to meet the criteria, but the
+threshold will only apply from the next tax year.
+
+Unit trusts must meet the criteria outlined in section 3A(3B) of the Land Tax Management
+Act 1956 to be considered a fixed trust.
+
+
+
+
+                                                                                                    5/9
+A trustee must lodge a land tax return, if the land is subject to a trust. A copy of the trust
+deed should be lodged with the return.
+
+If a beneficiary or a unit holder owns other taxable land, or is a special trust, they are
+assessed on the combined value of their interest of the land held in the trust and any
+other taxable land owned. They may be entitled to a secondary deduction to prevent
+double taxation.
+
+
+Back to top
+
+Bare trusts
+A bare trust is taxed with the benefit of the land tax threshold.
+
+A bare trust is a type of fixed trust, where the trustee and defined beneficiaries have
+complete control of the trust.
+
+Given their structure, the land tax implications of bare trusts vary.
+
+Bare trusts are required to submit a copy of the bare trust deed.
+
+Superannuation trusts
+A superannuation trust receives the land tax threshold.
+
+A superannuation trust can be:
+
+      a complying superannuation fund
+      a complying approved deposit fund, or
+      a pooled superannuation trust under sections 42, 43 and 44 of the Superannuation
+      Industry (Supervision) Act 1993.
+
+If a superannuation trust is not a complying or pooled trust, it is a special trust and will not
+receive the benefit of the land tax threshold.
+
+Trusts created by a will
+A fixed testamentary trust created by a will receives the land tax threshold.
+
+A discretionary testamentary trust created by a will may receive the land tax threshold for
+a period of 2 years from the date of death of the testator.
+
+After this period the trust will be considered a special trust. Special trusts do not receive
+the land tax threshold.
+
+A concessional testamentary trust created by a will is considered a fixed trust and will
+receive the land tax threshold while all the beneficiaries are minors (children under 18
+years). The terms of the trust will determine what happens when the eldest beneficiary
+
+                                                                                                   6/9
+turns 18.
+
+
+Family unit trusts
+Some family unit trusts receive the land tax threshold.
+
+Certain criteria must be met to qualify as a family unit trust. Family unit trust has the
+meaning given by Schedule 1AA (2) of the Land Tax Management Act 1956.
+
+A family unit trust is classified as a fixed trust when:
+
+      land was held at midnight on 31 December 2005 with a taxable value of $1 million
+      or less
+      the unit holders are entitled to a fixed proportion of any distribution of income or
+      capital of the trust made by the trustee, based on the proportion of income or capital
+      units that each person owned in the trust.
+      95% more of the units are owned by the same family group.
+
+Note: If the trust acquires additional land after midnight 31 December 2005 that makes
+the combined taxable land over $1 million, the trust will be assessed as a special trust for
+the tax year following the purchase.
+
+A family group consists of:
+
+      people who are related to each other by blood, as well as adopted children and their
+      spouses
+      the ultimate beneficiary, if any of the units are owned by a trustee - this excludes
+      discretionary trusts.
+      If a person holds units as trustee – e.g. as trustee of a complying superannuation
+      trust - and the members of the trust are all members of the same family group, the
+      units will be regarded as being owned by members of the same family group for the
+      purposes of determining whether the 95% test is satisfied.
+
+Note: If any new units are issued, redeemed or cancelled, the trust will continue to be
+assessed as a fixed trust, provided the proportion of units owned by members of the
+same family group remains at least 95%.
+
+If the trust does not meet this requirement, it will become liable as a “special trust” for the
+following land tax year.
+
+
+Back to top
+
+Concessional trusts
+A concessional trust receives the land tax threshold.
+
+Certain criteria must be met to qualify as a concessional trust.
+
+
+                                                                                                  7/9
+A concessional trust has the meanings given by section 3B of the Land Tax Management
+Act 1956.
+
+These trusts hold land for the benefit of someone who is:
+
+     under 18 years old,
+     subject to a guardianship order under the Guardianship Act 1987
+     a person in the relevant group within the meaning of section 2A of the Coroners Act
+     2009, or
+     the principal beneficiary of a special disability trust (within the meaning of section
+     1209L of the Social Security Act 1991 of the Commonwealth).
+
+Charitable trusts
+A charitable trust is created to relieve poverty, to advance education or religion, or to
+provide a community benefit.
+
+A charitable trust can apply for an exemption or concession.
+
+If the trust is accepted as a charitable trust all land owned by the trust is exempt from land
+tax.
+
+Documents to provide
+You must provide the following information to Revenue NSW when you own land in New
+South Wales as part of a trust.
+
+Open the heading for more details.
+
+ Open all
+Unit trusts
+      A copy of the executed and dated trust deed and all executed amendments to the
+      trust deed.
+      A certified copy of the unit register for your trust.
+      The percentage of interest held by each unit holder.
+      A copy of the executed trust deed for any unit holders who are trusts.
+      The last known address for each unit holder if not shown in the unit register.
+
+Estate/testamentary trusts
+     A copy of the will and probate.
+     The beneficiaries details.
+
+Any other trust
+     A copy of the executed and dated trust deed and all executed amendments to the
+     trust deed.
+     A copy of the executed deed that irrevocably excludes foreign beneficiaries as per
+     section 5D of the Land Tax Act 1956.
+
+
+                                                                                                 8/9
+     The foreign person status of the trust.
+
+Land Tax Online provides a secure and private way to send documents and other
+information to us.
+
+Learn how to update your land tax details in Land Tax Online.
+
+Providing accurate information and documents
+Providing accurate documentation helps us assess your matter efficiently and ensure the
+correct outcome for your circumstances.
+
+Providing false or misleading documents to obtain a financial advantage will not be
+accepted. Where such documents are provided, this may constitute fraud and may be
+referred to our Legal team for further consideration and penalty.
+
+Penalties for false and misleading information
+Applicants must provide information that is true, correct and not misleading, nor should
+they willfully destroy records.
+
+Under the Taxation Administration Act 1996, penalties may be imposed where a person:
+
+     includes or provides information that is false or misleading
+     deliberately fails to comply with requests for information
+     willfully destroys records.
+
+If found guilty, a person may be liable for a maximum penalty of:
+
+     500 penalty units ($55,000) for a first offence
+     1,000 penalty units ($110,000) and/or 2 years imprisonment for a second or
+     subsequent offence.
+
+Contact the land tax team
+If you have a question about land tax contact us.
+
+
+
+
+                                                                                           9/9
+

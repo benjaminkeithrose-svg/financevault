@@ -1,0 +1,950 @@
+                                                   Print whole section
+
+
+
+Motor vehicle and car expenses
+Deductions for work-related use of your car or another
+motor vehicle
+
+
+
+  Expenses for a car you own or lease
+  Deductions for work-related car expenses you incur for the use
+  of your own car.
+
+
+
+
+  Expenses for a vehicle that isn't yours or
+  isn't a car
+  Deductions for work-related use of a vehicle that either does not
+  belong to you or is not a car.
+
+
+
+
+  Expenses for parking tolls accidents
+  licence and fines
+  Deductions for parking fees, tolls, accident damage, renewing
+  your licence or paying a fine.
+
+
+
+
+QC 72123
+
+
+
+Expenses for a car you own or lease
+Deductions for work-related car expenses you incur for the
+use of your own car.
+Last updated 4 May 2026
+
+
+
+What are car expenses?
+Car expenses are the costs you incur to own and operate a car,
+including its decline in value.
+
+This includes:
+
+   fuel and oil expenses
+
+   repairs, servicing, maintenance and cleaning expenses
+
+   registration
+
+   insurance
+
+   interest on a car loan
+
+   lease payments
+
+   decline in value of the car.
+
+The following expenses aren't car expenses:
+
+   the purchase price of the car
+
+   principal repayments of a car loan
+
+   modifications, alterations of improvements to the car
+
+   parking and tolls.
+
+Modifications, alterations and improvements can be added to the cost
+(as a second element cost) of the car for the purpose of calculating it's
+decline in value.
+
+
+Claiming a deduction for car expenses
+To claim a deduction for car expenses:
+
+   Your vehicle must meet the definition of a car.
+
+   You must own or lease the car.
+
+      You do not own or lease the car if you use it under a salary
+      sacrifice or novated lease arrangement.
+
+   The expenses must be for work-related trips.
+     You can claim for trips between workplaces or to perform your
+     work duties.
+
+     You can't claim for trips between your home and place of work,
+     except in limited circumstances.
+
+  You must have spent the money yourself and weren't reimbursed.
+
+  You must have the required records.
+
+If it's someone else's car or it's another type of vehicle (such as a truck
+or motorcycle), see Expenses for a vehicle that isn't yours or isn't a
+car.
+
+If your travel is partly private, you can only claim a deduction for the
+work-related portion of your expenses.
+
+You claim the tax deduction in your income tax return as a work-
+related car expense.
+
+If you receive an allowance from your employer for car expenses, you
+must include it as assessable income in your tax return. The allowance
+amount is shown on your income statement or payment summary.
+
+For a summary of this information in PDF format, see Car expenses
+(PDF, 322KB) .
+
+
+Definition of a car
+To claim a work-related car expense, the vehicle must be a car.
+
+A car is a motor vehicle that carries a load of less than one tonne and
+fewer than 9 passengers (including the driver). This includes electric
+(zero emissions) vehicles (EVs), plug-in hybrid vehicles (PHEVs) and
+hybrid vehicles if they meet this definition.
+
+Motorcycles and similar vehicles are not cars.
+
+If your vehicle is a car and you use it for work-related purposes, you
+must calculate your deduction using one of the 2 methods below.
+
+If your vehicle doesn't meet this definition, see Expenses for a vehicle
+that isn't yours or isn't a car.
+
+
+You must own or lease the car
+To claim car expenses you must own, lease (from a finance company)
+or hire the car (under a hire-purchase arrangement with the
+dealership).
+
+If you use a car owned by a family member, and you can show there is
+a private arrangement that made you the owner or lessee of the car
+(even if you aren't the registered owner or lessee), you work out your
+car expenses as though it is your car.
+
+A car you use under a salary sacrifice or novated lease arrangement is
+usually leased by your employer from a financing company, and your
+employer typically pays for the running costs and claims deductions.
+You can't claim running costs for such a car because you don't own or
+lease it but you can claim additional expenses, like parking and tolls
+associated with your work use of the car.
+
+If you don't own or lease the car (or don't have a private arrangement
+that makes you the owner or lessee), see Expenses for a vehicle that
+isn't yours or isn't a car.
+
+
+
+
+  Example: private arrangement
+  When Rory turned 18, she bought a car from her parents for
+  $1,000. She now pays the insurance, fuel, registration and other
+  running costs, and no one else uses the car. However, the
+  registration hasn't been updated and the car is still registered in
+  her mother's name.
+
+  Rory is eligible to claim her work-related car expenses even
+  though the registration hasn't been changed to her name. She
+  would be treated as the owner because she can show that:
+
+     she bought the car from her parents
+
+     she is now responsible for all ownership and running costs of
+     the car.
+
+
+
+
+Calculating your car expense deductions
+To work out your deduction for car expenses, you can use either the:
+
+  Cents per kilometre method
+
+  Logbook method
+You can also use the calculator to work out your deduction for either
+method.
+
+
+   Work-related car expenses calculator
+
+
+If you're claiming car expenses for more than one car, you can use a
+different method for each car. You can also change the method you
+use in different income years for the same car.
+
+
+
+
+   Cents per kilometre method
+   How to calculate a deduction for car expenses using the cents
+   per kilometre method and the records you need to keep.
+
+
+
+
+   Logbook method
+   How to calculate a deduction for car expenses using the logbook
+   method and the records you need to keep.
+
+
+
+
+QC 72124
+
+
+
+Cents per kilometre method
+How to calculate a deduction for car expenses using the
+cents per kilometre method and the records you need to
+keep.
+
+Last updated 12 August 2026
+
+
+
+How it works
+The cents per kilometre method allows you to claim a set rate for each
+work-related kilometre you travel, as long as you meet the conditions.
+
+Using this method, you:
+
+   can claim a maximum of 5,000 km for work-related use per year
+  don't need receipts for your expenses (e.g. fuel receipts)
+
+  do need a record to show how you calculate your work-related
+  kilometres (e.g. using a diary or the myDeductions tool in the ATO
+  app)
+
+  need to be able to show that you own the car.
+
+The rate per km covers all of your car expenses including decline in
+value, registration and insurance, maintenance, repairs and fuel costs.
+
+You can’t add these, or any other car expenses, on top of the rate
+when calculating your deduction.
+
+
+Calculating your deduction
+To calculate your deduction using this method, multiply the number of
+work-related kilometres you travel in the car by the rate per kilometre
+for that income year.
+
+You can claim a maximum of 5,000 work-related kilometres per car.
+
+'Work-related kilometres' are the kilometres your car travels in the
+course of earning your assessable income. For more information on
+what travel is incurred in the course of earning your assessable
+employment income, see Trips you can and can't claim.
+
+You can work out the number of work-related kilometres the car
+travelled during the income year by making a reasonable estimate. For
+example, if you make a 20 kilometre work-related round trips in your
+car once a week and you worked for 48 weeks in the year, your work-
+related kilometres will be 960 (20 kilometres × 48 weeks).
+
+Use the rate for the income year for which you are claiming a
+deduction:
+
+  2026-27: use 91 cents per kilometre
+
+  2024–25 and 2025–26: use 88 cents per kilometre
+
+  2023–24: use 85 cents per kilometre
+
+  2022–23: use 78 cents per kilometre
+
+  2020–21 and 2021–22: use 72 cents per kilometre
+
+  for rates in earlier years, see Prior year tax return forms and
+  schedules.
+You need to keep records that show how you work out your work-
+related kilometres.
+
+If you and another joint owner use the car for separate income-
+producing purposes, you can each claim up to 5,000 work-related
+kilometres.
+
+
+Keeping records for cents per kilometre
+method
+If you use the cents per kilometre method, you don't need receipts.
+
+You do need to be able to show that you own the car and how you
+work out your work-related kilometres. For example, you could record
+your work-related trips:
+
+  in a diary
+
+  using the myDeductions tool in the ATO app.
+
+
+
+
+  Example: car deduction using cents per
+  kilometre
+  Once per week, Johan makes a 27-kilometre round trip in his own
+  car from his head office in the city to meet with clients. In
+  addition, once per month he makes a 106-kilometre round trip to
+  visit clients at another location.
+
+  When Johan consults his diary at the end of the 2025–26 income
+  year, he works out he was at work for 47 weeks, but he missed
+  one weekly meeting with clients as he was sick. He also
+  determines that, although he was on leave for 5 weeks during
+  the income year, he still made 12 × 106-kilometre round trips to
+  visit clients.
+
+  He works out his work-related kilometres as:
+
+  Number of weekly trips multiplied by distance of weekly
+  trip equals total weekly trip kilometres
+
+  46 × 27 km = 1,242 km
+   Number of monthly trips multiplied by distance of monthly
+   trip equals total monthly trip kilometres
+
+   12 × 106 km = 1,272 km
+
+   Total weekly trip kilometres plus total monthly trip
+   kilometres equals total trip kilometres
+
+   1,242 km + 1,272 km = 2,514 km
+
+   Johan works out his deduction for the 2025–26 income year as:
+
+   2,514 km × 0.88 = $2,212
+
+
+
+
+QC 107246
+
+
+
+Logbook method
+How to calculate a deduction for car expenses using the
+logbook method and the records you need to keep.
+
+Last updated 12 June 2026
+
+
+
+How it works
+The logbook method allows you to claim the work-related portion of
+your actual car expenses.
+
+Expenses you can claim include running costs such as fuel, electricity,
+servicing, registration, insurance and the decline in value, as long as
+you use the car in the course of earning your assessable employment
+income.
+
+To calculate your deduction using the logbook method, you need to:
+
+   keep a logbook that shows your work-related trips for a continuous
+   period of at least 12 weeks and your odometer records
+  keep receipts or other records of your car expenses
+
+  use your logbook to calculate the deductible portion of your car
+  expenses.
+
+
+Keeping a logbook
+Your logbook must:
+
+  cover at least 12 continuous weeks and be broadly representative of
+  your travel
+
+  include the reason and purpose, as well as the destination of every
+  work-related journey, the odometer reading at the start and end of
+  each journey, and the total kilometres travelled on the journey
+
+  include odometer readings for the start and end of the logbook
+  period and the total kilometres travelled during that period.
+
+Each journey in your logbook must be made at the end of the journey
+or as soon as possible afterwards.
+
+Your logbook is valid for 5 years. However, if your circumstances
+change (for example, if you change jobs or move to a new house), and
+the logbook is no longer representative of your work-related use, you
+will need to complete a new 12 week logbook.
+
+In each of the 4 years following the first year, you need to keep:
+
+  odometer readings for the start and end of the full period you
+  owned the car during the income year
+
+  your work-related kilometres and use percentage for the income
+  year based on the logbook.
+
+If you are using the logbook method for 2 or more cars, keep a logbook
+for each car and make sure they cover the same period.
+
+You can keep an electronic logbook using the myDeductions tool in the
+ATO app, or keep a paper logbook.
+
+You must retain your logbook and odometer records for 5 years after
+the end of the latest income year that you rely on them to support your
+claim.
+
+If you don't have a valid logbook, you can't use the logbook method to
+claim car expenses. You may be able to use the cents per kilometre
+method instead.
+
+
+Keeping records of car expenses
+In addition to keeping a valid logbook, you must keep the following
+records:
+
+   receipts for your fuel and oil expenses, or a record of your
+   reasonable estimate of these expenses based on the odometer
+   readings for the start and end of the period you owned the car, the
+   fuel consumption for your car and the average price of fuel during
+   the income year
+
+   receipts for other expenses for your car – for example, registration,
+   insurance, lease payments, services, tyres, repairs, electricity
+   expenses and interest charges
+
+   a record of the purchase price of the car and how you work out your
+   claim for the decline in value of your car, including the effective life
+   and method you use.
+
+
+Electric cars – records of electricity expenses
+If your car is electric, instead of keeping receipts for fuel and oil, you
+must keep:
+
+   receipts for electricity from commercial charging stations
+
+   evidence that shows you incur electricity costs to charge your car
+   at home, such as an electricity bill and how you calculated the
+   direct cost of charging your car.
+
+Hybrid cars – records of fuel and electricity
+expenses
+If your car is a hybrid, you must keep all the following:
+
+   receipts for your fuel and oil
+
+   receipts for commercial charging stations
+
+   evidence that shows you incur electricity costs to charge your car
+   at home, such as an electricity bill and how you calculated the
+   direct cost of charging your car.
+Calculating your deduction
+To calculate your deduction using the logbook method, follow these
+steps:
+
+Step 1 – Work out the total number of kilometres you travelled during
+the logbook period.
+
+Step 2 – Work out the number of kilometres you travelled for allowable
+work-related trips during the logbook period.
+
+Step 3 – Divide the work-related kilometres (step 2) by the total
+kilometres (step 1), then multiply by 100. This is your work-related use
+percentage.
+
+Step 4 – Add up your total expenses for the period that you are
+claiming.
+
+Step 5 – Multiply your work-related use percentage (step 3) by your
+car expenses (step 4). This is the amount you claim as a deduction.
+
+'Work-related kilometres' are the kilometres your car travels in the
+course of earning your assessable employment income. For more
+information on what travel is incurred in the course of earning your
+assessable employment income, see Trips you can and can't claim.
+
+
+Calculating electricity costs for your electric vehicle
+If your car is an electric (zero emissions) vehicle (EV), you can
+calculate your electricity costs either by:
+
+  calculating the actual amount you spent on charging your car at
+  commercial charging stations or at home
+
+  by multiplying the EV home charging rate for the relevant income
+  year by the total number of kilometres travelled during the income
+  year based on odometer records.
+
+The EV home charging rate for the 2022–23 to 2025–26 income years
+is 4.2 cents per kilometre.
+
+For more information, see paragraph 16 of Practical Compliance
+Guideline PCG 2024/2 Electric vehicle home charging rate –
+calculating electricity costs when a vehicle is charged at an
+employee's or individual's home.
+Calculating fuel and electricity costs for your plug-in
+hybrid vehicle
+If your car is a plug-in hybrid electric vehicle (PHEV), for the 2024–25
+income year onwards, you can work out your fuel and electricity
+expenses either by:
+
+  calculating the actual amount you spent on fuel and charging your
+  car at commercial charging stations or at home
+
+  using methodology set out at paragraphs 17 to 27 of PCG 2024/2,
+  which allows you to use the EV home charging rate.
+
+For the 2023–24 income year and earlier income years, you can only
+claim the actual amount you incurred on fuel and charging your EV at
+commercial charging stations or at home.
+
+If you use the home charging rate in PCG 2024/2 to calculate your
+electricity costs for the income year, unless your EV or PHEV has the
+functionality to report the percentage of the car's total charge based
+on the charging location, you can't add the cost of any commercial
+charging stations to this amount. These amounts must be disregarded.
+
+
+
+  Example: home charging percentage can be
+  accurately determined
+  Bill owns an electric car which he uses for work purposes. Bill
+  charges his electric car at home and at commercial charging
+  stations.
+
+  For the 2025–26 income year, Bill has:
+
+     a valid logbook
+
+     the odometer reading for his car at the start and the end of
+     the income year
+
+     an electricity bill for his home showing he incurred electricity
+     expenses
+
+     receipts for his commercial charging station expenses which
+     total $172.
+
+  Bill's car generates a report detailing the annual percentage of
+  total charge that relates to home charging. The report shows that
+  Bill charges his electric vehicle 75% at home during the 2025–26
+  income year.
+
+  Bill travelled a total of 10,000 km in the 2025–26 income year. His
+  home charging kilometres are determined by applying the home
+  charging percentage to the total kilometres travelled.
+
+  Bill calculates his home charging kilometres as:
+
+  Total kilometres multiplied by home charging percentage equals
+  home charging kilometres
+
+       10,000 km × 75% = 7,500 km
+
+  To calculate his total home charging expenses, Bill multiplies the
+  home charging kilometres by the EV home charging rate:
+
+       7,500 km × 4.2c/km = $315
+
+  Bill calculates his total charging expenses as:
+
+  Home charging expenses plus commercial charging expenses
+  equals total charging expenses
+
+       $315 + $172 = $487
+
+  To calculate his deduction for charging his car during the 2025–
+  26 income year, Bill will multiply his total charging expenses
+  ($487) by his work-related use percentage from his logbook.
+
+
+
+Working out the decline in value of a car
+Cars are depreciating assets so a deduction for their decline in value
+can be claimed as a car expense if you are using the logbook method.
+
+However, there is a limit on the cost of the car that you can claim as
+decline in value deductions over the car's effective life. This is referred
+to as the car limit car limit.
+
+If the cost of the car you purchase exceeds the car limit in the year you
+buy it, its cost for decline in value purposes will be the car limit. The
+limit is applied to the cost of the car, not your ownership interest in the
+car. This means if you purchase a car exceeding the car limit with
+another person jointly, you will use half of the cost limit for the purpose
+of calculating your decline in value deduction.
+
+The Commissioner's determination of the effective life of a car is
+generally 8 years.
+Example: working out the decline in value of a car
+(diminishing value method)
+On 3 July 2025, Lana buys a 5-seater car for $75,000 which she
+uses for work purposes during the 2025–26 income year.
+
+As Lana bought the car in the 2025–26 income year, when
+working out the car's decline in value for that income year, the
+cost of the car is reduced to $69,674 (the car limit for 2025–26).
+
+Lana uses the Commissioner's determination of the effective life
+and works out her decline in value using the diminishing value
+method in the following way:
+
+Car cost (car limit): $69,674
+
+Effective life of the car: 8 years
+
+Diminishing value formula: Cost × (days
+held ÷ 365) × (200% ÷ asset’s effective life)
+
+    $69,674 × (362 ÷ 365) × (200% ÷ 8) = $17,275.33
+
+Based on her logbook Lana works out her work-related use
+percentage as 69%. This means she can claim
+$17,275.33 × 69% = $11,919.98 as a deduction for the decline in
+value of the car in her 2025–26 tax return.
+
+Lana can also claim 69% of her fuel, insurance, tyres, repairs and
+other expenses for the car.
+
+
+
+
+Example: working out the decline in value of a car
+(prime cost method)
+Vlad buys an electric car on 1 July 2025 and uses to carry out his
+duties as an employee.
+
+Based on his valid logbook, Vlad works out he uses his car 11% of
+the time for work purposes, that his work-related use percentage
+is 11%. The car cost $30,000.
+
+Vlad works out his decline in value deduction using the prime
+cost method as follows:
+   Asset cost × (days held ÷ 365) × (100% ÷ asset’s effective life)
+
+       $30,000 × (365 ÷ 365) × (100% ÷ 8) = $3,750
+
+   As Vlad's work-use percentage based on his logbook is 11%, he
+   can claim a deduction of $413 ($3,750 × 11%) for the decline in
+   value of his car in the 2025–26 income year.
+
+
+You can't claim a deduction for the decline in value of your car if you
+use the cents per kilometre method.
+
+
+
+
+QC 107247
+
+
+
+Expenses for a vehicle that isn't
+yours or isn't a car
+Deductions for work-related use of a vehicle that either
+does not belong to you or is not a car.
+
+Last updated 8 June 2026
+
+
+
+
+Claiming a deduction for vehicle expenses
+You can claim a deduction for work-related expenses for a vehicle that
+either:
+
+   does not belong to you (is someone else's car)
+
+   is not a car (such as a truck or motorcycle, whether it belongs to
+   you or someone else).
+
+A tax deduction for these expenses is claimed as a work-related
+travel expense, rather than a work-related car expense.
+
+To claim a deduction:
+
+   The expenses must be for work-related trips.
+
+      You can claim for trips between workplaces or to perform your
+      work duties.
+     You can't claim for trips between your home and place of work,
+     except in limited circumstances.
+
+  You must have spent the money yourself and weren't reimbursed.
+
+  You must have a record of your expenses.
+
+If your travel is partly private, you can only claim a deduction for the
+work-related portion of the expenses you incur.
+
+If the vehicle is a car and belongs to you, you calculate and claim your
+deduction in a different way. See Expenses for a car you own or lease.
+
+If you receive an allowance from your employer for vehicle expenses,
+you must include it as assessable income in your tax return. The
+allowance amount is shown on your income statement or payment
+summary.
+
+
+Someone else's vehicle
+This means a vehicle owned by your employer or anyone other than
+you.
+
+You can't claim running costs for a car you use under a salary sacrifice
+or novated lease arrangement. In this situation the car is usually leased
+by your employer from a financing company, and your employer
+typically pays for the running costs and claims deductions. You can
+claim additional expenses, like parking and tolls associated with your
+work use of the car.
+
+If you use a car owned by a family member, and you can show there is
+a private arrangement that made you the owner or lessee of the car
+(even if you aren't the registered owner), you work out your car
+expenses as though it is your car.
+
+
+A vehicle that isn't a car
+Vehicles that are not cars include motorcycles, scooters and similar
+vehicles, and vehicles with:
+
+  one tonne or greater carrying capacity such as trucks, heavy
+  vehicles and some utes
+
+  a carrying capacity of 9 or more passengers (including the driver),
+  such as a minibus.
+Calculate deduction for vehicle expenses
+To claim a deduction for a vehicle that isn't yours or isn't a car, you:
+
+   work out your actual expenses for your work-related travel in the
+   vehicle
+
+   claim the deduction in your tax return as a work-related travel
+   expense (not as a work-related car expense).
+
+You can't use the cents per kilometre method or the logbook method
+to work out your claim. However, as you can only claim a deduction for
+the expenses related to your work-related travel, you may wish to keep
+a document similar to a logbook to calculate your work-related use
+percentage. While it is not a requirement, it is the easiest way to show
+how you calculated the expenses related to your work-related travel.
+
+
+Keeping records of vehicle expenses
+You must keep:
+
+   evidence of how you calculated your work-related use of the vehicle
+
+   original receipts for all of your vehicle expenses
+
+   details of how you work out your claim for the decline in value of the
+   vehicle, including the effective life and method you use.
+
+If your vehicle is electric or a plug-in hybrid electric vehicle (PHEV),
+and you're relying on the home charging rate outlined in Practical
+Compliance Guideline PCG 2024/2 Electric vehicle home charging rate
+– calculating electricity costs when a vehicle is charged at an
+employee’s or individual’s home, you'll also need to keep an electricity
+bill for your residential premises showing you incurred electricity costs.
+
+PCG 2024/2 is only available for PHEVs from 1 July 2024 onwards.
+
+You can use the myDeductions tool in the ATO app to keep your
+vehicle expense records.
+
+
+
+
+   Example: actual work-related expenses for a
+   motorcycle
+   Ben buys a motorcycle that he uses for his work, making local
+   deliveries. He also uses his motorcycle when he's not working. To
+   help work out his work-related use he decides to keep a record,
+   similar to a logbook, that shows his work-related and private
+   trips.
+
+   Ben's logbook shows he travelled a total of 3,000 kilometres on
+   his motorcycle for the whole income year. During the 12 week
+   period he kept his record of trips, he travelled 800 kilometres in
+   total, with 600 kilometres being work-related.
+
+   Ben calculates his work use percentage as 75% (600 ÷ 800).
+
+   Ben keeps receipts for all his expenses. His total expenses for
+   the motorcycle for the income year were:
+
+
+     Fuel and oil                                              $560
+
+     Repair                                                    $400
+
+     Registration                                              $540
+
+     Compulsory Third Party insurance                          $300
+
+     Decline in value                                        $1,800
+
+     Total                                                  $3,600
+
+
+   To work out his tax deduction, Ben multiplies his total expense by
+   his work use percentage:
+
+   $3,600 × 75% = $2,700
+
+
+
+
+QC 72125
+
+
+
+Expenses for parking, tolls,
+accidents, licence and fines
+Deductions for parking fees, tolls, accident damage,
+renewing your licence or paying a fine.
+
+Last updated 8 June 2026
+Parking fees and tolls
+You can claim a deduction for parking fees and tolls you incur when
+you use your car or other vehicle for work-related purposes.
+
+You can't claim a deduction for parking at or near a regular place of
+work. You also can't claim a deduction for tolls you incur for trips
+between your home and work. These are private expenses.
+
+
+
+
+  Example: parking on work-related trip
+  Karlyn is a trainee lawyer. She has to rush some legal documents
+  to the court before it closes for the day. Karlyn drives from the
+  office to the court. She parks directly in front of the court and
+  pays a fee for parking, which her employer does not reimburse.
+
+  Karlyn can claim the cost of the car parking as a deduction
+  because her trip from the office to the court is work-related.
+
+
+
+
+  Example: tolls and parking on trip from home to
+  work
+  Carissa works in the city centre. There is no parking for
+  employees in her building, so Carissa pays for car parking
+  nearby.
+
+  When Carissa is running late for work she takes a quicker route
+  and incurs a toll.
+
+  Carissa can't claim a deduction for the cost of:
+
+     parking near her regular place of work
+
+     the occasional tolls when driving between her home and her
+     regular place of work.
+
+
+
+
+Damage to a third-party motor vehicle
+If you use your own motor vehicle in the course of your employment
+and you're involved in an accident that causes damage to another
+vehicle, you may be able to claim a deduction for:
+
+  the costs you incur to repair your vehicle
+
+  damages or compensation for the damage to the other vehicle if
+  you are liable.
+
+Generally, you 'incur' an expense when you either pay it or are liable to
+pay. For more information, see TR 97/7 Income tax: section 8-1 –
+meaning of 'incurred' – timing of deductions.
+
+
+Drivers licence
+You can't claim a deduction for the cost to get or renew your drivers
+licence, even if you must have it as a condition of employment. This is
+a private expense.
+
+You can claim a deduction for additional costs you incur to get a
+special licence or condition on your licence to perform your work
+duties. For example, you can claim the cost you incur to get a heavy
+vehicle permit.
+
+
+
+  Example: special licence
+  Rhonda works on a sugar cane farm. She must operate heavy
+  machinery to carry out her employment duties. To operate some
+  of the machinery she needs a driver's licence and a heavy
+  vehicle permit. Her driver's licence renewal costs her $45 per
+  year and it costs $73 to apply for the heavy vehicle permit.
+
+  The $45 to renew her licence is not deductible because it is a
+  private expense. The cost of the heavy vehicle permit ($73) is
+  deductible as it is an additional expense she incurs that directly
+  relates to her employment duties and is not a private expense.
+
+
+
+
+Fines and penalties
+You can't claim a deduction for any fines you get when you travel to
+work or during work. This includes parking and speeding fines or
+penalties.
+     Example: parking fine at work
+     Warren's employment duties often require him to drive from the
+     office where he works to various building sites.
+
+     On a couple of occasions when Warren has been running late, he
+     has parked in a loading zone and received a parking fine.
+
+     Warren can't claim a deduction for the parking fines. It doesn't
+     matter that he is working at the time he is issued with the fine.
+
+
+
+
+  QC 72126
+
+
+
+Our commitment to you
+We are committed to providing you with accurate, consistent and clear
+information to help you understand your rights and entitlements and meet
+your obligations.
+
+If you follow our information and it turns out to be incorrect, or it is
+misleading and you make a mistake as a result, we will take that into
+account when determining what action, if any, we should take.
+
+Some of the information on this website applies to a specific financial year.
+This is clearly marked. Make sure you have the information for the right year
+before making decisions based on that information.
+
+If you feel that our information does not fully cover your circumstances, or
+you are unsure how it applies to you, contact us or seek professional
+advice.
+
+Copyright notice
+© Australian Taxation Office for the Commonwealth of Australia
+
+You are free to copy, adapt, modify, transmit and distribute this material as
+you wish (but not in any way that suggests the ATO or the Commonwealth
+endorses you or any of your services or products).
+

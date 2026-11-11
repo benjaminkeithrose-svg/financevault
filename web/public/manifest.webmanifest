@@ -1,0 +1,10 @@
+{
+  "name": "Financial Vault",
+  "short_name": "FinVault",
+  "description": "Private Australian personal financial management & document system",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": []
+}

@@ -1,0 +1,15 @@
+{
+  "name": "financevault-desktop",
+  "private": true,
+  "description": "Builds the installable Financial Vault program (Windows Setup). Kept apart from the app's own libraries so the folder version never downloads Electron.",
+  "scripts": {
+    "build": "node build.mjs",
+    "build:win": "node build.mjs --win",
+    "build:linux": "node build.mjs --linux"
+  },
+  "devDependencies": {
+    "electron": "44.4.5",
+    "electron-builder": "26.15.3",
+    "esbuild": "^0.25.0"
+  }
+}

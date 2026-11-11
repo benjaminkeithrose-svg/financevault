@@ -1,0 +1,379 @@
+    Fact sheet for employers
+
+
+    Electric vehicles and fringe benefits tax
+    Determining your fringe benefits tax obligations where you provide your employee
+    with an electric vehicle and associated items for their private use.
+
+                                                                      assessments and some other government benefits
+Key points                                                            and obligations.
+•      A fringe benefits tax (FBT) exemption may apply to       •     The government will complete a review of this
+       a car benefit arising if either                                exemption by mid-2027 to consider electric vehicle
+       −     you allow your current employees, or their               take-up.
+             associates, to use a zero or low emissions
+             vehicle (electric vehicle) for their private use
+       −     the electric vehicle is considered available       Private use of an electric vehicle –
+             for your current employees’, or their
+             associates’, private use under FBT law.            what you need to do
+•      From 1 April 2025, private use of a plug-in hybrid       If your employee uses an electric vehicle for private
+       electric vehicle is no longer eligible for the           purposes or the vehicle is taken to be available for their
+       exemption, unless both of the following apply            private use, you need to:
+
+       −     use of the plug-in hybrid electric vehicle was     •     work out if the electric vehicle FBT exemption
+             exempt before 1 April 2025                               applies
+
+       −     you have a financially-binding commitment to       •     if the benefit is not exempt, work out the taxable
+             continue providing private use of that vehicle           value of the benefit and include it in working out
+             on and after 1 April 2025.                               your FBT liability
+
+•      If an employer or lessor provides an employee with       •     work out if any benefits arising from the payment of
+       the use of a car by means of a lease arrangement,              any associated car expenses or provision of any
+       the benefit provided is only a car benefit if the car          associated items are exempt from FBT
+       lease arrangement is a bona fide car leasing             •     work out the taxable value of the car benefit for
+       arrangement.                                                   reportable fringe benefits purposes and report any
+•      Associated benefits arising from the provision of              reportable fringe benefits amount.
+       certain car expenses provided with the electric
+       vehicle are also exempt from FBT. These are not
+       included when working out if an employee has a           Does the exemption apply?
+       reportable fringe benefits amount.
+                                                                For the exemption to apply, all of the following
+•      Providing your employee with a home charging             requirements must be met:
+       station is a fringe benefit – the benefit is not an
+       exempt associated benefit.                               a)    the benefit is a car benefit
+
+•      If the use of the car and the associated car             b)    the vehicle must be a car, which is a zero or low
+       expenses are provided under a salary sacrifice                 emissions vehicle (vehicle requirements)
+       arrangement, the exemption can still apply.              c)    the car was first held and used on or after
+                                                                      1 July 2022 (held and used date requirements)
+•      Even if an exemption applies for the electric vehicle
+       car benefit, you still need to work out the taxable      d)    the car is used or available for private use by a
+       value of the car benefit provided. This is because             current employee or their associates (including
+       the car benefit’s value is used in working out if the          family members) (recipient requirements)
+       employee has a reportable fringe benefits amount.
+       This does not include the value of any associated        e)    no amount of luxury car tax (LCT) has become
+       car expense benefits.                                          payable on the supply or importation of the car
+                                                                      (LCT requirements).
+•      An employee’s reportable fringe benefits amount is
+       reported on their income statement or payment
+       summary. Employees do not pay income tax on
+       this amount, but it does impact their income tests
+       and thresholds for family assistance, child support
+a)    Car benefit                                               An electric vehicle is held where it is:
+Where the electric vehicle is provided under a lease            •     owned (including electric vehicles acquired under
+arrangement, an employer or lessor will only be providing             hire-purchase arrangements)
+the employee with a car benefit if it is a bona fide car
+                                                                •     leased (or let on hire), or
+leasing arrangement.
+If a car lease arrangement is not bona fide, the employer       •     otherwise made available to the provider.
+or lessor will not be providing the employee with a car         An electric vehicle is not considered to be held where it is
+benefit.                                                        owned by the employee themselves and not by you or
+Depending on the arrangement, it may instead be                 your associate.
+considered a property or residual fringe benefit, and           You can work out who ‘holds’ the electric vehicle by
+therefore would not be eligible for the electric vehicle        looking at:
+exemption.
+                                                                •     car registration papers
+                                                                •     car insurance policies
+b)    Vehicle requirements
+                                                                •     car leasing documents.
+The vehicle must be a car. A car is a motor vehicle
+(excluding motorcycles, scooters and similar vehicles)
+that is designed to carry a load of less than one tonne         Electric vehicle is used
+and 8 or less passengers (including the driver).
+                                                                The electric vehicle must also be used for the first time on
+The car must also be a zero or low emissions vehicle. For       or after 1 July 2022.
+FBT purposes, a zero or low emissions vehicle is a:
+                                                                An electric vehicle is considered 'used' when it is used or
+•     battery electric vehicle                                  available for use by any entity or person.
+•     hydrogen fuel cell electric vehicle, or
+•     plug-in hybrid electric vehicle.                          Example 1 – exemption does not apply
+If the vehicle is not a car, the electric vehicle exemption     Shelly purchases an electric car on 1 April 2022. She
+will not apply. However, the exemption for the private use      makes it available for the private use of her employee,
+of a vehicle other than a car may apply instead.                Jack, from that date until 30 July 2022.
+                                                                On 1 August 2022, Shelly sells the electric car to ABC
+Plug-in hybrid electric vehicles – 1 April 2025                 Co. ABC Co makes the car available for the private use of
+onwards                                                         its employees from 1 August 2022.
+
+From 1 April 2025, a plug-in hybrid electric vehicle will not   The first time the electric car was both held and used is
+be considered a zero or low emissions vehicle under FBT         before 1 July 2022. Therefore, any car benefits are not
+                                                                exempt from FBT.
+law.
+However, you can continue to apply the exemption if both
+the following requirements are met:                             Example 2 – exemption does apply
+•     Use of the plug-in hybrid electric vehicle was            C Co orders an electric car from overseas, which is
+      exempt before 1 April 2025.                               delivered on 1 July 2022 and used by their employee
+                                                                from that date. Under the contract, ownership of the
+•     You have a financially-binding commitment to
+                                                                vehicle passed to C Co on 30 June 2022.
+      continue providing private use of the vehicle on and
+      after 1 April 2025. For this purpose, any option to       The car was:
+      extend the agreement exercisable on or after 1
+                                                                •     first held on 30 June 2022, when C Co started
+      April 2025 is not considered binding.
+                                                                      owning it
+                                                                •     first used on 1 July 2022.
+c)    Held and used requirement
+                                                                Private use of the car is eligible for the FBT exemption
+The electric vehicle must be both held and used for the         (provided the other requirements of the exemption are
+first time on or after 1 July 2022.                             met), as the first time the car was both held and used was
+                                                                1 July 2022.
+
+Electric vehicle is held
+An electric vehicle may be ‘held’ by you, an associate of
+yours or a third party with whom you (or your associate)
+make an arrangement.
+d)    Recipient requirements                                    apply the FBT exemption to the car benefit it provides to
+                                                                its current employees.
+For the exemption to apply, the electric vehicle must be
+used by a current employee or their associate.
+The electric vehicle cannot, however, be used by a past
+or future employee (or their associate) who is not an
+associate of a current employee – otherwise, the use of         Car expense benefits
+the electric vehicle will not be exempt from FBT.
+                                                                Car expense benefits provided during the same time as a
+Associates are people closely associated with the               car benefit, regardless of whether the car benefit is
+employee, such as family members or other relatives.            subject to FBT or not, are exempt from FBT.
+                                                                These benefits may be provided as an expense payment,
+                                                                property or residual benefit.
+e)    Luxury car tax requirements
+                                                                Car expense benefits in respect of the car are:
+An electric vehicle for which LCT has become payable at
+any stage is not eligible for the exemption. Generally,         •     registration and road user charges
+LCT has to be paid if the value of the vehicle is above the
+                                                                •     insurance
+LCT threshold for fuel-efficient vehicles and either:
+                                                                •     repairs or maintenance
+•     you are registered or required to be registered for
+      goods and services tax and you sell or import a           •     fuel (including electricity to charge and run electric
+      luxury car in the course of your business – this                vehicles).
+      includes retailers, wholesalers, manufacturers and
+      other businesses that sell luxury cars, or
+•     you are an individual (private buyer) who imports a       Registration and road user charges
+      luxury car.                                               Electric vehicle owners in some Australian states and
+This means that where an electric vehicle is second hand,       territories pay a road user charge, based on kilometres
+you need to look at the sale price of the electric vehicle      travelled. This charge is imposed as part of the car
+every time it has been sold to see if any LCT was               registration process. Registration and road user charges
+payable.                                                        are car expenses and are exempt from FBT.
+
+
+See also:                                                       Insurance
+•     Luxury car tax                                            Insurance costs of the electric vehicle form part of the car
+                                                                expenses and are exempt from FBT.
+
+No sale history
+                                                                Repairs or maintenance
+If you do not have the sale history of the electric vehicle,
+including the dates it was first bought and sold, you will      Expenses relating to repairs or maintenance of the
+need to determine if LCT would have been payable if the         electric vehicle are exempt, as long as the expenses are
+electric vehicle had been acquired at that time. You can        not capital expenses. A capital expense is money spent
+do this by using other sources, such as:                        to purchase or substantially improve assets – for
+                                                                example, adding new features or upgrading a car.
+•     an internet search
+                                                                Electric vehicle batteries are expected to last a long time
+•     a car report                                              before replacement is required. It is anticipated that over
+•     an independent valuation.                                 that time, there will be rapid technological advances
+                                                                regarding battery capability.
+                                                                Where an enhancement arises from the use of more
+Example 3 – no sale records                                     modern materials or component parts (such as new
+                                                                battery technology available in the future), a replacement
+On 1 April 2025, ANW purchases a second-hand electric
+                                                                battery may still be a repair where it adds in only a minor
+car in a private sale for $65,000. There is no history of the
+                                                                and incidental way to the overall efficiency of function of
+car available, other than the fact the previous owner
+                                                                the vehicle and is a modern-day equivalent of the
+purchased it second hand for $70,000 on 1 July 2024.
+                                                                previous battery.
+ANW searches the vehicle identification number of the
+                                                                Where a replacement battery is a capital expense, the
+car and discovers it was manufactured in August 2022.
+                                                                battery will form part of the cost price of the electric
+ANW also searches the make and model of the car to
+                                                                vehicle when working out the taxable value of the car
+determine its recommended retail price in 2022.
+                                                                benefit for the FBT year in which it is installed and future
+ANW determines the recommended retail price was over            years.
+the LCT threshold and LCT would have been payable on
+the car when it was first purchased. ANW is unable to
+                                                               Provision of an electric vehicle charging station at an
+Example 4 – replacement battery is a car expense
+                                                               employee’s home
+                                                               While using electricity to charge an electric vehicle is a
+C Co has an electric car which is used by employees for
+                                                               car expense, the purchase of an electric vehicle charging
+their private use. During servicing of the vehicle, C Co is
+                                                               station is not a car expense. If you give your employee an
+told they need to replace the vehicle’s electric battery.
+                                                               electric vehicle charging station, this is a property fringe
+The replacement battery, the modern-day equivalent of          benefit. If you reimburse them for the cost of purchasing
+the previous battery, has similar power, energy storage        and installing a charging station, this is an expense
+and lifecycle.                                                 payment fringe benefit. That fringe benefit will be subject
+                                                               to FBT.
+The replacement battery is a repair and therefore a car
+expense that is exempt from FBT.                               Where home charging infrastructure is ‘rolled up’ in a
+                                                               lease arrangement, the cost of the charging station would
+                                                               need to be separately identified to ensure concessional
+Example 5 – replacement battery is not a car expense           FBT treatment is not afforded to a benefit which is not a
+                                                               car benefit.
+If C Co decided to upgrade their electric vehicle battery
+and purchased a replacement battery which had                  See also:
+significantly more power and energy storage and a longer
+                                                               •     Fringe benefits tax – a guide for employers:
+lifecycle, it would not be a car expense as it is an
+improvement rather than a repair. The battery will form              Chapter 9 – Expense payment fringe benefits
+part of the cost price of the car when working out the         •     Fringe benefits tax – a guide for employers:
+taxable value of the car benefits in the FBT year when it            Chapter 17 – Property fringe benefits
+was installed and subsequent FBT years.
+
+                                                               Provision of an electric vehicle charging station on
+                                                               business premises:
+Fuel                                                           If you install an electric vehicle charging station on your
+Fuel, including electricity to charge and run the electric     business premises, it will be a capital asset of your
+vehicle, qualifies for the car expenses exemption where        business. Electricity provided to your employees to
+the electric vehicle being charged is provided as a car        charge an electric vehicle that is provided as a car benefit
+benefit. This includes electricity obtained by charging at:    is a car expense (fuel) and would be exempt from FBT.
+
+•      commercial charging stations, or
+•      the employer’s premises.
+                                                               Other accessories for the electric vehicle (including
+                                                               charging cords)
+                                                               Any non-business accessories added after you or your
+Items that are not car expenses                                associate bought the electric vehicle increases the base
+                                                               value of the car in the year they were added and for
+Global Positioning System subscription                         subsequent years. There is no change to the base value
+A periodic Global Positioning System subscription is not a     of the car if the accessory that is added to the car is a
+car running expense and is therefore not exempt from           business accessory.
+FBT.                                                           Non-business accessories are fitted accessories, which
+                                                               are optional items that are not required to meet the needs
+                                                               of the business. Non-business accessories do not include
+Car parking                                                    standard accessories or features.
+Car parking expenses incurred when charging an electric        An accessory is fitted if it is secured, welded, wired into or
+vehicle at a commercial charging facility are a separate       otherwise permanently fixed to the electric vehicle. An
+benefit to the electricity (fuel) and are therefore not car    accessory may also be considered fitted to the electric
+expenses and not exempt from FBT.                              vehicle if the accessory is integral to the operation of the
+Normal car parking fringe benefits rules apply where you       electric vehicle and ordinarily accepted to stay
+provide car parking to your employees.                         permanently in the electric vehicle (for example, the spare
+                                                               tyre jack).
+                                                               An example of a business accessory is a GPS fitted in a
+Fringe benefits tax treatment of other                         salesperson’s car. Examples of non-business accessories
+                                                               include alloy wheels, rear spoilers, seat covers, paint
+electric vehicle items                                         protection, fabric protection, rust protection, window
+Other common electric vehicle items include:                   tinting and a personalised licence plate.
+•      electric vehicle charging stations
+•      other accessories for the electric vehicle (including
+       charging cords).
+                                                                calculation of your FBT liability for the year. It also does
+                                                                not impact and is not included in:
+Example 6 – electric charging cord is a non-business
+accessory                                                       •     for certain non-profit employers – the $17,000 or
+                                                                      $30,000 exemption cap
+Employer Co’s electric vehicle came with the standard
+charging cord attached. After purchasing the electric           •     for rebatable employers – the $30,000 rebate cap.
+vehicle, Employer Co decides that it would like to have an
+upgraded charging cable so that charging is faster.
+                                                                Pooled or shared cars
+Employer Co pays for the upgraded charging cable,
+which is fitted to the electric vehicle.                        Where an electric vehicle meets the definition of a pooled
+                                                                or shared car, the benefit is excluded for reportable fringe
+The upgraded charging cable would be a non-business
+                                                                benefit purposes.
+accessory as it is fitted to the electric vehicle and is an
+optional item that is not required to meet business needs.
+                                                                Taxable value of car benefits
+Example 7 – electric charging cord is neither a                 To calculate the taxable value of the car benefit, you must
+non-business accessory or a business accessory                  use either the:
+Employer Co purchases a charging cord for an                    •     statutory formula method (based on the car’s cost
+employee’s home charging station. The cord is attached                price)
+to the home charging station and plugs in to the electric
+vehicle. It is not fitted to and does not travel with the       •     operating cost method (based on the costs of
+electric vehicle. The cord is neither a non-business                  operating the car).
+accessory or a business accessory for FBT purposes and          Each method has special requirements and particular
+does not form part of the cost price of the electric vehicle.   record-keeping rules. You can choose whichever method
+The benefit will be a property or expense payment               gives you the lowest taxable value, regardless of which
+benefit, similar to the provision of a home charging            method you used in a previous year.
+station.
+                                                                Any fuel costs, such as electricity, that the employee pays
+                                                                for are deducted from the taxable value calculation, as
+                                                                they are a recipient contribution. Recipient contributions
+                                                                can also include paying for items for the electric vehicle
+Non-exempt electric vehicle benefits                            such as registration, car servicing and replacement tyres.
+
+If the benefit arising from the provision of the electric
+vehicle is not exempt, it will be a taxable fringe benefit.     Effect of having a reportable fringe benefits amount
+You will be required to work out the taxable value of the
+benefit and include it in working out your FBT liability        The reportable fringe benefits amount is not included in
+                                                                an employee’s assessable income, and it does not affect
+                                                                their standard Medicare payable.
+Reportable fringe benefits                                      However, it is included in the income tests and thresholds
+                                                                for family assistance, child support assessments and
+If the combined taxable value of certain benefits and
+                                                                some other government benefits and obligations.
+fringe benefits you provided to an employee exceed
+$2,000 in an FBT year, you must report the grossed-up
+value of those benefits on the employee’s payment
+summary or through Single Touch Payroll for the                 Example 8 – reportable fringe benefit impacts
+corresponding income year. This includes the value of car       Raj is allowed to use an electric vehicle for private
+benefits arising from the private use of electric vehicles.     purposes throughout the FBT year ending
+This does not include the value of any associated car           31 March 2024. The use of the car meets the
+expense benefits (such as registration and road user            requirements of the FBT electric vehicle exemption,
+charges, insurance, repairs and maintenance or fuel).           therefore Raj’s employer will not pay FBT on the car
+This means that if the private use of the electric vehicle is   benefit. However, for reportable fringe benefits amount
+exempt from FBT, you still need to work out the taxable         purposes, Raj’s employer works out (using the statutory
+value of the car benefits as if they had been fringe            formula method) that the value of the car benefits
+benefits. This is because the amount is included in the         received is $10,000. This is grossed-up using the type 1
+reportable fringe benefit amount of the employee for            gross-up rate to $18,868 and reported through Single
+reporting purposes.                                             Touch Payroll.
+
+The inclusion of the taxable value in the reportable fringe     Raj has a higher education loan program (HELP) loan
+benefit amount for an employee does not impact the              and also has to pay the Medicare levy, but he is not
+                                                                subject to the Medicare levy surcharge as he has private
+                                                                health insurance.
+                                                                Raj reports a taxable income of $160,000 in his 2023–24
+                                                                tax return. He also includes a reportable fringe benefits
+                                                                total, at the appropriate label, of $18,868.
+The reportable fringe benefit of $18,868 is added to the
+$160,000 so that Raj’s repayment income for HELP
+purposes is $178,868. Raj’s repayment rate for 2023–24
+income year will be 10%.
+
+
+
+
+See also:
+•           Reportable fringe benefits for employees
+•           Fringe benefits tax – a guide for employers;
+            Chapter 5 – Reportable fringe benefits
+
+
+
+More information
+For more information, you may wish to contact your
+registered tax professional.
+You can see also:
+
+           Fringe benefits tax
+           Fringe benefits tax – a guide for employers
+
+
+Siebel reference: 1-WQGMRKG
+
+
+
+
+    Our commitment to you
+                                                                                                   If you feel that this publication does not fully cover your circumstances, or you are unsure
+    We are committed to providing you with accurate, consistent and clear information to           how it applies to you, you can seek further assistance from us.
+    help you understand your rights and entitlements and meet your obligations.
+                                                                                                   This publication was current at February 2023.
+    If you follow our information in this publication and it turns out to be incorrect, or it is
+                                                                                                   © Australian Taxation Office for the Commonwealthof Australia.
+    misleading and you make a mistake as a result, we must still apply the law correctly. If
+    that means you owe us money, we must ask you to pay it but we will not charge you a            You are free to copy, adapt, modify, transmit and distribute this material as you wish (but
+    penalty. Also, if you acted reasonably and in good faith, we will not charge you               not in any way that suggests the ATO or the Commonwealth endorses you or any of
+    interest.                                                                                      your services or products).
+                                                                                                   Published by:
+    If you make an honest mistake trying to follow our information in this publication and         Australian Taxation Office
+    you owe us money as a result, we will not charge you a penalty. However, we will ask           Canberra
+    you to pay the money, and we may also charge you interest. If correcting the mistake
+    means we owe you money, we will pay it to you. We will also pay you any interest you
+    are entitled to.
+
