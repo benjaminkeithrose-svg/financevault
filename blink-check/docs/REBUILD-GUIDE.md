@@ -320,6 +320,29 @@ A "Retired" switch on the first page turns Blink Check into a retirement tool. T
 - **New year fields:** `age`, `agePension`, `superDraw`, `rentPaid`, `homeCosts`, `homeValue`, `homeEquity`, `spendable`, `moneyIn`, `moneyOut` and `leftOver`.
 - **New summary fields:** `runsOutAge` (null = lasts past the end), `retired` and `startAge`.
 
+**A retiree's plan is a short form, not a list of steps** (`scenario.retire`, turned into steps by `retiredSteps()`):
+
+```js
+{ home: true|false, price, year, payFrom: "SAVINGS"|"SUPER",
+  leftover: "BANK"|"SUPER"|"SHARES"|"OFFSET", keep, loan, downsizer,
+  draw: "MIN"|"EARNINGS"|"SET", drawAmount }
+```
+
+The four questions are:
+1. **Buy a home?** Price, year, and whether to pay from savings first or super first.
+2. **Money left over in the bank,** above the `keep` buffer (default $50,000). It's moved in the purchase year (year 1 if no home) by the `MOVE` step:
+   - into super, within the contribution limits: up to $360,000 each under 75 (bring-forward), plus up to $300,000 each as a downsizer contribution if ticked. Anything over stays in the bank, with a note;
+   - into shares;
+   - into the offset of a home loan of `loan` dollars taken out at purchase. The offset is filled only up to the loan balance, and a retiree's loan is never paid off automatically from its offset.
+3. **Income from super:** the age minimum, its expected earnings (`pensionReturn`%, never below the minimum), or a set amount.
+4. **Notes.**
+
+**Other retirement details:**
+- **No change, for a retiree:** stay as you are, with super paying the minimum and savings in the bank.
+- **Home-sale money:** `saleExempt` (dollars) and `saleExemptMonths` (default 24). Money from selling a home that's kept to buy another is left out of the Age Pension assets test, and deemed only at the lower rate, while renting and within those months. This is why a recent seller can get a high pension that drops when the window ends, and the card notes that drop.
+- **Credit card or loan repayments a month** (`otherRepayMonthly`) can be entered for retirees too.
+- **The built-in retiree example is made up** ("Pat"): 72, $500k super, $900k from a home sale, $2,500 a month living costs, $1,000 a week rent. Never ship a real person's figures as the example. Give them a saved copy of the file instead.
+
 **The verdict (`retiredVerdict`):**
 - **"Money doesn't last" (STOP, red flag):** money runs out at or before `lastUntil` (90/95/100, default 95). The flag gives the figures for that year, and notes the home's value as a fallback, not a plan.
 - **"Lasts to 95, only just" (MAYBE):** it lasts past the target, but not to 100.

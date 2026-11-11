@@ -215,3 +215,53 @@ test("a home that's too dear raises a red flag, and the highest safe price is be
   const ok = E.runAll(retiree([{ id: "h", type: "HOME", year: 1, price: buy.maxHomePrice }], { assumptions: { pensionReturn: 4, resGrowth: 3 } })).runs[1];
   assert.notEqual(ok.verdict.level, "STOP");
 });
+
+// --- The retiree's simple plan form -----------------------------------------------
+const mum = (retire, extra = {}) => ({
+  stage: "RETIRED",
+  people: [{ name: "Mum", age: extra.age || 72, salary: 0, super: 750000 }],
+  livingMonthly: 4000,
+  cash: 1100000,
+  rentWeekly: 550,
+  home: { has: false },
+  rentals: [],
+  assumptions: {},
+  scenarios: [
+    { id: "base", name: "No change", baseline: true, steps: [] },
+    { id: "s", name: "Plan", retire },
+  ],
+});
+
+test("retiree form: buy a home, the rest of the savings goes into super (within the limits)", () => {
+  const r = E.runAll(mum({ home: true, price: 700000, year: 1, leftover: "SUPER", keep: 50000, draw: "MIN" })).runs[1];
+  assert.equal(r.chains[0].kind, "HOME");
+  assert.equal(r.chains[0].fromSuper, 0, "savings pay for it first");
+  assert.ok(r.years[0].events.some((e) => /into super/.test(e)));
+  assert.ok(r.years[0].superTotal > 750000 + 300000, "the leftover went into super");
+  assert.ok(r.years[0].cash < 120000, "about the buffer is left in the bank");
+});
+
+test("retiree form: at 75 and over, super can't take the leftover unless it's a downsizer contribution", () => {
+  const no = E.runAll(mum({ home: true, price: 700000, year: 1, leftover: "SUPER", keep: 50000 }, { age: 78 })).runs[1];
+  assert.ok(no.flags.some((f) => /contribution limits/.test(f.text)));
+  const yes = E.runAll(mum({ home: true, price: 700000, year: 1, leftover: "SUPER", keep: 50000, downsizer: true }, { age: 78 })).runs[1];
+  assert.ok(yes.years[0].superTotal > no.years[0].superTotal + 250000);
+});
+
+test("retiree form: shares, offset with a small home loan, and super income choices", () => {
+  const shares = E.runAll(mum({ home: true, price: 700000, year: 1, leftover: "SHARES", keep: 50000 })).runs[1];
+  assert.ok(shares.years[0].shares > 250000);
+  const off = E.runAll(mum({ home: true, price: 700000, year: 1, leftover: "OFFSET", loan: 200000, keep: 50000 })).runs[1];
+  assert.equal(off.chains[0].mainLoan, 200000);
+  assert.ok(off.years[0].offsets > 100000, "savings sit in the home loan offset");
+  const min = E.runAll(mum({ home: false, leftover: "BANK", draw: "MIN" })).runs[1];
+  const earn = E.runAll(mum({ home: false, leftover: "BANK", draw: "EARNINGS" })).runs[1];
+  assert.ok(earn.years[0].superDraw > min.years[0].superDraw, "taking the earnings is more than the minimum at 72");
+  const set = E.runAll(mum({ home: false, leftover: "BANK", draw: "SET", drawAmount: 80000 })).runs[1];
+  assert.ok(Math.abs(set.years[0].superDraw - 80000) < 1000);
+});
+
+test("retiree form: the most to spend on the home is found for the form too", () => {
+  const r = E.runAll(mum({ home: true, price: 900000, year: 1, leftover: "SUPER", keep: 50000 })).runs[1];
+  assert.ok(typeof r.maxHomePrice === "number" && r.maxHomePrice > 0);
+});

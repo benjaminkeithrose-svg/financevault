@@ -586,6 +586,29 @@ A "Retired" switch on the first page turns Blink Check into a retirement tool. T
 - **New year fields:** `age`, `agePension`, `superDraw`, `rentPaid`, `homeCosts`, `homeValue`, `homeEquity`, `spendable`, `moneyIn`, `moneyOut` and `leftOver`.
 - **New summary fields:** `runsOutAge` (null = lasts past the end), `retired` and `startAge`.
 
+**A retiree's plan is a short form, not a list of steps** (`scenario.retire`, turned into steps by `retiredSteps()`):
+
+```js
+{ home: true|false, price, year, payFrom: "SAVINGS"|"SUPER",
+  leftover: "BANK"|"SUPER"|"SHARES"|"OFFSET", keep, loan, downsizer,
+  draw: "MIN"|"EARNINGS"|"SET", drawAmount }
+```
+
+The four questions are:
+1. **Buy a home?** Price, year, and whether to pay from savings first or super first.
+2. **Money left over in the bank,** above the `keep` buffer (default $50,000). It's moved in the purchase year (year 1 if no home) by the `MOVE` step:
+   - into super, within the contribution limits: up to $360,000 each under 75 (bring-forward), plus up to $300,000 each as a downsizer contribution if ticked. Anything over stays in the bank, with a note;
+   - into shares;
+   - into the offset of a home loan of `loan` dollars taken out at purchase. The offset is filled only up to the loan balance, and a retiree's loan is never paid off automatically from its offset.
+3. **Income from super:** the age minimum, its expected earnings (`pensionReturn`%, never below the minimum), or a set amount.
+4. **Notes.**
+
+**Other retirement details:**
+- **No change, for a retiree:** stay as you are, with super paying the minimum and savings in the bank.
+- **Home-sale money:** `saleExempt` (dollars) and `saleExemptMonths` (default 24). Money from selling a home that's kept to buy another is left out of the Age Pension assets test, and deemed only at the lower rate, while renting and within those months. This is why a recent seller can get a high pension that drops when the window ends, and the card notes that drop.
+- **Credit card or loan repayments a month** (`otherRepayMonthly`) can be entered for retirees too.
+- **The built-in retiree example is made up** ("Pat"): 72, $500k super, $900k from a home sale, $2,500 a month living costs, $1,000 a week rent. Never ship a real person's figures as the example. Give them a saved copy of the file instead.
+
 **The verdict (`retiredVerdict`):**
 - **"Money doesn't last" (STOP, red flag):** money runs out at or before `lastUntil` (90/95/100, default 95). The flag gives the figures for that year, and notes the home's value as a fallback, not a plan.
 - **"Lasts to 95, only just" (MAYBE):** it lasts past the target, but not to 100.
@@ -1107,7 +1130,8 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const threshold = (o.homeowner ? P.assetsHomeowner : P.assetsNonHomeowner)[k] * ix;
     const byAssets = max - (Math.max(0, o.assets - threshold) / 1000) * P.assetsTaper;
     const deemTop = P.deemThreshold[k] * ix;
-    const deemed = Math.min(o.financial, deemTop) * P.deemLow + Math.max(0, o.financial - deemTop) * P.deemHigh;
+    // Home-sale money set aside for a new home is deemed at the lower rate only.
+    const deemed = Math.min(o.financial, deemTop) * P.deemLow + Math.max(0, o.financial - deemTop) * P.deemHigh + (o.lowDeemed || 0) * P.deemLow;
     const byIncome = max - Math.max(0, deemed + (o.otherIncome || 0) - P.incomeFree[k] * ix) * P.incomeTaper;
     const rate = Math.max(0, Math.min(max, byAssets, byIncome));
     return o.couple ? (rate * Math.min(2, o.eligible)) / 2 : rate;
@@ -1257,9 +1281,24 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
   const round = (n) => Math.round(n);
   const positive = (n) => Math.max(0, n);
 
+  /**
+   * A retiree's plan is a short form rather than a list of steps:
+   * { home, price, year, payFrom: "SAVINGS"|"SUPER", leftover: "BANK"|"SUPER"|"SHARES"|"OFFSET", loan, keep, downsizer, draw: "MIN"|"EARNINGS"|"SET", drawAmount }.
+   * This turns it into the steps the simulation runs.
+   */
+  function retiredSteps(R) {
+    const out = [];
+    const year = R.home ? Math.max(1, +R.year || 1) : 1;
+    if (R.home && +R.price > 0) out.push({ id: "home-buy", type: "HOME", year, price: +R.price, name: R.homeName || "Home", keep: R.keep, payFrom: R.payFrom, loan: R.leftover === "OFFSET" ? +R.loan || 0 : 0 });
+    if (R.leftover && R.leftover !== "BANK") out.push({ id: "move", type: "MOVE", year, to: R.leftover, keep: R.keep, downsizer: !!R.downsizer });
+    return out;
+  }
+
   function simulate(plan, scenario) {
     const a = Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {});
     const retired = plan.stage === "RETIRED";
+    const RP = retired && scenario.retire ? scenario.retire : null;
+    const planSteps = RP ? retiredSteps(RP) : scenario.steps || [];
     const ages0 = (plan.people || []).filter((p) => p && p.name !== undefined).map((p) => +p.age || (retired ? 67 : 40));
     const youngest0 = ages0.length ? Math.min(...ages0) : retired ? 67 : 40;
     // Retired: run until the younger person is 100 (10–40 years), to see how long the money lasts.
@@ -1693,16 +1732,31 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       const other = a.buyCostsRes;
       const total = price + duty + other;
       const name = s.name || "New home";
-      props.push({ id: s.id, name, kind: "RES", home: true, bought: true, value: price, costBase: total, owners: evenOwners, growth: s.growth ?? a.resGrowth, landPct: a.landPctRes, boughtMonth: month });
+      // The new home takes the id "home", so its loan is treated as the home loan everywhere.
+      props.push({ id: "home", name, kind: "RES", home: true, bought: true, value: price, costBase: total, owners: evenOwners, growth: s.growth ?? a.resGrowth, landPct: a.landPctRes, boughtMonth: month });
       renting = false;
       const keep = s.keep !== undefined && s.keep !== null && s.keep !== "" ? +s.keep : reserve();
       const chain = { id: s.id, year, name, kind: "HOME", price, duty, other, total, mainLoan: 0, equity: [], cash: 0, fromSuper: 0, short: 0 };
       let need = total;
+      if (+s.loan > 0) {
+        // Part of the price borrowed against the new home (savings can then sit in its offset).
+        const amount = Math.min(+s.loan, price * (a.resLvr / 100));
+        const L = addLoan({ name: "Home loan", prop: "home", forProp: "home", balance: round(amount), rateToday: a.homeRate, type: "PI", termLeft: 25 * 12 });
+        repriceLoan(L);
+        chain.mainLoan = round(amount);
+        need -= amount;
+      }
+      const fromSuperFirst = retired && s.payFrom === "SUPER";
+      if (fromSuperFirst) {
+        const t = takeFromSuper(need);
+        chain.fromSuper = round(t);
+        need -= t;
+      }
       const first = Math.min(need, positive(cash + offsetsTotal() - keep));
       if (first > 0) draw(first);
       need -= first;
       chain.cash += first;
-      if (need > 0 && retired) {
+      if (need > 0 && retired && !fromSuperFirst) {
         const t = takeFromSuper(need);
         chain.fromSuper = round(t);
         need -= t;
@@ -1720,10 +1774,49 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       yr.events.push(`Buy ${name.toLowerCase()}`);
     }
 
+    /** Retiree: move savings above the cash to keep into super, shares or the home loan's offset. */
+    function stepMove(s) {
+      const keep = s.keep !== undefined && s.keep !== null && s.keep !== "" ? +s.keep : reserve();
+      const spare = positive(cash + offsetsTotal() - keep);
+      if (s.to === "OFFSET") {
+        const L = loans.find((x) => x.prop === "home" && x.forProp === "home" && active(x));
+        // Up to the loan balance: money beyond that would earn nothing in the offset, so it stays in the bank.
+        const amount = Math.min(positive(cash - keep), L ? L.balance : 0);
+        if (!L || !(amount > 0)) return;
+        cash -= amount;
+        L.offset += amount;
+        yr.events.push(`${money(amount)} into the home loan offset`);
+        return;
+      }
+      if (!(spare > 0)) return;
+      if (s.to === "SHARES") {
+        draw(spare);
+        shares.value += spare;
+        shares.costBase += spare;
+        yr.events.push(`${money(spare)} into shares`);
+        return;
+      }
+      if (s.to === "SUPER") {
+        // Contribution limits: non-concessional up to $360,000 each under 75 (three years brought forward);
+        // a downsizer contribution of up to $300,000 each at any age from 55, within 90 days of selling a home.
+        const room = people.map((p, i) => (ageOf(i) < 75 ? 360000 : 0) + (s.downsizer ? 300000 : 0));
+        const totalRoom = room.reduce((x, r) => x + r, 0);
+        const amount = Math.min(spare, totalRoom);
+        if (amount > 0) {
+          draw(amount);
+          room.forEach((r, i) => (superBal[i] += (amount * r) / totalRoom));
+          yr.events.push(`${money(amount)} into super`);
+        }
+        if (amount < spare - 1)
+          flags.push({ year, text: `Only ${money(amount)} of the ${money(spare)} could go into super (contribution limits${totalRoom === 0 ? " — from 75, new contributions generally aren't allowed except a downsizer contribution" : ""}); the rest stays in the bank.` });
+      }
+    }
+
     function applySteps(salaries) {
-      for (const s of (scenario.steps || []).filter((x) => +x.year === year)) {
+      for (const s of planSteps.filter((x) => +x.year === year)) {
         if (s.type === "BUY" || s.type === "SMSF") stepBuy(s, salaries);
         else if (s.type === "HOME") stepHome(s);
+        else if (s.type === "MOVE") stepMove(s);
         else if (s.type === "SELL") stepSell(s);
         else if (s.type === "SHARES") stepShares(s);
         else if (s.type === "OFFSET") {
@@ -1769,21 +1862,31 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         if (year > 1) rentYear *= 1 + a.resRentGrowth / 100;
         if (retired) {
           // Super pension: at least the minimum for each person's age, or the set amount if that's more.
-          const set = plan.superDrawMode === "SET" ? +plan.superDrawYearly || 0 : 0;
+          // How much super pays: the minimum for each age, its expected earnings, or a set amount — never less than the minimum.
+          const mode = (RP && RP.draw) || plan.superDrawMode || "MIN";
+          const set = mode === "SET" ? +((RP ? RP.drawAmount : plan.superDrawYearly) || 0) : 0;
           const t = superTotalNow();
-          drawYear = superBal.map((b, i) => Math.min(b, Math.max(b * minDrawRate(ageOf(i)), t > 0 ? (set * b) / t : 0)));
+          drawYear = superBal.map((b, i) => {
+            const min = b * minDrawRate(ageOf(i));
+            const want = mode === "EARNINGS" ? (b * a.pensionReturn) / 100 : mode === "SET" ? (t > 0 ? (set * b) / t : 0) : 0;
+            return Math.min(b, Math.max(min, want));
+          });
           // Age Pension, from this year's assets and income.
           const T = totalsNow();
           const investProps = liveProps().filter((p) => !p.home && !p.smsf);
           const assets = T.cash + T.offsets + T.superTotal + T.shares + investProps.reduce((x, p) => x + p.value, 0) + a.personalAssets;
-          const financial = T.cash + T.offsets + T.superTotal + T.shares;
+          let financial = T.cash + T.offsets + T.superTotal + T.shares;
+          // Money from selling a home, kept to buy another, is left out of the assets test for up to 24 months (while renting).
+          const exempt = renting && (year - 1) * 12 < (+plan.saleExemptMonths || 0) ? Math.min(+plan.saleExempt || 0, Math.max(0, T.cash + T.offsets)) : 0;
+          financial -= exempt;
           const netRent = investProps.reduce((x, p) => x + (p.rentNow || 0) * (1 - (p.costPct || 0) / 100), 0);
           pensionYear = agePension({
             couple,
             eligible: people.filter((p, i) => ageOf(i) >= AGE_PENSION.pensionAge).length,
             homeowner: !renting && liveProps().some((p) => p.home),
-            assets: Math.max(0, assets),
+            assets: Math.max(0, assets - exempt),
             financial: Math.max(0, financial),
+            lowDeemed: exempt,
             otherIncome: salaries.reduce((x, v) => x + v, 0) + netRent,
             index: Math.pow(1 + a.cpi / 100, year - 1),
           });
@@ -1896,7 +1999,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         } else parts[L.forProp] = (parts[L.forProp] || 0) - pay;
         // Covered by its offset: pay it off with the offset only if a cash reserve is left; otherwise keep
         // the money in the offset (no interest is charged) so it's still there when it's needed.
-        if (L.balance - L.offset <= 0.5 && !(L.type === "IO" && L.ioLeft > 0) && cash + offsetsTotal() - L.balance >= reserve()) clearLoan(L, "offset");
+        if (L.balance - L.offset <= 0.5 && !(L.type === "IO" && L.ioLeft > 0) && !retired && cash + offsetsTotal() - L.balance >= reserve()) clearLoan(L, "offset");
         else if (L.balance <= 0.5) clearLoan(L, "repaid");
       }
       // Loans for a property that's been sold, still running: the household pays them.
@@ -2132,6 +2235,17 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     const apBase = base.years[0].agePension;
     if (!r.baseline && Math.abs(ap1 - apBase) > 500) notes.push(`Age Pension in year 1: about ${money(ap1)} a year, compared with ${money(apBase)} with no change.`);
     else if (ap1 > 0) notes.push(`Age Pension in year 1: about ${money(ap1)} a year.`);
+    // A big drop in the Age Pension (for example when home-sale money starts to count after 24 months).
+    for (let k = 1; k < r.years.length; k++) {
+      const prev = r.years[k - 1].agePension;
+      const now = r.years[k].agePension;
+      if (prev > 5000 && now < prev * 0.5) {
+        notes.push(
+          `The Age Pension drops from about ${money(prev)} to ${money(now)} a year in year ${k + 1}${plan.saleExempt && r.years[k].rentPaid > 0 ? ` — the home-sale money starts to count in the assets test once ${plan.saleExemptMonths || 24} months have passed` : ""}.`
+        );
+        break;
+      }
+    }
     for (const f of r.flags) notes.push(f.text);
     if (r.baseline) return { level: "BASE", label: "What every plan is measured against", stops, warnings, notes: ["Nothing new is bought; money stays in savings and super.", ...notes] };
     const gain = s.nwEnd - base.summary.nwEnd;
@@ -2221,11 +2335,14 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
 
   /** Retired: the highest price for a plan's home purchase that still leaves money at the target age (to $5,000), or null. */
   function maxHomePrice(plan, scenario) {
-    const step = (scenario.steps || []).find((x) => x.type === "HOME");
+    const R = plan.stage === "RETIRED" && scenario.retire;
+    const step = R ? (R.home && +R.price > 0 ? R : null) : (scenario.steps || []).find((x) => x.type === "HOME");
     if (!step) return undefined;
     const until = +Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {}).lastUntil || 95;
     const lasts = (price) => {
-      const sc = Object.assign({}, scenario, { steps: scenario.steps.map((x) => (x === step ? Object.assign({}, x, { price }) : x)) });
+      const sc = R
+        ? Object.assign({}, scenario, { retire: Object.assign({}, R, { price }) })
+        : Object.assign({}, scenario, { steps: scenario.steps.map((x) => (x === step ? Object.assign({}, x, { price }) : x)) });
       const r = simulate(plan, sc);
       return (r.summary.runsOutAge === null || r.summary.runsOutAge > until) && !r.chains.some((c) => c.short > 0);
     };
@@ -2312,7 +2429,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     return seen ? total + current : null;
   }
 
-  const api = { agePension, minDrawRate, sapto, maxHomePrice, AGE_PENSION, writeOff, simulate, runAll, rateShifts, individualTax, nswDuty, nswLandTax, pmt, monthsToClear, parseAmount, DEFAULT_ASSUMPTIONS, CASH_RATE };
+  const api = { retiredSteps, agePension, minDrawRate, sapto, maxHomePrice, AGE_PENSION, writeOff, simulate, runAll, rateShifts, individualTax, nswDuty, nswLandTax, pmt, monthsToClear, parseAmount, DEFAULT_ASSUMPTIONS, CASH_RATE };
   root.BlinkEngine = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);
@@ -2386,6 +2503,8 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     homeEquityAccess: ["Home Equity Access Scheme", "A government loan for people of Age Pension age, secured on their home, paid as a fortnightly income or small lump sums. It's repaid when the home is sold. A fallback if money runs short — not something to plan on."],
     lastUntil: ["How long the money must last", "Blink Check runs to age 100 and flags a plan in red if savings and super run out before the age you pick. About 1 in 4 women aged 65 today will live past 95."],
     inflation: ["Inflation (cost of living)", "How fast prices rise each year. Blink Check raises your living costs by this every year, and your pay too unless you set your own pay rises; Age Pension rates and thresholds rise with it as well. Australia's long-run average is about 2.5–3% (the Reserve Bank aims for 2–3%); 2.75% is the starting figure. Try 3.5% to see a plan with dearer living."],
+    saleExempt: ["Home sale money and the Age Pension", "When you sell your home and plan to buy another, the money set aside for the new home is left out of the Age Pension assets test for up to 24 months (and only lightly deemed for the income test). That's why the pension can be high just after a sale — and why it can drop sharply if you keep renting past 24 months. Check the details with Services Australia."],
+    downsizer: ["Downsizer contribution", "From 55, you can put up to $300,000 (each, for a couple) into super from the sale of a home you've owned for 10 years or more, at any age and outside the usual limits — but it must be made within 90 days of settlement. Money in super counts for the Age Pension."],
     living: ["Living costs", "What the household spends each month on everything except loan repayments — food, bills, school, cars, holidays. The tool works out the loan repayments itself."],
   };
 
@@ -2439,34 +2558,39 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
   }
 
   // A made-up retiree: sold her home, money in super and savings, renting, thinking about buying.
+  // A made-up retiree: sold her home, money in super and the bank, renting, thinking about buying again.
   function exampleRetired() {
+    const form = (o) => Object.assign({ home: true, price: 900000, year: 1, payFrom: "SAVINGS", leftover: "SUPER", keep: 50000, loan: 0, downsizer: false, draw: "MIN", drawAmount: 0 }, o);
     return {
       example: true,
       stage: "RETIRED",
-      people: [{ id: "p1", name: "Pat", age: 72, salary: 0, super: 750000 }],
-      livingMonthly: 4000,
+      people: [{ id: "p1", name: "Pat", age: 72, salary: 0, super: 500000 }],
+      livingMonthly: 2500,
       cardLimits: 0,
       otherRepayMonthly: 0,
       otherRepayYears: 0,
-      rentWeekly: 550,
-      superDrawMode: "MIN",
-      superDrawYearly: 0,
+      rentWeekly: 1000,
+      saleExempt: 900000,
+      saleExemptMonths: 24,
       goal: "GROWTH",
       risk: "CAREFUL",
-      cash: 450000,
+      cash: 900000,
       home: { has: false, value: 0, loan: { balance: 0, rate: D.homeRate, type: "PI", ioYears: 0, yearsLeft: 25, offset: 0 } },
       rentals: [],
       shares: { value: 0, costBase: 0 },
       smsf: { has: false, open: false },
       assumptions: {},
-      notes: "Should I buy a home, and how much can I spend so the money lasts?",
+      notes: "Sold my home. Should I buy again, how much can I spend so the money lasts, and can I keep the Age Pension?",
       scenarios: [
-        { id: "base", name: "Keep renting", baseline: true, spare: "HOME_OFFSET", steps: [] },
-        { id: "s1", name: "Buy a $900k home", spare: "HOME_OFFSET", steps: [{ id: uid(), type: "HOME", year: 1, price: 900000, name: "Home" }] },
-        { id: "s2", name: "Buy a $650k unit", spare: "HOME_OFFSET", steps: [{ id: uid(), type: "HOME", year: 1, price: 650000, name: "Unit" }] },
+        { id: "base", name: "No change", baseline: true, spare: "HOME_OFFSET", steps: [] },
+        { id: "s1", name: "Buy a $900k home", spare: "HOME_OFFSET", steps: [], retire: form({ price: 900000 }) },
+        { id: "s2", name: "Buy a $700k unit, the rest into super", spare: "HOME_OFFSET", steps: [], retire: form({ price: 700000 }) },
+        { id: "s3", name: "Keep renting, take super's earnings", spare: "HOME_OFFSET", steps: [], retire: form({ home: false, price: 0, leftover: "BANK", draw: "EARNINGS" }) },
       ],
     };
   }
+
+  const newRetirePlan = () => ({ home: true, price: 700000, year: 1, payFrom: "SAVINGS", leftover: "BANK", keep: 50000, loan: 0, downsizer: false, draw: "MIN", drawAmount: 0 });
 
   function blank() {
     return {
@@ -2518,7 +2642,18 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     return example();
   }
 
-  let state = load();
+  // Retired plans use a short form (scenario.retire). Give any plan without one a form, from its home purchase step if it had one.
+  function ensureRetireForms(st) {
+    if (st.stage !== "RETIRED") return st;
+    for (const sc of st.scenarios || []) {
+      if (sc.baseline || sc.retire) continue;
+      const h = (sc.steps || []).find((x) => x.type === "HOME");
+      sc.retire = Object.assign(newRetirePlan(), h ? { home: true, price: h.price, year: h.year || 1, keep: h.keep ?? 50000 } : { home: false });
+    }
+    return st;
+  }
+
+  let state = ensureRetireForms(load());
   const ui = { fullMain: 1, fullCompare: { base: true }, fullShow: { nw: true, debt: true, income: true, cash: true }, atYear: 0, openHelp: {}, page: "you", plan: 1, metric: "nw", hidden: {}, chainPlan: 1, tablePlan: 1, confirm: null, panel: null, message: "" };
   let results = null;
 
@@ -2630,7 +2765,8 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     return `<div><div class="label-row"><label class="toggle" for="${id}"><input type="checkbox" id="${id}" data-path="${path}" data-kind="bool"${valueOf(path) ? " checked" : ""}> ${esc(label)}</label>${helpButton(help, id)}</div>${helpPop(help, id)}</div>`;
   }
   function chips(path, options, kind = "select") {
-    const v = valueOf(path);
+    const raw = valueOf(path);
+    const v = kind === "yesno" ? (raw ? "YES" : "NO") : raw;
     return `<div class="chips" role="group">${options
       .map(([val, text]) => `<button type="button" class="chip" data-chip="${path}" data-kind="${kind}" data-value="${esc(val)}" aria-pressed="${String(v) === String(val)}">${esc(text)}</button>`)
       .join("")}</div>`;
@@ -2705,7 +2841,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
           (p, i) => `<div class="grid">
             ${textField(`people.${i}.name`, "Name", { placeholder: i ? "Partner" : "You" })}
             ${numField(`people.${i}.age`, "Age now", { placeholder: "67" })}
-            ${moneyField(`people.${i}.super`, "Super", { hint: "Paid out as a pension (account-based). Tax-free from 60.", help: "superPension" })}
+            ${moneyField(`people.${i}.super`, "Super", { hint: `Paid out as a pension, tax-free from 60. At ${A("pensionReturn")}% it earns about ${money(((+p.super || 0) * A("pensionReturn")) / 100)} a year.`, help: "superPension" })}
             ${moneyField(`people.${i}.salary`, "Other income a year, before tax", { placeholder: "0", hint: "Part-time work, for example." })}
             ${i ? `<div class="field" style="align-self:end">${binButton("person-" + i, "Remove this person")}</div>` : ""}
           </div>${confirmBox("person-" + i, `Remove ${p.name || "this person"}?`, "remove-person")}`
@@ -2718,11 +2854,17 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         ${moneyField("livingMonthly", "Living costs a month", { hint: "Everything except rent, and the rates and upkeep of a home bought in a plan — those are added for you.", help: "living" })}
         ${inflationField()}
         ${state.home && state.home.has ? "" : moneyField("rentWeekly", "Rent a week now", { hint: "Stops when a plan buys a home." })}
-        ${moneyField("cash", "Savings in the bank")}
+        ${moneyField("cash", "Savings in the bank", { hint: `At ${A("savingsRate")}% interest that earns about ${money(((+state.cash || 0) * A("savingsRate")) / 100)} a year.` })}
+        ${moneyField("otherRepayMonthly", "Credit card or loan repayments a month", { placeholder: "0" })}
+        ${state.otherRepayMonthly ? numField("otherRepayYears", "Years left on those") : ""}
       </div>
-      <div class="field"><span class="label">Take from super each year</span>${chips("superDrawMode", [["MIN", "The minimum (4–14% by age)"], ["SET", "A set amount"]])}</div>
-      ${state.superDrawMode === "SET" ? `<div class="grid">${moneyField("superDrawYearly", "Amount a year (at least the minimum)", { help: "superPension" })}</div>` : ""}
-      <p class="small muted">The Age Pension is worked out for you each year from age 67 — the home doesn't count in the assets test.</p>
+      ${
+        state.home && state.home.has
+          ? ""
+          : `<div class="grid">${moneyField("saleExempt", "Money from selling a home, kept to buy another", { placeholder: "0", hint: "Left out of the Age Pension assets test for up to 24 months after the sale, while you rent.", help: "saleExempt" })}
+        ${state.saleExempt ? numField("saleExemptMonths", "Months of that left", { placeholder: "24" }) : ""}</div>`
+      }
+      <p class="small muted">The Age Pension is worked out for you each year from age 67 — the home doesn't count in the assets test. How much to take from super is chosen in each plan.</p>
     </div>
     <div class="card">
       <h3>What you're after</h3>
@@ -2821,8 +2963,12 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         </div>`;
       })
       .join("")}
-    <div class="row"><button type="button" class="btn secondary" data-act="add-rental" data-kind="RES">+ Add a rental property</button>
-      <button type="button" class="btn secondary" data-act="add-rental" data-kind="COM">+ Add a commercial property</button></div>
+    ${
+      retired()
+        ? `<div class="row"><button type="button" class="btn quiet" data-act="add-rental" data-kind="RES">+ Add a rental property you own</button></div>`
+        : `<div class="row"><button type="button" class="btn secondary" data-act="add-rental" data-kind="RES">+ Add a rental property</button>
+      <button type="button" class="btn secondary" data-act="add-rental" data-kind="COM">+ Add a commercial property</button></div>`
+    }
     <div class="card">
       <h3>${retired() ? "Shares" : "Savings, shares and super"}</h3>
       <div class="grid">
@@ -2914,6 +3060,56 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       ${confirmBox(key, "Remove this step?", "remove-step")}${body}</div>`;
   }
 
+  // A retiree's plan: four short questions instead of a list of steps.
+  function retirePlanCard(plan, idx) {
+    if (!plan.retire) plan.retire = newRetirePlan();
+    const R = plan.retire;
+    const b = `scenarios.${idx}.retire`;
+    const H = horizon();
+    const owns = state.home && state.home.has;
+    const age = youngestAge();
+    const leftover = [["BANK", "Keep it in the bank"], ["SUPER", "Put it into super"], ["SHARES", "Invest it in shares"]];
+    if (R.home) leftover.push(["OFFSET", "Keep it in an offset against a small home loan"]);
+    return `<div class="card">
+      <div class="card-head"><h3>${esc(plan.name || "Plan")}</h3>
+        <div class="row">${plans().length < 3 ? `<button type="button" class="btn secondary" data-act="copy-plan">Copy this plan</button>` : ""}${binButton("plan-" + plan.id, "Delete this plan")}</div></div>
+      ${confirmBox("plan-" + plan.id, `Delete "${plan.name || "this plan"}"?`, "remove-plan")}
+      <div class="grid wide">${textField(`scenarios.${idx}.name`, "Plan name")}</div>
+    </div>
+    <div class="card">
+      <h3>1. Buy a home?</h3>
+      ${chips(b + ".home", [["NO", owns ? "No — stay in this home" : "No — keep renting"], ["YES", owns ? "Yes — sell this one and buy another" : "Yes — buy a home"]], "yesno")}
+      ${
+        R.home
+          ? `<div class="grid">${moneyField(b + ".price", "Price", { hint: "Stamp duty and buying costs are added." })}${numField(b + ".year", `In year (1–${H})`, { placeholder: "1" })}</div>
+        <div class="field"><span class="label">Pay for it from</span>${chips(b + ".payFrom", [["SAVINGS", "Savings first, then super"], ["SUPER", "Super first, then savings"]])}</div>
+        <p class="small muted">${owns ? "This home is sold first. " : "Rent stops once it's bought. "}Rates, insurance and upkeep (about ${A("homeRunPct")}% of its value a year) are added to the budget. The home doesn't count for the Age Pension, so putting money into it can raise the pension.</p>`
+          : ""
+      }
+    </div>
+    <div class="card">
+      <h3>2. Money left over in the bank</h3>
+      ${chips(b + ".leftover", leftover)}
+      <div class="grid">${moneyField(b + ".keep", "Keep at least this much in the bank", { placeholder: "50,000", hint: "A buffer for emergencies. Only money above this is moved." })}
+      ${R.leftover === "OFFSET" && R.home ? moneyField(b + ".loan", "Borrow against the home", { hint: "Savings sit in its offset, so there's little or no interest, and the money stays easy to get to. Lenders may not lend to retirees without other income." }) : ""}</div>
+      ${
+        R.leftover === "SUPER"
+          ? `${toggle(b + ".downsizer", "Use a downsizer contribution (sold a home in the last 90 days)", "downsizer")}
+        <p class="small muted">${age < 75 ? "Under 75, up to $360,000 can go in (three years of the yearly limit at once)" : "From 75, new contributions generally aren't allowed"}${R.downsizer ? ", plus up to $300,000 as a downsizer contribution" : ""}. Anything over stays in the bank. Money in super counts for the Age Pension.</p>`
+          : R.leftover === "SHARES"
+          ? `<p class="small muted">Shares grow and pay dividends (see Assumptions), and count for the Age Pension.</p>`
+          : ""
+      }
+    </div>
+    <div class="card">
+      <h3>3. Income from super</h3>
+      ${chips(b + ".draw", [["MIN", "The minimum"], ["EARNINGS", "Its earnings (the balance holds up)"], ["SET", "A set amount"]])}
+      ${R.draw === "SET" ? `<div class="grid">${moneyField(b + ".drawAmount", "Amount a year", { hint: "Never less than the minimum for your age." })}</div>` : ""}
+      <p class="small muted">The minimum is ${Math.round(E.minDrawRate(age) * 100)}% of the balance a year at ${age}, rising with age. Money not spent stays in the bank.</p>
+      ${notesField(`scenarios.${idx}.notes`, "Notes and questions about this plan", "For example: “Could I keep the Age Pension?”")}
+    </div>`;
+  }
+
   function pagePlans() {
     const list = state.scenarios;
     const idx = Math.min(ui.plan, list.length - 1);
@@ -2928,6 +3124,8 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
         <p>Nothing new is bought. ${state.home && state.home.has ? "You stay in your home" : "You keep renting"}; super pays a pension, savings earn interest, and the Age Pension is worked out each year. Each plan is compared with this.</p></div>`
         : `<div class="card"><h3>No change: cash stays in the offset</h3>
         <p>Nothing new is bought. Your savings and every spare dollar go into the home loan offset (then the next loan that isn't tax-deductible), which cuts interest and pays the loans off sooner. Each plan is compared with this.</p></div>`;
+    } else if (retired()) {
+      body = retirePlanCard(plan, idx);
     } else {
       const sorted = plan.steps.slice().sort((a, b) => a.year - b.year);
       const smsfOk = state.smsf && (state.smsf.has || state.smsf.open);
@@ -2952,7 +3150,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       </div></div>`;
     }
     return `${exampleBanner()}
-    <div class="intro"><h2>Plans</h2><p class="muted">Every plan is compared with <b>No change</b> — ${retired() ? "staying as you are" : "buying nothing new and leaving your cash in the offset"}. Set up to three plans to compare with it — buy, sell, shares or super, in the years you'd do them.</p></div>
+    <div class="intro"><h2>Plans</h2><p class="muted">Every plan is compared with <b>No change</b> — ${retired() ? `staying as you are: ${state.home && state.home.has ? "in your home" : "renting"}, with super paying the minimum and savings in the bank` : "buying nothing new and leaving your cash in the offset"}. ${retired() ? "Set up to three plans to compare with it." : "Set up to three plans to compare with it — buy, sell, shares or super, in the years you'd do them."}</p></div>
     <div class="row">${tabs}${plans().length < 3 ? `<button type="button" class="btn quiet" data-act="add-plan">+ Add a plan</button>` : ""}</div>
     ${body}
     ${navButtons("own", "check")}`;
@@ -3203,6 +3401,18 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     return "";
   }
 
+  function retireWords(R) {
+    if (!R) return [];
+    const out = [];
+    if (R.home) out.push(`Year ${R.year || 1}: buy a home for about ${money(R.price)}${state.home && state.home.has ? ", after selling the current one" : ""}, paid from ${R.payFrom === "SUPER" ? "super first, then savings" : "savings first, then super"}.`);
+    else out.push(state.home && state.home.has ? "Stay in the home." : "Keep renting.");
+    const keep = money(R.keep === undefined || R.keep === "" ? 50000 : R.keep);
+    const to = { SUPER: `put it into super${R.downsizer ? " (using a downsizer contribution)" : ""}`, SHARES: "invest it in shares", OFFSET: `borrow ${money(R.loan)} against the home and keep the savings in its offset` }[R.leftover];
+    out.push(to ? `Keep ${keep} in the bank; anything above that: ${to}.` : "Keep the savings in the bank.");
+    out.push({ MIN: "Take the minimum from super each year.", EARNINGS: "Take super's earnings each year, so the balance holds up.", SET: `Take ${money(R.drawAmount)} a year from super (at least the minimum).` }[R.draw || "MIN"]);
+    return out;
+  }
+
   function plainWordsRetired(R) {
     const lines = [];
     const two = state.people.length > 1;
@@ -3211,11 +3421,12 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
     lines.push(two ? "ABOUT US" : "ABOUT ME");
     lines.push(state.people.map((p, i) => `${names[i]} is ${p.age || "—"}, with ${money(p.super)} in super${p.salary ? ` and ${money(p.salary)} a year of other income` : ""}.`).join(" "));
     lines.push(`${two ? "We have" : "I have"} ${money(state.cash)} in savings; living costs are about ${money(state.livingMonthly)} a month${state.home && state.home.has ? `, and ${two ? "we own our" : "I own my"} home (worth about ${money(state.home.value)})` : state.rentWeekly ? `, plus rent of ${money(state.rentWeekly)} a week` : ""}.`);
-    lines.push(`Super is taken as ${state.superDrawMode === "SET" ? `${money(state.superDrawYearly)} a year (at least the minimum)` : "the minimum pension each year"}. The money needs to last until age ${until}.`);
+    if (state.saleExempt && !(state.home && state.home.has)) lines.push(`${money(state.saleExempt)} of that is from selling ${two ? "our" : "my"} home and is set aside to buy another (left out of the Age Pension assets test for up to ${state.saleExemptMonths || 24} months).`);
+    lines.push(`The money needs to last until age ${until}.`);
     if (state.notes) lines.push(`What ${two ? "we're" : "I'm"} trying to work out: ${state.notes}`);
     const base = R.base;
     lines.push("");
-    lines.push("KEEPING THINGS AS THEY ARE");
+    lines.push(`NO CHANGE (${state.home && state.home.has ? "stay in the home" : "keep renting"}, super pays the minimum, savings stay in the bank)`);
     lines.push(`Money lasts ${base.summary.runsOutAge === null ? "past 100" : `until about age ${base.summary.runsOutAge}`}; Age Pension in the first year about ${money(base.years[0].agePension)}.`);
     for (const r of R.runs.filter((x) => !x.baseline)) {
       const sc = state.scenarios.find((x) => x.id === r.id);
@@ -3223,8 +3434,8 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       const y = r.years[at - 1];
       lines.push("");
       lines.push(`IDEA: ${r.name.toUpperCase()}`);
-      for (const st of sc.steps.slice().sort((a, b) => a.year - b.year)) lines.push(`• Year ${st.year}: ${stepWords(st)}.`);
-      lines.push(`Rough result: money lasts ${r.summary.runsOutAge === null ? "past 100" : `until about age ${r.summary.runsOutAge}`} (${r.verdict.label.toLowerCase()}).`);
+      for (const w of retireWords(sc.retire)) lines.push(`• ${w}`);
+      lines.push(`Rough result: money lasts ${r.summary.runsOutAge === null ? "past 100" : `until about age ${r.summary.runsOutAge}`}${r.verdict.level === "STOP" || r.verdict.level === "MAYBE" ? ` (${r.verdict.label.toLowerCase()})` : ""}.`);
       lines.push(`In year ${at} (age ${y.age}): home equity about ${money(y.homeEquity)}, cash and super about ${money(y.spendable)}. Age Pension in the first year about ${money(r.years[0].agePension)}.`);
       if (r.maxHomePrice !== undefined && r.maxHomePrice !== null) lines.push(`The most this plan could spend on the home and still have money at ${until}: about ${money(r.maxHomePrice)}.`);
       for (const t of r.verdict.stops || []) lines.push(`RED FLAG: ${t}`);
@@ -3961,7 +4172,8 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       return render(true);
     }
     if (d.chip) {
-      setPath(d.chip, d.kind === "num" ? Number(d.value) : d.value);
+      setPath(d.chip, d.kind === "num" ? Number(d.value) : d.kind === "yesno" ? d.value === "YES" : d.value);
+      if (d.chip === "stage") ensureRetireForms(state);
       edited();
       return render(true);
     }
@@ -4032,7 +4244,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       ui.confirm = null;
       edited();
     } else if (act === "add-plan") {
-      state.scenarios.push({ id: "s" + uid(), name: `Plan ${plans().length + 1}`, spare: "HOME_OFFSET", steps: [] });
+      state.scenarios.push({ id: "s" + uid(), name: `Plan ${plans().length + 1}`, spare: "HOME_OFFSET", steps: [], ...(retired() ? { retire: newRetirePlan() } : {}) });
       ui.plan = state.scenarios.length - 1;
       edited();
     } else if (act === "copy-plan") {
@@ -4040,7 +4252,7 @@ Run with `node --test blink-check/test/engine.test.mjs`. They check:
       const copy = JSON.parse(JSON.stringify(src));
       copy.id = "s" + uid();
       copy.name = src.name + " (copy)";
-      copy.steps.forEach((s) => (s.id = uid()));
+      (copy.steps || []).forEach((s) => (s.id = uid()));
       state.scenarios.push(copy);
       ui.plan = state.scenarios.length - 1;
       edited();

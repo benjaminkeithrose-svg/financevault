@@ -65,6 +65,8 @@
     homeEquityAccess: ["Home Equity Access Scheme", "A government loan for people of Age Pension age, secured on their home, paid as a fortnightly income or small lump sums. It's repaid when the home is sold. A fallback if money runs short — not something to plan on."],
     lastUntil: ["How long the money must last", "Blink Check runs to age 100 and flags a plan in red if savings and super run out before the age you pick. About 1 in 4 women aged 65 today will live past 95."],
     inflation: ["Inflation (cost of living)", "How fast prices rise each year. Blink Check raises your living costs by this every year, and your pay too unless you set your own pay rises; Age Pension rates and thresholds rise with it as well. Australia's long-run average is about 2.5–3% (the Reserve Bank aims for 2–3%); 2.75% is the starting figure. Try 3.5% to see a plan with dearer living."],
+    saleExempt: ["Home sale money and the Age Pension", "When you sell your home and plan to buy another, the money set aside for the new home is left out of the Age Pension assets test for up to 24 months (and only lightly deemed for the income test). That's why the pension can be high just after a sale — and why it can drop sharply if you keep renting past 24 months. Check the details with Services Australia."],
+    downsizer: ["Downsizer contribution", "From 55, you can put up to $300,000 (each, for a couple) into super from the sale of a home you've owned for 10 years or more, at any age and outside the usual limits — but it must be made within 90 days of settlement. Money in super counts for the Age Pension."],
     living: ["Living costs", "What the household spends each month on everything except loan repayments — food, bills, school, cars, holidays. The tool works out the loan repayments itself."],
   };
 
@@ -118,34 +120,39 @@
   }
 
   // A made-up retiree: sold her home, money in super and savings, renting, thinking about buying.
+  // A made-up retiree: sold her home, money in super and the bank, renting, thinking about buying again.
   function exampleRetired() {
+    const form = (o) => Object.assign({ home: true, price: 900000, year: 1, payFrom: "SAVINGS", leftover: "SUPER", keep: 50000, loan: 0, downsizer: false, draw: "MIN", drawAmount: 0 }, o);
     return {
       example: true,
       stage: "RETIRED",
-      people: [{ id: "p1", name: "Pat", age: 72, salary: 0, super: 750000 }],
-      livingMonthly: 4000,
+      people: [{ id: "p1", name: "Pat", age: 72, salary: 0, super: 500000 }],
+      livingMonthly: 2500,
       cardLimits: 0,
       otherRepayMonthly: 0,
       otherRepayYears: 0,
-      rentWeekly: 550,
-      superDrawMode: "MIN",
-      superDrawYearly: 0,
+      rentWeekly: 1000,
+      saleExempt: 900000,
+      saleExemptMonths: 24,
       goal: "GROWTH",
       risk: "CAREFUL",
-      cash: 450000,
+      cash: 900000,
       home: { has: false, value: 0, loan: { balance: 0, rate: D.homeRate, type: "PI", ioYears: 0, yearsLeft: 25, offset: 0 } },
       rentals: [],
       shares: { value: 0, costBase: 0 },
       smsf: { has: false, open: false },
       assumptions: {},
-      notes: "Should I buy a home, and how much can I spend so the money lasts?",
+      notes: "Sold my home. Should I buy again, how much can I spend so the money lasts, and can I keep the Age Pension?",
       scenarios: [
-        { id: "base", name: "Keep renting", baseline: true, spare: "HOME_OFFSET", steps: [] },
-        { id: "s1", name: "Buy a $900k home", spare: "HOME_OFFSET", steps: [{ id: uid(), type: "HOME", year: 1, price: 900000, name: "Home" }] },
-        { id: "s2", name: "Buy a $650k unit", spare: "HOME_OFFSET", steps: [{ id: uid(), type: "HOME", year: 1, price: 650000, name: "Unit" }] },
+        { id: "base", name: "No change", baseline: true, spare: "HOME_OFFSET", steps: [] },
+        { id: "s1", name: "Buy a $900k home", spare: "HOME_OFFSET", steps: [], retire: form({ price: 900000 }) },
+        { id: "s2", name: "Buy a $700k unit, the rest into super", spare: "HOME_OFFSET", steps: [], retire: form({ price: 700000 }) },
+        { id: "s3", name: "Keep renting, take super's earnings", spare: "HOME_OFFSET", steps: [], retire: form({ home: false, price: 0, leftover: "BANK", draw: "EARNINGS" }) },
       ],
     };
   }
+
+  const newRetirePlan = () => ({ home: true, price: 700000, year: 1, payFrom: "SAVINGS", leftover: "BANK", keep: 50000, loan: 0, downsizer: false, draw: "MIN", drawAmount: 0 });
 
   function blank() {
     return {
@@ -197,7 +204,18 @@
     return example();
   }
 
-  let state = load();
+  // Retired plans use a short form (scenario.retire). Give any plan without one a form, from its home purchase step if it had one.
+  function ensureRetireForms(st) {
+    if (st.stage !== "RETIRED") return st;
+    for (const sc of st.scenarios || []) {
+      if (sc.baseline || sc.retire) continue;
+      const h = (sc.steps || []).find((x) => x.type === "HOME");
+      sc.retire = Object.assign(newRetirePlan(), h ? { home: true, price: h.price, year: h.year || 1, keep: h.keep ?? 50000 } : { home: false });
+    }
+    return st;
+  }
+
+  let state = ensureRetireForms(load());
   const ui = { fullMain: 1, fullCompare: { base: true }, fullShow: { nw: true, debt: true, income: true, cash: true }, atYear: 0, openHelp: {}, page: "you", plan: 1, metric: "nw", hidden: {}, chainPlan: 1, tablePlan: 1, confirm: null, panel: null, message: "" };
   let results = null;
 
@@ -309,7 +327,8 @@
     return `<div><div class="label-row"><label class="toggle" for="${id}"><input type="checkbox" id="${id}" data-path="${path}" data-kind="bool"${valueOf(path) ? " checked" : ""}> ${esc(label)}</label>${helpButton(help, id)}</div>${helpPop(help, id)}</div>`;
   }
   function chips(path, options, kind = "select") {
-    const v = valueOf(path);
+    const raw = valueOf(path);
+    const v = kind === "yesno" ? (raw ? "YES" : "NO") : raw;
     return `<div class="chips" role="group">${options
       .map(([val, text]) => `<button type="button" class="chip" data-chip="${path}" data-kind="${kind}" data-value="${esc(val)}" aria-pressed="${String(v) === String(val)}">${esc(text)}</button>`)
       .join("")}</div>`;
@@ -384,7 +403,7 @@
           (p, i) => `<div class="grid">
             ${textField(`people.${i}.name`, "Name", { placeholder: i ? "Partner" : "You" })}
             ${numField(`people.${i}.age`, "Age now", { placeholder: "67" })}
-            ${moneyField(`people.${i}.super`, "Super", { hint: "Paid out as a pension (account-based). Tax-free from 60.", help: "superPension" })}
+            ${moneyField(`people.${i}.super`, "Super", { hint: `Paid out as a pension, tax-free from 60. At ${A("pensionReturn")}% it earns about ${money(((+p.super || 0) * A("pensionReturn")) / 100)} a year.`, help: "superPension" })}
             ${moneyField(`people.${i}.salary`, "Other income a year, before tax", { placeholder: "0", hint: "Part-time work, for example." })}
             ${i ? `<div class="field" style="align-self:end">${binButton("person-" + i, "Remove this person")}</div>` : ""}
           </div>${confirmBox("person-" + i, `Remove ${p.name || "this person"}?`, "remove-person")}`
@@ -397,11 +416,17 @@
         ${moneyField("livingMonthly", "Living costs a month", { hint: "Everything except rent, and the rates and upkeep of a home bought in a plan — those are added for you.", help: "living" })}
         ${inflationField()}
         ${state.home && state.home.has ? "" : moneyField("rentWeekly", "Rent a week now", { hint: "Stops when a plan buys a home." })}
-        ${moneyField("cash", "Savings in the bank")}
+        ${moneyField("cash", "Savings in the bank", { hint: `At ${A("savingsRate")}% interest that earns about ${money(((+state.cash || 0) * A("savingsRate")) / 100)} a year.` })}
+        ${moneyField("otherRepayMonthly", "Credit card or loan repayments a month", { placeholder: "0" })}
+        ${state.otherRepayMonthly ? numField("otherRepayYears", "Years left on those") : ""}
       </div>
-      <div class="field"><span class="label">Take from super each year</span>${chips("superDrawMode", [["MIN", "The minimum (4–14% by age)"], ["SET", "A set amount"]])}</div>
-      ${state.superDrawMode === "SET" ? `<div class="grid">${moneyField("superDrawYearly", "Amount a year (at least the minimum)", { help: "superPension" })}</div>` : ""}
-      <p class="small muted">The Age Pension is worked out for you each year from age 67 — the home doesn't count in the assets test.</p>
+      ${
+        state.home && state.home.has
+          ? ""
+          : `<div class="grid">${moneyField("saleExempt", "Money from selling a home, kept to buy another", { placeholder: "0", hint: "Left out of the Age Pension assets test for up to 24 months after the sale, while you rent.", help: "saleExempt" })}
+        ${state.saleExempt ? numField("saleExemptMonths", "Months of that left", { placeholder: "24" }) : ""}</div>`
+      }
+      <p class="small muted">The Age Pension is worked out for you each year from age 67 — the home doesn't count in the assets test. How much to take from super is chosen in each plan.</p>
     </div>
     <div class="card">
       <h3>What you're after</h3>
@@ -500,8 +525,12 @@
         </div>`;
       })
       .join("")}
-    <div class="row"><button type="button" class="btn secondary" data-act="add-rental" data-kind="RES">+ Add a rental property</button>
-      <button type="button" class="btn secondary" data-act="add-rental" data-kind="COM">+ Add a commercial property</button></div>
+    ${
+      retired()
+        ? `<div class="row"><button type="button" class="btn quiet" data-act="add-rental" data-kind="RES">+ Add a rental property you own</button></div>`
+        : `<div class="row"><button type="button" class="btn secondary" data-act="add-rental" data-kind="RES">+ Add a rental property</button>
+      <button type="button" class="btn secondary" data-act="add-rental" data-kind="COM">+ Add a commercial property</button></div>`
+    }
     <div class="card">
       <h3>${retired() ? "Shares" : "Savings, shares and super"}</h3>
       <div class="grid">
@@ -593,6 +622,56 @@
       ${confirmBox(key, "Remove this step?", "remove-step")}${body}</div>`;
   }
 
+  // A retiree's plan: four short questions instead of a list of steps.
+  function retirePlanCard(plan, idx) {
+    if (!plan.retire) plan.retire = newRetirePlan();
+    const R = plan.retire;
+    const b = `scenarios.${idx}.retire`;
+    const H = horizon();
+    const owns = state.home && state.home.has;
+    const age = youngestAge();
+    const leftover = [["BANK", "Keep it in the bank"], ["SUPER", "Put it into super"], ["SHARES", "Invest it in shares"]];
+    if (R.home) leftover.push(["OFFSET", "Keep it in an offset against a small home loan"]);
+    return `<div class="card">
+      <div class="card-head"><h3>${esc(plan.name || "Plan")}</h3>
+        <div class="row">${plans().length < 3 ? `<button type="button" class="btn secondary" data-act="copy-plan">Copy this plan</button>` : ""}${binButton("plan-" + plan.id, "Delete this plan")}</div></div>
+      ${confirmBox("plan-" + plan.id, `Delete "${plan.name || "this plan"}"?`, "remove-plan")}
+      <div class="grid wide">${textField(`scenarios.${idx}.name`, "Plan name")}</div>
+    </div>
+    <div class="card">
+      <h3>1. Buy a home?</h3>
+      ${chips(b + ".home", [["NO", owns ? "No — stay in this home" : "No — keep renting"], ["YES", owns ? "Yes — sell this one and buy another" : "Yes — buy a home"]], "yesno")}
+      ${
+        R.home
+          ? `<div class="grid">${moneyField(b + ".price", "Price", { hint: "Stamp duty and buying costs are added." })}${numField(b + ".year", `In year (1–${H})`, { placeholder: "1" })}</div>
+        <div class="field"><span class="label">Pay for it from</span>${chips(b + ".payFrom", [["SAVINGS", "Savings first, then super"], ["SUPER", "Super first, then savings"]])}</div>
+        <p class="small muted">${owns ? "This home is sold first. " : "Rent stops once it's bought. "}Rates, insurance and upkeep (about ${A("homeRunPct")}% of its value a year) are added to the budget. The home doesn't count for the Age Pension, so putting money into it can raise the pension.</p>`
+          : ""
+      }
+    </div>
+    <div class="card">
+      <h3>2. Money left over in the bank</h3>
+      ${chips(b + ".leftover", leftover)}
+      <div class="grid">${moneyField(b + ".keep", "Keep at least this much in the bank", { placeholder: "50,000", hint: "A buffer for emergencies. Only money above this is moved." })}
+      ${R.leftover === "OFFSET" && R.home ? moneyField(b + ".loan", "Borrow against the home", { hint: "Savings sit in its offset, so there's little or no interest, and the money stays easy to get to. Lenders may not lend to retirees without other income." }) : ""}</div>
+      ${
+        R.leftover === "SUPER"
+          ? `${toggle(b + ".downsizer", "Use a downsizer contribution (sold a home in the last 90 days)", "downsizer")}
+        <p class="small muted">${age < 75 ? "Under 75, up to $360,000 can go in (three years of the yearly limit at once)" : "From 75, new contributions generally aren't allowed"}${R.downsizer ? ", plus up to $300,000 as a downsizer contribution" : ""}. Anything over stays in the bank. Money in super counts for the Age Pension.</p>`
+          : R.leftover === "SHARES"
+          ? `<p class="small muted">Shares grow and pay dividends (see Assumptions), and count for the Age Pension.</p>`
+          : ""
+      }
+    </div>
+    <div class="card">
+      <h3>3. Income from super</h3>
+      ${chips(b + ".draw", [["MIN", "The minimum"], ["EARNINGS", "Its earnings (the balance holds up)"], ["SET", "A set amount"]])}
+      ${R.draw === "SET" ? `<div class="grid">${moneyField(b + ".drawAmount", "Amount a year", { hint: "Never less than the minimum for your age." })}</div>` : ""}
+      <p class="small muted">The minimum is ${Math.round(E.minDrawRate(age) * 100)}% of the balance a year at ${age}, rising with age. Money not spent stays in the bank.</p>
+      ${notesField(`scenarios.${idx}.notes`, "Notes and questions about this plan", "For example: “Could I keep the Age Pension?”")}
+    </div>`;
+  }
+
   function pagePlans() {
     const list = state.scenarios;
     const idx = Math.min(ui.plan, list.length - 1);
@@ -607,6 +686,8 @@
         <p>Nothing new is bought. ${state.home && state.home.has ? "You stay in your home" : "You keep renting"}; super pays a pension, savings earn interest, and the Age Pension is worked out each year. Each plan is compared with this.</p></div>`
         : `<div class="card"><h3>No change: cash stays in the offset</h3>
         <p>Nothing new is bought. Your savings and every spare dollar go into the home loan offset (then the next loan that isn't tax-deductible), which cuts interest and pays the loans off sooner. Each plan is compared with this.</p></div>`;
+    } else if (retired()) {
+      body = retirePlanCard(plan, idx);
     } else {
       const sorted = plan.steps.slice().sort((a, b) => a.year - b.year);
       const smsfOk = state.smsf && (state.smsf.has || state.smsf.open);
@@ -631,7 +712,7 @@
       </div></div>`;
     }
     return `${exampleBanner()}
-    <div class="intro"><h2>Plans</h2><p class="muted">Every plan is compared with <b>No change</b> — ${retired() ? "staying as you are" : "buying nothing new and leaving your cash in the offset"}. Set up to three plans to compare with it — buy, sell, shares or super, in the years you'd do them.</p></div>
+    <div class="intro"><h2>Plans</h2><p class="muted">Every plan is compared with <b>No change</b> — ${retired() ? `staying as you are: ${state.home && state.home.has ? "in your home" : "renting"}, with super paying the minimum and savings in the bank` : "buying nothing new and leaving your cash in the offset"}. ${retired() ? "Set up to three plans to compare with it." : "Set up to three plans to compare with it — buy, sell, shares or super, in the years you'd do them."}</p></div>
     <div class="row">${tabs}${plans().length < 3 ? `<button type="button" class="btn quiet" data-act="add-plan">+ Add a plan</button>` : ""}</div>
     ${body}
     ${navButtons("own", "check")}`;
@@ -882,6 +963,18 @@
     return "";
   }
 
+  function retireWords(R) {
+    if (!R) return [];
+    const out = [];
+    if (R.home) out.push(`Year ${R.year || 1}: buy a home for about ${money(R.price)}${state.home && state.home.has ? ", after selling the current one" : ""}, paid from ${R.payFrom === "SUPER" ? "super first, then savings" : "savings first, then super"}.`);
+    else out.push(state.home && state.home.has ? "Stay in the home." : "Keep renting.");
+    const keep = money(R.keep === undefined || R.keep === "" ? 50000 : R.keep);
+    const to = { SUPER: `put it into super${R.downsizer ? " (using a downsizer contribution)" : ""}`, SHARES: "invest it in shares", OFFSET: `borrow ${money(R.loan)} against the home and keep the savings in its offset` }[R.leftover];
+    out.push(to ? `Keep ${keep} in the bank; anything above that: ${to}.` : "Keep the savings in the bank.");
+    out.push({ MIN: "Take the minimum from super each year.", EARNINGS: "Take super's earnings each year, so the balance holds up.", SET: `Take ${money(R.drawAmount)} a year from super (at least the minimum).` }[R.draw || "MIN"]);
+    return out;
+  }
+
   function plainWordsRetired(R) {
     const lines = [];
     const two = state.people.length > 1;
@@ -890,11 +983,12 @@
     lines.push(two ? "ABOUT US" : "ABOUT ME");
     lines.push(state.people.map((p, i) => `${names[i]} is ${p.age || "—"}, with ${money(p.super)} in super${p.salary ? ` and ${money(p.salary)} a year of other income` : ""}.`).join(" "));
     lines.push(`${two ? "We have" : "I have"} ${money(state.cash)} in savings; living costs are about ${money(state.livingMonthly)} a month${state.home && state.home.has ? `, and ${two ? "we own our" : "I own my"} home (worth about ${money(state.home.value)})` : state.rentWeekly ? `, plus rent of ${money(state.rentWeekly)} a week` : ""}.`);
-    lines.push(`Super is taken as ${state.superDrawMode === "SET" ? `${money(state.superDrawYearly)} a year (at least the minimum)` : "the minimum pension each year"}. The money needs to last until age ${until}.`);
+    if (state.saleExempt && !(state.home && state.home.has)) lines.push(`${money(state.saleExempt)} of that is from selling ${two ? "our" : "my"} home and is set aside to buy another (left out of the Age Pension assets test for up to ${state.saleExemptMonths || 24} months).`);
+    lines.push(`The money needs to last until age ${until}.`);
     if (state.notes) lines.push(`What ${two ? "we're" : "I'm"} trying to work out: ${state.notes}`);
     const base = R.base;
     lines.push("");
-    lines.push("KEEPING THINGS AS THEY ARE");
+    lines.push(`NO CHANGE (${state.home && state.home.has ? "stay in the home" : "keep renting"}, super pays the minimum, savings stay in the bank)`);
     lines.push(`Money lasts ${base.summary.runsOutAge === null ? "past 100" : `until about age ${base.summary.runsOutAge}`}; Age Pension in the first year about ${money(base.years[0].agePension)}.`);
     for (const r of R.runs.filter((x) => !x.baseline)) {
       const sc = state.scenarios.find((x) => x.id === r.id);
@@ -902,8 +996,8 @@
       const y = r.years[at - 1];
       lines.push("");
       lines.push(`IDEA: ${r.name.toUpperCase()}`);
-      for (const st of sc.steps.slice().sort((a, b) => a.year - b.year)) lines.push(`• Year ${st.year}: ${stepWords(st)}.`);
-      lines.push(`Rough result: money lasts ${r.summary.runsOutAge === null ? "past 100" : `until about age ${r.summary.runsOutAge}`} (${r.verdict.label.toLowerCase()}).`);
+      for (const w of retireWords(sc.retire)) lines.push(`• ${w}`);
+      lines.push(`Rough result: money lasts ${r.summary.runsOutAge === null ? "past 100" : `until about age ${r.summary.runsOutAge}`}${r.verdict.level === "STOP" || r.verdict.level === "MAYBE" ? ` (${r.verdict.label.toLowerCase()})` : ""}.`);
       lines.push(`In year ${at} (age ${y.age}): home equity about ${money(y.homeEquity)}, cash and super about ${money(y.spendable)}. Age Pension in the first year about ${money(r.years[0].agePension)}.`);
       if (r.maxHomePrice !== undefined && r.maxHomePrice !== null) lines.push(`The most this plan could spend on the home and still have money at ${until}: about ${money(r.maxHomePrice)}.`);
       for (const t of r.verdict.stops || []) lines.push(`RED FLAG: ${t}`);
@@ -1640,7 +1734,8 @@
       return render(true);
     }
     if (d.chip) {
-      setPath(d.chip, d.kind === "num" ? Number(d.value) : d.value);
+      setPath(d.chip, d.kind === "num" ? Number(d.value) : d.kind === "yesno" ? d.value === "YES" : d.value);
+      if (d.chip === "stage") ensureRetireForms(state);
       edited();
       return render(true);
     }
@@ -1711,7 +1806,7 @@
       ui.confirm = null;
       edited();
     } else if (act === "add-plan") {
-      state.scenarios.push({ id: "s" + uid(), name: `Plan ${plans().length + 1}`, spare: "HOME_OFFSET", steps: [] });
+      state.scenarios.push({ id: "s" + uid(), name: `Plan ${plans().length + 1}`, spare: "HOME_OFFSET", steps: [], ...(retired() ? { retire: newRetirePlan() } : {}) });
       ui.plan = state.scenarios.length - 1;
       edited();
     } else if (act === "copy-plan") {
@@ -1719,7 +1814,7 @@
       const copy = JSON.parse(JSON.stringify(src));
       copy.id = "s" + uid();
       copy.name = src.name + " (copy)";
-      copy.steps.forEach((s) => (s.id = uid()));
+      (copy.steps || []).forEach((s) => (s.id = uid()));
       state.scenarios.push(copy);
       ui.plan = state.scenarios.length - 1;
       edited();
