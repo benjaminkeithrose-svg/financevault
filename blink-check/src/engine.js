@@ -1,0 +1,1005 @@
+/*
+ * Blink Check engine: given what a household owns and a plan (buy, sell,
+ * shares, SMSF…), works out month by month over 10–30 years what happens to
+ * its loans, offsets, cash, property, shares, super and tax — and compares
+ * each plan with simply leaving the cash in the offset.
+ *
+ * Pure functions, no page code, so it can be tested on its own. Broad
+ * numbers: general information for deciding what's worth researching, not
+ * advice.
+ */
+(function (root) {
+  "use strict";
+
+  // ---------------------------------------------------------------------
+  // Tax (resident individual), NSW stamp duty and land tax — the same
+  // figures Financial Vault uses (ATO resident rates, Revenue NSW).
+  // ---------------------------------------------------------------------
+
+  // [income from, tax at that point, rate above it]
+  const BRACKETS = {
+    2026: [
+      [0, 0, 0],
+      [18200, 0, 0.15],
+      [45000, 4020, 0.3],
+      [135000, 31020, 0.37],
+      [190000, 51370, 0.45],
+    ],
+    // From 1 July 2027 the 16% rate becomes 14% (legislated).
+    2027: [
+      [0, 0, 0],
+      [18200, 0, 0.14],
+      [45000, 3752, 0.3],
+      [135000, 30752, 0.37],
+      [190000, 51102, 0.45],
+    ],
+  };
+  const MEDICARE = 0.02;
+  const MEDICARE_THRESHOLD = 27222;
+
+  function bracketsFor(calendarYear) {
+    return calendarYear >= 2027 ? BRACKETS[2027] : BRACKETS[2026];
+  }
+
+  /** Income tax plus Medicare levy on a resident's taxable income. */
+  function individualTax(taxable, calendarYear) {
+    if (!(taxable > 0)) return 0;
+    const brackets = bracketsFor(calendarYear || 2026);
+    let b = brackets[0];
+    for (const x of brackets) if (taxable > x[0]) b = x;
+    const medicare = taxable <= MEDICARE_THRESHOLD ? 0 : Math.min(taxable * MEDICARE, (taxable - MEDICARE_THRESHOLD) * 0.1);
+    return b[1] + (taxable - b[0]) * b[2] + medicare;
+  }
+
+  // NSW transfer duty, 2026-27 general rates; premium duty for residential.
+  const DUTY = [
+    [0, 0, 1.25],
+    [18000, 225, 1.5],
+    [38000, 525, 1.75],
+    [103000, 1662, 3.5],
+    [387000, 11602, 4.5],
+    [1290000, 52237, 5.5],
+  ];
+  const DUTY_PREMIUM = [3870000, 194137, 7];
+
+  function nswDuty(value, residential) {
+    if (!(value > 0)) return 0;
+    const bands = residential ? DUTY.concat([DUTY_PREMIUM]) : DUTY;
+    let band = bands[0];
+    for (const b of bands) if (value > b[0]) band = b;
+    return Math.max(20, Math.round(band[1] + ((value - band[0]) / 100) * band[2]));
+  }
+
+  /** NSW land tax for one owner's combined taxable land value (general threshold, frozen from 2025). */
+  function nswLandTax(totalLandValue) {
+    const v = Math.max(0, totalLandValue);
+    if (v <= 1075000) return 0;
+    if (v <= 6571000) return 100 + (v - 1075000) * 0.016;
+    return 88036 + (v - 6571000) * 0.02;
+  }
+
+  /** Monthly repayment on a principal-and-interest loan. */
+  function pmt(annualRate, months, balance) {
+    if (!(balance > 0) || !(months > 0)) return 0;
+    const r = annualRate / 12;
+    if (r <= 0) return balance / months;
+    return (balance * r) / (1 - Math.pow(1 + r, -months));
+  }
+
+  /** Months to clear a P&I loan paying `payment`, with `offset` against it, at a fixed rate. */
+  function monthsToClear(balance, offset, annualRate, payment) {
+    let b = balance;
+    let m = 0;
+    while (b > offset && m < 1200) {
+      const interest = Math.max(0, b - offset) * (annualRate / 12);
+      b -= payment - interest;
+      m++;
+    }
+    return m;
+  }
+
+  // ---------------------------------------------------------------------
+  // Interest rates: the shape of the RBA cash rate cycle since 2000 (yearly
+  // averages, approximate), with its long downward drift taken out, applied
+  // to today's rates. Year 1 is always today's rate.
+  // ---------------------------------------------------------------------
+
+  const CASH_RATE = {
+    2000: 5.85, 2001: 4.95, 2002: 4.55, 2003: 4.8, 2004: 5.25, 2005: 5.45, 2006: 5.8, 2007: 6.4, 2008: 6.75,
+    2009: 3.25, 2010: 4.35, 2011: 4.7, 2012: 3.95, 2013: 2.85, 2014: 2.5, 2015: 2.15, 2016: 1.7, 2017: 1.5,
+    2018: 1.5, 2019: 1.1, 2020: 0.35, 2021: 0.1, 2022: 1.35, 2023: 3.95, 2024: 4.35, 2025: 3.85,
+  };
+  const CYCLE_YEARS = Object.keys(CASH_RATE).map(Number);
+  const CYCLE = (() => {
+    const xs = CYCLE_YEARS;
+    const ys = xs.map((y) => CASH_RATE[y]);
+    const n = xs.length;
+    const mx = xs.reduce((s, x) => s + x, 0) / n;
+    const my = ys.reduce((s, y) => s + y, 0) / n;
+    const slope = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0) / xs.reduce((s, x) => s + (x - mx) ** 2, 0);
+    return ys.map((y, i) => y - (my + slope * (xs[i] - mx))); // the cycle, without the drift
+  })();
+
+  /** How much rates are above (+) or below (−) today's, for each year of the plan, in percentage points. */
+  function rateShifts(a, years) {
+    const out = [];
+    const start = Math.max(0, CYCLE_YEARS.indexOf(Number(a.cycleStart)));
+    for (let y = 0; y < years; y++) {
+      if (a.rateModel !== "CYCLE") out.push(0);
+      else out.push((CYCLE[(start + y) % CYCLE.length] - CYCLE[start]) * (a.cycleScale ?? 1));
+    }
+    return out;
+  }
+
+  // ---------------------------------------------------------------------
+  // Defaults
+  // ---------------------------------------------------------------------
+
+  const DEFAULT_ASSUMPTIONS = {
+    horizon: 20,
+    startYear: new Date().getFullYear(),
+    state: "NSW",
+    dutyPctOther: 4.5, // % of price outside NSW
+    rateModel: "CYCLE",
+    cycleStart: 2000,
+    cycleScale: 1,
+    minRate: 2,
+    homeRate: 5.8,
+    invRate: 6.2,
+    comRate: 7.2,
+    ioPremium: 0.4,
+    lrbaPremium: 1.2,
+    savingsRate: 4,
+    cpi: 2.75,
+    wageGrowth: 3.25,
+    resGrowth: 5,
+    comGrowth: 3,
+    resRentGrowth: 3.5,
+    comRentGrowth: 3,
+    resVacancyWeeks: 2,
+    comVacancyWeeks: 6,
+    resCostPct: 25, // of rent: rates, insurance, repairs, management
+    comCostPct: 12, // of rent: what a net lease leaves the owner
+    landPctRes: 55,
+    landPctCom: 45,
+    buyCostsRes: 4000,
+    buyCostsComPct: 1.5,
+    sellCostsPct: 2.5,
+    maxLvr: 80, // for borrowing against equity
+    resLvr: 80,
+    comLvr: 70,
+    smsfLvr: 70,
+    shareGrowth: 4.5,
+    shareYield: 3.5,
+    franking: 70,
+    superReturn: 6.5,
+    superGuarantee: 12,
+    assessBuffer: 3,
+    resShade: 80,
+    comShade: 75,
+    smsfBuffer: 30000,
+    negativeGearing: true, // rental losses reduce wage tax; off = carried forward to later rental profit and gains
+    cardServicing: 3.8, // % of card limits a month that lenders count
+    buildingPctRes: 40, // construction cost as % of price, for the 2.5% building write-off
+    buildingPctCom: 50,
+    fittingsPct: 1, // new-build fittings write-off, % of price in year 1, falling 20% a year
+  };
+
+  /** The yearly tax write-off (depreciation) for a property: none, building only, or building + fittings (new). */
+  function writeOff(p, yearsHeld, a) {
+    if (p.writeOffAmount !== undefined && p.writeOffAmount !== null && p.writeOffAmount !== "") return +p.writeOffAmount || 0;
+    const mode = p.writeOff || "NONE";
+    if (mode === "NONE") return 0;
+    const price = p.writeOffBase || p.value;
+    const building = (price * (p.kind === "COM" ? a.buildingPctCom : a.buildingPctRes)) / 100;
+    let total = yearsHeld < 40 ? building * 0.025 : 0;
+    if (mode === "NEW") total += ((price * a.fittingsPct) / 100) * Math.pow(0.8, Math.max(0, yearsHeld));
+    return total;
+  }
+
+  // ---------------------------------------------------------------------
+  // Simulation
+  // ---------------------------------------------------------------------
+
+  const round = (n) => Math.round(n);
+  const positive = (n) => Math.max(0, n);
+
+  function simulate(plan, scenario) {
+    const a = Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {});
+    const H = Math.max(5, Math.min(30, Number(a.horizon) || 20));
+    const shifts = rateShifts(a, H);
+    const people = (plan.people || []).filter((p) => p && p.name !== undefined);
+    if (!people.length) people.push({ id: "p1", name: "You", salary: 0, super: 0 });
+    const nP = people.length;
+    const evenOwners = people.map(() => 100 / nP);
+    const ownersOf = (o) => (Array.isArray(o) && o.length === nP && o.some((x) => x > 0) ? o.map(Number) : evenOwners);
+
+    let loanSeq = 0;
+    const props = [];
+    const loans = [];
+    const flags = [];
+    const chains = [];
+
+    function addLoan(spec) {
+      const L = Object.assign(
+        { id: "L" + ++loanSeq, balance: 0, offset: 0, type: "PI", ioLeft: 0, termLeft: 360, deductible: false, smsf: false, paidOff: null, interestYear: 0, interestTotal: 0, payYear: 0 },
+        spec
+      );
+      L.rate = L.rateToday;
+      L.payment = L.type === "IO" && L.ioLeft > 0 ? 0 : pmt(L.rate / 100, L.termLeft, L.balance);
+      loans.push(L);
+      return L;
+    }
+    const active = (L) => L.balance > 0.5 && !L.paidOff;
+    const mainLoanOf = (propId) => loans.find((L) => L.prop === propId && L.forProp === propId && active(L));
+
+    // --- What's owned today ------------------------------------------------
+    const home = plan.home || {};
+    if (home.has && home.value > 0) {
+      props.push({ id: "home", name: "Home", kind: "RES", home: true, value: +home.value, costBase: +home.value, owners: evenOwners, growth: a.resGrowth, landPct: a.landPctRes });
+      if (home.loan && home.loan.balance > 0) {
+        addLoan({
+          name: "Home loan", prop: "home", forProp: "home", balance: +home.loan.balance, offset: +home.loan.offset || 0,
+          rateToday: +home.loan.rate || a.homeRate, type: home.loan.type === "IO" ? "IO" : "PI",
+          ioLeft: (home.loan.type === "IO" ? +home.loan.ioYears || 5 : 0) * 12, termLeft: (+home.loan.yearsLeft || 25) * 12,
+        });
+      }
+    }
+    (plan.rentals || []).forEach((r, i) => {
+      if (!(r.value > 0)) return;
+      const id = r.id || "r" + (i + 1);
+      const kind = r.kind === "COM" ? "COM" : "RES";
+      props.push({
+        id, name: r.name || (kind === "COM" ? "Commercial property" : "Rental property"), kind, value: +r.value,
+        costBase: +r.costBase || +r.value, owners: ownersOf(r.owners), rentWeekly: +r.rentWeekly || 0,
+        costPct: r.costPct ?? (kind === "COM" ? a.comCostPct : a.resCostPct), writeOff: r.writeOff || "NONE", writeOffAmount: r.writeOffAmount, writeOffBase: +r.value,
+        growth: kind === "COM" ? a.comGrowth : a.resGrowth, landPct: kind === "COM" ? a.landPctCom : a.landPctRes, boughtMonth: -24,
+      });
+      if (r.loan && r.loan.balance > 0) {
+        addLoan({
+          name: (r.name || "Rental") + " loan", prop: id, forProp: id, balance: +r.loan.balance, offset: +r.loan.offset || 0,
+          rateToday: +r.loan.rate || (kind === "COM" ? a.comRate : a.invRate), type: r.loan.type === "IO" ? "IO" : "PI",
+          ioLeft: (r.loan.type === "IO" ? +r.loan.ioYears || 5 : 0) * 12, termLeft: (+r.loan.yearsLeft || 25) * 12, deductible: true,
+        });
+      }
+    });
+
+    let cash = +plan.cash || 0;
+    const shares = { value: +((plan.shares || {}).value) || 0, costBase: +((plan.shares || {}).costBase) || +((plan.shares || {}).value) || 0 };
+    const superBal = people.map((p) => +p.super || 0);
+    const living0 = (+plan.livingMonthly || 0) * 12;
+    const otherRepay = (+plan.otherRepayMonthly || 0) * 12;
+    const otherRepayYears = +plan.otherRepayYears || 0;
+    const cardLimits = +plan.cardLimits || 0;
+    const carried = people.map(() => 0); // rental losses carried forward when negative gearing is off
+
+    // --- Helpers ---------------------------------------------------------------
+    const debtOn = (propId) => loans.filter((L) => L.prop === propId && active(L)).reduce((s, L) => s + L.balance, 0);
+    const usableEquity = (p) => positive(p.value * (a.maxLvr / 100) - debtOn(p.id));
+    const liveProps = () => props.filter((p) => !p.sold);
+    const offsetsTotal = () => loans.filter((L) => !L.smsf).reduce((s, L) => s + (active(L) ? L.offset : 0), 0);
+
+    let month = 0;
+    let year = 1;
+    let yr = null; // this year's running totals
+
+    function newYearTotals() {
+      return {
+        interest: 0, interestSaved: 0, rent: 0, costs: 0, landTax: 0, propCash: {}, shareCash: 0, dividends: 0, savingsInterest: 0,
+        takeHome: 0, living: 0, payg: 0, homePay: 0, gains: people.map(() => 0), sentTo: { homeOffset: 0, ownOffset: 0, otherOffset: 0, cash: 0, payDown: 0 },
+        drawnFrom: { cash: 0, offsets: 0, overdrawn: 0 }, upfrontCash: 0, events: [], taxSettle: 0, smsfIncome: 0,
+      };
+    }
+
+    /** Where spare money goes under this scenario's rule. Returns the loan whose offset takes it, or null for cash. */
+    function spareTarget(propId) {
+      const rule = scenario.spare || "HOME_OFFSET";
+      const open = loans.filter((L) => active(L) && !L.smsf);
+      if (rule === "CASH") return null;
+      if (rule === "OWN_OFFSET" && propId) {
+        const own = mainLoanOf(propId);
+        if (own) return own;
+      }
+      if (rule === "HIGHEST_RATE") return open.sort((x, y) => y.rate - x.rate)[0] || null;
+      // Home loan first; otherwise the loans that aren't tax-deductible, then the dearest.
+      const homeLoan = open.find((L) => L.prop === "home" && L.forProp === "home");
+      if (homeLoan) return homeLoan;
+      return open.sort((x, y) => Number(x.deductible) - Number(y.deductible) || y.rate - x.rate)[0] || null;
+    }
+
+    function putAway(amount, propId) {
+      if (!(amount > 0)) return;
+      const L = spareTarget(propId);
+      if (!L) {
+        cash += amount;
+        yr.sentTo.cash += amount;
+        return;
+      }
+      L.offset += amount;
+      if (L.prop === "home" && L.forProp === "home") yr.sentTo.homeOffset += amount;
+      else if (propId && L.forProp === propId) yr.sentTo.ownOffset += amount;
+      else yr.sentTo.otherOffset += amount;
+    }
+
+    /** Takes money from savings, then offsets (home first). Returns how much couldn't be found. */
+    function draw(amount, opts) {
+      let need = amount;
+      const fromCash = Math.min(positive(cash), need);
+      cash -= fromCash;
+      need -= fromCash;
+      yr.drawnFrom.cash += fromCash;
+      const order = loans
+        .filter((L) => !L.smsf && L.offset > 0)
+        .sort((x, y) => Number(y.prop === "home") - Number(x.prop === "home") || x.rate - y.rate);
+      for (const L of order) {
+        if (need <= 0) break;
+        const take = Math.min(L.offset, need);
+        L.offset -= take;
+        need -= take;
+        yr.drawnFrom.offsets += take;
+      }
+      if (need > 0 && !(opts && opts.noOverdraw)) {
+        cash -= need;
+        yr.drawnFrom.overdrawn += need;
+      }
+      return need;
+    }
+
+    function clearLoan(L, why) {
+      if (L.offset > 0) {
+        const left = L.offset - L.balance;
+        L.offset = 0;
+        L.balance = 0;
+        L.paidOff = { year, why };
+        if (left > 0) putAway(left, L.forProp);
+      } else {
+        L.balance = 0;
+        L.paidOff = { year, why };
+      }
+      yr.events.push(`${L.name} paid off`);
+    }
+
+    function repriceLoan(L) {
+      L.rate = Math.max(a.minRate, L.rateToday + (shifts[year - 1] || 0));
+      if (!(L.type === "IO" && L.ioLeft > 0)) L.payment = pmt(L.rate / 100, Math.max(1, L.termLeft), L.balance);
+    }
+
+    function totalsNow() {
+      const live = liveProps();
+      const value = live.filter((p) => !p.smsf).reduce((s, p) => s + p.value, 0);
+      const debt = loans.filter((L) => !L.smsf && active(L)).reduce((s, L) => s + L.balance, 0);
+      const offsets = offsetsTotal();
+      const smsfProp = live.filter((p) => p.smsf).reduce((s, p) => s + p.value, 0);
+      const smsfDebt = loans.filter((L) => L.smsf && active(L)).reduce((s, L) => s + L.balance, 0);
+      const superTotal = superBal.reduce((s, b) => s + b, 0) + smsfProp - smsfDebt;
+      const liquid = cash + offsets;
+      const nwExSuper = value + shares.value + cash + offsets - debt;
+      return { value, debt, offsets, cash, liquid, shares: shares.value, superTotal, nwExSuper, nw: nwExSuper + superTotal, equity: value - debt + offsets };
+    }
+
+    // Borrowing check, as a lender might: rates plus a buffer, rents shaded, every loan at P&I.
+    function borrowingCheck(salaries) {
+      const live = liveProps().filter((p) => !p.home && !p.smsf);
+      const gross = people.map((p, i) => salaries[i]);
+      for (const p of live) {
+        const rent = (p.rentNow ?? p.rentWeekly * 52) * ((p.kind === "COM" ? a.comShade : a.resShade) / 100);
+        p.owners.forEach((o, i) => (gross[i] += (rent * o) / 100));
+      }
+      const net = gross.reduce((s, g) => s + g - individualTax(g, a.startYear + year - 1), 0);
+      const commitments = loans
+        .filter((L) => active(L) && !L.smsf)
+        .reduce((s, L) => s + pmt((L.rate + a.assessBuffer) / 100, Math.max(12, L.type === "IO" ? L.termLeft - L.ioLeft : L.termLeft), L.balance) * 12, 0);
+      const living = living0 * Math.pow(1 + a.cpi / 100, year - 1);
+      const others = (year <= otherRepayYears ? otherRepay : 0) + cardLimits * (a.cardServicing / 100) * 12;
+      const surplus = net - commitments - living - others;
+      return { surplus: round(surplus), result: surplus >= 6000 ? "LIKELY" : surplus >= 0 ? "TIGHT" : "UNLIKELY" };
+    }
+
+    // --- Plan steps ----------------------------------------------------------------
+    function stepBuy(s, salaries) {
+      const kind = s.kind === "COM" ? "COM" : "RES";
+      const smsf = s.type === "SMSF";
+      const price = +s.price || 0;
+      if (!(price > 0)) return;
+      const duty = a.state === "NSW" ? nswDuty(price, kind === "RES") : round((price * a.dutyPctOther) / 100);
+      const other = kind === "RES" ? a.buyCostsRes : round((price * a.buyCostsComPct) / 100);
+      const total = price + duty + other;
+      const lvr = (+s.lvr || (smsf ? a.smsfLvr : kind === "COM" ? a.comLvr : a.resLvr)) / 100;
+      const id = s.id;
+      const owners = smsf ? evenOwners : ownersOf(s.owners);
+      const rentWeekly = +s.rentWeekly || (price * ((kind === "COM" ? 6.5 : 4) / 100)) / 52;
+      props.push({
+        id, name: s.name || (smsf ? "SMSF property" : kind === "COM" ? "Commercial purchase" : "Residential purchase"), kind, smsf,
+        value: price, costBase: total, owners, rentWeekly, costPct: s.costPct ?? (kind === "COM" ? a.comCostPct : a.resCostPct),
+        writeOff: s.writeOff || (kind === "COM" ? "BUILDING" : "BUILDING"), writeOffAmount: s.writeOffAmount, writeOffBase: price, growth: s.growth ?? (kind === "COM" ? a.comGrowth : a.resGrowth),
+        landPct: kind === "COM" ? a.landPctCom : a.landPctRes, boughtMonth: month,
+      });
+      const baseRate = smsf ? a.invRate + a.lrbaPremium : kind === "COM" ? a.comRate : a.invRate;
+      const loanType = smsf ? "PI" : s.loanType === "IO" ? "IO" : "PI";
+      const rateToday = baseRate + (loanType === "IO" ? a.ioPremium : 0);
+      const term = (smsf ? 20 : +s.loanYears || 30) * 12;
+      const io = loanType === "IO" ? (+s.ioYears || 5) * 12 : 0;
+      const mainAmount = round(price * lvr);
+      const main = addLoan({ name: (s.name || "Purchase") + " loan", prop: id, forProp: id, balance: mainAmount, rateToday, type: loanType, ioLeft: io, termLeft: term, deductible: !smsf, smsf });
+      repriceLoan(main);
+      let rest = total - mainAmount;
+      const chain = { id, year, name: props[props.length - 1].name, kind, smsf, price, duty, other, total, mainLoan: mainAmount, equity: [], cash: 0, fromSuper: 0, short: 0 };
+
+      if (smsf) {
+        const superTotal = superBal.reduce((x, b) => x + b, 0);
+        chain.fromSuper = rest;
+        if (superTotal - rest < a.smsfBuffer) flags.push({ year, text: `Super would be left with less than $${a.smsfBuffer.toLocaleString("en-AU")} after the SMSF purchase in year ${year}.` });
+        superBal.forEach((b, i) => (superBal[i] -= superTotal > 0 ? (rest * b) / superTotal : rest / nP));
+        chains.push(chain);
+        return;
+      }
+
+      const fromEquity = (amount) => {
+        let need = amount;
+        const sources = liveProps()
+          .filter((p) => !p.smsf && p.id !== id)
+          .sort((x, y) => Number(y.home) - Number(x.home) || usableEquity(y) - usableEquity(x));
+        for (const p of sources) {
+          if (need <= 0) break;
+          const take = Math.min(usableEquity(p), need);
+          if (take < 1000) continue;
+          const L = addLoan({ name: `Equity from ${p.name.toLowerCase()} for ${chain.name.toLowerCase()}`, prop: p.id, forProp: id, balance: round(take), rateToday, type: loanType, ioLeft: io, termLeft: term, deductible: true });
+          repriceLoan(L);
+          chain.equity.push({ from: p.name, amount: round(take) });
+          need -= take;
+        }
+        return need;
+      };
+      const fromCash = (amount) => {
+        const before = cash + offsetsTotal();
+        const take = Math.min(amount, positive(before));
+        if (take > 0) draw(take);
+        chain.cash += round(take);
+        yr.upfrontCash += take;
+        return amount - take;
+      };
+
+      if (s.funding === "CASH") rest = fromEquity(fromCash(rest));
+      else if (s.funding === "MIX") rest = fromEquity(fromCash(Math.min(rest, +s.cashAmount || 0)) + (rest - Math.min(rest, +s.cashAmount || 0)));
+      else rest = fromCash(fromEquity(rest));
+      if (rest > 1) {
+        chain.short = round(rest);
+        draw(rest);
+        flags.push({ year, text: `Not enough equity or cash for ${chain.name.toLowerCase()} in year ${year} — about $${round(rest).toLocaleString("en-AU")} short.` });
+      }
+      const debt = loans.filter((L) => !L.smsf && active(L)).reduce((x, L) => x + L.balance, 0);
+      const value = liveProps().filter((p) => !p.smsf).reduce((x, p) => x + p.value, 0);
+      chain.lvrAfter = value > 0 ? debt / value : 0;
+      chain.borrow = borrowingCheck(salaries);
+      chains.push(chain);
+      yr.events.push(`Buy ${chain.name.toLowerCase()}`);
+    }
+
+    function stepSell(s) {
+      const p = props.find((x) => x.id === s.target && !x.sold);
+      if (!p) return;
+      const price = p.value;
+      const costs = (price * a.sellCostsPct) / 100;
+      let proceeds = price - costs;
+      for (const L of loans.filter((x) => x.prop === p.id && active(x))) {
+        proceeds -= L.balance - L.offset;
+        L.balance = 0;
+        L.offset = 0;
+        L.paidOff = { year, why: "sold" };
+      }
+      // Loans that paid for it but are secured on other property: clear them too, or they stop being deductible.
+      for (const L of loans.filter((x) => x.forProp === p.id && x.prop !== p.id && active(x))) {
+        if (s.then !== "OFFSET" && proceeds > 0) {
+          const pay = Math.min(proceeds, L.balance);
+          L.balance -= pay;
+          proceeds -= pay;
+          yr.sentTo.payDown += pay;
+          if (L.balance <= 0.5) clearLoan(L, "sale");
+        }
+        if (active(L)) L.deductible = false;
+      }
+      if (!p.home && !p.smsf) {
+        const gain = price - costs - p.costBase;
+        const held = month - (p.boughtMonth ?? -24);
+        const taxable = gain > 0 ? (held >= 12 ? gain / 2 : gain) : 0;
+        p.owners.forEach((o, i) => (yr.gains[i] += (taxable * o) / 100));
+      }
+      p.sold = true;
+      p.soldYear = year;
+      yr.events.push(`Sell ${p.name.toLowerCase()}`);
+      if (p.smsf) {
+        const t = superBal.reduce((x, b) => x + b, 0);
+        superBal.forEach((b, i) => (superBal[i] += t > 0 ? (proceeds * b) / t : proceeds / nP));
+        return;
+      }
+      if (proceeds < 0) {
+        draw(-proceeds);
+        flags.push({ year, text: `Selling ${p.name.toLowerCase()} in year ${year} wouldn't clear its loans — about $${round(-proceeds).toLocaleString("en-AU")} short.` });
+        return;
+      }
+      if (s.then === "OFFSET") {
+        putAway(proceeds, null);
+        return;
+      }
+      // Pay down what's left: the loans that aren't tax-deductible first, then the dearest.
+      const order = loans.filter((L) => active(L) && !L.smsf).sort((x, y) => Number(x.deductible) - Number(y.deductible) || y.rate - x.rate);
+      for (const L of order) {
+        if (proceeds <= 0) break;
+        const pay = Math.min(proceeds, L.balance - L.offset);
+        if (pay <= 0) continue;
+        L.balance -= pay;
+        proceeds -= pay;
+        yr.sentTo.payDown += pay;
+        if (L.balance - L.offset <= 0.5) clearLoan(L, "sale");
+        else repriceLoan(L);
+      }
+      if (proceeds > 0) putAway(proceeds, null);
+    }
+
+    function stepShares(s) {
+      const amount = +s.amount || 0;
+      if (!(amount > 0)) return;
+      const chain = { id: s.id, year, name: "Shares / ETFs", kind: "SHARES", price: amount, duty: 0, other: 0, total: amount, mainLoan: 0, equity: [], cash: 0, short: 0 };
+      const loanType = s.loanType === "PI" ? "PI" : "IO";
+      const homeProp = props.find((p) => p.home && !p.sold);
+      const homeLoan = loans.find((L) => L.prop === "home" && L.forProp === "home" && active(L));
+      if (s.funding === "RECYCLE" && homeLoan && homeProp) {
+        // Pay the home loan down with the cash, then borrow the same back as a separate, tax-deductible split to buy the shares.
+        const take = Math.min(amount, positive(cash + offsetsTotal()), homeLoan.balance);
+        draw(take);
+        homeLoan.balance -= take;
+        repriceLoan(homeLoan);
+        const L = addLoan({ name: "Investment split (debt recycling)", prop: "home", forProp: "SHARES", balance: take, rateToday: a.invRate + (loanType === "IO" ? a.ioPremium : 0), type: loanType, ioLeft: loanType === "IO" ? 5 * 12 : 0, termLeft: 30 * 12, deductible: true });
+        repriceLoan(L);
+        chain.recycled = round(take);
+        chain.cash = 0;
+        shares.value += take;
+        shares.costBase += take;
+        if (take < amount) chain.short = round(amount - take);
+      } else if (s.funding === "EQUITY") {
+        let need = amount;
+        const sources = liveProps().filter((p) => !p.smsf).sort((x, y) => usableEquity(y) - usableEquity(x));
+        for (const p of sources) {
+          if (need <= 0) break;
+          const take = Math.min(usableEquity(p), need);
+          if (take < 1000) continue;
+          const L = addLoan({ name: `Share loan against ${p.name.toLowerCase()}`, prop: p.id, forProp: "SHARES", balance: round(take), rateToday: a.invRate + (loanType === "IO" ? a.ioPremium : 0), type: loanType, ioLeft: loanType === "IO" ? 5 * 12 : 0, termLeft: 30 * 12, deductible: true });
+          repriceLoan(L);
+          chain.equity.push({ from: p.name, amount: round(take) });
+          need -= take;
+        }
+        if (need > 0) {
+          chain.cash = round(need);
+          draw(need);
+          yr.upfrontCash += need;
+        }
+        shares.value += amount;
+        shares.costBase += amount;
+      } else {
+        draw(amount);
+        chain.cash = round(amount);
+        yr.upfrontCash += amount;
+        shares.value += amount;
+        shares.costBase += amount;
+      }
+      chains.push(chain);
+      yr.events.push("Buy shares");
+    }
+
+    function applySteps(salaries) {
+      for (const s of (scenario.steps || []).filter((x) => +x.year === year)) {
+        if (s.type === "BUY" || s.type === "SMSF") stepBuy(s, salaries);
+        else if (s.type === "SELL") stepSell(s);
+        else if (s.type === "SHARES") stepShares(s);
+        else if (s.type === "OFFSET") {
+          const amount = Math.min(+s.amount || 0, positive(cash));
+          const L = s.to === "home" ? loans.find((x) => x.prop === "home" && x.forProp === "home" && active(x)) : mainLoanOf(s.to);
+          if (L && amount > 0) {
+            cash -= amount;
+            L.offset += amount;
+            yr.events.push(`Move $${round(amount).toLocaleString("en-AU")} into an offset`);
+          }
+        } else if (s.type === "PI") {
+          for (const L of loans.filter((x) => (x.forProp === s.target || x.prop === s.target) && active(x) && x.type === "IO")) {
+            L.ioLeft = 0;
+            L.type = "PI";
+            L.payment = pmt(L.rate / 100, Math.max(1, L.termLeft), L.balance);
+          }
+          yr.events.push("Switch to principal and interest");
+        }
+      }
+    }
+
+    // --- Month by month ---------------------------------------------------------------
+    const years = [];
+    let salaries = people.map((p) => +p.salary || 0);
+    let payg = salaries.map((s) => individualTax(s, a.startYear));
+    let minLiquid = Infinity;
+    let runsOut = null;
+
+    for (month = 0; month < H * 12; month++) {
+      if (month % 12 === 0) {
+        year = month / 12 + 1;
+        yr = newYearTotals();
+        if (year > 1) {
+          salaries = salaries.map((s) => s * (1 + a.wageGrowth / 100));
+          for (const p of props) {
+            if (p.rentNow !== undefined) p.rentNow *= 1 + (p.kind === "COM" ? a.comRentGrowth : a.resRentGrowth) / 100;
+          }
+        }
+        payg = salaries.map((s) => individualTax(s, a.startYear + year - 1));
+        for (const L of loans.filter(active)) repriceLoan(L);
+        applySteps(salaries);
+        for (const p of props) if (p.rentNow === undefined && !p.home) p.rentNow = (p.rentWeekly || 0) * 52;
+        // Land tax this year: each person's share of the taxable land they hold (NSW; not the home or SMSF).
+        const landTax = {};
+        if (a.state === "NSW") {
+          const perPerson = people.map(() => []);
+          for (const p of liveProps().filter((x) => !x.home && !x.smsf)) p.owners.forEach((o, i) => perPerson[i].push({ id: p.id, v: (p.value * p.landPct * o) / 10000 }));
+          perPerson.forEach((parts) => {
+            const total = parts.reduce((s, x) => s + x.v, 0);
+            const tax = nswLandTax(total);
+            parts.forEach((x) => (landTax[x.id] = (landTax[x.id] || 0) + (total > 0 ? (tax * x.v) / total : 0)));
+          });
+        }
+        yr.landTaxBy = landTax;
+      }
+
+      const living = (living0 / 12) * Math.pow(1 + a.cpi / 100, year - 1);
+      let salaryPart = 0;
+      people.forEach((p, i) => {
+        const gross = salaries[i] / 12;
+        const takeHome = gross - payg[i] / 12;
+        salaryPart += takeHome;
+        yr.takeHome += takeHome;
+        yr.payg += payg[i] / 12;
+        superBal[i] += gross * (a.superGuarantee / 100) * 0.85;
+      });
+      salaryPart -= living;
+      yr.living += living;
+      if (year <= otherRepayYears && otherRepay > 0) {
+        salaryPart -= otherRepay / 12;
+        yr.living += otherRepay / 12;
+      }
+
+      // Growth.
+      for (const p of liveProps()) p.value *= Math.pow(1 + p.growth / 100, 1 / 12);
+      shares.value *= Math.pow(1 + a.shareGrowth / 100, 1 / 12);
+      superBal.forEach((b, i) => (superBal[i] = b * Math.pow(1 + a.superReturn / 100, 1 / 12)));
+
+      // Rents and running costs.
+      const parts = {};
+      for (const p of liveProps().filter((x) => !x.home)) {
+        const vacancy = (p.kind === "COM" ? a.comVacancyWeeks : a.resVacancyWeeks) / 52;
+        const rent = (p.rentNow * (1 - vacancy)) / 12;
+        const costs = (p.rentNow * p.costPct) / 100 / 12 + (yr.landTaxBy[p.id] || 0) / 12;
+        if (p.smsf) {
+          const t = superBal.reduce((x, b) => x + b, 0);
+          superBal.forEach((b, i) => (superBal[i] += ((rent - costs) * (t > 0 ? b / t : 1 / nP))));
+          yr.smsfIncome += rent - costs;
+          continue;
+        }
+        parts[p.id] = rent - costs;
+        yr.rent += rent;
+        yr.costs += costs;
+        yr.landTax += (yr.landTaxBy[p.id] || 0) / 12;
+      }
+
+      // Loans.
+      let sharePart = 0;
+      for (const L of loans.filter(active)) {
+        const eff = positive(L.balance - L.offset);
+        const interest = (eff * L.rate) / 100 / 12;
+        yr.interestSaved += (Math.min(L.offset, L.balance) * L.rate) / 100 / 12;
+        let pay;
+        if (L.type === "IO" && L.ioLeft > 0) {
+          pay = interest;
+          L.ioLeft--;
+          if (L.ioLeft === 0) {
+            L.type = "PI";
+            L.payment = pmt(L.rate / 100, Math.max(1, L.termLeft - 1), L.balance);
+          }
+        } else {
+          pay = Math.min(L.payment, L.balance + interest);
+          L.balance -= pay - interest;
+        }
+        L.termLeft = Math.max(1, L.termLeft - 1);
+        L.interestYear += interest;
+        L.interestTotal += interest;
+        L.payYear += pay;
+        yr.interest += L.smsf ? 0 : interest;
+        if (L.smsf) {
+          yr.smsfIncome -= interest;
+          const t = superBal.reduce((x, b) => x + b, 0);
+          superBal.forEach((b, i) => (superBal[i] -= pay * (t > 0 ? b / t : 1 / nP)));
+        } else if (L.forProp === "SHARES") sharePart -= pay;
+        else if (L.prop === "home" && L.forProp === "home") {
+          salaryPart -= pay;
+          yr.homePay += pay;
+        } else parts[L.forProp] = (parts[L.forProp] || 0) - pay;
+        if (L.balance - L.offset <= 0.5 && !(L.type === "IO" && L.ioLeft > 0)) clearLoan(L, "offset");
+        else if (L.balance <= 0.5) clearLoan(L, "repaid");
+      }
+      // Loans for a property that's been sold, still running: the household pays them.
+      for (const k of Object.keys(parts)) if (!props.find((p) => p.id === k && !p.sold)) {
+        salaryPart += parts[k];
+        delete parts[k];
+      }
+
+      const dividends = (shares.value * a.shareYield) / 100 / 12;
+      sharePart += dividends;
+      yr.dividends += dividends;
+      const interestOnCash = (positive(cash) * a.savingsRate) / 100 / 12;
+      salaryPart += interestOnCash;
+      yr.savingsInterest += interestOnCash;
+
+      for (const k of Object.keys(parts)) yr.propCash[k] = (yr.propCash[k] || 0) + parts[k];
+      yr.shareCash += sharePart;
+
+      // Spare money goes where the scenario says; missing money comes from savings, then offsets.
+      const items = Object.keys(parts).map((k) => ({ prop: k, v: parts[k] }));
+      items.push({ prop: null, v: salaryPart + sharePart });
+      const net = items.reduce((s, x) => s + x.v, 0);
+      if (net >= 0) {
+        const pos = items.reduce((s, x) => s + positive(x.v), 0);
+        for (const x of items) if (x.v > 0) putAway((x.v * net) / pos, x.prop);
+      } else draw(-net);
+
+      // Year end: tax, super tax, the year's record.
+      if (month % 12 === 11) {
+        const calYear = a.startYear + year - 1;
+        const taxable = people.map((p, i) => salaries[i]);
+        const taxableExInvest = people.map((p, i) => salaries[i]);
+        const savingsShare = yr.savingsInterest / nP;
+        people.forEach((p, i) => {
+          taxable[i] += savingsShare;
+          taxableExInvest[i] += savingsShare;
+        });
+        const invest = people.map(() => 0);
+        let writeOffs = 0;
+        for (const p of props.filter((x) => !x.home && !x.smsf)) {
+          if (yr.propCash[p.id] === undefined) continue;
+          // Tax uses interest rather than repayments, and takes off the write-off.
+          const principal = loans.filter((L) => L.forProp === p.id && !L.smsf).reduce((s, L) => s + (L.payYear - L.interestYear), 0);
+          const yearsHeld = Math.max(0, Math.floor((month - (p.boughtMonth ?? -24)) / 12));
+          const dep = p.sold && (p.soldYear ?? 0) < year ? 0 : writeOff(p, yearsHeld, a);
+          writeOffs += dep;
+          const result = yr.propCash[p.id] + principal - dep;
+          p.owners.forEach((o, i) => (invest[i] += (result * o) / 100));
+        }
+        const sharePrincipal = loans.filter((L) => L.forProp === "SHARES").reduce((s, L) => s + (L.payYear - L.interestYear), 0);
+        const frankRate = a.franking / 100;
+        const grossUp = yr.dividends * frankRate * (30 / 70);
+        people.forEach((p, i) => {
+          invest[i] += (yr.shareCash + sharePrincipal + grossUp) / nP;
+          let result = invest[i] + yr.gains[i];
+          if (!a.negativeGearing) {
+            // Losses only count against later investment income and gains.
+            if (result < 0) {
+              carried[i] += -result;
+              result = 0;
+            } else {
+              const use = Math.min(carried[i], result);
+              carried[i] -= use;
+              result -= use;
+            }
+          }
+          taxable[i] += result;
+        });
+        yr.writeOffs = writeOffs;
+        const tax = taxable.map((t) => individualTax(t, calYear));
+        const credits = grossUp;
+        const totalTax = tax.reduce((s, t) => s + t, 0) - credits;
+        const taxEx = taxableExInvest.reduce((s, t) => s + individualTax(t, calYear), 0);
+        const settle = yr.payg - totalTax; // refund (+) or bill (−)
+        yr.taxSettle = settle;
+        if (settle >= 0) putAway(settle, null);
+        else draw(-settle);
+        if (yr.smsfIncome > 0) {
+          const t = superBal.reduce((x, b) => x + b, 0);
+          superBal.forEach((b, i) => (superBal[i] -= yr.smsfIncome * 0.15 * (t > 0 ? b / t : 1 / nP)));
+        }
+
+        const T = totalsNow();
+        minLiquid = Math.min(minLiquid, T.liquid);
+        if (T.liquid < -1 && runsOut === null) runsOut = year;
+        const investCashBefore = Object.values(yr.propCash).reduce((s, v) => s + v, 0) + yr.shareCash;
+        const taxEffect = totalTax - taxEx; // extra tax because of the investments (negative = saves tax)
+        const investCashAfter = investCashBefore - taxEffect;
+        const homeLoan = loans.find((L) => L.prop === "home" && L.forProp === "home");
+        years.push({
+          year,
+          calYear,
+          rateShift: shifts[year - 1] || 0,
+          homeRate: homeLoan ? homeLoan.rate : (a.homeRate + (shifts[year - 1] || 0)),
+          value: round(T.value),
+          debt: round(T.debt),
+          offsets: round(T.offsets),
+          cash: round(T.cash),
+          liquid: round(T.liquid),
+          shares: round(T.shares),
+          superTotal: round(T.superTotal),
+          equity: round(T.equity),
+          nw: round(T.nw),
+          nwExSuper: round(T.nwExSuper),
+          interest: round(yr.interest),
+          interestSaved: round(yr.interestSaved),
+          rent: round(yr.rent),
+          costs: round(yr.costs),
+          landTax: round(yr.landTax),
+          taxEffect: round(taxEffect),
+          writeOffs: round(yr.writeOffs || 0),
+          investCashBefore: round(investCashBefore),
+          investCashAfter: round(investCashAfter),
+          topUp: round(positive(-investCashAfter)),
+          upfrontCash: round(yr.upfrontCash),
+          householdSpare: round(yr.takeHome - yr.living - yr.homePay + investCashBefore + yr.savingsInterest + settle),
+          sentTo: Object.fromEntries(Object.entries(yr.sentTo).map(([k, v]) => [k, round(v)])),
+          drawnFrom: Object.fromEntries(Object.entries(yr.drawnFrom).map(([k, v]) => [k, round(v)])),
+          props: props
+            .filter((p) => !p.home && !p.smsf && (yr.propCash[p.id] !== undefined))
+            .map((p) => ({ id: p.id, name: p.name, value: round(p.sold ? 0 : p.value), debt: round(loans.filter((L) => L.forProp === p.id && active(L)).reduce((s, L) => s + L.balance, 0)), cash: round(yr.propCash[p.id] || 0), sold: !!p.sold })),
+          events: yr.events,
+        });
+        for (const L of loans) {
+          L.interestYear = 0;
+          L.payYear = 0;
+        }
+      }
+    }
+
+    // --- Summary ------------------------------------------------------------------------
+    const last = years[years.length - 1];
+    const homeLoan = loans.find((L) => L.prop === "home" && L.forProp === "home");
+    const totalInterest = round(loans.reduce((s, L) => s + (L.smsf ? 0 : L.interestTotal), 0));
+    const upfront = years.reduce((s, y) => s + y.upfrontCash, 0);
+    const topUps = years.reduce((s, y) => s + y.topUp, 0);
+    const worst = years.reduce((w, y) => (y.investCashAfter < w.amount ? { year: y.year, amount: y.investCashAfter } : w), { year: 0, amount: 0 });
+    const firstPositive = years.find((y, i) => y.investCashAfter >= 0 && years.slice(i).every((z) => z.investCashAfter >= 0) && years.slice(0, i).some((z) => z.investCashAfter < 0));
+    const peakDebt = years.reduce((m, y) => Math.max(m, y.debt), 0);
+    const peakLvr = years.reduce((m, y) => Math.max(m, y.value > 0 ? y.debt / y.value : 0), 0);
+    const debtFree = years.find((y) => y.debt <= 0.5);
+    return {
+      id: scenario.id,
+      name: scenario.name,
+      baseline: !!scenario.baseline,
+      spare: scenario.spare || "HOME_OFFSET",
+      years,
+      chains,
+      flags,
+      summary: {
+        nwEnd: last.nw,
+        nwExSuperEnd: last.nwExSuper,
+        debtEnd: last.debt,
+        valueEnd: last.value,
+        peakDebt,
+        peakLvr,
+        totalInterest,
+        upfrontCash: round(upfront),
+        topUps: round(topUps),
+        moneyIn: round(upfront + topUps),
+        worstYear: worst,
+        positiveFrom: firstPositive ? firstPositive.year : null,
+        homeLoanPaidOff: homeLoan && homeLoan.paidOff ? homeLoan.paidOff.year : null,
+        debtFreeYear: debtFree ? debtFree.year : null,
+        minLiquid: round(minLiquid),
+        runsOut,
+      },
+    };
+  }
+
+  // ---------------------------------------------------------------------
+  // Comparing plans
+  // ---------------------------------------------------------------------
+
+  const money = (n) => (n < 0 ? "−$" : "$") + Math.abs(Math.round(n)).toLocaleString("en-AU");
+
+  function verdictFor(r, base, plan) {
+    const notes = [];
+    const s = r.summary;
+    const risk = plan.risk || "MIDDLE";
+    const goal = plan.goal || "GROWTH";
+    if (r.baseline) return { level: "BASE", label: "The yardstick", notes: ["Cash stays in the offset and spare money keeps going in; nothing new is bought."] };
+    const gain = s.nwEnd - base.summary.nwEnd;
+    const H = r.years.length;
+    for (const c of r.chains) {
+      if (c.borrow && c.borrow.result === "UNLIKELY") notes.push(`A lender may not approve the loan for ${c.name.toLowerCase()} in year ${c.year} — the budget comes out about ${money(-c.borrow.surplus)} a year short at their test rate.`);
+      else if (c.borrow && c.borrow.result === "TIGHT") notes.push(`Borrowing for ${c.name.toLowerCase()} in year ${c.year} looks tight at a lender's test rate.`);
+      if (c.short > 0) notes.push(`About ${money(c.short)} short of the deposit and costs for ${c.name.toLowerCase()} in year ${c.year}.`);
+    }
+    if (s.worstYear.amount < 0) notes.push(`The worst year is year ${s.worstYear.year}: the investments need ${money(-s.worstYear.amount)} from you (${money(-s.worstYear.amount / 52)} a week) after tax.`);
+    if (s.positiveFrom) notes.push(`The investments pay for themselves from year ${s.positiveFrom}.`);
+    if (s.peakLvr > 0.8) notes.push(`Borrowing peaks at ${Math.round(s.peakLvr * 100)}% of what the property is worth — little room if prices fall.`);
+    if (risk === "CAREFUL" && (s.peakLvr > 0.65 || r.chains.some((c) => c.kind === "COM"))) notes.push("More risk than a careful profile usually takes on (high borrowing, or a commercial vacancy risk).");
+    if (r.chains.some((c) => c.kind === "COM")) notes.push("Commercial property can sit empty for 6–12 months between tenants — keep a cash buffer.");
+    if (goal === "CASHFLOW" && s.worstYear.amount < 0 && !s.positiveFrom) notes.push("Costs money every year over the plan — doesn't fit a cash-flow goal.");
+    for (const f of r.flags) notes.push(f.text);
+    let level;
+    let label;
+    if (s.runsOut) {
+      level = "NO";
+      label = `Runs out of spare cash in year ${s.runsOut}`;
+      notes.unshift("Savings and offsets would be used up — it would need more income, a smaller purchase or a later year.");
+    } else if (gain > Math.max(50000, Math.abs(base.summary.nwEnd) * 0.05)) {
+      level = r.chains.some((c) => c.borrow && c.borrow.result === "UNLIKELY") ? "MAYBE" : "YES";
+      label = level === "YES" ? "Worth a closer look" : "Worth a look — if the loan is approved";
+    } else if (gain > 0) {
+      level = "MAYBE";
+      label = "Marginal";
+    } else {
+      level = "NO";
+      label = "Doesn't beat leaving the cash in the offset";
+    }
+    return { level, label, gain: round(gain), perDollar: s.moneyIn > 0 ? gain / s.moneyIn : null, notes, horizon: H };
+  }
+
+  function runAll(plan) {
+    const scenarios = plan.scenarios || [];
+    const base = scenarios.find((s) => s.baseline) || { id: "base", name: "Cash stays in the offset", baseline: true, steps: [] };
+    const baseRun = simulate(plan, base);
+    const runs = scenarios.map((s) => (s === base ? baseRun : simulate(plan, s)));
+    if (!scenarios.includes(base)) runs.unshift(baseRun);
+    for (const r of runs) r.verdict = verdictFor(r, baseRun, plan);
+    return { runs, base: baseRun, shifts: rateShifts(Object.assign({}, DEFAULT_ASSUMPTIONS, plan.assumptions || {}), baseRun.years.length) };
+  }
+
+  // ---------------------------------------------------------------------
+  // Reading numbers as people say or type them: "$650k", "1.2m", "four hundred and twenty thousand"
+  // ---------------------------------------------------------------------
+
+  const SMALL = { zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90, a: 1 };
+  const SCALE = { hundred: 100, thousand: 1000, grand: 1000, k: 1000, million: 1e6, mil: 1e6, m: 1e6 };
+
+  function parseAmount(input) {
+    if (input === null || input === undefined) return null;
+    if (typeof input === "number") return Number.isFinite(input) ? input : null;
+    let t = String(input).toLowerCase().trim().replace(/[$,]/g, "").replace(/\s+dollars?$/, "").replace(/\s*per\s*cent|\s*percent|%/g, "");
+    if (!t) return null;
+    const short = /^(-?\d*\.?\d+)\s*(k|m|mil|million|thousand|grand)?$/.exec(t);
+    if (short) return Number(short[1]) * (short[2] ? SCALE[short[2]] : 1);
+    // Words, possibly mixed with digits: "four hundred and twenty thousand", "1.5 million", "point five".
+    const words = t.replace(/-/g, " ").replace(/\band\b/g, " ").split(/\s+/).filter(Boolean);
+    let total = 0;
+    let current = 0;
+    let decimal = null;
+    let seen = false;
+    for (const w of words) {
+      if (w === "point") {
+        decimal = "";
+        continue;
+      }
+      if (decimal !== null) {
+        if (SMALL[w] !== undefined && SMALL[w] < 10) {
+          decimal += String(SMALL[w]);
+          continue;
+        }
+        if (/^\d+$/.test(w)) {
+          decimal += w;
+          continue;
+        }
+        current += Number("0." + (decimal || "0"));
+        decimal = null;
+      }
+      if (/^\d*\.?\d+$/.test(w)) {
+        current += Number(w);
+        seen = true;
+      } else if (SMALL[w] !== undefined) {
+        current += SMALL[w];
+        seen = true;
+      } else if (w === "hundred") {
+        current = (current || 1) * 100;
+        seen = true;
+      } else if (SCALE[w]) {
+        total += (current || 1) * SCALE[w];
+        current = 0;
+        seen = true;
+      } else return null;
+    }
+    if (decimal !== null) current += Number("0." + (decimal || "0"));
+    return seen ? total + current : null;
+  }
+
+  const api = { writeOff, simulate, runAll, rateShifts, individualTax, nswDuty, nswLandTax, pmt, monthsToClear, parseAmount, DEFAULT_ASSUMPTIONS, CASH_RATE };
+  root.BlinkEngine = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+})(typeof window !== "undefined" ? window : globalThis);
