@@ -2,7 +2,7 @@
  * Blink Check engine: given what a household owns and a plan (buy, sell,
  * shares, SMSF…), works out month by month over 10–30 years what happens to
  * its loans, offsets, cash, property, shares, super and tax — and compares
- * each plan with simply leaving the cash in the offset.
+ * each plan with "No change" (buying nothing new).
  *
  * Pure functions, no page code, so it can be tested on its own. Broad
  * numbers: general information for deciding what's worth researching, not
@@ -271,7 +271,7 @@
   function retiredSteps(R) {
     const out = [];
     const year = R.home ? Math.max(1, +R.year || 1) : 1;
-    if (R.home && +R.price > 0) out.push({ id: "home-buy", type: "HOME", year, price: +R.price, name: R.homeName || "Home", keep: R.keep, payFrom: R.payFrom, loan: R.leftover === "OFFSET" ? +R.loan || 0 : 0 });
+    if (R.home && +R.price > 0) out.push({ id: "home-buy", type: "HOME", year, price: +R.price, name: R.homeName || "Home (PPOR)", keep: R.keep, payFrom: R.payFrom, loan: R.leftover === "OFFSET" ? +R.loan || 0 : 0 });
     if (R.leftover && R.leftover !== "BANK") out.push({ id: "move", type: "MOVE", year, to: R.leftover, keep: R.keep, downsizer: !!R.downsizer });
     return out;
   }
@@ -422,7 +422,7 @@
         interest: 0, interestSaved: 0, rent: 0, costs: 0, landTax: 0, propCash: {}, shareCash: 0, dividends: 0, savingsInterest: 0,
         takeHome: 0, living: 0, payg: 0, homePay: 0, gains: people.map(() => 0), sentTo: { homeOffset: 0, ownOffset: 0, otherOffset: 0, cash: 0, payDown: 0 },
         drawnFrom: { cash: 0, offsets: 0, super: 0, overdrawn: 0 }, upfrontCash: 0, events: [], taxSettle: 0, smsfIncome: 0,
-        agePension: 0, superDraw: 0, rentPaid: 0, homeCosts: 0,
+        agePension: 0, superDraw: 0, rentPaid: 0, homeCosts: 0, superEarnings: 0,
       };
     }
 
@@ -793,7 +793,7 @@
         flags.push({ year, text: `Not enough savings${retired ? " and super" : ""} to buy ${name.toLowerCase()} in year ${year} — about $${round(need).toLocaleString("en-AU")} short.` });
       }
       chains.push(chain);
-      yr.events.push(`Buy ${name.toLowerCase()}`);
+      yr.events.push(`Buy ${/^home/i.test(name) ? "the home to live in (PPOR)" : name}`);
     }
 
     /** Retiree: move savings above the cash to keep into super, shares or the home loan's offset. */
@@ -937,7 +937,11 @@
       // Growth.
       for (const p of liveProps()) p.value *= Math.pow(1 + p.growth / 100, 1 / 12);
       shares.value *= Math.pow(1 + a.shareGrowth / 100, 1 / 12);
-      superBal.forEach((b, i) => (superBal[i] = b * Math.pow(1 + (retired ? a.pensionReturn : a.superReturn) / 100, 1 / 12)));
+      superBal.forEach((b, i) => {
+        const grown = b * Math.pow(1 + (retired ? a.pensionReturn : a.superReturn) / 100, 1 / 12);
+        yr.superEarnings += grown - b;
+        superBal[i] = grown;
+      });
       if (retired) {
         // Super pension payments and the Age Pension come in; rent and a bought home's running costs go out.
         drawYear.forEach((d, i) => {
@@ -1128,6 +1132,12 @@
           takeHome: round(yr.takeHome),
           homeLoanPay: round(yr.homePay),
           age: youngest0 + year - 1,
+          // Everything earned this year, before tax: pay, Age Pension, interest, super earnings, dividends and rent.
+          superEarnings: round(yr.superEarnings),
+          savingsInterest: round(yr.savingsInterest),
+          dividends: round(yr.dividends),
+          totalIncome: round(salaries.reduce((x, v) => x + v, 0) + yr.agePension + yr.savingsInterest + yr.superEarnings + yr.dividends + yr.rent),
+          bank: round(T.cash + T.offsets),
           agePension: round(yr.agePension),
           superDraw: round(yr.superDraw),
           rentPaid: round(yr.rentPaid),
@@ -1349,7 +1359,7 @@
       label = "Marginal";
     } else {
       level = "NO";
-      label = "Doesn't beat leaving the cash in the offset";
+      label = "Behind No change";
     }
     return { level, label, gain: round(gain), perDollar: s.moneyIn > 0 ? gain / s.moneyIn : null, notes, stops, warnings, horizon: H };
   }

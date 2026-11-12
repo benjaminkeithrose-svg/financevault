@@ -344,7 +344,7 @@ The four questions are:
 - **The built-in retiree example is made up** ("Pat"): 72, $500k super, $900k from a home sale, $2,500 a month living costs, $1,000 a week rent. Never ship a real person's figures as the example. Give them a saved copy of the file instead.
 
 **Keep Retired mode simple.** A retiree is deciding about one home and where their money sits, so nothing about investment purchases is shown:
-- **Results:** No change, the plans' cards (with the home's cost and how it's paid for), the 24-month banner, "Home equity against cash and super", the plain words and the year table. "Compare one measure" and "Where the money comes from" are hidden.
+- **Results (Analysis page):** No change, the plans' cards (with the home's cost and how it's paid for), the 24-month banner, "Compare the plans" (retirement measures: net wealth, home equity, cash and super, super, cash in the bank; total income, Age Pension, super earnings, interest, spending, left over), the plain words and the year table (hidden until shown). "Where the money comes from" is hidden.
 - **Assumptions (`pageAssumeRetired`):** inflation, savings interest, super returns, home values and running costs, stamp duty, buying costs, rent rises and personal assets. Share rates appear only if a plan invests in shares; the home loan rate only if a plan borrows.
 - **Help (`pageHelpRetired`):** retirement-only results and glossary words (`RETIRED_WORDS`), and a retiree footer.
 - **Red flags:** the only one is "money doesn't last" (or not enough to buy the home).
@@ -361,7 +361,7 @@ The four questions are:
 - **You:** age, super, other income, living costs, rent, savings, how much to take from super, and "must last until".
 - **Plans:** a "Buy a home to live in" button.
 - **Results:**
-  - "Home equity against cash and super": home equity (solid) and cash and super (dashed) on top; money coming in (dotted) and left over (solid) below;
+  - "Compare the plans", with the retirement measures, the 24-month mark drawn on the charts, and the table of income sources, money in and out, and what you have (see section 6);
   - a slider showing year and age;
   - sentences comparing plans;
   - a table: home equity, cash and super, coming in, Age Pension, going out, left over, and how long the money lasts.
@@ -517,7 +517,7 @@ Results are computed with `BlinkEngine.runAll(state)` and cached until the next 
 
 - **Brand:** "Blink Check".
 - **Tools:** Save a copy (or Copy my figures inside a host frame), Load figures, Start again, and Print.
-- **Tabs:** 1 You · 2 What you own · 3 Plans · 4 Blink check · 5 Assumptions · ? Help.
+- **Tabs:** 1 You · 2 What you own · 3 Plans · 4 Analysis · 5 Assumptions · ? Help.
 
 The page is reachable by `#hash` (e.g. `#check`).
 
@@ -537,21 +537,17 @@ The page is reachable by `#hash` (e.g. `#check`).
    - for each plan: name, spare-money rule, notes, and the step cards sorted by year;
    - "Add a step" buttons: Buy residential, Buy commercial, Sell a property, Buy shares, SMSF purchase (only if either SMSF box is ticked), Put cash in an offset, and Switch a loan to P&I;
    - copy or delete a plan, with a confirmation.
-4. **Blink check:**
-   - a verdict card for each run: the gain against No change, the key figures and the notes;
+4. **Analysis** (the results page, once called "Blink check"):
+   - a verdict card for each run: the gain against No change, and the key figures as a table with a line between rows (`factsTable`). Rows with nothing to show ("—", or $0 where that just means "not applicable") are left out, and notes that repeat the table are dropped;
    - a red banner at the top when any plan probably won't work, and a red box on that plan's card;
-   - **Wealth, debt and cash flow:**
-     - pick one plan, tick others to lay over it, and tick which measures to show;
-     - **top chart, "What you own and owe":** wealth (net worth, solid) and debt (dashed), in each plan's colour;
-     - **bottom chart, "Money each year":** income before tax (dotted, in the text colour; the same in every plan) and the investments' cash flow after tax (solid). Below zero is shaded "costs you money";
-     - two charts rather than one with two scales, so yearly amounts aren't squashed against multi-million totals;
-     - the charts share a year cursor, and hovering one moves both;
-     - a year slider (easy on a phone) moves the cursor and updates the comparison without redrawing the page;
-     - the comparison is sentences ("By year 20, compared with A, B leaves you with $1.7m less wealth and $310k more debt; its investments cost you money in 10 years instead of 5") and a table: wealth, debt, income, cash flow, years costing money, own money put in, and the debt-free year;
-   - **Compare one measure:** one chart with metric chips (net worth, net worth outside super, debt, equity, investments' cash after tax, household spare cash, interest rate) and a tick box per plan to overlay or hide it;
-   - "Where the money comes from" (the money chain per purchase, with the borrowing check);
+   - **Compare the plans** (`compareCard`): one set of charts for any ticked plans (colour = plan) and any ticked measures (line style = measure, in the order ticked: solid, dashed, dotted, dash-dot…):
+     - totals ("What you have": net wealth, debt, equity, home equity, cash and super…) on one chart, and yearly amounts ("Each year": total income, pay, Age Pension, super earnings, interest, spending, left over, investments' cash flow…) on a second chart with the same years, so yearly figures aren't flattened by multi-million totals;
+     - every chart has a visual key; "Compare at" year buttons (with age for retirees) mark the year on both charts; hovering shows the figures;
+     - the table underneath (`diffTable`) lists, for each ticked plan at that year: every income source (pay, Age Pension, super earnings, interest on savings, dividends, rent, total income), money in and out, and what you have, with the difference from the first ticked plan under each figure. Rows that are zero for every plan are left out;
+   - **Total income** (`years[].totalIncome`) = pay before tax + Age Pension + interest on savings + super earnings (`superEarnings`, the year's growth in super) + dividends + gross rent;
+   - "Where the money comes from" (working households only);
    - "In plain words — for your accountant or broker" with Copy;
-   - the year-by-year table.
+   - the year-by-year table, hidden behind a Show button.
 5. **Assumptions:**
    - the rate model and a chart of the home loan rate;
    - every default, in groups: rates, growth, running a property, buying and selling, tax, and the lender's test;

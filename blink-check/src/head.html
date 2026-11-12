@@ -234,4 +234,23 @@ pre.guide { white-space: pre-wrap; word-break: break-word; max-height: 60vh; ove
 
 .amber-flag.big-amber { border: 2px solid var(--warn); display: grid; gap: 4px; margin-bottom: 14px; }
 .amber-flag.big-amber b { color: var(--fg); }
+
+/* card figures: a proper table, a line between rows */
+table.facts { font-size: 14px; border-top: 1px solid var(--line); }
+table.facts th { text-align: left; font-weight: 400; color: var(--muted); white-space: normal; padding: 9px 8px 9px 0; }
+table.facts td { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; white-space: normal; padding: 9px 0 9px 8px; }
+/* the comparison table */
+table.cmp-table th, table.cmp-table td { padding: 9px 12px; }
+table.cmp-table thead th { text-align: right; vertical-align: bottom; white-space: normal; min-width: 110px; }
+table.cmp-table thead th .dot { display: inline-block; vertical-align: middle; margin-right: 4px; }
+table.cmp-table td:first-child { text-align: left; white-space: normal; min-width: 150px; color: var(--muted); }
+table.cmp-table tr.group th { text-align: left; background: var(--surface-2); color: var(--fg); font: 600 13px var(--font-body); padding-top: 10px; }
+table.cmp-table tr.strong td { font-weight: 600; color: var(--fg); }
+table.cmp-table tr.strong td:first-child { color: var(--fg); }
+table.cmp-table td .small { font-weight: 400; }
+table.cmp-table td + td { border-left: 1px solid var(--line); }
+/* forms: boxes line up across a row, whatever the label length */
+.grid { align-items: start; }
+.grid > .field > .label-row { min-height: 40px; align-items: flex-end; }
+.grid > .field > .label-row label { line-height: 1.3; }
 </style>
